@@ -415,34 +415,34 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
           <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed">{q.questionAr}</h2>
           <p className="text-base text-surface-600 leading-relaxed" dir="ltr">{q.questionIt}</p>
         </div>
-        <div className="px-5 pb-5 grid grid-cols-2 gap-3">
+        <div className="px-5 pb-4 grid grid-cols-2 gap-3">
           <button
-            className={cn('p-5 rounded-xl border-2 transition-all text-center font-bold text-lg',
+            className={cn('py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 font-bold text-base',
               userAnswer === true
                 ? 'border-green-500 bg-green-50 text-green-700 shadow-sm'
                 : 'border-surface-200 text-surface-400 hover:border-green-400 hover:bg-green-50/50 hover:text-green-600'
             )}
             onClick={() => handleAnswer(true)}
           >
-            <Icon name="check_circle" size={28} className={cn('mx-auto mb-1.5', userAnswer === true ? 'text-green-500' : 'text-surface-200')} filled={userAnswer === true} />
-            VERO
+            <Icon name="check_circle" size={22} className={cn(userAnswer === true ? 'text-green-500' : 'text-surface-200')} filled={userAnswer === true} />
+            <span>VERO</span>
           </button>
           <button
-            className={cn('p-5 rounded-xl border-2 transition-all text-center font-bold text-lg',
+            className={cn('py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 font-bold text-base',
               userAnswer === false
                 ? 'border-red-500 bg-red-50 text-red-700 shadow-sm'
                 : 'border-surface-200 text-surface-400 hover:border-red-400 hover:bg-red-50/50 hover:text-red-600'
             )}
             onClick={() => handleAnswer(false)}
           >
-            <Icon name="cancel" size={28} className={cn('mx-auto mb-1.5', userAnswer === false ? 'text-red-500' : 'text-surface-200')} filled={userAnswer === false} />
-            FALSO
+            <Icon name="cancel" size={22} className={cn(userAnswer === false ? 'text-red-500' : 'text-surface-200')} filled={userAnswer === false} />
+            <span>FALSO</span>
           </button>
         </div>
       </div>
 
       {/* Navigation */}
-      <div className="flex items-center justify-between gap-3 pb-2">
+      <div className="flex items-center justify-between gap-3">
         <button className={cn('flex items-center gap-2 px-4 py-3 rounded-xl border border-surface-200 transition-all text-sm font-medium',
           currentIndex > 0 ? 'hover:bg-surface-50 text-surface-700' : 'opacity-30 cursor-not-allowed'
         )} onClick={prevQuestion} disabled={currentIndex === 0}>
