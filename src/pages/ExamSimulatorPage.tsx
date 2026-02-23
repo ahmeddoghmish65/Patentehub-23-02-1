@@ -308,7 +308,8 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
+    /* fill viewport height so the card stretches with no gap below */
+    <div className="max-w-2xl mx-auto flex flex-col" style={{ minHeight: 'calc(100dvh - 7rem)' }}>
       {/* Submit warning modal */}
       {showSubmitWarning && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -335,11 +336,10 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
         </div>
       )}
 
-      {/* Exam Header — submit button replaces the X */}
-      <div className="bg-white rounded-xl border border-surface-100 p-3 mb-4">
+      {/* Exam Header */}
+      <div className="bg-white rounded-xl border border-surface-100 p-3 mb-3">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-bold text-surface-700">محاكي الامتحان</span>
-          {/* Submit button in place of X */}
           <button
             onClick={handleSubmitClick}
             className={cn(
@@ -353,19 +353,15 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
           </button>
         </div>
         <div className="flex items-center justify-between">
-          {/* Timer only */}
           <div className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-mono font-bold',
             remaining < 300 ? 'bg-danger-50 text-danger-600 animate-pulse' : remaining < 600 ? 'bg-warning-50 text-warning-600' : 'bg-surface-50 text-surface-700'
           )}>
             <Icon name="timer" size={16} />
             {fmt(remaining)}
           </div>
-
-          {/* Question count only - NO errors */}
           <div className="text-xs font-semibold text-surface-500 bg-surface-50 px-2.5 py-1.5 rounded-lg">
             {answeredCount}/{examQuestions.length} مُجاب
           </div>
-
           <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-500" onClick={() => setShowGrid(!showGrid)}>
             <Icon name="grid_view" size={20} />
           </button>
@@ -374,7 +370,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
 
       {/* Question Navigation Grid */}
       {showGrid && (
-        <div className="bg-white rounded-xl border border-surface-100 p-4 mb-4">
+        <div className="bg-white rounded-xl border border-surface-100 p-4 mb-3">
           <p className="text-xs font-semibold text-surface-600 mb-3">انتقل إلى سؤال:</p>
           <div className="grid grid-cols-10 gap-1.5">
             {examQuestions.map((_, i) => {
@@ -396,13 +392,15 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
       )}
 
       {/* Progress bar */}
-      <div className="w-full bg-surface-100 rounded-full h-1.5 mb-4">
+      <div className="w-full bg-surface-100 rounded-full h-1.5 mb-3">
         <div className="bg-primary-500 rounded-full h-1.5 transition-all duration-300" style={{ width: `${((currentIndex + 1) / examQuestions.length) * 100}%` }} />
       </div>
 
-      {/* Question Card */}
-      <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden mb-3">
-        <div className="bg-surface-50 px-5 py-3 flex items-center justify-between border-b border-surface-100">
+      {/* Question Card — flex-1 so it fills the remaining height with no gap */}
+      <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden flex flex-col flex-1">
+
+        {/* Card header */}
+        <div className="bg-surface-50 px-5 py-3 flex items-center justify-between border-b border-surface-100 shrink-0">
           <span className="text-sm font-bold text-surface-700">سؤال {currentIndex + 1} من {examQuestions.length}</span>
           <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium',
             q.difficulty === 'easy' ? 'bg-success-50 text-success-600' : q.difficulty === 'medium' ? 'bg-warning-50 text-warning-600' : 'bg-danger-50 text-danger-600'
@@ -410,12 +408,16 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
             {q.difficulty === 'easy' ? 'سهل' : q.difficulty === 'medium' ? 'متوسط' : 'صعب'}
           </span>
         </div>
-        <div className="p-5 sm:p-6">
+
+        {/* Question content — grows to fill space */}
+        <div className="p-5 sm:p-6 flex-1 flex flex-col justify-center">
           {q.image && <img src={q.image} alt="" className="w-full rounded-xl mb-4 max-h-48 object-contain bg-surface-50" />}
           <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed">{q.questionAr}</h2>
           <p className="text-base text-surface-600 leading-relaxed" dir="ltr">{q.questionIt}</p>
         </div>
-        <div className="px-5 pb-4 grid grid-cols-2 gap-3">
+
+        {/* VERO / FALSO */}
+        <div className="px-5 pb-4 grid grid-cols-2 gap-3 shrink-0">
           <button
             className={cn('py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 font-bold text-base',
               userAnswer === true
@@ -440,29 +442,23 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
           </button>
         </div>
 
-        {/* Navigation — inside the card, no gap */}
-        <div className="border-t border-surface-100 px-5 py-3 flex items-center justify-between">
+        {/* Navigation — pinned to card bottom */}
+        <div className="border-t border-surface-100 px-5 py-3 flex items-center justify-between shrink-0">
           <button
             className={cn('flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all',
-              currentIndex > 0
-                ? 'text-surface-700 hover:bg-surface-100'
-                : 'text-surface-300 cursor-not-allowed'
+              currentIndex > 0 ? 'text-surface-700 hover:bg-surface-100' : 'text-surface-300 cursor-not-allowed'
             )}
             onClick={prevQuestion}
             disabled={currentIndex === 0}
           >
             <Icon name="chevron_right" size={18} /> السابق
           </button>
-
           <span className="text-xs text-surface-400 font-medium tabular-nums">
             {currentIndex + 1} / {examQuestions.length}
           </span>
-
           <button
             className={cn('flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all',
-              currentIndex < examQuestions.length - 1
-                ? 'text-surface-700 hover:bg-surface-100'
-                : 'text-surface-300 cursor-not-allowed'
+              currentIndex < examQuestions.length - 1 ? 'text-surface-700 hover:bg-surface-100' : 'text-surface-300 cursor-not-allowed'
             )}
             onClick={nextQuestion}
             disabled={currentIndex >= examQuestions.length - 1}
