@@ -39,6 +39,38 @@ function renderWithMentions(text: string, onMentionClick?: (username: string) =>
   });
 }
 
+// Parse @mentions AND #hashtags inline — highlights and makes both clickable
+function renderWithMentionsAndHashtags(
+  text: string,
+  onMentionClick?: (username: string) => void,
+  onHashtagClick?: (tag: string) => void,
+) {
+  // Split on @mentions and #hashtags; \p{L}\p{N} gives full Unicode (Arabic, Italian, English…)
+  const parts = text.split(/(#[\p{L}\p{N}_]+|@\w+)/gu);
+  return parts.map((part, i) => {
+    if (part.startsWith('@') && part.length > 1) {
+      return (
+        <span key={i}
+          className="text-blue-600 font-semibold cursor-pointer hover:text-blue-700 hover:underline underline-offset-2"
+          onClick={(e) => { e.stopPropagation(); onMentionClick?.(part.slice(1)); }}>
+          {part}
+        </span>
+      );
+    }
+    if (part.startsWith('#') && part.length > 1) {
+      const tag = part.slice(1).toLowerCase();
+      return (
+        <span key={i}
+          className="text-primary-600 font-semibold cursor-pointer hover:text-primary-700 hover:underline underline-offset-2"
+          onClick={(e) => { e.stopPropagation(); onHashtagClick?.(tag); }}>
+          {part}
+        </span>
+      );
+    }
+    return <span key={i}>{part}</span>;
+  });
+}
+
 // Relative time formatter — used for posts, comments, replies, notifications
 function relativeTime(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
@@ -90,6 +122,9 @@ export function CommunityPage() {
   const [savedPosts, setSavedPosts] = useState<string[]>([]);
   const [showBookmarks, setShowBookmarks] = useState(false);
   const bookmarkRef = useRef<HTMLDivElement>(null);
+  // Trending hashtags panel
+  const [showTrending, setShowTrending] = useState(false);
+  const trendingRef = useRef<HTMLDivElement>(null);
   // Mention autocomplete
   const [mentionSuggestions, setMentionSuggestions] = useState<{ id: string; name: string; username: string }[]>([]);
   const [allUsers, setAllUsers] = useState<{ id: string; name: string; username: string; avatar: string }[]>([]);
@@ -111,6 +146,15 @@ export function CommunityPage() {
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (bookmarkRef.current && !bookmarkRef.current.contains(e.target as Node)) setShowBookmarks(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  // Close trending panel when clicking outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (trendingRef.current && !trendingRef.current.contains(e.target as Node)) setShowTrending(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
@@ -183,6 +227,11 @@ export function CommunityPage() {
       openUserProfile(found.id);
     }
   }, [allUsers]);
+
+  // Filter feed by clicked hashtag
+  const handleHashtagClick = useCallback((tag: string) => {
+    setActiveHashtag(tag);
+  }, []);
 
   // Detect @mentions in text and send notifications
   const sendMentionNotifs = useCallback(async (text: string, postId?: string, commentId?: string) => {
@@ -529,7 +578,7 @@ export function CommunityPage() {
     );
   };
 
-  // Render text with "show more" for long posts + @mention highlighting
+  // Render text with "show more" for long posts + @mention and #hashtag highlighting
   const renderPostText = (post: Post) => {
     const text = post.content;
     if (!text) return null;
@@ -538,7 +587,7 @@ export function CommunityPage() {
 
     const renderText = (t: string) => (
       <p className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap mb-3">
-        {renderWithMentions(t, handleMentionClick)}
+        {renderWithMentionsAndHashtags(t, handleMentionClick, handleHashtagClick)}
       </p>
     );
 
@@ -548,7 +597,7 @@ export function CommunityPage() {
       return (
         <div className="mb-3">
           <p className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap">
-            {renderWithMentions(text, handleMentionClick)}
+            {renderWithMentionsAndHashtags(text, handleMentionClick, handleHashtagClick)}
           </p>
           <button className="text-primary-500 text-xs font-medium mt-1 hover:text-primary-700" onClick={() => toggleExpandText(post.id)}>
             عرض أقل
@@ -561,7 +610,7 @@ export function CommunityPage() {
     return (
       <div className="mb-3">
         <p className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap">
-          {renderWithMentions(truncated, handleMentionClick)}
+          {renderWithMentionsAndHashtags(truncated, handleMentionClick, handleHashtagClick)}
         </p>
         <button className="text-primary-500 text-xs font-medium mt-1 hover:text-primary-700" onClick={() => toggleExpandText(post.id)}>
           عرض المزيد
@@ -584,7 +633,7 @@ export function CommunityPage() {
               <UserName userId={c.userId} name={c.userName} className="text-xs text-surface-800" onClick={() => openUserProfile(c.userId)} />
               <span className="text-[10px] text-surface-400">{relativeTime(c.createdAt)}</span>
             </div>
-            <p className="text-sm text-surface-600 mt-0.5">{renderWithMentions(c.content, handleMentionClick)}</p>
+            <p className="text-sm text-surface-600 mt-0.5">{renderWithMentionsAndHashtags(c.content, handleMentionClick, handleHashtagClick)}</p>
             <div className="flex items-center gap-3 mt-1.5">
               <button className={cn('flex items-center gap-0.5 text-[11px]', commentLikes[c.id] ? 'text-red-500' : 'text-surface-400 hover:text-red-400')}
                 onClick={() => toggleCommentLike(c.id)}>
@@ -621,7 +670,7 @@ export function CommunityPage() {
                     <span className="text-[10px] text-primary-500">{c.userName}</span>
                     <span className="text-[10px] text-surface-400 mr-auto">{relativeTime(r.createdAt)}</span>
                   </div>
-                  <p className="text-sm text-surface-600 mt-0.5">{renderWithMentions(getReplyContent(r), handleMentionClick)}</p>
+                  <p className="text-sm text-surface-600 mt-0.5">{renderWithMentionsAndHashtags(getReplyContent(r), handleMentionClick, handleHashtagClick)}</p>
                   <div className="flex items-center gap-3 mt-1.5">
                     <button className={cn('flex items-center gap-0.5 text-[11px]', commentLikes[r.id] ? 'text-red-500' : 'text-surface-400 hover:text-red-400')}
                       onClick={() => toggleCommentLike(r.id)}>
@@ -770,7 +819,7 @@ export function CommunityPage() {
               </div>
             </div>
           ) : (
-            <>{renderPostText(post)}{renderHashtagPills(post)}</>
+            <>{renderPostText(post)}</>
           )}
 
           {isQuiz && post.quizQuestion && (
@@ -968,6 +1017,51 @@ export function CommunityPage() {
             )}
           </div>
 
+          {/* Trending Hashtags */}
+          <div className="relative" ref={trendingRef}>
+            <button
+              className={cn('relative w-10 h-10 rounded-xl flex items-center justify-center hover:bg-surface-200 transition-colors', showTrending ? 'bg-primary-100' : 'bg-surface-100')}
+              onClick={() => { setShowTrending(!showTrending); setShowBookmarks(false); setShowNotifs(false); }}
+              title="الوسوم الرائجة">
+              <Icon name="trending_up" size={22} className={showTrending ? 'text-primary-600' : 'text-surface-600'} filled={showTrending} />
+            </button>
+            {showTrending && (
+              <div className="absolute left-0 top-12 bg-white rounded-2xl shadow-2xl border border-surface-100 z-50 overflow-hidden" style={{ width: 300 }}>
+                <div className="flex items-center gap-2 p-4 border-b border-surface-100 bg-surface-50">
+                  <Icon name="trending_up" size={18} className="text-primary-500" filled />
+                  <h3 className="font-bold text-surface-900">الوسوم الرائجة</h3>
+                </div>
+                <div className="p-3">
+                  {trendingHashtags.length === 0 ? (
+                    <div className="py-6 text-center">
+                      <Icon name="tag" size={32} className="text-surface-200 mx-auto mb-2" />
+                      <p className="text-sm text-surface-400">لا توجد وسوم رائجة بعد</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {trendingHashtags.map(h => (
+                        <button
+                          key={h.id}
+                          className={cn(
+                            'flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border transition-colors',
+                            activeHashtag === h.tag
+                              ? 'bg-primary-500 text-white border-primary-500'
+                              : 'bg-surface-50 hover:bg-primary-50 text-surface-600 hover:text-primary-600 border-surface-200 hover:border-primary-200'
+                          )}
+                          onClick={() => { setActiveHashtag(activeHashtag === h.tag ? null : h.tag); setShowTrending(false); }}
+                        >
+                          <span className={activeHashtag === h.tag ? 'text-white/70' : 'text-primary-400'}>#</span>
+                          {h.tag}
+                          <span className={activeHashtag === h.tag ? 'text-white/60' : 'text-surface-400 text-[10px]'}>{h.postCount}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Notifications Bell */}
           <div className="relative" ref={notifRef}>
           <button
@@ -1116,28 +1210,6 @@ export function CommunityPage() {
           </button>
         )}
       </div>
-
-      {/* Trending Hashtags */}
-      {trendingHashtags.length > 0 && !activeHashtag && (
-        <div className="bg-white rounded-2xl border border-surface-100 p-4 mb-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Icon name="trending_up" size={16} className="text-primary-500" filled />
-            <span className="text-sm font-semibold text-surface-800">الوسوم الرائجة</span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {trendingHashtags.map(h => (
-              <button
-                key={h.id}
-                className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-50 hover:bg-primary-50 text-surface-600 hover:text-primary-600 text-xs font-medium border border-surface-200 hover:border-primary-200 transition-colors"
-                onClick={() => setActiveHashtag(h.tag)}
-              >
-                <span className="text-primary-400">#</span>{h.tag}
-                <span className="text-surface-400 text-[10px]">{h.postCount}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* New Post */}
       <div className="bg-white rounded-2xl p-5 border border-surface-100 mb-6">
