@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { LandingPage } from '@/pages/LandingPage';
 import { AuthPage } from '@/pages/AuthPage';
@@ -18,8 +18,10 @@ import { QuestionsBrowsePage } from '@/pages/QuestionsBrowsePage';
 import { ContactPage } from '@/pages/ContactPage';
 import { PrivacyPolicyPage } from '@/pages/PrivacyPolicyPage';
 import { TermsOfServicePage } from '@/pages/TermsOfServicePage';
+import { CookieConsentBanner } from '@/components/CookieConsentBanner';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
+import { getConsentLevel, saveLastPage, type ConsentLevel } from '@/utils/cookieManager';
 
 type Page = 'landing' | 'login' | 'register' | 'reset-password' | 'dashboard' | 'lessons' | 'lesson-detail' | 'quiz' | 'signs' | 'dictionary' | 'training' | 'community' | 'profile' | 'admin' | 'mistakes' | 'exam-simulator' | 'questions-browse' | 'contact' | 'privacy-policy' | 'terms-of-service';
 
@@ -27,6 +29,18 @@ export function App() {
   const { user, isLoading, checkAuth, recordPageVisit } = useAuthStore();
   const [currentPage, setCurrentPage] = useState<Page>('landing');
   const [pageData, setPageData] = useState<Record<string, string>>({});
+
+  // ── Cookie consent ──────────────────────────────────────────────────────
+  // Lazily read from cookie so we don't trigger a re-render on first mount.
+  const [consentLevel, setConsentLevel] = useState<ConsentLevel | null>(
+    () => getConsentLevel(),
+  );
+  const showConsentBanner = consentLevel === null;
+
+  const handleConsent = useCallback((level: ConsentLevel) => {
+    setConsentLevel(level);
+  }, []);
+  // ────────────────────────────────────────────────────────────────────────
 
   useEffect(() => { checkAuth(); }, [checkAuth]);
 
@@ -40,8 +54,10 @@ export function App() {
     setCurrentPage(page as Page);
     if (data) setPageData(prev => ({ ...prev, ...data }));
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    // Record real page visit
+    // Record analytics page visit
     recordPageVisit(page).catch(() => {});
+    // Persist last page to cookie (no-op unless user consented to all cookies)
+    saveLastPage(page);
   }, [recordPageVisit]);
 
   if (isLoading) {
@@ -64,13 +80,24 @@ export function App() {
   // Public pages
   const legalPages: Page[] = ['contact', 'privacy-policy', 'terms-of-service'];
   if (!user || ['landing', 'login', 'register', 'reset-password', ...legalPages].includes(currentPage)) {
+    let publicContent: React.ReactNode;
     if (currentPage === 'login' || currentPage === 'register' || currentPage === 'reset-password') {
-      return <AuthPage mode={currentPage as 'login' | 'register' | 'reset-password'} onNavigate={navigate} />;
+      publicContent = <AuthPage mode={currentPage as 'login' | 'register' | 'reset-password'} onNavigate={navigate} />;
+    } else if (currentPage === 'contact') {
+      publicContent = <ContactPage onNavigate={navigate} />;
+    } else if (currentPage === 'privacy-policy') {
+      publicContent = <PrivacyPolicyPage onNavigate={navigate} />;
+    } else if (currentPage === 'terms-of-service') {
+      publicContent = <TermsOfServicePage onNavigate={navigate} />;
+    } else {
+      publicContent = <LandingPage onNavigate={navigate} />;
     }
-    if (currentPage === 'contact') return <ContactPage onNavigate={navigate} />;
-    if (currentPage === 'privacy-policy') return <PrivacyPolicyPage onNavigate={navigate} />;
-    if (currentPage === 'terms-of-service') return <TermsOfServicePage onNavigate={navigate} />;
-    return <LandingPage onNavigate={navigate} />;
+    return (
+      <>
+        {publicContent}
+        {showConsentBanner && <CookieConsentBanner onConsent={handleConsent} />}
+      </>
+    );
   }
 
   const isAdminUser = user.role === 'admin' || user.role === 'manager';
@@ -225,6 +252,9 @@ export function App() {
           ))}
         </div>
       </nav>
+
+      {/* Cookie consent banner — shown once per browser until user decides */}
+      {showConsentBanner && <CookieConsentBanner onConsent={handleConsent} />}
     </div>
   );
 }

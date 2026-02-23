@@ -1,8 +1,14 @@
 import { create } from 'zustand';
 import * as api from '@/db/api';
 import type { User, QuizResult, UserMistake, Section, Lesson, Question, Sign, DictionarySection, DictionaryEntry, Post, Comment, Notification, Report, AdminLog } from '@/db/database';
-
-const TOKEN_KEY = 'ph_token';
+import {
+  setCookie,
+  getCookie,
+  deleteCookie,
+  clearActivityCookies,
+  COOKIE_NAMES,
+  COOKIE_EXPIRY,
+} from '@/utils/cookieManager';
 
 interface AppState {
   // Auth
@@ -135,6 +141,22 @@ interface AppState {
   getPageVisitStats: () => Promise<unknown>;
 }
 
+/**
+ * Apply (or remove) the dark-mode attribute on the root <html> element.
+ * Adding data-theme="dark" and the "dark" class provides dual compatibility
+ * for Tailwind's class-based dark mode and any CSS [data-theme="dark"] selectors.
+ */
+export function applyTheme(theme: 'light' | 'dark'): void {
+  const root = document.documentElement;
+  if (theme === 'dark') {
+    root.setAttribute('data-theme', 'dark');
+    root.classList.add('dark');
+  } else {
+    root.removeAttribute('data-theme');
+    root.classList.remove('dark');
+  }
+}
+
 export const useAuthStore = create<AppState>((set, get) => ({
   user: null, token: null, isLoading: true, error: null,
   sections: [], lessons: [], questions: [], signs: [],
@@ -156,7 +178,8 @@ export const useAuthStore = create<AppState>((set, get) => ({
     const lastName = nameParts.slice(1).join(' ') || '';
     const r = await api.apiRegister(email, password, name, { firstName, lastName, username });
     if (r.success && r.data) {
-      sessionStorage.setItem(TOKEN_KEY, r.data.token);
+      // Store auth token in a persistent cookie (30-day expiry, SameSite=Lax)
+      setCookie(COOKIE_NAMES.AUTH, r.data.token, { days: COOKIE_EXPIRY.SESSION });
       set({ user: r.data.user, token: r.data.token, isLoading: false });
       return true;
     }
@@ -167,7 +190,8 @@ export const useAuthStore = create<AppState>((set, get) => ({
     set({ isLoading: true, error: null });
     const r = await api.apiLogin(email, password);
     if (r.success && r.data) {
-      sessionStorage.setItem(TOKEN_KEY, r.data.token);
+      // Store auth token in a persistent cookie (30-day expiry, SameSite=Lax)
+      setCookie(COOKIE_NAMES.AUTH, r.data.token, { days: COOKIE_EXPIRY.SESSION });
       set({ user: r.data.user, token: r.data.token, isLoading: false });
       return true;
     }
@@ -177,16 +201,24 @@ export const useAuthStore = create<AppState>((set, get) => ({
   logout: async () => {
     const { token } = get();
     if (token) await api.apiLogout(token);
-    sessionStorage.removeItem(TOKEN_KEY);
+    // Remove auth cookie and all activity cookies on logout
+    deleteCookie(COOKIE_NAMES.AUTH);
+    clearActivityCookies();
     set({ user: null, token: null });
   },
 
   checkAuth: async () => {
-    const token = sessionStorage.getItem(TOKEN_KEY);
+    // Read token from persistent cookie (falls back to null if not set)
+    const token = getCookie(COOKIE_NAMES.AUTH);
     if (!token) { set({ isLoading: false }); return; }
     const r = await api.apiGetUser(token);
-    if (r.success && r.data) set({ user: r.data, token, isLoading: false });
-    else { sessionStorage.removeItem(TOKEN_KEY); set({ isLoading: false }); }
+    if (r.success && r.data) {
+      set({ user: r.data, token, isLoading: false });
+    } else {
+      // Token is invalid or expired — clean up
+      deleteCookie(COOKIE_NAMES.AUTH);
+      set({ isLoading: false });
+    }
   },
 
   clearError: () => set({ error: null }),
@@ -206,7 +238,23 @@ export const useAuthStore = create<AppState>((set, get) => ({
   updateSettings: async (settings) => {
     const { token } = get(); if (!token) return;
     const r = await api.apiUpdateSettings(token, settings);
-    if (r.success && r.data) set(s => ({ user: s.user ? { ...s.user, settings: r.data! } : null }));
+    if (r.success && r.data) {
+      set(s => ({ user: s.user ? { ...s.user, settings: r.data! } : null }));
+      // Mirror language and theme to cookies so they can be read before
+      // the DB loads on next startup (prevents flash of wrong preference).
+      if (settings.language) {
+        setCookie(COOKIE_NAMES.LANGUAGE, settings.language, {
+          days: COOKIE_EXPIRY.PREFERENCES,
+        });
+      }
+      if (settings.theme) {
+        setCookie(COOKIE_NAMES.THEME, settings.theme, {
+          days: COOKIE_EXPIRY.PREFERENCES,
+        });
+        // Apply theme class immediately so the UI updates without a reload
+        applyTheme(settings.theme);
+      }
+    }
   },
 
   updateProgress: async (p) => {
