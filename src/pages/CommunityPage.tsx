@@ -134,8 +134,20 @@ export function CommunityPage() {
   const [activeHashtag, setActiveHashtag] = useState<string | null>(null);
   const [trendingHashtags, setTrendingHashtags] = useState<Hashtag[]>([]);
   const [hashtagSuggestions, setHashtagSuggestions] = useState<Hashtag[]>([]);
+  // Community image upload — controlled by admin toggle
+  const [communityAllowImages, setCommunityAllowImages] = useState(() =>
+    localStorage.getItem('communityAllowImages') === 'true'
+  );
+  const [postImage, setPostImage] = useState<string>('');
 
   useEffect(() => { loadPosts(postSortMode, activeHashtag ?? undefined); }, [loadPosts, postSortMode, activeHashtag]);
+
+  // Sync communityAllowImages if admin changes it in another tab / same session
+  useEffect(() => {
+    const handler = () => setCommunityAllowImages(localStorage.getItem('communityAllowImages') === 'true');
+    window.addEventListener('storage', handler);
+    return () => window.removeEventListener('storage', handler);
+  }, []);
   useEffect(() => { if (user) loadCommunityNotifs(); }, [user, loadCommunityNotifs]);
 
   // Load trending hashtags once on mount and after posts load
@@ -316,12 +328,12 @@ export function CommunityPage() {
       setQuizQuestion(''); setQuizAnswer(true); setNewPost(''); setPostType('post');
       await loadPosts();
     } else {
-      const ok = await createPost(newPost, '');
+      const ok = await createPost(newPost, postImage);
       if (ok) {
         // Find new post and send mentions
         await sendMentionNotifs(newPost);
       }
-      setNewPost('');
+      setNewPost(''); setPostImage('');
     }
     setPosting(false);
   };
@@ -345,8 +357,7 @@ export function CommunityPage() {
   };
 
   const openComments = async (postId: string) => {
-    const post = posts.find(p => p.id === postId);
-    if (post?.locked) return; // comments are locked — do nothing
+    // Locked posts: still allow viewing existing comments, just block adding new ones
     if (showComments === postId) { setShowComments(null); return; }
     const c = await getComments(postId);
     setComments(c); setShowComments(postId); setReplyingTo(null); setReplyContent('');
@@ -875,11 +886,10 @@ export function CommunityPage() {
             <Icon name="favorite" size={20} filled={likes[post.id]} />{post.likesCount}
           </button>
           <button
-            className={cn('flex items-center gap-1 text-sm', post.locked ? 'text-surface-300 cursor-not-allowed' : 'text-surface-400 hover:text-primary-500')}
+            className={cn('flex items-center gap-1 text-sm', post.locked ? 'text-surface-400 hover:text-surface-600' : 'text-surface-400 hover:text-primary-500')}
             onClick={() => openComments(post.id)}
-            disabled={post.locked}
-            title={post.locked ? 'التعليقات مغلقة' : undefined}>
-            <Icon name="chat_bubble" size={20} />{post.commentsCount}
+            title={post.locked ? 'التعليقات مغلقة — عرض فقط' : undefined}>
+            <Icon name={post.locked ? 'lock' : 'chat_bubble'} size={20} />{post.commentsCount}
           </button>
           <button
             className={cn('flex items-center gap-1 text-sm mr-auto', savedPosts.includes(post.id) ? 'text-primary-500' : 'text-surface-400 hover:text-primary-400')}
@@ -896,23 +906,31 @@ export function CommunityPage() {
 
         {activePost === post.id && (
           <div className="border-t border-surface-100 p-4 bg-surface-50 space-y-3">
+            {post.locked && (
+              <div className="flex items-center gap-2 bg-surface-100 rounded-xl px-3 py-2 border border-surface-200">
+                <Icon name="lock" size={14} className="text-surface-400" />
+                <span className="text-xs text-surface-500">التعليقات مغلقة — لا يمكن إضافة تعليقات جديدة</span>
+              </div>
+            )}
             {previewCmts.map(c => renderComment(c, post.id, currentAllCmts, showAllComments))}
             {hasMoreCmts && (
               <button className="w-full text-center text-sm text-primary-500 font-medium py-2 hover:text-primary-700" onClick={() => openPostDetail(post.id)}>
                 عرض كل التعليقات ({currentCmts.length})
               </button>
             )}
-            <div className="flex gap-2 items-center relative">
-              <UserAvatar avatar={user?.avatar} name={user?.name || '?'} size="sm" />
-              <div className="flex-1 relative">
-                <input className="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm focus:border-primary-500" placeholder="اكتب تعليقاً... (@اسم للإشارة)" value={newComment} onChange={e => handleTextChange(e.target.value, setNewComment)}
-                  onKeyDown={e => { if (e.key === 'Enter') handleComment(post.id); }} />
-                {mentionSuggestions.length > 0 && <MentionDropdown suggestions={mentionSuggestions} onSelect={u => insertMention(u.username || u.name, newComment, setNewComment)} />}
+            {!post.locked && (
+              <div className="flex gap-2 items-center relative">
+                <UserAvatar avatar={user?.avatar} name={user?.name || '?'} size="sm" />
+                <div className="flex-1 relative">
+                  <input className="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm focus:border-primary-500" placeholder="اكتب تعليقاً... (@اسم للإشارة)" value={newComment} onChange={e => handleTextChange(e.target.value, setNewComment)}
+                    onKeyDown={e => { if (e.key === 'Enter') handleComment(post.id); }} />
+                  {mentionSuggestions.length > 0 && <MentionDropdown suggestions={mentionSuggestions} onSelect={u => insertMention(u.username || u.name, newComment, setNewComment)} />}
+                </div>
+                <Button size="sm" onClick={() => handleComment(post.id)} disabled={!newComment.trim()}>
+                  <Icon name="send" size={14} />
+                </Button>
               </div>
-              <Button size="sm" onClick={() => handleComment(post.id)} disabled={!newComment.trim()}>
-                <Icon name="send" size={14} />
-              </Button>
-            </div>
+            )}
           </div>
         )}
       </div>
@@ -1167,8 +1185,8 @@ export function CommunityPage() {
         </div>
       )}
 
-      {/* Feed Sort Controls + Following toggle */}
-      <div className="flex items-center gap-2 mb-4 flex-wrap">
+      {/* Feed Sort Controls + Following toggle — single scrollable row */}
+      <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-0.5 no-scrollbar">
         {([
           { mode: 'hot' as PostSortMode, icon: 'local_fire_department', label: 'الأكثر تفاعلاً' },
           { mode: 'new' as PostSortMode, icon: 'schedule', label: 'الأحدث' },
@@ -1177,7 +1195,7 @@ export function CommunityPage() {
           <button
             key={mode}
             className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all border',
+              'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all border shrink-0',
               postSortMode === mode
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300 hover:text-primary-600'
@@ -1192,7 +1210,7 @@ export function CommunityPage() {
         {/* Following toggle button */}
         <button
           className={cn(
-            'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all border',
+            'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all border shrink-0',
             activeTab === 'following'
               ? 'bg-primary-500 text-white border-primary-500'
               : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300 hover:text-primary-600'
@@ -1256,6 +1274,35 @@ export function CommunityPage() {
             )}
             {!canPost && (
               <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><Icon name="block" size={12} /> تم تقييد نشرك من قبل المسؤول</p>
+            )}
+            {/* Image upload — only when admin has enabled it */}
+            {communityAllowImages && postType === 'post' && (
+              <div className="mt-2">
+                {postImage ? (
+                  <div className="relative mt-2 rounded-xl overflow-hidden border border-surface-200">
+                    <img src={postImage} alt="" className="w-full max-h-48 object-cover" />
+                    <button
+                      className="absolute top-2 left-2 w-7 h-7 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center"
+                      onClick={() => setPostImage('')}
+                      title="إزالة الصورة">
+                      <Icon name="close" size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex items-center gap-1.5 text-xs text-surface-500 hover:text-primary-600 cursor-pointer w-fit">
+                    <Icon name="image" size={16} />
+                    إرفاق صورة
+                    <input type="file" accept="image/*" className="hidden" onChange={e => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const reader = new FileReader();
+                      reader.onload = () => setPostImage(reader.result as string);
+                      reader.readAsDataURL(file);
+                      e.target.value = '';
+                    }} />
+                  </label>
+                )}
+              </div>
             )}
             <div className="flex justify-end mt-2">
               <Button size="sm" onClick={handlePost} loading={posting} disabled={!canPost || (postType === 'quiz' ? !quizQuestion.trim() : !newPost.trim())}

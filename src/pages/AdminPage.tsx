@@ -35,6 +35,17 @@ export function AdminPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [userSelectedIds, setUserSelectedIds] = useState<Set<string>>(new Set());
   const [postSelectedIds, setPostSelectedIds] = useState<Set<string>>(new Set());
+  // Community settings
+  const [communityAllowImages, setCommunityAllowImages] = useState(
+    () => localStorage.getItem('communityAllowImages') === 'true'
+  );
+  const toggleCommunityImages = () => {
+    const next = !communityAllowImages;
+    setCommunityAllowImages(next);
+    localStorage.setItem('communityAllowImages', String(next));
+    // Notify other tabs / CommunityPage open in same session
+    window.dispatchEvent(new Event('storage'));
+  };
 
   useEffect(() => {
     store.loadAdminStats();
@@ -1047,6 +1058,31 @@ export function AdminPage() {
         const filtered = store.posts.filter(p => !search || p.content.includes(search) || p.userName.includes(search));
         const [selectedPostIds, setSelectedPostIds] = [postSelectedIds, setPostSelectedIds];
         return (
+        <div className="space-y-4">
+        {/* Community settings card */}
+        <div className="bg-white rounded-xl border border-surface-100 p-4">
+          <h3 className="text-sm font-bold text-surface-800 flex items-center gap-2 mb-3">
+            <Icon name="settings" size={16} className="text-primary-500" />
+            إعدادات المجتمع
+          </h3>
+          <div className="flex items-center justify-between p-3 bg-surface-50 rounded-xl border border-surface-200">
+            <div className="flex items-center gap-3">
+              <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center', communityAllowImages ? 'bg-primary-100' : 'bg-surface-200')}>
+                <Icon name="image" size={18} className={communityAllowImages ? 'text-primary-600' : 'text-surface-400'} />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-surface-800">رفع الصور في المنشورات</p>
+                <p className="text-xs text-surface-500">السماح للمستخدمين برفع صور عند إنشاء منشور</p>
+              </div>
+            </div>
+            <button
+              className={cn('relative w-12 h-6 rounded-full transition-colors shrink-0', communityAllowImages ? 'bg-primary-500' : 'bg-surface-300')}
+              onClick={toggleCommunityImages}
+              title={communityAllowImages ? 'إيقاف رفع الصور' : 'تفعيل رفع الصور'}>
+              <span className={cn('absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform', communityAllowImages ? 'translate-x-6 left-0.5' : 'translate-x-0 left-0.5')} />
+            </button>
+          </div>
+        </div>
         <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
           <div className="p-4 border-b border-surface-100">
             <div className="flex items-center justify-between mb-3">
@@ -1095,6 +1131,7 @@ export function AdminPage() {
               ))}
             </div>
           )}
+        </div>
         </div>
         );
       })()}
