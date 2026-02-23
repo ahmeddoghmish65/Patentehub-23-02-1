@@ -15,10 +15,13 @@ import { AdminPage } from '@/pages/AdminPage';
 import { MistakesPage } from '@/pages/MistakesPage';
 import { ExamSimulatorPage } from '@/pages/ExamSimulatorPage';
 import { QuestionsBrowsePage } from '@/pages/QuestionsBrowsePage';
+import { ContactPage } from '@/pages/ContactPage';
+import { PrivacyPolicyPage } from '@/pages/PrivacyPolicyPage';
+import { TermsOfServicePage } from '@/pages/TermsOfServicePage';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 
-type Page = 'landing' | 'login' | 'register' | 'reset-password' | 'dashboard' | 'lessons' | 'lesson-detail' | 'quiz' | 'signs' | 'dictionary' | 'training' | 'community' | 'profile' | 'admin' | 'mistakes' | 'exam-simulator' | 'questions-browse';
+type Page = 'landing' | 'login' | 'register' | 'reset-password' | 'dashboard' | 'lessons' | 'lesson-detail' | 'quiz' | 'signs' | 'dictionary' | 'training' | 'community' | 'profile' | 'admin' | 'mistakes' | 'exam-simulator' | 'questions-browse' | 'contact' | 'privacy-policy' | 'terms-of-service';
 
 export function App() {
   const { user, isLoading, checkAuth, recordPageVisit } = useAuthStore();
@@ -59,10 +62,14 @@ export function App() {
   }
 
   // Public pages
-  if (!user || ['landing', 'login', 'register', 'reset-password'].includes(currentPage)) {
+  const legalPages: Page[] = ['contact', 'privacy-policy', 'terms-of-service'];
+  if (!user || ['landing', 'login', 'register', 'reset-password', ...legalPages].includes(currentPage)) {
     if (currentPage === 'login' || currentPage === 'register' || currentPage === 'reset-password') {
       return <AuthPage mode={currentPage as 'login' | 'register' | 'reset-password'} onNavigate={navigate} />;
     }
+    if (currentPage === 'contact') return <ContactPage onNavigate={navigate} />;
+    if (currentPage === 'privacy-policy') return <PrivacyPolicyPage onNavigate={navigate} />;
+    if (currentPage === 'terms-of-service') return <TermsOfServicePage onNavigate={navigate} />;
     return <LandingPage onNavigate={navigate} />;
   }
 
@@ -133,6 +140,9 @@ export function App() {
       case 'mistakes': return <MistakesPage />;
       case 'exam-simulator': return <ExamSimulatorPage onNavigate={navigate} />;
       case 'questions-browse': return <QuestionsBrowsePage onNavigate={navigate} />;
+      case 'contact': return <ContactPage onNavigate={navigate} />;
+      case 'privacy-policy': return <PrivacyPolicyPage onNavigate={navigate} />;
+      case 'terms-of-service': return <TermsOfServicePage onNavigate={navigate} />;
       default: return <Dashboard onNavigate={navigate} />;
     }
   };

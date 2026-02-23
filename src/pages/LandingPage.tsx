@@ -482,10 +482,11 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
       </section>
 
       {/* Footer */}
-      <footer className="bg-surface-900 border-t border-surface-800 py-10">
+      <footer className="bg-surface-900 border-t border-surface-800 pt-10 pb-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col lg:flex-row items-start justify-between gap-8 mb-8">
+            {/* Brand */}
+            <div className="flex items-center gap-3 shrink-0">
               <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
                 <Icon name="directions_car" size={20} className="text-white" filled />
               </div>
@@ -494,12 +495,40 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                 <p className="text-surface-500 text-xs">تطبيق تعليم رخصة القيادة الإيطالية</p>
               </div>
             </div>
-            <div className="flex items-center gap-6 text-sm text-surface-500">
-              <a href="#features" className="hover:text-white transition-colors">المميزات</a>
-              <a href="#faq" className="hover:text-white transition-colors">الأسئلة الشائعة</a>
-              <a href="#testimonials" className="hover:text-white transition-colors">آراء المستخدمين</a>
+
+            {/* Navigation columns */}
+            <div className="flex flex-wrap gap-10 text-sm">
+              {/* App links */}
+              <div>
+                <p className="text-surface-400 font-semibold mb-3 text-xs uppercase tracking-wider">التطبيق</p>
+                <div className="space-y-2">
+                  <a href="#features" className="block text-surface-500 hover:text-white transition-colors">المميزات</a>
+                  <a href="#testimonials" className="block text-surface-500 hover:text-white transition-colors">آراء المستخدمين</a>
+                  <a href="#faq" className="block text-surface-500 hover:text-white transition-colors">الأسئلة الشائعة</a>
+                </div>
+              </div>
+              {/* Legal links */}
+              <div>
+                <p className="text-surface-400 font-semibold mb-3 text-xs uppercase tracking-wider">قانوني</p>
+                <div className="space-y-2">
+                  <button onClick={() => onNavigate('privacy-policy')} className="block text-surface-500 hover:text-white transition-colors text-right w-full">سياسة الخصوصية</button>
+                  <button onClick={() => onNavigate('terms-of-service')} className="block text-surface-500 hover:text-white transition-colors text-right w-full">شروط الاستخدام</button>
+                  <button onClick={() => onNavigate('contact')} className="block text-surface-500 hover:text-white transition-colors text-right w-full">تواصل معنا</button>
+                </div>
+              </div>
             </div>
-            <p className="text-surface-600 text-sm">© 2024 Patente Hub</p>
+          </div>
+
+          {/* Bottom bar */}
+          <div className="border-t border-surface-800 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-surface-600 text-xs">© {new Date().getFullYear()} Patente Hub. جميع الحقوق محفوظة.</p>
+            <div className="flex items-center gap-4 text-xs text-surface-600">
+              <button onClick={() => onNavigate('privacy-policy')} className="hover:text-surface-400 transition-colors">الخصوصية</button>
+              <span>·</span>
+              <button onClick={() => onNavigate('terms-of-service')} className="hover:text-surface-400 transition-colors">الشروط</button>
+              <span>·</span>
+              <button onClick={() => onNavigate('contact')} className="hover:text-surface-400 transition-colors">الاتصال</button>
+            </div>
           </div>
         </div>
       </footer>
