@@ -1,7 +1,7 @@
 import { openDB, type IDBPDatabase } from 'idb';
 
 const DB_NAME = 'patente_hub_v3';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 export interface User {
   id: string;
@@ -39,6 +39,14 @@ export interface User {
   lastLogin: string;
   progress: UserProgress;
   settings: UserSettings;
+  // Reputation system
+  reputation?: number;
+  reputationDetails?: {
+    postLikes: number;
+    helpfulComments: number;
+    acceptedAnswers: number;
+    lastCalculated: string;
+  };
 }
 
 export interface UserProgress {
@@ -164,6 +172,24 @@ export interface Post {
   commentsCount: number;
   createdAt: string;
   updatedAt: string;
+  // Ranking & moderation
+  hotScore?: number;
+  viralScore?: number;
+  spamScore?: number;
+  shadowBanned?: boolean;
+  featured?: boolean;
+  locked?: boolean;
+  hashtags?: string[];
+}
+
+export interface Hashtag {
+  id: string;
+  tag: string;          // lowercase, no '#' prefix
+  postCount: number;
+  weeklyCount: number;  // posts using this tag in last 7 days
+  trendScore: number;
+  lastUsed: string;
+  createdAt: string;
 }
 
 export interface Comment {
@@ -176,6 +202,11 @@ export interface Comment {
   parentId?: string; // for replies
   mentions?: string[]; // array of user IDs mentioned
   createdAt: string;
+  // Ranking
+  likes?: number;
+  rankScore?: number;
+  hashtags?: string[];
+  pinned?: boolean;
 }
 
 export interface CommunityNotification {
@@ -288,6 +319,7 @@ export async function getDB(): Promise<IDBPDatabase> {
         { name: 'comments', keyPath: 'id', indexes: [{ name: 'postId', keyPath: 'postId', unique: false }] },
         { name: 'likes', keyPath: 'id', indexes: [{ name: 'postId', keyPath: 'postId', unique: false }, { name: 'userId', keyPath: 'userId', unique: false }] },
         { name: 'reports', keyPath: 'id', indexes: [{ name: 'status', keyPath: 'status', unique: false }] },
+        { name: 'hashtags', keyPath: 'id', indexes: [{ name: 'tag', keyPath: 'tag', unique: true }, { name: 'trendScore', keyPath: 'trendScore', unique: false }] },
         { name: 'quizResults', keyPath: 'id', indexes: [{ name: 'userId', keyPath: 'userId', unique: false }] },
         { name: 'userMistakes', keyPath: 'id', indexes: [{ name: 'userId', keyPath: 'userId', unique: false }] },
         { name: 'trainingSessions', keyPath: 'id', indexes: [{ name: 'userId', keyPath: 'userId', unique: false }] },

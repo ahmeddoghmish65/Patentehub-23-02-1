@@ -5,6 +5,12 @@ import {
   type Like, type Report, type QuizResult, type UserMistake,
   type TrainingSession, type Notification, type AdminLog
 } from './database';
+import { computeHotScore, sortPostsByHot, sortPostsByNew, sortPostsByViral } from '@/services/rankingService';
+import { evaluateSpam } from '@/services/spamDetectionService';
+import { recordEngagement, computeViralScore } from '@/services/viralDetectionService';
+import { recalculateReputation, getCachedReputation } from '@/services/reputationService';
+import { computeCommentScore } from '@/services/commentRankingService';
+import { extractHashtags, indexHashtags, decrementHashtags, getTrendingHashtags, suggestHashtags } from '@/services/hashtagService';
 
 // ============ RATE LIMITING ============
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -638,19 +644,51 @@ export async function apiUpdateDictEntry(token: string, id: string, data: Partia
 }
 
 // ============ COMMUNITY API ============
-export async function apiGetPosts(): Promise<ApiRes<Post[]>> {
+export type PostSortMode = 'hot' | 'new' | 'viral';
+
+export async function apiGetPosts(sortMode: PostSortMode = 'hot', hashtag?: string): Promise<ApiRes<Post[]>> {
   const db = await getDB();
-  const all = await db.getAll('posts');
+  let all = await db.getAll('posts');
+
+  // Filter by hashtag if requested
+  if (hashtag) {
+    all = all.filter(p => p.hashtags?.includes(hashtag.toLowerCase()));
+  }
+
   // Sync avatar + name from current user data so updates reflect immediately
   const users = await db.getAll('users');
-  const userMap: Record<string, { name: string; avatar: string }> = {};
-  for (const u of users) userMap[u.id] = { name: u.name, avatar: u.avatar || '' };
+  const userMap: Record<string, { name: string; avatar: string; reputation?: number }> = {};
+  for (const u of users) userMap[u.id] = { name: u.name, avatar: u.avatar || '', reputation: u.reputation };
   for (const p of all) {
     const u = userMap[p.userId];
     if (u) { p.userName = u.name; p.userAvatar = u.avatar; }
   }
-  all.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  return ok(all);
+
+  // Compute reply counts per post for HOT scoring
+  const allComments = await db.getAll('comments');
+  const replyMap: Record<string, number> = {};
+  for (const c of allComments) {
+    if (c.parentId) {
+      replyMap[c.postId] = (replyMap[c.postId] ?? 0) + 1;
+    }
+  }
+
+  // Refresh hot + viral scores
+  for (const p of all) {
+    const authorRep = userMap[p.userId]?.reputation ?? 0;
+    p.hotScore = computeHotScore(p, replyMap[p.id] ?? 0, authorRep);
+    p.viralScore = computeViralScore(p);
+  }
+
+  let sorted: Post[];
+  switch (sortMode) {
+    case 'viral': sorted = sortPostsByViral(all); break;
+    case 'new':   sorted = sortPostsByNew(all); break;
+    case 'hot':
+    default:      sorted = sortPostsByHot(all); break;
+  }
+
+  return ok(sorted);
 }
 
 export async function apiCreatePost(token: string, content: string, image: string): Promise<ApiRes<Post>> {
@@ -658,6 +696,11 @@ export async function apiCreatePost(token: string, content: string, image: strin
   if (!user) return err('غير مصرح', 401);
   if (user.isBanned) return err('حسابك محظور', 403);
   if (!content.trim()) return err('المحتوى فارغ');
+
+  // Spam detection
+  const spamResult = evaluateSpam(user.id, content);
+  const hashtags = extractHashtags(content);
+
   const p: Post = {
     id: generateId(), userId: user.id, userName: user.name, userAvatar: user.avatar,
     content: sanitize(content), image, type: 'post',
@@ -665,8 +708,18 @@ export async function apiCreatePost(token: string, content: string, image: strin
     pinned: false,
     likesCount: 0, commentsCount: 0,
     createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+    hotScore: 0, viralScore: 0,
+    spamScore: spamResult.spamScore,
+    shadowBanned: spamResult.shadowBan,
+    featured: false, locked: false,
+    hashtags,
   };
-  const db = await getDB(); await db.put('posts', p);
+  const db = await getDB();
+  await db.put('posts', p);
+
+  // Index hashtags asynchronously (no await — fire and forget)
+  indexHashtags(hashtags).catch(() => {});
+
   return ok(p, 201);
 }
 
@@ -676,8 +729,15 @@ export async function apiUpdatePost(token: string, id: string, content: string):
   const db = await getDB();
   const p = await db.get('posts', id); if (!p) return err('منشور غير موجود', 404);
   if (p.userId !== user.id && user.role !== 'admin') return err('غير مصرح', 403);
-  p.content = sanitize(content); p.updatedAt = new Date().toISOString();
+  const oldHashtags = p.hashtags ?? [];
+  const newHashtags = extractHashtags(content);
+  p.content = sanitize(content);
+  p.hashtags = newHashtags;
+  p.updatedAt = new Date().toISOString();
   await db.put('posts', p);
+  // Update hashtag index: decrement old, increment new
+  decrementHashtags(oldHashtags).catch(() => {});
+  indexHashtags(newHashtags).catch(() => {});
   return ok(p);
 }
 
@@ -687,6 +747,7 @@ export async function apiDeletePost(token: string, id: string): Promise<ApiRes> 
   const db = await getDB();
   const p = await db.get('posts', id); if (!p) return err('غير موجود', 404);
   if (p.userId !== user.id && user.role !== 'admin') return err('غير مصرح', 403);
+  decrementHashtags(p.hashtags ?? []).catch(() => {});
   await db.delete('posts', id);
   // delete related comments and likes
   const comments = await db.getAllFromIndex('comments', 'postId', id);
@@ -701,12 +762,23 @@ export async function apiGetComments(postId: string): Promise<ApiRes<Comment[]>>
   const all = await db.getAllFromIndex('comments', 'postId', postId);
   // Sync avatar + name from current user data
   const users = await db.getAll('users');
-  const userMap: Record<string, { name: string; avatar: string }> = {};
-  for (const u of users) userMap[u.id] = { name: u.name, avatar: u.avatar || '' };
+  const userMap: Record<string, { name: string; avatar: string; reputation?: number }> = {};
+  for (const u of users) userMap[u.id] = { name: u.name, avatar: u.avatar || '', reputation: u.reputation };
   for (const c of all) {
     const u = userMap[c.userId];
     if (u) { c.userName = u.name; c.userAvatar = u.avatar; }
   }
+  // Build reply counts
+  const replyMap: Record<string, number> = {};
+  for (const c of all) {
+    if (c.parentId) replyMap[c.parentId] = (replyMap[c.parentId] ?? 0) + 1;
+  }
+  // Compute rank scores
+  for (const c of all) {
+    const rep = userMap[c.userId]?.reputation ?? 0;
+    c.rankScore = computeCommentScore(c, replyMap[c.id] ?? 0, rep);
+  }
+  // Default: oldest first (CommunityPage can override via sortComments helper)
   all.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
   return ok(all);
 }
@@ -747,12 +819,16 @@ export async function apiToggleLike(token: string, postId: string): Promise<ApiR
     await db.delete('likes', existing.id);
     post.likesCount = Math.max(0, post.likesCount - 1);
     await db.put('posts', post);
+    recordEngagement(post);
+    recalculateReputation(post.userId).catch(() => {});
     return ok({ liked: false, count: post.likesCount });
   } else {
     const like: Like = { id: generateId(), postId, userId: user.id, createdAt: new Date().toISOString() };
     await db.put('likes', like);
     post.likesCount++;
     await db.put('posts', post);
+    recordEngagement(post);
+    recalculateReputation(post.userId).catch(() => {});
     return ok({ liked: true, count: post.likesCount });
   }
 }
@@ -771,6 +847,83 @@ export async function apiCreateReport(token: string, type: Report['type'], targe
   const r: Report = { id: generateId(), type, targetId, userId: user.id, reason: sanitize(reason), status: 'pending', createdAt: new Date().toISOString() };
   const db = await getDB(); await db.put('reports', r);
   return ok(r, 201);
+}
+
+// ---- Moderator tools ----
+
+/** Pin or unpin a post (admin/manager only). */
+export async function apiPinPost(token: string, postId: string, pinned: boolean): Promise<ApiRes<Post>> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const p = await db.get('posts', postId); if (!p) return err('غير موجود', 404);
+  p.pinned = pinned;
+  await db.put('posts', p);
+  return ok(p);
+}
+
+/** Feature or unfeature a post (admin/manager only). */
+export async function apiFeaturePost(token: string, postId: string, featured: boolean): Promise<ApiRes<Post>> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const p = await db.get('posts', postId); if (!p) return err('غير موجود', 404);
+  p.featured = featured;
+  await db.put('posts', p);
+  return ok(p);
+}
+
+/** Lock or unlock a post's comments (admin/manager only). */
+export async function apiLockPost(token: string, postId: string, locked: boolean): Promise<ApiRes<Post>> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const p = await db.get('posts', postId); if (!p) return err('غير موجود', 404);
+  p.locked = locked;
+  await db.put('posts', p);
+  return ok(p);
+}
+
+/** Shadow-ban or un-shadow-ban a post (admin/manager only). */
+export async function apiShadowBanPost(token: string, postId: string, shadowBanned: boolean): Promise<ApiRes<Post>> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const p = await db.get('posts', postId); if (!p) return err('غير موجود', 404);
+  p.shadowBanned = shadowBanned;
+  await db.put('posts', p);
+  return ok(p);
+}
+
+/** Pin or unpin a comment (admin/manager only). */
+export async function apiPinComment(token: string, commentId: string, pinned: boolean): Promise<ApiRes<Comment>> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const c = await db.get('comments', commentId); if (!c) return err('غير موجود', 404);
+  c.pinned = pinned;
+  await db.put('comments', c);
+  return ok(c);
+}
+
+// ---- Hashtag API ----
+
+/** Get top trending hashtags. */
+export async function apiGetTrendingHashtags(limit = 10): Promise<ApiRes<import('./database').Hashtag[]>> {
+  const tags = await getTrendingHashtags(limit);
+  return ok(tags);
+}
+
+/** Autocomplete hashtag suggestions based on a prefix. */
+export async function apiSuggestHashtags(prefix: string): Promise<ApiRes<import('./database').Hashtag[]>> {
+  const tags = await suggestHashtags(prefix);
+  return ok(tags);
+}
+
+/** Get reputation details for a user (useful for profile display). */
+export async function apiGetUserReputation(userId: string): Promise<ApiRes<{ reputation: number; tier: string }>> {
+  const db = await getDB();
+  const user = await db.get('users', userId);
+  if (!user) return err('مستخدم غير موجود', 404);
+  const { getReputationTier } = await import('@/services/reputationService');
+  const rep = getCachedReputation(user);
+  const tier = getReputationTier(rep);
+  return ok({ reputation: rep, tier: tier.label });
 }
 
 // ============ QUIZ / TRAINING API ============

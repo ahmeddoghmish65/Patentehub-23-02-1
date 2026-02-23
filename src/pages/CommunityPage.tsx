@@ -4,10 +4,11 @@ import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
 import { getDB } from '@/db/database';
-import type { Comment, Post } from '@/db/database';
+import type { Comment, Post, Hashtag } from '@/db/database';
 import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
 import * as api from '@/db/api';
-import { apiCreateCommunityNotif } from '@/db/api';
+import type { PostSortMode } from '@/db/api';
+import { apiCreateCommunityNotif, apiGetTrendingHashtags, apiSuggestHashtags } from '@/db/api';
 
 function isReply(c: Comment): boolean { return !!c.parentId || c.content.startsWith('REPLY_TO:'); }
 function getParentId(c: Comment): string | null {
@@ -90,12 +91,21 @@ export function CommunityPage() {
   const [showBookmarks, setShowBookmarks] = useState(false);
   const bookmarkRef = useRef<HTMLDivElement>(null);
   // Mention autocomplete
-  const [mentionQuery, setMentionQuery] = useState('');
   const [mentionSuggestions, setMentionSuggestions] = useState<{ id: string; name: string; username: string }[]>([]);
   const [allUsers, setAllUsers] = useState<{ id: string; name: string; username: string; avatar: string }[]>([]);
+  // Feed ranking & hashtag
+  const [postSortMode, setPostSortMode] = useState<PostSortMode>('hot');
+  const [activeHashtag, setActiveHashtag] = useState<string | null>(null);
+  const [trendingHashtags, setTrendingHashtags] = useState<Hashtag[]>([]);
+  const [hashtagSuggestions, setHashtagSuggestions] = useState<Hashtag[]>([]);
 
-  useEffect(() => { loadPosts(); }, [loadPosts]);
+  useEffect(() => { loadPosts(postSortMode, activeHashtag ?? undefined); }, [loadPosts, postSortMode, activeHashtag]);
   useEffect(() => { if (user) loadCommunityNotifs(); }, [user, loadCommunityNotifs]);
+
+  // Load trending hashtags once on mount and after posts load
+  useEffect(() => {
+    apiGetTrendingHashtags(8).then(r => { if (r.success && r.data) setTrendingHashtags(r.data); }).catch(() => {});
+  }, [posts.length]);
 
   // Close bookmarks when clicking outside
   useEffect(() => {
@@ -191,19 +201,25 @@ export function CommunityPage() {
     }
   }, [user, allUsers]);
 
-  // Mention autocomplete handler
+  // Mention + hashtag autocomplete handler
   const handleTextChange = useCallback((text: string, setter: (t: string) => void) => {
     setter(text);
     const lastWord = text.split(/\s/).pop() || '';
     if (lastWord.startsWith('@') && lastWord.length > 1) {
       const q = lastWord.slice(1).toLowerCase();
-      setMentionQuery(q);
       setMentionSuggestions(allUsers.filter(u =>
         (u.username || u.name).toLowerCase().includes(q) && u.id !== user?.id
       ).slice(0, 5));
-    } else {
-      setMentionQuery('');
+      setHashtagSuggestions([]);
+    } else if (lastWord.startsWith('#') && lastWord.length > 1) {
+      const q = lastWord.slice(1).toLowerCase();
       setMentionSuggestions([]);
+      apiSuggestHashtags(q).then(r => {
+        if (r.success && r.data) setHashtagSuggestions(r.data);
+      }).catch(() => {});
+    } else {
+      setMentionSuggestions([]);
+      setHashtagSuggestions([]);
     }
   }, [allUsers, user]);
 
@@ -212,7 +228,13 @@ export function CommunityPage() {
     words[words.length - 1] = `@${username} `;
     setter(words.join(' '));
     setMentionSuggestions([]);
-    setMentionQuery('');
+  }, []);
+
+  const insertHashtag = useCallback((tag: string, currentText: string, setter: (t: string) => void) => {
+    const words = currentText.split(/\s/);
+    words[words.length - 1] = `#${tag} `;
+    setter(words.join(' '));
+    setHashtagSuggestions([]);
   }, []);
 
   // Check community restrictions
@@ -364,9 +386,12 @@ export function CommunityPage() {
   };
 
   const togglePinPost = async (postId: string) => {
-    const db = await getDB();
-    const post = await db.get('posts', postId);
-    if (post) { post.pinned = !post.pinned; await db.put('posts', post); await loadPosts(); }
+    const { token } = useAuthStore.getState();
+    if (!token) return;
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+    await api.apiPinPost(token, postId, !post.pinned);
+    await loadPosts(postSortMode, activeHashtag ?? undefined);
   };
 
   const toggleFollow = async (userId: string) => {
@@ -446,11 +471,8 @@ export function CommunityPage() {
   const getReplies = (commentId: string, cmts: Comment[]) => cmts.filter(c => getParentId(c) === commentId);
   const isAdminUser = user?.role === 'admin' || user?.role === 'manager';
 
-  const sortedPosts = [...posts].sort((a, b) => {
-    if (a.pinned && !b.pinned) return -1;
-    if (!a.pinned && b.pinned) return 1;
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-  });
+  // Posts from store are already sorted by the API (hot/new/viral) and hashtag-filtered
+  const sortedPosts = posts;
 
   // Filter posts by tab
   const filteredPosts = activeTab === 'following'
@@ -483,6 +505,29 @@ export function CommunityPage() {
       {isVerified(userId) && <VerifiedBadge size="xs" tooltip />}
     </span>
   );
+
+  // Render hashtag pills for a post
+  const renderHashtagPills = (post: Post) => {
+    if (!post.hashtags || post.hashtags.length === 0) return null;
+    return (
+      <div className="flex flex-wrap gap-1.5 mb-3">
+        {post.hashtags.map(tag => (
+          <button
+            key={tag}
+            className={cn(
+              'text-[11px] px-2 py-0.5 rounded-full font-medium transition-colors',
+              activeHashtag === tag
+                ? 'bg-primary-500 text-white'
+                : 'bg-primary-50 text-primary-600 hover:bg-primary-100'
+            )}
+            onClick={() => setActiveHashtag(activeHashtag === tag ? null : tag)}
+          >
+            #{tag}
+          </button>
+        ))}
+      </div>
+    );
+  };
 
   // Render text with "show more" for long posts + @mention highlighting
   const renderPostText = (post: Post) => {
@@ -639,11 +684,28 @@ export function CommunityPage() {
     const hasVoted = quizVoted[post.id] || false;
 
     return (
-      <div className={cn('bg-white rounded-2xl border overflow-hidden', post.pinned ? 'border-amber-200 ring-1 ring-amber-100' : 'border-surface-100')}>
+      <div className={cn(
+        'bg-white rounded-2xl border overflow-hidden',
+        post.pinned ? 'border-amber-200 ring-1 ring-amber-100' :
+        post.featured ? 'border-blue-200 ring-1 ring-blue-100' :
+        'border-surface-100'
+      )}>
         {post.pinned && (
           <div className="bg-amber-50 px-4 py-1.5 flex items-center gap-1.5 border-b border-amber-100">
             <Icon name="push_pin" size={14} className="text-amber-500" filled />
             <span className="text-xs font-semibold text-amber-600">منشور مثبت</span>
+          </div>
+        )}
+        {post.featured && !post.pinned && (
+          <div className="bg-blue-50 px-4 py-1.5 flex items-center gap-1.5 border-b border-blue-100">
+            <Icon name="star" size={14} className="text-blue-500" filled />
+            <span className="text-xs font-semibold text-blue-600">منشور مميز</span>
+          </div>
+        )}
+        {post.locked && (
+          <div className="bg-surface-50 px-4 py-1 flex items-center gap-1.5 border-b border-surface-100">
+            <Icon name="lock" size={12} className="text-surface-400" />
+            <span className="text-[11px] text-surface-400">التعليقات مغلقة</span>
           </div>
         )}
 
@@ -664,10 +726,22 @@ export function CommunityPage() {
             </div>
             <div className="flex items-center gap-1">
               {isAdminUser && (
-                <button className={cn('p-1.5 rounded-lg hover:bg-surface-100', post.pinned ? 'text-amber-500' : 'text-surface-400')}
-                  onClick={() => togglePinPost(post.id)} title={post.pinned ? 'إلغاء التثبيت' : 'تثبيت'}>
-                  <Icon name="push_pin" size={18} filled={post.pinned} />
-                </button>
+                <>
+                  <button className={cn('p-1.5 rounded-lg hover:bg-surface-100', post.pinned ? 'text-amber-500' : 'text-surface-400')}
+                    onClick={() => togglePinPost(post.id)} title={post.pinned ? 'إلغاء التثبيت' : 'تثبيت'}>
+                    <Icon name="push_pin" size={18} filled={post.pinned} />
+                  </button>
+                  <button className={cn('p-1.5 rounded-lg hover:bg-surface-100', post.featured ? 'text-blue-500' : 'text-surface-400')}
+                    onClick={async () => { const { token } = useAuthStore.getState(); if (token) { await api.apiFeaturePost(token, post.id, !post.featured); loadPosts(postSortMode, activeHashtag ?? undefined); } }}
+                    title={post.featured ? 'إلغاء التمييز' : 'تمييز'}>
+                    <Icon name="star" size={18} filled={post.featured} />
+                  </button>
+                  <button className={cn('p-1.5 rounded-lg hover:bg-surface-100', post.locked ? 'text-surface-600' : 'text-surface-400')}
+                    onClick={async () => { const { token } = useAuthStore.getState(); if (token) { await api.apiLockPost(token, post.id, !post.locked); loadPosts(postSortMode, activeHashtag ?? undefined); } }}
+                    title={post.locked ? 'فتح التعليقات' : 'قفل التعليقات'}>
+                    <Icon name={post.locked ? 'lock' : 'lock_open'} size={18} />
+                  </button>
+                </>
               )}
               {(post.userId === user?.id || isAdminUser) && (
                 <>
@@ -696,7 +770,7 @@ export function CommunityPage() {
               </div>
             </div>
           ) : (
-            <>{renderPostText(post)}</>
+            <>{renderPostText(post)}{renderHashtagPills(post)}</>
           )}
 
           {isQuiz && post.quizQuestion && (
@@ -961,7 +1035,7 @@ export function CommunityPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           <p className="text-[10px] text-surface-400">{relativeTime(String(n.createdAt))}</p>
-                          {n.postId && (
+                          {!!n.postId && (
                             <span className="text-[10px] text-primary-500 font-medium flex items-center gap-0.5">
                               <Icon name="open_in_new" size={10} /> افتح المنشور
                             </span>
@@ -1011,6 +1085,60 @@ export function CommunityPage() {
         </button>
       </div>
 
+      {/* Feed Sort Controls */}
+      <div className="flex items-center gap-2 mb-4">
+        {([
+          { mode: 'hot' as PostSortMode, icon: 'local_fire_department', label: 'الأكثر تفاعلاً' },
+          { mode: 'new' as PostSortMode, icon: 'schedule', label: 'الأحدث' },
+          { mode: 'viral' as PostSortMode, icon: 'trending_up', label: 'رائج' },
+        ] as const).map(({ mode, icon, label }) => (
+          <button
+            key={mode}
+            className={cn(
+              'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all border',
+              postSortMode === mode
+                ? 'bg-primary-500 text-white border-primary-500'
+                : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300 hover:text-primary-600'
+            )}
+            onClick={() => setPostSortMode(mode)}
+          >
+            <Icon name={icon} size={14} filled={postSortMode === mode} />
+            {label}
+          </button>
+        ))}
+        {activeHashtag && (
+          <button
+            className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium bg-primary-100 text-primary-700 border border-primary-200 mr-auto"
+            onClick={() => setActiveHashtag(null)}
+          >
+            #{activeHashtag}
+            <Icon name="close" size={12} />
+          </button>
+        )}
+      </div>
+
+      {/* Trending Hashtags */}
+      {trendingHashtags.length > 0 && !activeHashtag && (
+        <div className="bg-white rounded-2xl border border-surface-100 p-4 mb-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Icon name="trending_up" size={16} className="text-primary-500" filled />
+            <span className="text-sm font-semibold text-surface-800">الوسوم الرائجة</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {trendingHashtags.map(h => (
+              <button
+                key={h.id}
+                className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-50 hover:bg-primary-50 text-surface-600 hover:text-primary-600 text-xs font-medium border border-surface-200 hover:border-primary-200 transition-colors"
+                onClick={() => setActiveHashtag(h.tag)}
+              >
+                <span className="text-primary-400">#</span>{h.tag}
+                <span className="text-surface-400 text-[10px]">{h.postCount}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* New Post */}
       <div className="bg-white rounded-2xl p-5 border border-surface-100 mb-6">
         <div className="flex items-start gap-3">
@@ -1041,8 +1169,9 @@ export function CommunityPage() {
               </div>
             ) : (
               <div className="relative">
-                <textarea className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none focus:border-primary-500" rows={3} placeholder="شارك شيئاً مع المجتمع... استخدم @اسم للإشارة لمستخدم" value={newPost} onChange={e => handleTextChange(e.target.value, setNewPost)} />
+                <textarea className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none focus:border-primary-500" rows={3} placeholder="شارك شيئاً مع المجتمع... استخدم @اسم أو #وسم" value={newPost} onChange={e => handleTextChange(e.target.value, setNewPost)} />
                 {mentionSuggestions.length > 0 && <MentionDropdown suggestions={mentionSuggestions} onSelect={u => insertMention(u.username || u.name, newPost, setNewPost)} />}
+                {hashtagSuggestions.length > 0 && <HashtagDropdown suggestions={hashtagSuggestions} onSelect={h => insertHashtag(h.tag, newPost, setNewPost)} />}
               </div>
             )}
             {!canPost && (
@@ -1196,6 +1325,28 @@ function MentionDropdown({ suggestions, onSelect }: {
             <p className="text-xs font-semibold text-surface-900 truncate">{u.name}</p>
             <p className="text-[10px] text-primary-500">@{u.username || u.name}</p>
           </div>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ── HashtagDropdown Component ──────────────────────────────────────────────────
+function HashtagDropdown({ suggestions, onSelect }: {
+  suggestions: import('@/db/database').Hashtag[];
+  onSelect: (h: import('@/db/database').Hashtag) => void;
+}) {
+  return (
+    <div className="absolute bottom-full left-0 right-0 bg-white border border-surface-200 rounded-xl shadow-2xl z-[200] overflow-hidden mb-1 max-h-40 overflow-y-auto">
+      <div className="px-3 py-1.5 bg-surface-50 border-b border-surface-100">
+        <p className="text-[10px] text-surface-400 font-medium">وسوم مقترحة</p>
+      </div>
+      {suggestions.map(h => (
+        <button key={h.id} type="button"
+          className="w-full flex items-center justify-between px-3 py-2 hover:bg-primary-50 text-right transition-colors"
+          onMouseDown={e => { e.preventDefault(); onSelect(h); }}>
+          <span className="text-xs font-semibold text-primary-600">#{h.tag}</span>
+          <span className="text-[10px] text-surface-400">{h.postCount} منشور</span>
         </button>
       ))}
     </div>

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import * as api from '@/db/api';
+import type { PostSortMode } from '@/db/api';
 import type { User, QuizResult, UserMistake, Section, Lesson, Question, Sign, DictionarySection, DictionaryEntry, Post, Comment, Notification, Report, AdminLog } from '@/db/database';
 import {
   setCookie,
@@ -54,7 +55,7 @@ interface AppState {
   loadSigns: (category?: string) => Promise<void>;
   loadDictSections: () => Promise<void>;
   loadDictEntries: (sectionId?: string) => Promise<void>;
-  loadPosts: () => Promise<void>;
+  loadPosts: (sortMode?: PostSortMode, hashtag?: string) => Promise<void>;
   loadQuizHistory: () => Promise<void>;
   loadMistakes: () => Promise<void>;
   loadNotifications: () => Promise<void>;
@@ -270,7 +271,7 @@ export const useAuthStore = create<AppState>((set, get) => ({
   loadSigns: async (cat) => { const r = await api.apiGetSigns(cat); if (r.success && r.data) set({ signs: r.data }); },
   loadDictSections: async () => { const r = await api.apiGetDictSections(); if (r.success && r.data) set({ dictSections: r.data }); },
   loadDictEntries: async (sId) => { const r = await api.apiGetDictEntries(sId); if (r.success && r.data) set({ dictEntries: r.data }); },
-  loadPosts: async () => { const r = await api.apiGetPosts(); if (r.success && r.data) set({ posts: r.data }); },
+  loadPosts: async (sortMode = 'hot', hashtag) => { const r = await api.apiGetPosts(sortMode, hashtag); if (r.success && r.data) set({ posts: r.data }); },
   loadQuizHistory: async () => { const { token } = get(); if (!token) return; const r = await api.apiGetQuizHistory(token); if (r.success && r.data) set({ quizHistory: r.data }); },
   loadMistakes: async () => { const { token } = get(); if (!token) return; const r = await api.apiGetUserMistakes(token); if (r.success && r.data) set({ mistakes: r.data }); },
   loadNotifications: async () => { const { token } = get(); if (!token) return; const r = await api.apiGetNotifications(token); if (r.success && r.data) set({ notifications: r.data }); },
