@@ -439,23 +439,37 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
             <span>FALSO</span>
           </button>
         </div>
-      </div>
 
-      {/* Navigation */}
-      <div className="flex items-center justify-between gap-3">
-        <button className={cn('flex items-center gap-2 px-4 py-3 rounded-xl border border-surface-200 transition-all text-sm font-medium',
-          currentIndex > 0 ? 'hover:bg-surface-50 text-surface-700' : 'opacity-30 cursor-not-allowed'
-        )} onClick={prevQuestion} disabled={currentIndex === 0}>
-          <Icon name="chevron_right" size={20} /> السابق
-        </button>
+        {/* Navigation — inside the card, no gap */}
+        <div className="border-t border-surface-100 px-5 py-3 flex items-center justify-between">
+          <button
+            className={cn('flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all',
+              currentIndex > 0
+                ? 'text-surface-700 hover:bg-surface-100'
+                : 'text-surface-300 cursor-not-allowed'
+            )}
+            onClick={prevQuestion}
+            disabled={currentIndex === 0}
+          >
+            <Icon name="chevron_right" size={18} /> السابق
+          </button>
 
-        <span className="text-xs text-surface-400 font-medium">{currentIndex + 1} / {examQuestions.length}</span>
+          <span className="text-xs text-surface-400 font-medium tabular-nums">
+            {currentIndex + 1} / {examQuestions.length}
+          </span>
 
-        <button className={cn('flex items-center gap-2 px-4 py-3 rounded-xl border border-surface-200 transition-all text-sm font-medium',
-          currentIndex < examQuestions.length - 1 ? 'hover:bg-surface-50 text-surface-700' : 'opacity-30 cursor-not-allowed'
-        )} onClick={nextQuestion} disabled={currentIndex >= examQuestions.length - 1}>
-          التالي <Icon name="chevron_left" size={20} />
-        </button>
+          <button
+            className={cn('flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all',
+              currentIndex < examQuestions.length - 1
+                ? 'text-surface-700 hover:bg-surface-100'
+                : 'text-surface-300 cursor-not-allowed'
+            )}
+            onClick={nextQuestion}
+            disabled={currentIndex >= examQuestions.length - 1}
+          >
+            التالي <Icon name="chevron_left" size={18} />
+          </button>
+        </div>
       </div>
     </div>
   );
