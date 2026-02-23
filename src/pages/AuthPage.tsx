@@ -168,6 +168,13 @@ export function AuthPage({ mode, onNavigate }: AuthPageProps) {
                   <button type="button" className="text-primary-600 font-semibold hover:text-primary-700 mr-2" onClick={() => { setLocalError(''); clearError(); onNavigate('register'); }}>سجّل الآن</button>
                 </p>
               </div>
+              <div className="flex items-center justify-center gap-4 text-xs text-surface-400 pt-1">
+                <button type="button" className="hover:text-primary-600 transition-colors" onClick={() => onNavigate('privacy-policy')}>سياسة الخصوصية</button>
+                <span>·</span>
+                <button type="button" className="hover:text-primary-600 transition-colors" onClick={() => onNavigate('terms-of-service')}>شروط الاستخدام</button>
+                <span>·</span>
+                <button type="button" className="hover:text-primary-600 transition-colors" onClick={() => onNavigate('contact')}>تواصل معنا</button>
+              </div>
             </form>
           )}
 
@@ -228,6 +235,13 @@ export function AuthPage({ mode, onNavigate }: AuthPageProps) {
               <p className="text-center text-surface-500 text-sm">
                 لديك حساب بالفعل؟
                 <button type="button" className="text-primary-600 font-semibold hover:text-primary-700 mr-2" onClick={() => { setLocalError(''); clearError(); onNavigate('login'); }}>سجّل الدخول</button>
+              </p>
+              <p className="text-center text-surface-400 text-xs leading-relaxed">
+                بإنشاء حساب، أنت توافق على
+                {' '}
+                <button type="button" className="text-primary-600 hover:underline" onClick={() => onNavigate('terms-of-service')}>شروط الاستخدام</button>
+                {' '}و{' '}
+                <button type="button" className="text-primary-600 hover:underline" onClick={() => onNavigate('privacy-policy')}>سياسة الخصوصية</button>
               </p>
             </form>
           )}
