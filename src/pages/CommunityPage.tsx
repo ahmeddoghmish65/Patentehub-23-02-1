@@ -340,7 +340,20 @@ export function CommunityPage() {
 
   const handleLike = async (postId: string) => {
     const result = await toggleLike(postId);
-    if (result) setLikes(prev => ({ ...prev, [postId]: result.liked }));
+    if (result) {
+      setLikes(prev => ({ ...prev, [postId]: result.liked }));
+      // Send like notification only when liking (not when un-liking)
+      if (result.liked && user) {
+        const post = posts.find(p => p.id === postId);
+        if (post && post.userId !== user.id) {
+          apiCreateCommunityNotif({
+            toUserId: post.userId, fromUserId: user.id,
+            fromUserName: user.name, fromUserAvatar: user.avatar || '',
+            type: 'like', postId,
+          }).then(() => loadCommunityNotifs()).catch(() => {});
+        }
+      }
+    }
   };
 
   const toggleCommentLike = (commentId: string) => {
@@ -600,7 +613,7 @@ export function CommunityPage() {
     const isExpanded = expandedTexts[post.id];
 
     const renderText = (t: string) => (
-      <p className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap mb-3">
+      <p dir="auto" className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap mb-3">
         {renderWithMentionsAndHashtags(t, handleMentionClick, handleHashtagClick)}
       </p>
     );
@@ -610,7 +623,7 @@ export function CommunityPage() {
     if (isExpanded) {
       return (
         <div className="mb-3">
-          <p className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap">
+          <p dir="auto" className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap">
             {renderWithMentionsAndHashtags(text, handleMentionClick, handleHashtagClick)}
           </p>
           <button className="text-primary-500 text-xs font-medium mt-1 hover:text-primary-700" onClick={() => toggleExpandText(post.id)}>
@@ -623,7 +636,7 @@ export function CommunityPage() {
     const truncated = text.length > 180 ? text.slice(0, 180) + '...' : text.split('\n').slice(0, 3).join('\n') + '...';
     return (
       <div className="mb-3">
-        <p className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap">
+        <p dir="auto" className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap">
           {renderWithMentionsAndHashtags(truncated, handleMentionClick, handleHashtagClick)}
         </p>
         <button className="text-primary-500 text-xs font-medium mt-1 hover:text-primary-700" onClick={() => toggleExpandText(post.id)}>
@@ -647,7 +660,7 @@ export function CommunityPage() {
               <UserName userId={c.userId} name={c.userName} className="text-xs text-surface-800" onClick={() => openUserProfile(c.userId)} />
               <span className="text-[10px] text-surface-400">{relativeTime(c.createdAt)}</span>
             </div>
-            <p className="text-sm text-surface-600 mt-0.5">{renderWithMentionsAndHashtags(c.content, handleMentionClick, handleHashtagClick)}</p>
+            <p dir="auto" className="text-sm text-surface-600 mt-0.5">{renderWithMentionsAndHashtags(c.content, handleMentionClick, handleHashtagClick)}</p>
             <div className="flex items-center gap-3 mt-1.5">
               <button className={cn('flex items-center gap-0.5 text-[11px]', commentLikes[c.id] ? 'text-red-500' : 'text-surface-400 hover:text-red-400')}
                 onClick={() => toggleCommentLike(c.id)}>
@@ -684,7 +697,7 @@ export function CommunityPage() {
                     <span className="text-[10px] text-primary-500">{c.userName}</span>
                     <span className="text-[10px] text-surface-400 mr-auto">{relativeTime(r.createdAt)}</span>
                   </div>
-                  <p className="text-sm text-surface-600 mt-0.5">{renderWithMentionsAndHashtags(getReplyContent(r), handleMentionClick, handleHashtagClick)}</p>
+                  <p dir="auto" className="text-sm text-surface-600 mt-0.5">{renderWithMentionsAndHashtags(getReplyContent(r), handleMentionClick, handleHashtagClick)}</p>
                   <div className="flex items-center gap-3 mt-1.5">
                     <button className={cn('flex items-center gap-0.5 text-[11px]', commentLikes[r.id] ? 'text-red-500' : 'text-surface-400 hover:text-red-400')}
                       onClick={() => toggleCommentLike(r.id)}>
@@ -716,7 +729,7 @@ export function CommunityPage() {
         {replyingTo?.commentId === c.id && (
           <div className="mr-8 flex gap-2 items-center">
             <div className="flex-1 relative">
-              <input className="w-full border border-primary-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-100 pr-16"
+              <input dir="auto" className="w-full border border-primary-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-100 pr-16"
                 placeholder={`رد على ${replyingTo.userName}...`} value={replyContent}
                 onChange={e => setReplyContent(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') handleReply(isDetail ? detailPostId! : postId); }}
@@ -826,7 +839,7 @@ export function CommunityPage() {
 
           {editingPost === post.id ? (
             <div className="space-y-2">
-              <textarea className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none" rows={3} value={editContent} onChange={e => setEditContent(e.target.value)} />
+              <textarea dir="auto" className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none" rows={3} value={editContent} onChange={e => setEditContent(e.target.value)} />
               <div className="flex gap-2 justify-end">
                 <Button size="sm" variant="ghost" onClick={() => setEditingPost(null)}>إلغاء</Button>
                 <Button size="sm" onClick={() => handleEdit(post.id)}>حفظ</Button>
@@ -838,7 +851,7 @@ export function CommunityPage() {
 
           {isQuiz && post.quizQuestion && (
             <div className="bg-purple-50 rounded-xl p-4 border border-purple-100 mt-2">
-              <p className="text-sm font-semibold text-purple-900 mb-3">{post.quizQuestion}</p>
+              <p dir="auto" className="text-sm font-semibold text-purple-900 mb-3">{post.quizQuestion}</p>
               {hasVoted ? (
                 <div className="space-y-2">
                   <div className={cn('flex items-center justify-between p-2.5 rounded-lg border', post.quizAnswer === true ? 'bg-success-50 border-success-200' : quizSelected[post.id] === true ? 'bg-danger-50 border-danger-200' : 'bg-white border-surface-200')}>
@@ -922,7 +935,7 @@ export function CommunityPage() {
               <div className="flex gap-2 items-center relative">
                 <UserAvatar avatar={user?.avatar} name={user?.name || '?'} size="sm" />
                 <div className="flex-1 relative">
-                  <input className="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm focus:border-primary-500" placeholder="اكتب تعليقاً... (@اسم للإشارة)" value={newComment} onChange={e => handleTextChange(e.target.value, setNewComment)}
+                  <input dir="auto" className="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm focus:border-primary-500" placeholder="اكتب تعليقاً... (@اسم للإشارة)" value={newComment} onChange={e => handleTextChange(e.target.value, setNewComment)}
                     onKeyDown={e => { if (e.key === 'Enter') handleComment(post.id); }} />
                   {mentionSuggestions.length > 0 && <MentionDropdown suggestions={mentionSuggestions} onSelect={u => insertMention(u.username || u.name, newComment, setNewComment)} />}
                 </div>
@@ -1253,7 +1266,7 @@ export function CommunityPage() {
             {postType === 'quiz' ? (
               <div className="space-y-3">
                 <div className="relative">
-                  <textarea className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none focus:border-purple-500" rows={2} placeholder="اكتب السؤال هنا... استخدم @اسم للإشارة لمستخدم" value={quizQuestion} onChange={e => handleTextChange(e.target.value, setQuizQuestion)} />
+                  <textarea dir="auto" className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none focus:border-purple-500" rows={2} placeholder="اكتب السؤال هنا... استخدم @اسم للإشارة لمستخدم" value={quizQuestion} onChange={e => handleTextChange(e.target.value, setQuizQuestion)} />
                   {mentionSuggestions.length > 0 && <MentionDropdown suggestions={mentionSuggestions} onSelect={u => insertMention(u.username || u.name, quizQuestion, setQuizQuestion)} />}
                 </div>
                 <div>
@@ -1263,11 +1276,11 @@ export function CommunityPage() {
                     <button className={cn('flex-1 py-2 rounded-lg text-sm font-medium border-2', !quizAnswer ? 'border-danger-500 bg-danger-50 text-danger-700' : 'border-surface-200 text-surface-500')} onClick={() => setQuizAnswer(false)}>خطأ</button>
                   </div>
                 </div>
-                <textarea className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none" rows={1} placeholder="تعليق إضافي (اختياري)..." value={newPost} onChange={e => setNewPost(e.target.value)} />
+                <textarea dir="auto" className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none" rows={1} placeholder="تعليق إضافي (اختياري)..." value={newPost} onChange={e => setNewPost(e.target.value)} />
               </div>
             ) : (
               <div className="relative">
-                <textarea className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none focus:border-primary-500" rows={3} placeholder="شارك شيئاً مع المجتمع... استخدم @اسم أو #وسم" value={newPost} onChange={e => handleTextChange(e.target.value, setNewPost)} />
+                <textarea dir="auto" className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none focus:border-primary-500" rows={3} placeholder="شارك شيئاً مع المجتمع... استخدم @اسم أو #وسم" value={newPost} onChange={e => handleTextChange(e.target.value, setNewPost)} />
                 {mentionSuggestions.length > 0 && <MentionDropdown suggestions={mentionSuggestions} onSelect={u => insertMention(u.username || u.name, newPost, setNewPost)} />}
                 {hashtagSuggestions.length > 0 && <HashtagDropdown suggestions={hashtagSuggestions} onSelect={h => insertHashtag(h.tag, newPost, setNewPost)} />}
               </div>
