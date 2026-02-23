@@ -121,6 +121,7 @@ export function CommunityPage() {
   // Saved posts / bookmarks
   const [savedPosts, setSavedPosts] = useState<string[]>([]);
   const [showBookmarks, setShowBookmarks] = useState(false);
+  const [confirmClearBookmarks, setConfirmClearBookmarks] = useState(false);
   const bookmarkRef = useRef<HTMLDivElement>(null);
   // Trending hashtags panel
   const [showTrending, setShowTrending] = useState(false);
@@ -344,6 +345,8 @@ export function CommunityPage() {
   };
 
   const openComments = async (postId: string) => {
+    const post = posts.find(p => p.id === postId);
+    if (post?.locked) return; // comments are locked — do nothing
     if (showComments === postId) { setShowComments(null); return; }
     const c = await getComments(postId);
     setComments(c); setShowComments(postId); setReplyingTo(null); setReplyContent('');
@@ -871,7 +874,11 @@ export function CommunityPage() {
           <button className={cn('flex items-center gap-1 text-sm', likes[post.id] ? 'text-red-500' : 'text-surface-400 hover:text-red-400')} onClick={() => handleLike(post.id)}>
             <Icon name="favorite" size={20} filled={likes[post.id]} />{post.likesCount}
           </button>
-          <button className="flex items-center gap-1 text-sm text-surface-400 hover:text-primary-500" onClick={() => openComments(post.id)}>
+          <button
+            className={cn('flex items-center gap-1 text-sm', post.locked ? 'text-surface-300 cursor-not-allowed' : 'text-surface-400 hover:text-primary-500')}
+            onClick={() => openComments(post.id)}
+            disabled={post.locked}
+            title={post.locked ? 'التعليقات مغلقة' : undefined}>
             <Icon name="chat_bubble" size={20} />{post.commentsCount}
           </button>
           <button
@@ -977,7 +984,7 @@ export function CommunityPage() {
                   </div>
                   {savedPosts.length > 0 && (
                     <button className="text-xs text-danger-500 hover:text-danger-700 font-medium"
-                      onClick={() => { setSavedPosts([]); if (user) localStorage.setItem(`savedPosts_${user.id}`, '[]'); }}>
+                      onClick={() => setConfirmClearBookmarks(true)}>
                       مسح الكل
                     </button>
                   )}
@@ -1160,27 +1167,8 @@ export function CommunityPage() {
         </div>
       )}
 
-      {/* Tabs: Discover / Following */}
-      <div className="flex gap-2 mb-5 bg-surface-100 rounded-xl p-1">
-        <button
-          className={cn('flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2',
-            activeTab === 'discover' ? 'bg-white text-primary-600 shadow-sm' : 'text-surface-500 hover:text-surface-700')}
-          onClick={() => setActiveTab('discover')}
-        >
-          <Icon name="explore" size={18} /> اكتشف
-        </button>
-        <button
-          className={cn('flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all flex items-center justify-center gap-2',
-            activeTab === 'following' ? 'bg-white text-primary-600 shadow-sm' : 'text-surface-500 hover:text-surface-700')}
-          onClick={() => setActiveTab('following')}
-        >
-          <Icon name="people" size={18} /> المتابَعين
-          {following.length > 0 && <span className="bg-primary-100 text-primary-600 text-[10px] px-1.5 py-0.5 rounded-full">{following.length}</span>}
-        </button>
-      </div>
-
-      {/* Feed Sort Controls */}
-      <div className="flex items-center gap-2 mb-4">
+      {/* Feed Sort Controls + Following toggle */}
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
         {([
           { mode: 'hot' as PostSortMode, icon: 'local_fire_department', label: 'الأكثر تفاعلاً' },
           { mode: 'new' as PostSortMode, icon: 'schedule', label: 'الأحدث' },
@@ -1200,6 +1188,26 @@ export function CommunityPage() {
             {label}
           </button>
         ))}
+
+        {/* Following toggle button */}
+        <button
+          className={cn(
+            'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all border',
+            activeTab === 'following'
+              ? 'bg-primary-500 text-white border-primary-500'
+              : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300 hover:text-primary-600'
+          )}
+          onClick={() => setActiveTab(activeTab === 'following' ? 'discover' : 'following')}
+        >
+          <Icon name="people" size={14} filled={activeTab === 'following'} />
+          المتابَعون
+          {following.length > 0 && (
+            <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full', activeTab === 'following' ? 'bg-white/20 text-white' : 'bg-primary-100 text-primary-600')}>
+              {following.length}
+            </span>
+          )}
+        </button>
+
         {activeHashtag && (
           <button
             className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium bg-primary-100 text-primary-700 border border-primary-200 mr-auto"
@@ -1283,6 +1291,26 @@ export function CommunityPage() {
             <div className="flex gap-3">
               <Button fullWidth variant="ghost" onClick={() => setConfirmDelete(null)}>إلغاء</Button>
               <Button fullWidth variant="danger" onClick={handleDeleteItem}>حذف</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Clear Bookmarks Confirmation */}
+      {confirmClearBookmarks && (
+        <div className="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center p-4" onClick={() => setConfirmClearBookmarks(false)}>
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
+            <Icon name="warning" size={40} className="text-warning-500 mx-auto mb-4" />
+            <h3 className="text-lg font-bold text-surface-900 text-center mb-2">مسح المحفوظات</h3>
+            <p className="text-sm text-surface-500 text-center mb-6">هل أنت متأكد من مسح جميع المنشورات المحفوظة؟ لا يمكن التراجع عن هذا الإجراء.</p>
+            <div className="flex gap-3">
+              <Button fullWidth variant="ghost" onClick={() => setConfirmClearBookmarks(false)}>إلغاء</Button>
+              <Button fullWidth variant="danger" onClick={() => {
+                setSavedPosts([]);
+                if (user) localStorage.setItem(`savedPosts_${user.id}`, '[]');
+                setConfirmClearBookmarks(false);
+                setShowBookmarks(false);
+              }}>مسح الكل</Button>
             </div>
           </div>
         </div>
