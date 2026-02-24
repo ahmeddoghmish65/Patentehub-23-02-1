@@ -112,7 +112,8 @@ export function CommunityPage() {
   const [quizSelected, setQuizSelected] = useState<Record<string, boolean>>({});
   const [following, setFollowing] = useState<string[]>([]);
   const [viewUserId, setViewUserId] = useState<string | null>(null);
-  const [viewUserData, setViewUserData] = useState<{ name: string; avatar: string; bio: string; verified: boolean; postsCount: number; followersCount: number; followingCount: number; hideStats: boolean } | null>(null);
+  const [viewUserData, setViewUserData] = useState<{ name: string; username: string; avatar: string; bio: string; verified: boolean; postsCount: number; followersCount: number; followingCount: number; hideStats: boolean; joinedAt?: string } | null>(null);
+  const [viewProfileTab, setViewProfileTab] = useState<'posts' | 'quizzes'>('posts');
   const [detailPostId, setDetailPostId] = useState<string | null>(null);
   const [detailComments, setDetailComments] = useState<Comment[]>([]);
   const [verifiedUsers, setVerifiedUsers] = useState<Record<string, boolean>>({});
@@ -145,8 +146,29 @@ export function CommunityPage() {
     localStorage.getItem('communityAllowImages') === 'true'
   );
   const [postImage, setPostImage] = useState<string>('');
+  // Post likers — first 3 avatars shown next to like button
+  const [postLikers, setPostLikers] = useState<Record<string, { userId: string; userName: string; userAvatar: string }[]>>({});
+  const [likersModal, setLikersModal] = useState<{ postId: string; likers: { userId: string; userName: string; userAvatar: string }[] } | null>(null);
 
   useEffect(() => { loadPosts(postSortMode, activeHashtag ?? undefined); }, [loadPosts, postSortMode, activeHashtag]);
+
+  // Load likers for all posts to show avatars
+  useEffect(() => {
+    if (!posts.length) return;
+    (async () => {
+      const db = await getDB();
+      const allLikes = await db.getAll('likes');
+      const allDbUsers = await db.getAll('users');
+      const userMap: Record<string, { name: string; avatar: string }> = {};
+      for (const u of allDbUsers) userMap[u.id] = { name: u.name, avatar: u.avatar || '' };
+      const map: Record<string, { userId: string; userName: string; userAvatar: string }[]> = {};
+      for (const l of allLikes) {
+        if (!map[l.postId]) map[l.postId] = [];
+        map[l.postId].push({ userId: l.userId, userName: userMap[l.userId]?.name || 'مستخدم', userAvatar: userMap[l.userId]?.avatar || '' });
+      }
+      setPostLikers(map);
+    })();
+  }, [posts]);
 
   // Sync communityAllowImages if admin changes it in another tab / same session
   useEffect(() => {
@@ -351,6 +373,21 @@ export function CommunityPage() {
     const result = await toggleLike(postId);
     if (result) {
       setLikes(prev => ({ ...prev, [postId]: result.liked }));
+      // Update likers list optimistically
+      if (user) {
+        setPostLikers(prev => {
+          const current = prev[postId] || [];
+          if (result.liked) {
+            // Add current user if not already present
+            if (!current.find(l => l.userId === user.id)) {
+              return { ...prev, [postId]: [...current, { userId: user.id, userName: user.name, userAvatar: user.avatar || '' }] };
+            }
+          } else {
+            return { ...prev, [postId]: current.filter(l => l.userId !== user.id) };
+          }
+          return prev;
+        });
+      }
       // Send like notification only when liking (not when un-liking)
       if (result.liked && user) {
         const post = posts.find(p => p.id === postId);
@@ -531,14 +568,16 @@ export function CommunityPage() {
         return 0;
       })();
       setViewUserData({
-        name: u.name, avatar: u.avatar || '', bio: u.bio || '',
+        name: u.name, username: u.username || '', avatar: u.avatar || '', bio: u.bio || '',
         verified: u.verified || false,
-        postsCount: posts.filter(p => p.userId === userId).length,
+        postsCount: posts.filter(p => p.userId === userId && p.type !== 'quiz').length,
         followersCount: realFollowers,
         followingCount: userFollowing,
         hideStats: u.privacyHideStats || false,
+        joinedAt: u.createdAt || undefined,
       });
       setViewUserId(userId);
+      setViewProfileTab('posts');
     }
   }, [user, posts]);
 
@@ -914,10 +953,32 @@ export function CommunityPage() {
           {post.image && <img src={post.image} alt="" className="mt-3 rounded-xl w-full" />}
         </div>
 
-        <div className="border-t border-surface-100 px-5 py-3 flex items-center gap-4">
+        <div className="border-t border-surface-100 px-5 py-3 flex items-center gap-3">
           <button className={cn('flex items-center gap-1 text-sm', likes[post.id] ? 'text-red-500' : 'text-surface-400 hover:text-red-400')} onClick={() => handleLike(post.id)}>
             <Icon name="favorite" size={20} filled={likes[post.id]} />{post.likesCount}
           </button>
+          {/* Liker avatars */}
+          {(postLikers[post.id] || []).length > 0 && (
+            <button
+              className="flex items-center gap-0.5 hover:opacity-80 transition-opacity"
+              onClick={() => setLikersModal({ postId: post.id, likers: postLikers[post.id] || [] })}
+              title="عرض الإعجابات">
+              <div className="flex -space-x-1.5 rtl:space-x-reverse">
+                {(postLikers[post.id] || []).slice(0, 3).map((liker, i) => (
+                  <div key={i} className="w-5 h-5 rounded-full border-2 border-white overflow-hidden shrink-0 shadow-sm"
+                    style={{ zIndex: 3 - i }}>
+                    {liker.userAvatar ? (
+                      <img src={liker.userAvatar} className="w-full h-full object-cover" alt="" />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center">
+                        <span className="text-[7px] font-bold text-white">{liker.userName.charAt(0)}</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </button>
+          )}
           <button
             className={cn('flex items-center gap-1 text-sm', post.locked ? 'text-surface-400 hover:text-surface-600' : 'text-surface-400 hover:text-primary-500')}
             onClick={() => openComments(post.id)}
@@ -1481,68 +1542,173 @@ export function CommunityPage() {
 
       {/* User Profile Modal */}
       {viewUserId && viewUserData && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => { setViewUserId(null); setViewUserData(null); }}>
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="text-center mb-4">
-              <UserAvatar avatar={viewUserData.avatar} name={viewUserData.name} size="lg" />
-              <div className="flex items-center justify-center gap-1 mt-3">
-                <h3 className="text-lg font-bold text-surface-900">{viewUserData.name}</h3>
-                {viewUserData.verified && <VerifiedBadge size="sm" tooltip />}
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => { setViewUserId(null); setViewUserData(null); }}>
+          <div className="bg-white rounded-3xl w-full max-w-sm max-h-[88vh] overflow-hidden flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
+
+            {/* Cover + Avatar */}
+            <div className="relative shrink-0">
+              {/* Cover */}
+              <div className="h-28 bg-gradient-to-br from-primary-400 via-blue-500 to-indigo-600" />
+              {/* Close button */}
+              <button onClick={() => { setViewUserId(null); setViewUserData(null); }}
+                className="absolute top-3 left-3 w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 flex items-center justify-center transition-colors">
+                <Icon name="close" size={16} className="text-white" />
+              </button>
+              {/* Avatar overlapping cover */}
+              <div className="absolute -bottom-10 right-5">
+                <div className="w-20 h-20 rounded-2xl border-4 border-white shadow-lg overflow-hidden" style={{ background: viewUserData.avatar ? undefined : 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}>
+                  {viewUserData.avatar ? (
+                    <img src={viewUserData.avatar} className="w-full h-full object-cover" alt="" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <span className="text-2xl font-black text-white">{viewUserData.name.charAt(0)}</span>
+                    </div>
+                  )}
+                </div>
+                {viewUserData.verified && (
+                  <div className="absolute -bottom-1 -left-1">
+                    <VerifiedBadge size="sm" tooltip />
+                  </div>
+                )}
               </div>
-              {viewUserData.username && (
-                <p className="text-sm text-primary-500 font-medium mt-0.5">@{viewUserData.username}</p>
-              )}
-              {viewUserData.bio && <p className="text-sm text-surface-500 mt-1">{viewUserData.bio}</p>}
+              {/* Follow button in header */}
+              <div className="absolute -bottom-5 left-5">
+                <button onClick={() => toggleFollow(viewUserId!)}
+                  className={cn('px-5 py-2 rounded-xl text-sm font-bold transition-all shadow-sm', following.includes(viewUserId!)
+                    ? 'bg-surface-100 text-surface-600 hover:bg-surface-200 border border-surface-200'
+                    : 'bg-primary-500 text-white hover:bg-primary-600 shadow-primary-200')}>
+                  {following.includes(viewUserId!) ? 'يتم المتابعة' : 'متابعة'}
+                </button>
+              </div>
             </div>
 
-            {viewUserData.hideStats ? (
-              <div className="bg-surface-50 rounded-xl p-4 text-center mb-4">
-                <Icon name="lock" size={24} className="text-surface-300 mx-auto mb-2" />
-                <p className="text-sm text-surface-500">هذا المستخدم أخفى إحصائياته</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="bg-surface-50 rounded-xl p-3 text-center">
-                  <p className="text-lg font-bold text-surface-900">{viewUserData.postsCount}</p>
-                  <p className="text-[10px] text-surface-500">منشور</p>
-                </div>
-                <div className="bg-surface-50 rounded-xl p-3 text-center">
-                  <p className="text-lg font-bold text-surface-900">{posts.filter(p => p.userId === viewUserId && p.type === 'quiz').length}</p>
-                  <p className="text-[10px] text-surface-500">سؤال</p>
-                </div>
-                <div className="bg-surface-50 rounded-xl p-3 text-center">
-                  <p className="text-lg font-bold text-surface-900">{viewUserData.followersCount}</p>
-                  <p className="text-[10px] text-surface-500">متابِع</p>
-                </div>
-                <div className="bg-surface-50 rounded-xl p-3 text-center">
-                  <p className="text-lg font-bold text-surface-900">{viewUserData.followingCount}</p>
-                  <p className="text-[10px] text-surface-500">يتابِع</p>
+            {/* Info */}
+            <div className="px-5 pt-14 pb-4 shrink-0">
+              <div className="flex items-start gap-2">
+                <div className="flex-1">
+                  <h3 className="text-lg font-black text-surface-900">{viewUserData.name}</h3>
+                  {viewUserData.username && (
+                    <p className="text-sm text-primary-500 font-medium">@{viewUserData.username}</p>
+                  )}
+                  {viewUserData.bio && (
+                    <p className="text-sm text-surface-500 mt-1.5 leading-relaxed">{viewUserData.bio}</p>
+                  )}
+                  {viewUserData.joinedAt && (
+                    <p className="text-xs text-surface-400 mt-1 flex items-center gap-1">
+                      <Icon name="calendar_month" size={12} />
+                      انضم {new Date(viewUserData.joinedAt).toLocaleDateString('ar', { month: 'long', year: 'numeric' })}
+                    </p>
+                  )}
                 </div>
               </div>
-            )}
 
-            <Button fullWidth onClick={() => toggleFollow(viewUserId!)} variant={following.includes(viewUserId!) ? 'secondary' : 'primary'}>
-              {following.includes(viewUserId!) ? 'إلغاء المتابعة' : 'متابعة'}
-            </Button>
+              {/* Stats */}
+              {viewUserData.hideStats ? (
+                <div className="bg-surface-50 rounded-2xl p-3 text-center mt-4 border border-surface-100">
+                  <Icon name="lock" size={20} className="text-surface-300 mx-auto mb-1" />
+                  <p className="text-xs text-surface-500">أخفى هذا المستخدم إحصائياته</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-4 gap-2 mt-4">
+                  {[
+                    { label: 'منشور', value: viewUserData.postsCount, icon: 'article', color: 'text-primary-600', bg: 'bg-primary-50' },
+                    { label: 'سؤال', value: posts.filter(p => p.userId === viewUserId && p.type === 'quiz').length, icon: 'quiz', color: 'text-purple-600', bg: 'bg-purple-50' },
+                    { label: 'متابِع', value: viewUserData.followersCount, icon: 'group', color: 'text-green-600', bg: 'bg-green-50' },
+                    { label: 'يتابِع', value: viewUserData.followingCount, icon: 'person_add', color: 'text-blue-600', bg: 'bg-blue-50' },
+                  ].map((s) => (
+                    <div key={s.label} className={cn('rounded-xl p-2.5 text-center', s.bg)}>
+                      <Icon name={s.icon} size={16} className={cn('mx-auto mb-1', s.color)} />
+                      <p className={cn('text-base font-black', s.color)}>{s.value}</p>
+                      <p className="text-[9px] text-surface-500 leading-tight">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
-            {/* User's posts */}
-            <div className="mt-4 max-h-48 overflow-y-auto space-y-2">
-              <p className="text-xs font-semibold text-surface-600">منشوراته وأسئلته:</p>
-              {posts.filter(p => p.userId === viewUserId).slice(0, 10).map(p => (
-                <div key={p.id} className="bg-surface-50 rounded-lg p-2 cursor-pointer hover:bg-surface-100" onClick={() => { setViewUserId(null); setViewUserData(null); openPostDetail(p.id); }}>
-                  <div className="flex items-center gap-1 mb-0.5">
-                    {p.type === 'quiz' && <span className="text-[10px] bg-purple-100 text-purple-600 px-1 rounded">سؤال</span>}
-                    <p className="text-[10px] text-surface-400">{new Date(p.createdAt).toLocaleDateString('ar')}</p>
+            {/* Tabs + Posts */}
+            <div className="flex-1 overflow-y-auto border-t border-surface-100">
+              <div className="flex border-b border-surface-100 sticky top-0 bg-white z-10">
+                {([['posts', 'منشوراته', 'article'], ['quizzes', 'أسئلته', 'quiz']] as const).map(([tab, label, icon]) => (
+                  <button key={tab} onClick={() => setViewProfileTab(tab)}
+                    className={cn('flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-semibold transition-all border-b-2',
+                      viewProfileTab === tab ? 'border-primary-500 text-primary-600' : 'border-transparent text-surface-400 hover:text-surface-600')}>
+                    <Icon name={icon} size={14} />
+                    {label}
+                    <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full font-bold', viewProfileTab === tab ? 'bg-primary-100 text-primary-600' : 'bg-surface-100 text-surface-400')}>
+                      {tab === 'posts'
+                        ? posts.filter(p => p.userId === viewUserId && p.type !== 'quiz').length
+                        : posts.filter(p => p.userId === viewUserId && p.type === 'quiz').length}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="p-4 space-y-2">
+                {posts.filter(p => p.userId === viewUserId && (viewProfileTab === 'posts' ? p.type !== 'quiz' : p.type === 'quiz')).slice(0, 15).map(p => (
+                  <div key={p.id} className="bg-surface-50 rounded-xl p-3 cursor-pointer hover:bg-surface-100 transition-colors border border-surface-100"
+                    onClick={() => { setViewUserId(null); setViewUserData(null); openPostDetail(p.id); }}>
+                    <div className="flex items-center gap-1.5 mb-1">
+                      {p.type === 'quiz' && (
+                        <span className="text-[10px] bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded-full font-medium">سؤال</span>
+                      )}
+                      <span className="text-[10px] text-surface-400 mr-auto">{relativeTime(p.createdAt)}</span>
+                    </div>
+                    <p className="text-xs text-surface-700 line-clamp-2 leading-relaxed" dir="auto">
+                      {p.type === 'quiz' ? p.quizQuestion : p.content}
+                    </p>
+                    <div className="flex items-center gap-3 mt-2">
+                      <span className="text-[10px] text-surface-400 flex items-center gap-0.5"><Icon name="favorite" size={10} className="text-red-400" filled />{p.likesCount}</span>
+                      <span className="text-[10px] text-surface-400 flex items-center gap-0.5"><Icon name="chat_bubble" size={10} />{p.commentsCount}</span>
+                    </div>
                   </div>
-                  <p className="text-xs text-surface-700 line-clamp-2">{p.type === 'quiz' ? p.quizQuestion : p.content}</p>
+                ))}
+                {posts.filter(p => p.userId === viewUserId && (viewProfileTab === 'posts' ? p.type !== 'quiz' : p.type === 'quiz')).length === 0 && (
+                  <div className="text-center py-8">
+                    <Icon name={viewProfileTab === 'posts' ? 'article' : 'quiz'} size={32} className="text-surface-200 mx-auto mb-2" />
+                    <p className="text-xs text-surface-400">لا توجد {viewProfileTab === 'posts' ? 'منشورات' : 'أسئلة'} بعد</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Likers Modal */}
+      {likersModal && (
+        <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setLikersModal(null)}>
+          <div className="bg-white rounded-2xl w-full max-w-xs max-h-[60vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-4 border-b border-surface-100">
+              <h3 className="font-bold text-surface-900 flex items-center gap-2">
+                <Icon name="favorite" size={18} className="text-red-500" filled />
+                {likersModal.likers.length} إعجاب
+              </h3>
+              <button onClick={() => setLikersModal(null)} className="w-8 h-8 rounded-xl hover:bg-surface-100 flex items-center justify-center transition-colors">
+                <Icon name="close" size={18} className="text-surface-500" />
+              </button>
+            </div>
+            <div className="overflow-y-auto flex-1 p-4 space-y-3">
+              {likersModal.likers.length === 0 && (
+                <p className="text-sm text-surface-400 text-center py-4">لا إعجابات بعد</p>
+              )}
+              {likersModal.likers.map((l, i) => (
+                <div key={i} className="flex items-center gap-3 cursor-pointer hover:bg-surface-50 rounded-xl p-2 transition-colors"
+                  onClick={() => { setLikersModal(null); openUserProfile(l.userId); }}>
+                  <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 shadow-sm"
+                    style={{ background: l.userAvatar ? undefined : 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}>
+                    {l.userAvatar ? (
+                      <img src={l.userAvatar} className="w-full h-full object-cover" alt="" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <span className="text-sm font-bold text-white">{l.userName.charAt(0)}</span>
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-sm font-semibold text-surface-800">{l.userName}</span>
                 </div>
               ))}
-              {posts.filter(p => p.userId === viewUserId).length === 0 && (
-                <p className="text-xs text-surface-400 text-center py-2">لا توجد منشورات</p>
-              )}
             </div>
-
-            <Button fullWidth variant="ghost" onClick={() => { setViewUserId(null); setViewUserData(null); }} className="mt-3">إغلاق</Button>
           </div>
         </div>
       )}

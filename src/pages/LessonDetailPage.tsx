@@ -44,8 +44,10 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
             <Icon name={section?.icon || 'school'} size={28} style={{ color: section?.color || '#3b82f6' }} filled />
           </div>
           <div className="flex-1">
-            <h1 className="text-xl font-bold text-surface-900">{lesson.titleAr}</h1>
-            <p className="text-sm text-primary-500">{lesson.titleIt}</p>
+            <h1 className="text-xl font-bold text-surface-900" dir={lang === 'it' ? 'ltr' : 'rtl'}>
+              {lang === 'it' ? lesson.titleIt : lesson.titleAr}
+            </h1>
+            {lang === 'both' && <p className="text-sm text-primary-500" dir="ltr">{lesson.titleIt}</p>}
             {isCompleted && <span className="inline-flex items-center gap-1 mt-2 text-xs bg-success-50 text-success-600 px-2 py-1 rounded-full"><Icon name="check" size={14} /> مكتمل</span>}
           </div>
         </div>

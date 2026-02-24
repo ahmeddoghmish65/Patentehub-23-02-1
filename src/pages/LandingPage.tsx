@@ -88,7 +88,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
       {/* ═══ NAVBAR ═══ */}
       <nav className={cn(
         'fixed top-0 inset-x-0 z-50 transition-all duration-500',
-        scrolled ? 'bg-white/90 backdrop-blur-2xl shadow-lg shadow-surface-900/5 border-b border-surface-100' : 'bg-transparent'
+        scrolled ? 'bg-white/95 backdrop-blur-2xl shadow-lg shadow-surface-900/5 border-b border-surface-100' : 'bg-white/80 backdrop-blur-md border-b border-surface-100/60'
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
@@ -100,7 +100,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                 <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white" />
               </div>
               <span className="text-lg font-black tracking-tight">
-                <span className={scrolled ? 'text-surface-900' : 'text-white'}>Patente </span>
+                <span className="text-surface-900">Patente </span>
                 <span className="text-primary-500">Hub</span>
               </span>
             </div>
@@ -114,7 +114,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
               ].map(l => (
                 <a key={l.href} href={l.href}
                   className={cn('px-4 py-2 rounded-xl text-sm font-medium transition-all',
-                    scrolled ? 'text-surface-600 hover:text-primary-600 hover:bg-primary-50' : 'text-white/80 hover:text-white hover:bg-white/10')}>
+                    'text-surface-600 hover:text-primary-600 hover:bg-primary-50')}>
                   {l.label}
                 </a>
               ))}
@@ -123,7 +123,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             <div className="hidden md:flex items-center gap-2">
               <button onClick={() => onNavigate('login')}
                 className={cn('px-4 py-2 rounded-xl text-sm font-semibold transition-all',
-                  scrolled ? 'text-surface-600 hover:bg-surface-100' : 'text-white/80 hover:bg-white/10')}>
+                  'text-surface-600 hover:bg-surface-100')}>
                 تسجيل الدخول
               </button>
               <Button size="sm" onClick={() => onNavigate('register')} icon={<Icon name="rocket_launch" size={15} />}>
@@ -133,12 +133,12 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
 
             <div className="flex items-center gap-2 md:hidden">
               <button onClick={() => onNavigate('login')}
-                className="text-sm font-semibold text-primary-600 border border-primary-200 px-3 py-1.5 rounded-xl hover:bg-primary-50 transition-colors">
+                className="text-sm font-semibold text-primary-700 border border-primary-200 px-3 py-1.5 rounded-xl hover:bg-primary-50 transition-colors bg-white/80">
                 دخول
               </button>
-              <button className={cn('p-2 rounded-xl transition-colors', scrolled ? 'hover:bg-surface-100' : 'hover:bg-white/10')}
+              <button className={cn('p-2 rounded-xl transition-colors hover:bg-surface-100')}
                 onClick={() => setMobileMenu(!mobileMenu)}>
-                <Icon name={mobileMenu ? 'close' : 'menu'} size={22} className={scrolled ? 'text-surface-800' : 'text-white'} />
+                <Icon name={mobileMenu ? 'close' : 'menu'} size={22} className="text-surface-800" />
               </button>
             </div>
           </div>
@@ -169,47 +169,49 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
 
       {/* ═══ HERO ═══ */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-[#0a1628] to-slate-900" />
-        <div className="absolute inset-0 opacity-40"
-          style={{ backgroundImage: 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59,130,246,0.5), transparent)' }} />
-        <div className="absolute inset-0 opacity-[0.035]"
-          style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.4) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.4) 1px,transparent 1px)', backgroundSize: '64px 64px' }} />
+        {/* Light background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white via-primary-50/70 to-blue-50/80" />
+        <div className="absolute inset-0 opacity-60"
+          style={{ backgroundImage: 'radial-gradient(ellipse 80% 55% at 60% 0%, rgba(59,130,246,0.12), transparent)' }} />
+        <div className="absolute inset-0 opacity-[0.04]"
+          style={{ backgroundImage: 'linear-gradient(rgba(59,130,246,0.6) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.6) 1px,transparent 1px)', backgroundSize: '64px 64px' }} />
 
-        {/* Blobs */}
-        <div className="absolute top-1/3 left-1/5 w-80 h-80 bg-primary-600/15 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/5 w-64 h-64 bg-violet-600/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }} />
+        {/* Light blobs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-300/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/3 right-1/4 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute top-2/3 left-1/2 w-56 h-56 bg-indigo-200/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '3s' }} />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 w-full">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20 w-full">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
 
             {/* Content */}
             <div className="text-center lg:text-right order-2 lg:order-1">
-              <div className="inline-flex items-center gap-2.5 bg-white/8 backdrop-blur-sm border border-white/15 text-white/80 px-5 py-2.5 rounded-full text-sm font-medium mb-8 animate-fade-in-up">
-                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse shrink-0" />
+              <div className="inline-flex items-center gap-2.5 bg-primary-50 border border-primary-200/70 text-primary-700 px-5 py-2.5 rounded-full text-sm font-medium mb-8 animate-fade-in-up shadow-sm">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse shrink-0" />
                 🇮🇹 التطبيق الأول للعرب في إيطاليا
               </div>
 
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-surface-900 leading-[1.05] mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
                 احصل على<br />
-                <span className="bg-gradient-to-l from-cyan-400 via-blue-400 to-violet-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-l from-primary-600 via-blue-500 to-indigo-600 bg-clip-text text-transparent">
                   رخصة القيادة
                 </span><br />
-                <span className="text-white/70">الإيطالية</span>
+                <span className="text-surface-500">الإيطالية</span>
               </h1>
 
-              <p className="text-lg text-white/55 mb-10 leading-relaxed max-w-lg mx-auto lg:mx-0 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+              <p className="text-lg text-surface-500 mb-10 leading-relaxed max-w-lg mx-auto lg:mx-0 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                 تعلّم بالعربية والإيطالية معاً. دروس شاملة، أسئلة حقيقية، إشارات مرورية، وتتبع ذكي لتقدمك.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
                 <button onClick={() => onNavigate('register')}
-                  className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-9 py-4 bg-white text-primary-700 font-bold text-base rounded-2xl shadow-2xl shadow-primary-500/20 hover:shadow-primary-500/40 transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-l from-primary-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-9 py-4 bg-gradient-to-l from-primary-600 to-primary-500 text-white font-bold text-base rounded-2xl shadow-xl shadow-primary-500/30 hover:shadow-primary-500/50 transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-l from-primary-500 to-primary-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <Icon name="rocket_launch" size={20} className="relative shrink-0" />
                   <span className="relative">ابدأ التعلم مجاناً</span>
                 </button>
                 <button onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-9 py-4 border-2 border-white/20 text-white font-semibold text-base rounded-2xl hover:bg-white/8 hover:border-white/35 transition-all duration-300">
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-9 py-4 border-2 border-primary-200 text-primary-700 font-semibold text-base rounded-2xl hover:bg-primary-50 hover:border-primary-300 transition-all duration-300">
                   <Icon name="play_circle" size={20} />
                   اكتشف المزيد
                 </button>
@@ -218,8 +220,8 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
               {/* Mini badges */}
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mt-10 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
                 {['مجاني 100%', 'بالعربية', '+5000 مستخدم', '92% نجاح'].map((b, i) => (
-                  <span key={i} className="inline-flex items-center gap-1.5 bg-white/8 border border-white/12 text-white/60 text-xs px-3 py-1.5 rounded-full">
-                    <Icon name="check_circle" size={12} className="text-green-400" filled />
+                  <span key={i} className="inline-flex items-center gap-1.5 bg-white border border-surface-200 text-surface-600 text-xs px-3 py-1.5 rounded-full shadow-sm">
+                    <Icon name="check_circle" size={12} className="text-green-500" filled />
                     {b}
                   </span>
                 ))}
@@ -230,16 +232,16 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             <div className="order-1 lg:order-2 hidden lg:flex items-center justify-center">
               <div className="relative w-[420px] h-[420px]">
                 {/* Glow */}
-                <div className="absolute inset-1/4 bg-primary-500/20 rounded-full blur-3xl" />
+                <div className="absolute inset-1/4 bg-primary-400/15 rounded-full blur-3xl" />
                 {/* Ring */}
-                <div className="absolute inset-8 rounded-full border border-white/5" />
-                <div className="absolute inset-16 rounded-full border border-white/8" />
+                <div className="absolute inset-8 rounded-full border border-primary-200/40" />
+                <div className="absolute inset-16 rounded-full border border-primary-200/60" />
                 {/* Center */}
-                <div className="absolute inset-[30%] bg-white/8 backdrop-blur-2xl rounded-3xl border border-white/15 flex flex-col items-center justify-center p-4 shadow-2xl">
+                <div className="absolute inset-[30%] bg-white backdrop-blur-2xl rounded-3xl border border-primary-100 flex flex-col items-center justify-center p-4 shadow-xl shadow-primary-500/10">
                   <div className={cn('w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-br mb-3 shadow-lg transition-all duration-500', features[activeFeature].bg)}>
                     <Icon name={features[activeFeature].icon} size={28} className="text-white" filled />
                   </div>
-                  <p className="text-white font-bold text-sm text-center leading-tight">{features[activeFeature].title}</p>
+                  <p className="text-surface-800 font-bold text-sm text-center leading-tight">{features[activeFeature].title}</p>
                 </div>
                 {/* Orbit buttons */}
                 {features.map((f, i) => {
@@ -251,9 +253,9 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                   return (
                     <button key={i} onClick={() => setActiveFeature(i)}
                       className={cn('absolute w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300',
-                        activeFeature === i ? 'bg-white shadow-xl shadow-white/15 scale-115' : 'bg-white/10 border border-white/15 hover:bg-white/20')}
+                        activeFeature === i ? 'bg-primary-500 shadow-xl shadow-primary-500/30 scale-115' : 'bg-white border border-surface-200 hover:border-primary-300 hover:bg-primary-50 shadow-sm')}
                       style={{ left: `${x}%`, top: `${y}%`, transform: `translate(-50%,-50%)` }}>
-                      <Icon name={f.icon} size={18} className={activeFeature === i ? 'text-primary-600' : 'text-white/60'} filled={activeFeature === i} />
+                      <Icon name={f.icon} size={18} className={activeFeature === i ? 'text-white' : 'text-surface-500'} filled={activeFeature === i} />
                     </button>
                   );
                 })}
