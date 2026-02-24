@@ -66,6 +66,12 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
     phoneCode: '+39', phone: '', italianLevel: '',
   });
 
+  // Stats modal
+  const [activeStatView, setActiveStatView] = useState<null | 'posts' | 'quizzes' | 'followers' | 'following'>(null);
+  const [followersList, setFollowersList] = useState<{ id: string; name: string; avatar?: string; username?: string }[]>([]);
+  const [followingList, setFollowingList] = useState<{ id: string; name: string; avatar?: string; username?: string }[]>([]);
+  const [followingCount, setFollowingCount] = useState(0);
+
   const fileRef = useRef<HTMLInputElement>(null);
   const editFileRef = useRef<HTMLInputElement>(null);
 
@@ -74,7 +80,20 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
   useEffect(() => {
     if (!user) return;
     getDB().then(db => db.getAll('users')).then(all => {
-      setFollowerCount(all.filter(u => u.following?.includes(user.id)).length);
+      // Followers: users who have current user in their localStorage following list
+      const followers = all.filter(u => {
+        const f = localStorage.getItem(`following_${u.id}`);
+        if (!f) return false;
+        try { return (JSON.parse(f) as string[]).includes(user.id); } catch { return false; }
+      });
+      setFollowerCount(followers.length);
+      setFollowersList(followers.map(u => ({ id: u.id, name: u.name, avatar: u.avatar, username: u.username })));
+      // Following: users that current user follows (from localStorage)
+      const myFollowingRaw = localStorage.getItem(`following_${user.id}`);
+      const myFollowingIds: string[] = myFollowingRaw ? (() => { try { return JSON.parse(myFollowingRaw); } catch { return []; } })() : [];
+      setFollowingCount(myFollowingIds.length);
+      const followingUsers = all.filter(u => myFollowingIds.includes(u.id));
+      setFollowingList(followingUsers.map(u => ({ id: u.id, name: u.name, avatar: u.avatar, username: u.username })));
     });
   }, [user?.id]);
 
@@ -526,23 +545,125 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
         {(() => {
           const myPosts = posts.filter(p => p.userId === user.id && p.type === 'post').length;
           const myQuizzes = posts.filter(p => p.userId === user.id && p.type === 'quiz').length;
-          const following = user.following?.length || 0;
+          const statsItems: { label: string; value: number; view: 'posts' | 'quizzes' | 'followers' | 'following' }[] = [
+            { label: 'منشور', value: myPosts, view: 'posts' },
+            { label: 'سؤال', value: myQuizzes, view: 'quizzes' },
+            { label: 'متابِع', value: followerCount, view: 'followers' },
+            { label: 'يتابِع', value: followingCount, view: 'following' },
+          ];
           return (
             <div className="grid grid-cols-4 gap-1.5 mt-4 border-t border-surface-50 pt-4">
-              {[
-                { label: 'منشور', value: myPosts },
-                { label: 'سؤال', value: myQuizzes },
-                { label: 'متابِع', value: followerCount },
-                { label: 'يتابِع', value: following },
-              ].map((s, i) => (
-                <div key={i} className="text-center">
+              {statsItems.map((s) => (
+                <button key={s.view} className="text-center py-1 rounded-xl hover:bg-surface-50 transition-colors cursor-pointer" onClick={() => setActiveStatView(s.view)}>
                   <p className="text-lg font-black text-surface-900 leading-tight">{s.value}</p>
-                  <p className="text-[11px] text-surface-400 font-medium">{s.label}</p>
-                </div>
+                  <p className="text-[11px] text-primary-500 font-medium">{s.label}</p>
+                </button>
               ))}
             </div>
           );
         })()}
+
+        {/* Stats Modal */}
+        {activeStatView && (
+          <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-4" onClick={() => setActiveStatView(null)}>
+            <div className="bg-white rounded-2xl w-full max-w-md max-h-[70vh] overflow-hidden shadow-2xl flex flex-col" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between p-4 border-b border-surface-100 shrink-0">
+                <h3 className="font-bold text-surface-900">
+                  {activeStatView === 'posts' ? 'منشوراتي' : activeStatView === 'quizzes' ? 'أسئلتي' : activeStatView === 'followers' ? 'المتابِعون' : 'يتابِع'}
+                </h3>
+                <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-400" onClick={() => setActiveStatView(null)}>
+                  <Icon name="close" size={18} />
+                </button>
+              </div>
+              <div className="overflow-y-auto flex-1">
+                {activeStatView === 'posts' && (() => {
+                  const myPosts = posts.filter(p => p.userId === user.id && p.type === 'post');
+                  return myPosts.length === 0 ? (
+                    <div className="p-8 text-center text-surface-400"><Icon name="forum" size={36} className="mx-auto mb-2 opacity-30" /><p>لا توجد منشورات بعد</p></div>
+                  ) : (
+                    <div className="divide-y divide-surface-50">
+                      {myPosts.map(p => (
+                        <div key={p.id} className="p-4">
+                          <p className="text-sm text-surface-800 line-clamp-3">{p.content}</p>
+                          <div className="flex items-center gap-3 mt-2">
+                            <span className="text-[10px] text-surface-400 flex items-center gap-0.5"><Icon name="favorite" size={11} /> {p.likesCount}</span>
+                            <span className="text-[10px] text-surface-400 flex items-center gap-0.5"><Icon name="chat_bubble" size={11} /> {p.commentsCount}</span>
+                            <span className="text-[10px] text-surface-400 mr-auto">{new Date(p.createdAt).toLocaleDateString('ar')}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+                {activeStatView === 'quizzes' && (() => {
+                  const myQuizzes = posts.filter(p => p.userId === user.id && p.type === 'quiz');
+                  return myQuizzes.length === 0 ? (
+                    <div className="p-8 text-center text-surface-400"><Icon name="quiz" size={36} className="mx-auto mb-2 opacity-30" /><p>لا توجد أسئلة بعد</p></div>
+                  ) : (
+                    <div className="divide-y divide-surface-50">
+                      {myQuizzes.map(p => (
+                        <div key={p.id} className="p-4">
+                          <span className="text-[10px] bg-purple-50 text-purple-600 px-1.5 rounded-full mb-1 inline-block">سؤال</span>
+                          <p className="text-sm text-surface-800 line-clamp-3">{p.content}</p>
+                          <div className="flex items-center gap-3 mt-2">
+                            <span className="text-[10px] text-surface-400 flex items-center gap-0.5"><Icon name="chat_bubble" size={11} /> {p.commentsCount}</span>
+                            <span className="text-[10px] text-surface-400 mr-auto">{new Date(p.createdAt).toLocaleDateString('ar')}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+                {activeStatView === 'followers' && (
+                  followersList.length === 0 ? (
+                    <div className="p-8 text-center text-surface-400"><Icon name="people" size={36} className="mx-auto mb-2 opacity-30" /><p>لا يوجد متابِعون بعد</p></div>
+                  ) : (
+                    <div className="divide-y divide-surface-50">
+                      {followersList.map(u => (
+                        <div key={u.id} className="p-4 flex items-center gap-3">
+                          {u.avatar ? (
+                            <img src={u.avatar} className="w-10 h-10 rounded-full object-cover shrink-0" alt="" />
+                          ) : (
+                            <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center shrink-0">
+                              <span className="font-bold text-primary-700">{u.name.charAt(0)}</span>
+                            </div>
+                          )}
+                          <div>
+                            <p className="text-sm font-semibold text-surface-800">{u.name}</p>
+                            {u.username && <p className="text-xs text-primary-500">@{u.username}</p>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                )}
+                {activeStatView === 'following' && (
+                  followingList.length === 0 ? (
+                    <div className="p-8 text-center text-surface-400"><Icon name="person_add" size={36} className="mx-auto mb-2 opacity-30" /><p>لا تتابع أحداً بعد</p></div>
+                  ) : (
+                    <div className="divide-y divide-surface-50">
+                      {followingList.map(u => (
+                        <div key={u.id} className="p-4 flex items-center gap-3">
+                          {u.avatar ? (
+                            <img src={u.avatar} className="w-10 h-10 rounded-full object-cover shrink-0" alt="" />
+                          ) : (
+                            <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center shrink-0">
+                              <span className="font-bold text-primary-700">{u.name.charAt(0)}</span>
+                            </div>
+                          )}
+                          <div>
+                            <p className="text-sm font-semibold text-surface-800">{u.name}</p>
+                            {u.username && <p className="text-xs text-primary-500">@{u.username}</p>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Progress & Exam Readiness */}

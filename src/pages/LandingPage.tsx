@@ -12,10 +12,22 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
+  const [activeFeature, setActiveFeature] = useState(0);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
+  const features = [
+    { icon: 'translate', title: 'ثنائي اللغة', desc: 'كل سؤال وشرح بالعربية والإيطالية معاً', bg: 'from-blue-500 to-blue-600' },
+    { icon: 'quiz', title: 'اختبارات حقيقية', desc: 'أسئلة صح/خطأ مطابقة لنمط الامتحان', bg: 'from-violet-500 to-violet-600' },
+    { icon: 'school', title: 'دروس منظمة', desc: 'محتوى مقسم لأقسام ودروس مرتبة', bg: 'from-green-500 to-green-600' },
+    { icon: 'traffic', title: 'إشارات مرورية', desc: 'مكتبة شاملة لجميع الإشارات مع شرح', bg: 'from-red-500 to-red-600' },
+    { icon: 'menu_book', title: 'قاموس مروري', desc: 'كل مصطلح إيطالي مترجم بالعربية', bg: 'from-amber-500 to-amber-600' },
+    { icon: 'forum', title: 'مجتمع تعليمي', desc: 'تواصل مع آلاف العرب في إيطاليا', bg: 'from-cyan-500 to-cyan-600' },
+    { icon: 'trending_up', title: 'تتبع ذكي', desc: 'إحصائيات دقيقة لتقدمك ونسبة جاهزيتك', bg: 'from-pink-500 to-pink-600' },
+    { icon: 'fitness_center', title: 'تدريب يومي', desc: 'سلسلة أيام وتحديات لتحفيزك', bg: 'from-orange-500 to-orange-600' },
+  ];
+
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => setScrolled(window.scrollY > 30);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -29,191 +41,277 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
           }
         });
       },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
     );
-
     document.querySelectorAll('[data-animate]').forEach((el) => {
       observerRef.current?.observe(el);
     });
-
     return () => observerRef.current?.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const t = setInterval(() => setActiveFeature(p => (p + 1) % features.length), 3200);
+    return () => clearInterval(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const isVisible = (id: string) => visibleSections.has(id);
 
-  const features = [
-    { icon: 'translate', title: 'ثنائي اللغة', titleIt: 'Bilingue', desc: 'كل سؤال وشرح بالعربية والإيطالية معاً — تعلّم المصطلحات الحقيقية التي ستواجهها في الامتحان', color: 'from-blue-500 to-blue-600' },
-    { icon: 'quiz', title: 'اختبارات حقيقية', titleIt: 'Quiz reali', desc: 'أسئلة صح/خطأ مطابقة لنمط الامتحان الحقيقي مع شرح مفصل لكل إجابة بالعربية', color: 'from-purple-500 to-purple-600' },
-    { icon: 'school', title: 'دروس منظمة', titleIt: 'Lezioni organizzate', desc: 'محتوى مقسم لأقسام ودروس مرتبة — من إشارات الخطر حتى التأمين والوثائق', color: 'from-green-500 to-green-600' },
-    { icon: 'traffic', title: 'إشارات مرورية', titleIt: 'Segnali stradali', desc: 'مكتبة شاملة للإشارات المرورية الإيطالية مع صور وشرح لكل إشارة', color: 'from-red-500 to-red-600' },
-    { icon: 'menu_book', title: 'قاموس مروري', titleIt: 'Dizionario stradale', desc: 'قاموس مصطلحات رخصة القيادة — كل مصطلح إيطالي مترجم ومشروح بالعربية', color: 'from-orange-500 to-orange-600' },
-    { icon: 'forum', title: 'مجتمع تعليمي', titleIt: 'Comunità', desc: 'شارك تجربتك واسأل المجتمع — آلاف العرب في إيطاليا يدرسون معك', color: 'from-cyan-500 to-cyan-600' },
-    { icon: 'trending_up', title: 'تتبع ذكي', titleIt: 'Monitoraggio', desc: 'إحصائيات دقيقة — تتبع أخطائك وتقدمك ونسبة جاهزيتك للامتحان', color: 'from-pink-500 to-pink-600' },
-    { icon: 'fitness_center', title: 'تدريب مستمر', titleIt: 'Allenamento', desc: '3 أنواع تدريب: أسئلة + إشارات + مصطلحات — تمرّن يومياً واحصل على سلسلة أيام', color: 'from-amber-500 to-amber-600' },
-  ];
-
   const testimonials = [
-    { name: 'أحمد محمد', text: 'نجحت في الامتحان من أول مرة بفضل هذا التطبيق! الشرح بالعربية سهّل عليّ فهم القوانين الإيطالية المعقدة. أنصح الجميع به.', rating: 5, city: 'Milano', role: 'طالب جامعي' },
-    { name: 'فاطمة علي', text: 'كنت خائفة من الامتحان لأن لغتي الإيطالية ضعيفة، لكن التطبيق ساعدني بالشرح العربي المفصل. أسئلة التدريب كانت مشابهة جداً للامتحان الحقيقي.', rating: 5, city: 'Roma', role: 'ربة منزل' },
-    { name: 'يوسف حسن', text: 'نظام تتبع الأخطاء ممتاز — ساعدني أركز على النقاط الضعيفة. بعد أسبوعين من التدريب اليومي نجحت بسهولة!', rating: 5, city: 'Torino', role: 'عامل' },
-    { name: 'سارة خالد', text: 'قسم الإشارات المرورية مع الصور رائع. تعلمت كل الإشارات بسرعة. والقاموس ساعدني أفهم المصطلحات الصعبة.', rating: 5, city: 'Napoli', role: 'موظفة' },
-    { name: 'محمد رضا', text: 'أفضل ميزة هي أسئلة صح/خطأ مثل الامتحان بالضبط. درست 3 أسابيع فقط ونجحت. شكراً Patente Hub!', rating: 5, city: 'Bologna', role: 'مهندس' },
-    { name: 'نور الهدى', text: 'التطبيق بسيط ومرتب. المجتمع فيه ناس مساعدة. كنت أسأل عن الأشياء اللي ما فهمتها وأحصل إجابة بسرعة.', rating: 5, city: 'Firenze', role: 'طالبة' },
+    { name: 'أحمد محمد', text: 'نجحت من أول مرة! الشرح بالعربية سهّل عليّ فهم القوانين الإيطالية.', rating: 5, city: 'Milano', role: 'طالب جامعي', initials: 'أم' },
+    { name: 'فاطمة علي', text: 'كنت خائفة من الامتحان، لكن أسئلة التدريب كانت مشابهة جداً للامتحان الحقيقي.', rating: 5, city: 'Roma', role: 'ربة منزل', initials: 'فع' },
+    { name: 'يوسف حسن', text: 'نظام تتبع الأخطاء رائع. بعد أسبوعين من التدريب اليومي نجحت بسهولة!', rating: 5, city: 'Torino', role: 'عامل', initials: 'يح' },
+    { name: 'سارة خالد', text: 'قسم الإشارات المرورية مع الصور رائع. والقاموس ساعدني أفهم المصطلحات الصعبة.', rating: 5, city: 'Napoli', role: 'موظفة', initials: 'سخ' },
+    { name: 'محمد رضا', text: 'درست 3 أسابيع فقط ونجحت. شكراً Patente Hub! أفضل تطبيق للعرب.', rating: 5, city: 'Bologna', role: 'مهندس', initials: 'مر' },
+    { name: 'نور الهدى', text: 'المجتمع فيه ناس مساعدة جداً. كنت أسأل وأحصل إجابة بسرعة.', rating: 5, city: 'Firenze', role: 'طالبة', initials: 'نه' },
   ];
 
   const faqs = [
-    { q: 'هل التطبيق مجاني؟', a: 'نعم، التطبيق مجاني بالكامل. جميع الدروس والأسئلة والإشارات والقاموس متاحة بدون أي رسوم أو اشتراكات.' },
-    { q: 'هل الأسئلة مشابهة للامتحان الحقيقي؟', a: 'نعم، الأسئلة بنمط صح/خطأ (Vero/Falso) وهو نفس نمط الامتحان الرسمي في إيطاليا. المحتوى مبني على المنهج الرسمي.' },
-    { q: 'ما هو نوع الرخصة المدعوم؟', a: 'التطبيق يغطي جميع مواضيع رخصة القيادة من الفئة B (Patente B) وهي الرخصة الأكثر شيوعاً للسيارات العادية.' },
-    { q: 'هل يمكنني الدراسة بالعربية فقط؟', a: 'نعم، يمكنك اختيار العرض بالعربية فقط أو الإيطالية فقط أو كلاهما معاً. لكننا ننصح بالتعلم بكلا اللغتين لأن الامتحان بالإيطالية.' },
-    { q: 'كم يوماً أحتاج للاستعداد؟', a: 'يختلف حسب الشخص، لكن معظم المستخدمين ينجحون بعد 2-4 أسابيع من الدراسة اليومية المنتظمة. نظام التتبع يساعدك تعرف متى تكون جاهزاً.' },
-    { q: 'ماذا أفعل إذا نسيت كلمة المرور؟', a: 'يمكنك إعادة تعيين كلمة المرور من صفحة تسجيل الدخول عبر خيار "نسيت كلمة المرور".' },
-    { q: 'هل يوجد تطبيق للجوال؟', a: 'التطبيق مصمم ليعمل بشكل مثالي على متصفح الجوال. يمكنك إضافته للشاشة الرئيسية واستخدامه كتطبيق عادي.' },
+    { q: 'هل التطبيق مجاني؟', a: 'نعم، التطبيق مجاني بالكامل. جميع الدروس والأسئلة والإشارات والقاموس متاحة بدون أي رسوم.' },
+    { q: 'هل الأسئلة مشابهة للامتحان الحقيقي؟', a: 'نعم، الأسئلة بنمط صح/خطأ (Vero/Falso) وهو نفس نمط الامتحان الرسمي في إيطاليا.' },
+    { q: 'ما هو نوع الرخصة المدعوم؟', a: 'التطبيق يغطي جميع مواضيع رخصة الفئة B (Patente B) وهي الأكثر شيوعاً.' },
+    { q: 'هل يمكنني الدراسة بالعربية فقط؟', a: 'نعم، يمكنك الدراسة بالعربية أو الإيطالية أو كلاهما. لكننا ننصح بكلا اللغتين لأن الامتحان بالإيطالية.' },
+    { q: 'كم يوماً أحتاج للاستعداد؟', a: 'معظم المستخدمين ينجحون بعد 2-4 أسابيع من الدراسة اليومية. نظام التتبع يساعدك تعرف متى تكون جاهزاً.' },
+    { q: 'هل يوجد تطبيق للجوال؟', a: 'التطبيق مصمم ليعمل بشكل مثالي على متصفح الجوال. يمكنك إضافته للشاشة الرئيسية واستخدامه كتطبيق.' },
   ];
 
   const stats = [
-    { value: '+5,000', label: 'مستخدم نشط', icon: 'group' },
-    { value: '92%', label: 'نسبة النجاح', icon: 'verified' },
-    { value: '+10,000', label: 'اختبار مكتمل', icon: 'quiz' },
-    { value: '4.9/5', label: 'تقييم المستخدمين', icon: 'star' },
+    { value: '+5,000', label: 'مستخدم نشط', icon: 'group', colorfrom: 'from-blue-500', colorto: 'to-blue-600', textcolor: 'text-blue-600' },
+    { value: '92%', label: 'نسبة النجاح', icon: 'verified', colorfrom: 'from-green-500', colorto: 'to-green-600', textcolor: 'text-green-600' },
+    { value: '+10,000', label: 'اختبار مكتمل', icon: 'quiz', colorfrom: 'from-violet-500', colorto: 'to-violet-600', textcolor: 'text-violet-600' },
+    { value: '4.9★', label: 'تقييم المستخدمين', icon: 'star', colorfrom: 'from-amber-500', colorto: 'to-amber-600', textcolor: 'text-amber-600' },
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navbar */}
+    <div className="min-h-screen bg-white overflow-x-hidden" dir="rtl">
+
+      {/* ═══ NAVBAR ═══ */}
       <nav className={cn(
-        'fixed top-0 inset-x-0 z-50 transition-all duration-300',
-        scrolled ? 'bg-white/95 backdrop-blur-xl shadow-sm border-b border-surface-100' : 'bg-transparent'
+        'fixed top-0 inset-x-0 z-50 transition-all duration-500',
+        scrolled ? 'bg-white/90 backdrop-blur-2xl shadow-lg shadow-surface-900/5 border-b border-surface-100' : 'bg-transparent'
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-200">
-                <Icon name="directions_car" size={22} className="text-white" filled />
+            <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+              <div className="relative">
+                <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/30">
+                  <Icon name="directions_car" size={20} className="text-white" filled />
+                </div>
+                <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white" />
               </div>
-              <span className="text-xl font-bold text-surface-900">Patente Hub</span>
+              <span className="text-lg font-black tracking-tight">
+                <span className={scrolled ? 'text-surface-900' : 'text-white'}>Patente </span>
+                <span className="text-primary-500">Hub</span>
+              </span>
             </div>
 
-            <div className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-surface-600 hover:text-primary-600 transition-colors text-sm font-medium">المميزات</a>
-              <a href="#how" className="text-surface-600 hover:text-primary-600 transition-colors text-sm font-medium">كيف يعمل</a>
-              <a href="#testimonials" className="text-surface-600 hover:text-primary-600 transition-colors text-sm font-medium">آراء المستخدمين</a>
-              <a href="#faq" className="text-surface-600 hover:text-primary-600 transition-colors text-sm font-medium">الأسئلة الشائعة</a>
+            <div className="hidden md:flex items-center gap-1">
+              {[
+                { href: '#features', label: 'المميزات' },
+                { href: '#how', label: 'كيف يعمل' },
+                { href: '#testimonials', label: 'آراء المستخدمين' },
+                { href: '#faq', label: 'الأسئلة الشائعة' },
+              ].map(l => (
+                <a key={l.href} href={l.href}
+                  className={cn('px-4 py-2 rounded-xl text-sm font-medium transition-all',
+                    scrolled ? 'text-surface-600 hover:text-primary-600 hover:bg-primary-50' : 'text-white/80 hover:text-white hover:bg-white/10')}>
+                  {l.label}
+                </a>
+              ))}
             </div>
 
-            <div className="hidden md:flex items-center gap-3">
-              <Button size="sm" variant="ghost" onClick={() => onNavigate('login')}>تسجيل الدخول</Button>
-              <Button size="sm" onClick={() => onNavigate('register')}>ابدأ مجاناً</Button>
+            <div className="hidden md:flex items-center gap-2">
+              <button onClick={() => onNavigate('login')}
+                className={cn('px-4 py-2 rounded-xl text-sm font-semibold transition-all',
+                  scrolled ? 'text-surface-600 hover:bg-surface-100' : 'text-white/80 hover:bg-white/10')}>
+                تسجيل الدخول
+              </button>
+              <Button size="sm" onClick={() => onNavigate('register')} icon={<Icon name="rocket_launch" size={15} />}>
+                ابدأ مجاناً
+              </Button>
             </div>
 
             <div className="flex items-center gap-2 md:hidden">
-              <button
-                onClick={() => onNavigate('login')}
-                className="text-sm font-semibold text-primary-600 border border-primary-200 px-3 py-1.5 rounded-lg hover:bg-primary-50 transition-colors"
-              >
+              <button onClick={() => onNavigate('login')}
+                className="text-sm font-semibold text-primary-600 border border-primary-200 px-3 py-1.5 rounded-xl hover:bg-primary-50 transition-colors">
                 دخول
               </button>
-              <button className="p-2 rounded-lg hover:bg-surface-100" onClick={() => setMobileMenu(!mobileMenu)}>
-                <Icon name={mobileMenu ? 'close' : 'menu'} />
+              <button className={cn('p-2 rounded-xl transition-colors', scrolled ? 'hover:bg-surface-100' : 'hover:bg-white/10')}
+                onClick={() => setMobileMenu(!mobileMenu)}>
+                <Icon name={mobileMenu ? 'close' : 'menu'} size={22} className={scrolled ? 'text-surface-800' : 'text-white'} />
               </button>
             </div>
           </div>
         </div>
 
         {mobileMenu && (
-          <div className="md:hidden bg-white border-t border-surface-100 p-4 space-y-3 shadow-xl">
-            <a href="#features" className="block py-2 text-surface-600 font-medium" onClick={() => setMobileMenu(false)}>المميزات</a>
-            <a href="#how" className="block py-2 text-surface-600 font-medium" onClick={() => setMobileMenu(false)}>كيف يعمل</a>
-            <a href="#testimonials" className="block py-2 text-surface-600 font-medium" onClick={() => setMobileMenu(false)}>آراء المستخدمين</a>
-            <a href="#faq" className="block py-2 text-surface-600 font-medium" onClick={() => setMobileMenu(false)}>الأسئلة الشائعة</a>
-            <div className="pt-2 space-y-2">
-              <Button fullWidth variant="outline" onClick={() => onNavigate('login')}>تسجيل الدخول</Button>
-              <Button fullWidth onClick={() => onNavigate('register')}>ابدأ مجاناً</Button>
+          <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-surface-100 shadow-xl">
+            <div className="px-4 py-4 space-y-1">
+              {[
+                { href: '#features', label: 'المميزات' },
+                { href: '#how', label: 'كيف يعمل' },
+                { href: '#testimonials', label: 'آراء المستخدمين' },
+                { href: '#faq', label: 'الأسئلة الشائعة' },
+              ].map(l => (
+                <a key={l.href} href={l.href} onClick={() => setMobileMenu(false)}
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-surface-700 font-medium hover:bg-surface-50 transition-colors">
+                  {l.label}
+                </a>
+              ))}
+              <div className="pt-3 space-y-2 border-t border-surface-100">
+                <Button fullWidth variant="outline" onClick={() => onNavigate('login')}>تسجيل الدخول</Button>
+                <Button fullWidth onClick={() => onNavigate('register')}>ابدأ مجاناً</Button>
+              </div>
             </div>
           </div>
         )}
       </nav>
 
-      {/* Hero */}
-      <section className="relative pt-28 pb-20 sm:pt-40 sm:pb-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-50 via-white to-purple-50" />
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary-200 rounded-full blur-3xl opacity-30 animate-pulse" />
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-200 rounded-full blur-3xl opacity-20" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-primary-100 to-purple-100 rounded-full blur-3xl opacity-20" />
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-primary-200 text-primary-700 px-5 py-2.5 rounded-full text-sm font-medium mb-8 shadow-sm animate-fade-in-up">
-              <Icon name="auto_awesome" size={18} filled className="text-primary-500" />
-              <span> التطبيق مدعوم بالذكاء الاصطناعي </span>
-            </div>
-            
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-surface-900 leading-tight mb-8 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-              احصل على رخصة القيادة
-              <br />
-              <span className="gradient-text">الإيطالية بسهولة</span>
-            </h1>
-            
-            <p className="text-lg sm:text-xl text-surface-500 max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-              تعلّم واستعد لامتحان الباتينتي بالعربية والإيطالية.
-              <br className="hidden sm:block" />
-              دروس شاملة، أسئلة حقيقية، إشارات مرورية، وتتبع ذكي لتقدمك.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-              <Button size="lg" onClick={() => onNavigate('register')} icon={<Icon name="rocket_launch" size={22} />} className="animate-pulse-glow text-lg px-8">
-                ابدأ التعلم مجاناً
-              </Button>
-              <Button size="lg" variant="outline" onClick={() => {
-                document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
-              }} icon={<Icon name="arrow_downward" size={22} />}>
-                تعرّف على المزيد
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ═══ HERO ═══ */}
+      <section className="relative min-h-screen flex items-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-[#0a1628] to-slate-900" />
+        <div className="absolute inset-0 opacity-40"
+          style={{ backgroundImage: 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59,130,246,0.5), transparent)' }} />
+        <div className="absolute inset-0 opacity-[0.035]"
+          style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.4) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.4) 1px,transparent 1px)', backgroundSize: '64px 64px' }} />
 
-      {/* Stats Bar */}
-      <section className="relative -mt-10 z-10">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl shadow-xl shadow-surface-200/50 border border-surface-100 p-6 sm:p-8">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
-              {stats.map((stat, i) => (
-                <div key={i} className="text-center">
-                  <Icon name={stat.icon} size={28} className="text-primary-500 mx-auto mb-2" filled />
-                  <p className="text-2xl sm:text-3xl font-black text-surface-900">{stat.value}</p>
-                  <p className="text-xs sm:text-sm text-surface-500 mt-1">{stat.label}</p>
+        {/* Blobs */}
+        <div className="absolute top-1/3 left-1/5 w-80 h-80 bg-primary-600/15 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/5 w-64 h-64 bg-violet-600/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }} />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 w-full">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+
+            {/* Content */}
+            <div className="text-center lg:text-right order-2 lg:order-1">
+              <div className="inline-flex items-center gap-2.5 bg-white/8 backdrop-blur-sm border border-white/15 text-white/80 px-5 py-2.5 rounded-full text-sm font-medium mb-8 animate-fade-in-up">
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse shrink-0" />
+                🇮🇹 التطبيق الأول للعرب في إيطاليا
+              </div>
+
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+                احصل على<br />
+                <span className="bg-gradient-to-l from-cyan-400 via-blue-400 to-violet-400 bg-clip-text text-transparent">
+                  رخصة القيادة
+                </span><br />
+                <span className="text-white/70">الإيطالية</span>
+              </h1>
+
+              <p className="text-lg text-white/55 mb-10 leading-relaxed max-w-lg mx-auto lg:mx-0 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                تعلّم بالعربية والإيطالية معاً. دروس شاملة، أسئلة حقيقية، إشارات مرورية، وتتبع ذكي لتقدمك.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+                <button onClick={() => onNavigate('register')}
+                  className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-9 py-4 bg-white text-primary-700 font-bold text-base rounded-2xl shadow-2xl shadow-primary-500/20 hover:shadow-primary-500/40 transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-l from-primary-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Icon name="rocket_launch" size={20} className="relative shrink-0" />
+                  <span className="relative">ابدأ التعلم مجاناً</span>
+                </button>
+                <button onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-9 py-4 border-2 border-white/20 text-white font-semibold text-base rounded-2xl hover:bg-white/8 hover:border-white/35 transition-all duration-300">
+                  <Icon name="play_circle" size={20} />
+                  اكتشف المزيد
+                </button>
+              </div>
+
+              {/* Mini badges */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mt-10 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+                {['مجاني 100%', 'بالعربية', '+5000 مستخدم', '92% نجاح'].map((b, i) => (
+                  <span key={i} className="inline-flex items-center gap-1.5 bg-white/8 border border-white/12 text-white/60 text-xs px-3 py-1.5 rounded-full">
+                    <Icon name="check_circle" size={12} className="text-green-400" filled />
+                    {b}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Interactive feature wheel */}
+            <div className="order-1 lg:order-2 hidden lg:flex items-center justify-center">
+              <div className="relative w-[420px] h-[420px]">
+                {/* Glow */}
+                <div className="absolute inset-1/4 bg-primary-500/20 rounded-full blur-3xl" />
+                {/* Ring */}
+                <div className="absolute inset-8 rounded-full border border-white/5" />
+                <div className="absolute inset-16 rounded-full border border-white/8" />
+                {/* Center */}
+                <div className="absolute inset-[30%] bg-white/8 backdrop-blur-2xl rounded-3xl border border-white/15 flex flex-col items-center justify-center p-4 shadow-2xl">
+                  <div className={cn('w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-br mb-3 shadow-lg transition-all duration-500', features[activeFeature].bg)}>
+                    <Icon name={features[activeFeature].icon} size={28} className="text-white" filled />
+                  </div>
+                  <p className="text-white font-bold text-sm text-center leading-tight">{features[activeFeature].title}</p>
                 </div>
-              ))}
+                {/* Orbit buttons */}
+                {features.map((f, i) => {
+                  const angle = (i / features.length) * 360 - 90;
+                  const rad = (angle * Math.PI) / 180;
+                  const rx = 46, ry = 46;
+                  const x = 50 + rx * Math.cos(rad);
+                  const y = 50 + ry * Math.sin(rad);
+                  return (
+                    <button key={i} onClick={() => setActiveFeature(i)}
+                      className={cn('absolute w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300',
+                        activeFeature === i ? 'bg-white shadow-xl shadow-white/15 scale-115' : 'bg-white/10 border border-white/15 hover:bg-white/20')}
+                      style={{ left: `${x}%`, top: `${y}%`, transform: `translate(-50%,-50%)` }}>
+                      <Icon name={f.icon} size={18} className={activeFeature === i ? 'text-primary-600' : 'text-white/60'} filled={activeFeature === i} />
+                    </button>
+                  );
+                })}
+              </div>
             </div>
+          </div>
+        </div>
+
+        {/* Wave */}
+        <div className="absolute bottom-0 inset-x-0">
+          <svg viewBox="0 0 1440 70" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block">
+            <path d="M0,70 L1440,70 L1440,35 C1200,70 960,0 720,18 C480,36 240,70 0,35 Z" fill="white" />
+          </svg>
+        </div>
+      </section>
+
+      {/* ═══ STATS ═══ */}
+      <section className="bg-white py-16">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+            {stats.map((s, i) => (
+              <div key={i} className="text-center group">
+                <div className={cn('w-14 h-14 rounded-2xl bg-gradient-to-br flex items-center justify-center mx-auto mb-3 transition-transform group-hover:scale-110 shadow-sm', s.colorfrom, s.colorto)}>
+                  <Icon name={s.icon} size={26} className="text-white" filled />
+                </div>
+                <p className="text-3xl font-black text-surface-900">{s.value}</p>
+                <p className="text-sm text-surface-400 mt-1">{s.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="py-24 sm:py-32" data-animate>
+      {/* ═══ FEATURES ═══ */}
+      <section id="features" className="py-24 bg-gradient-to-b from-white to-surface-50" data-animate>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={cn('text-center mb-16 transition-all duration-700', isVisible('features') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
-            <div className="inline-flex items-center gap-2 bg-primary-50 text-primary-600 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
+            <span className="inline-flex items-center gap-2 bg-primary-50 text-primary-700 border border-primary-100 px-5 py-2 rounded-full text-sm font-semibold mb-5">
               <Icon name="stars" size={16} filled />
               لماذا Patente Hub؟
-            </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-surface-900 mt-3">كل ما تحتاجه في تطبيق واحد</h2>
-            <p className="text-surface-500 mt-4 max-w-2xl mx-auto text-lg">أدوات متكاملة صُممت خصيصاً لمساعدة العرب في إيطاليا على النجاح في امتحان رخصة القيادة</p>
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-black text-surface-900 mt-2">كل ما تحتاجه في مكان واحد</h2>
+            <p className="text-surface-500 mt-4 max-w-2xl mx-auto text-lg">أدوات متكاملة صُممت خصيصاً للعرب في إيطاليا</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {features.map((f, i) => (
-              <div key={i} className={cn(
-                'bg-white rounded-2xl p-6 border border-surface-100 hover:border-primary-200 hover:shadow-xl hover:shadow-primary-50 transition-all duration-500 group cursor-default',
-                isVisible('features') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-              )} style={{ transitionDelay: `${i * 80}ms` }}>
-                <div className={cn('w-14 h-14 rounded-2xl flex items-center justify-center mb-5 bg-gradient-to-br shadow-lg', f.color)}>
-                  <Icon name={f.icon} size={26} className="text-white" filled />
+              <div key={i}
+                className={cn(
+                  'group relative bg-white rounded-2xl p-6 border border-surface-100 cursor-default transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-surface-900/8 overflow-hidden',
+                  isVisible('features') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                )}
+                style={{ transitionDelay: `${i * 55}ms` }}>
+                <div className={cn('absolute inset-0 opacity-0 group-hover:opacity-[0.04] transition-opacity bg-gradient-to-br', f.bg)} />
+                <div className={cn('w-13 h-13 w-12 h-12 rounded-2xl flex items-center justify-center mb-5 bg-gradient-to-br shadow-md transition-transform group-hover:scale-110 duration-300', f.bg)}>
+                  <Icon name={f.icon} size={24} className="text-white" filled />
                 </div>
-                <h3 className="text-lg font-bold text-surface-900 mb-1 group-hover:text-primary-600 transition-colors">{f.title}</h3>
-                <p className="text-xs text-primary-500 font-medium mb-3">{f.titleIt}</p>
+                <h3 className="text-base font-bold text-surface-900 mb-2 group-hover:text-primary-600 transition-colors">{f.title}</h3>
                 <p className="text-surface-500 text-sm leading-relaxed">{f.desc}</p>
               </div>
             ))}
@@ -221,85 +319,80 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
         </div>
       </section>
 
-      {/* How it works */}
-      <section id="how" className="py-24 sm:py-32 bg-gradient-to-br from-surface-50 to-white" data-animate>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* ═══ HOW IT WORKS ═══ */}
+      <section id="how" className="py-24 bg-surface-50" data-animate>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={cn('text-center mb-16 transition-all duration-700', isVisible('how') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
-            <div className="inline-flex items-center gap-2 bg-green-50 text-green-600 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
+            <span className="inline-flex items-center gap-2 bg-green-50 text-green-700 border border-green-100 px-5 py-2 rounded-full text-sm font-semibold mb-5">
               <Icon name="route" size={16} filled />
               كيف تبدأ؟
-            </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-surface-900 mt-3">3 خطوات فقط</h2>
-            <p className="text-surface-500 mt-4 max-w-xl mx-auto text-lg">ابدأ رحلتك نحو رخصة القيادة الإيطالية</p>
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-black text-surface-900 mt-2">ثلاث خطوات فقط</h2>
+            <p className="text-surface-500 mt-4 max-w-xl mx-auto text-lg">ابدأ رحلتك نحو رخصة القيادة الإيطالية اليوم</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {[
-              { step: '1', icon: 'person_add', title: 'سجّل حسابك مجاناً', titleIt: 'Registrati gratis', desc: 'أنشئ حساباً في ثوانٍ — بريد إلكتروني وكلمة مرور فقط', color: 'from-blue-500 to-blue-600' },
-              { step: '2', icon: 'menu_book', title: 'ادرس الدروس والأسئلة', titleIt: 'Studia le lezioni', desc: 'اختر القسم وابدأ بالدروس ثم حل أسئلة صح/خطأ مع الشرح', color: 'from-purple-500 to-purple-600' },
-              { step: '3', icon: 'workspace_premium', title: 'انجح في الامتحان!', titleIt: 'Supera l\'esame!', desc: 'تدرّب يومياً وتابع نسبة جاهزيتك حتى تصل 100% وتنجح', color: 'from-green-500 to-green-600' },
-            ].map((step, i) => (
-              <div key={i} className={cn(
-                'text-center relative transition-all duration-700',
-                isVisible('how') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-              )} style={{ transitionDelay: `${i * 200}ms` }}>
-                <div className="relative inline-block mb-8">
-                  <div className={cn('w-24 h-24 mx-auto bg-gradient-to-br rounded-3xl flex items-center justify-center shadow-2xl', step.color)}>
-                    <Icon name={step.icon} size={44} className="text-white" filled />
+              { step: '01', icon: 'person_add', title: 'سجّل مجاناً', titleIt: 'Registrati gratis', desc: 'أنشئ حساباً في ثوانٍ — بريد إلكتروني وكلمة مرور فقط', color: 'from-blue-500 to-blue-600' },
+              { step: '02', icon: 'menu_book', title: 'ادرس الدروس', titleIt: 'Studia le lezioni', desc: 'اختر القسم وابدأ بالدروس ثم حل أسئلة صح/خطأ مع الشرح', color: 'from-violet-500 to-violet-600' },
+              { step: '03', icon: 'workspace_premium', title: 'انجح في الامتحان!', titleIt: 'Supera l\'esame!', desc: 'تدرّب يومياً وتابع جاهزيتك حتى تصل 100%', color: 'from-green-500 to-green-600' },
+            ].map((s, i) => (
+              <div key={i}
+                className={cn('flex flex-col items-center text-center transition-all duration-700', isVisible('how') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}
+                style={{ transitionDelay: `${i * 180}ms` }}>
+                <div className="relative mb-7">
+                  <div className={cn('w-24 h-24 mx-auto bg-gradient-to-br rounded-3xl flex items-center justify-center shadow-2xl hover:scale-105 transition-transform cursor-default', s.color)}>
+                    <Icon name={s.icon} size={44} className="text-white" filled />
                   </div>
-                  <div className="absolute -top-3 -right-3 w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center border-2 border-primary-200">
-                    <span className="text-lg font-black text-primary-600">{step.step}</span>
+                  <div className="absolute -top-3 -right-3 w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center border border-surface-100">
+                    <span className="text-sm font-black text-surface-400">{s.step}</span>
                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-surface-900 mb-1">{step.title}</h3>
-                <p className="text-xs text-primary-500 font-medium mb-3">{step.titleIt}</p>
-                <p className="text-surface-500 leading-relaxed">{step.desc}</p>
+                <h3 className="text-xl font-bold text-surface-900 mb-1">{s.title}</h3>
+                <p className="text-xs text-primary-500 font-medium mb-3">{s.titleIt}</p>
+                <p className="text-surface-500 leading-relaxed text-sm">{s.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* App Preview / Screenshots */}
-      <section className="py-24 sm:py-32 overflow-hidden" data-animate id="preview">
+      {/* ═══ APP PREVIEW ═══ */}
+      <section className="py-24 bg-white overflow-hidden" data-animate id="preview">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={cn('text-center mb-16 transition-all duration-700', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
-            <div className="inline-flex items-center gap-2 bg-purple-50 text-purple-600 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
+            <span className="inline-flex items-center gap-2 bg-violet-50 text-violet-700 border border-violet-100 px-5 py-2 rounded-full text-sm font-semibold mb-5">
               <Icon name="phone_iphone" size={16} filled />
-              واجهة التطبيق
-            </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-surface-900 mt-3">تصميم بسيط وسهل الاستخدام</h2>
-            <p className="text-surface-500 mt-4 max-w-xl mx-auto text-lg">واجهة عربية مريحة مع دعم كامل للإيطالية</p>
+              داخل التطبيق
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-black text-surface-900 mt-2">تصميم حديث وسهل الاستخدام</h2>
+            <p className="text-surface-500 mt-4 max-w-xl mx-auto">واجهة عربية مريحة مع دعم كامل للإيطالية</p>
           </div>
 
           <div className={cn('grid grid-cols-1 md:grid-cols-3 gap-6 transition-all duration-1000', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12')}>
-            {/* Preview Card 1 - Quiz */}
-            <div className="bg-gradient-to-br from-surface-800 to-surface-900 rounded-2xl p-4 shadow-2xl">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-2.5 h-2.5 rounded-full bg-danger-500" />
-                <div className="w-2.5 h-2.5 rounded-full bg-warning-500" />
-                <div className="w-2.5 h-2.5 rounded-full bg-success-500" />
-              </div>
-              <div className="bg-white rounded-xl p-5">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+            {/* Quiz Card */}
+            <div className="rounded-3xl p-[2px] bg-gradient-to-br from-blue-500 via-violet-500 to-pink-500 shadow-2xl group hover:-translate-y-2 transition-all duration-500">
+              <div className="bg-white rounded-[22px] p-6 h-full">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center">
                     <Icon name="quiz" className="text-red-500" size={22} filled />
                   </div>
                   <div>
-                    <h3 className="font-bold text-surface-900 text-sm">اختبار: إشارات الخطر</h3>
-                    <p className="text-xs text-surface-400">Segnali di pericolo</p>
+                    <h3 className="font-bold text-surface-900 text-sm">اختبار يومي</h3>
+                    <p className="text-xs text-surface-400">سؤال ١ من ٤٠</p>
                   </div>
+                  <span className="mr-auto bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-lg">85%</span>
                 </div>
-                <div className="bg-surface-50 rounded-lg p-3 mb-3">
-                  <p className="text-sm font-semibold text-surface-800">إشارات الخطر لها شكل مثلث بحافة حمراء</p>
-                  <p className="text-xs text-surface-400 mt-1" dir="ltr">I segnali di pericolo hanno forma triangolare</p>
+                <div className="bg-surface-50 rounded-2xl p-4 mb-4 border border-surface-100">
+                  <p className="text-sm font-semibold text-surface-800 leading-relaxed">إشارات الخطر لها شكل مثلث بحافة حمراء</p>
+                  <p className="text-xs text-surface-400 mt-1.5" dir="ltr">I segnali di pericolo sono triangolari</p>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="p-3 rounded-lg border-2 border-success-400 bg-success-50 text-center">
-                    <Icon name="check_circle" size={24} className="text-success-500 mx-auto mb-1" filled />
-                    <span className="text-xs font-bold text-success-600">صحيح ✓</span>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3.5 rounded-xl border-2 border-green-400 bg-green-50 text-center">
+                    <Icon name="check_circle" size={24} className="text-green-500 mx-auto mb-1" filled />
+                    <span className="text-xs font-bold text-green-600">صحيح ✓</span>
                   </div>
-                  <div className="p-3 rounded-lg border-2 border-surface-200 text-center opacity-50">
+                  <div className="p-3.5 rounded-xl border-2 border-surface-200 text-center opacity-50">
                     <Icon name="cancel" size={24} className="text-surface-300 mx-auto mb-1" />
                     <span className="text-xs font-bold text-surface-400">خطأ</span>
                   </div>
@@ -307,67 +400,74 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
               </div>
             </div>
 
-            {/* Preview Card 2 - Sections */}
-            <div className="bg-gradient-to-br from-surface-800 to-surface-900 rounded-2xl p-4 shadow-2xl">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-2.5 h-2.5 rounded-full bg-danger-500" />
-                <div className="w-2.5 h-2.5 rounded-full bg-warning-500" />
-                <div className="w-2.5 h-2.5 rounded-full bg-success-500" />
-              </div>
-              <div className="bg-white rounded-xl p-5">
-                <h3 className="font-bold text-surface-900 mb-4">الأقسام الدراسية</h3>
-                {[
-                  { icon: 'warning', name: 'إشارات الخطر', color: '#ef4444', pct: 80 },
-                  { icon: 'block', name: 'إشارات المنع', color: '#dc2626', pct: 60 },
-                  { icon: 'arrow_circle_up', name: 'إشارات الإلزام', color: '#2563eb', pct: 40 },
-                  { icon: 'speed', name: 'حدود السرعة', color: '#8b5cf6', pct: 20 },
-                ].map((s, i) => (
-                  <div key={i} className="flex items-center gap-3 p-2 mb-2 rounded-lg hover:bg-surface-50">
-                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: s.color + '15' }}>
-                      <Icon name={s.icon} size={18} style={{ color: s.color }} filled />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-surface-800">{s.name}</p>
-                      <div className="w-full bg-surface-100 rounded-full h-1.5 mt-1">
-                        <div className="bg-primary-500 rounded-full h-1.5" style={{ width: `${s.pct}%` }} />
-                      </div>
-                    </div>
-                    <span className="text-xs text-surface-400">{s.pct}%</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Preview Card 3 - Stats */}
-            <div className="bg-gradient-to-br from-surface-800 to-surface-900 rounded-2xl p-4 shadow-2xl">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-2.5 h-2.5 rounded-full bg-danger-500" />
-                <div className="w-2.5 h-2.5 rounded-full bg-warning-500" />
-                <div className="w-2.5 h-2.5 rounded-full bg-success-500" />
-              </div>
-              <div className="bg-white rounded-xl p-5">
-                <h3 className="font-bold text-surface-900 mb-4">تتبع تقدمك</h3>
-                <div className="flex items-center justify-center mb-4">
-                  <div className="relative w-28 h-28">
-                    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="42" fill="none" stroke="#e2e8f0" strokeWidth="8" />
-                      <circle cx="50" cy="50" r="42" fill="none" stroke="#22c55e" strokeWidth="8" strokeLinecap="round" strokeDasharray="198 66" />
+            {/* Progress Card */}
+            <div className="rounded-3xl p-[2px] bg-gradient-to-br from-green-400 to-primary-600 shadow-2xl group hover:-translate-y-2 transition-all duration-500">
+              <div className="bg-white rounded-[22px] p-6 h-full">
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="font-bold text-surface-900">تقدمك</h3>
+                  <span className="text-xs bg-green-50 text-green-600 border border-green-200 px-2.5 py-1 rounded-lg font-semibold">جاهز ✓</span>
+                </div>
+                <div className="flex items-center justify-center mb-5">
+                  <div className="relative w-32 h-32">
+                    <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
+                      <circle cx="60" cy="60" r="50" fill="none" stroke="#f1f5f9" strokeWidth="10" />
+                      <circle cx="60" cy="60" r="50" fill="none" strokeWidth="10" strokeLinecap="round"
+                        stroke="url(#pgrad)"
+                        strokeDasharray={`${2 * Math.PI * 50 * 0.78} ${2 * Math.PI * 50}`} />
+                      <defs>
+                        <linearGradient id="pgrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" stopColor="#3b82f6" />
+                          <stop offset="100%" stopColor="#8b5cf6" />
+                        </linearGradient>
+                      </defs>
                     </svg>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-2xl font-black text-success-500">75%</span>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-3xl font-black text-surface-900">78%</span>
+                      <span className="text-[10px] text-surface-400">جاهزية</span>
                     </div>
                   </div>
                 </div>
-                <p className="text-center text-sm text-surface-500 mb-3">جاهزية الامتحان</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="bg-blue-50 rounded-lg p-2 text-center">
-                    <p className="text-lg font-bold text-blue-600">12</p>
-                    <p className="text-xs text-blue-400">اختبار</p>
-                  </div>
-                  <div className="bg-orange-50 rounded-lg p-2 text-center">
-                    <p className="text-lg font-bold text-orange-600">5</p>
-                    <p className="text-xs text-orange-400">أيام متتالية</p>
-                  </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { val: '12', lbl: 'اختبار', bg: 'bg-blue-50', tc: 'text-blue-600' },
+                    { val: '7', lbl: 'أيام', bg: 'bg-orange-50', tc: 'text-orange-600' },
+                    { val: '94%', lbl: 'دقة', bg: 'bg-green-50', tc: 'text-green-600' },
+                  ].map((x, j) => (
+                    <div key={j} className={cn('rounded-xl p-2.5 text-center', x.bg)}>
+                      <p className={cn('text-lg font-bold', x.tc)}>{x.val}</p>
+                      <p className="text-[10px] text-surface-500">{x.lbl}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Sections Card */}
+            <div className="rounded-3xl p-[2px] bg-gradient-to-br from-amber-400 to-orange-500 shadow-2xl group hover:-translate-y-2 transition-all duration-500">
+              <div className="bg-white rounded-[22px] p-6 h-full">
+                <h3 className="font-bold text-surface-900 mb-5">الأقسام الدراسية</h3>
+                <div className="space-y-3">
+                  {[
+                    { icon: 'warning', name: 'إشارات الخطر', pct: 85, color: '#ef4444' },
+                    { icon: 'block', name: 'إشارات المنع', pct: 62, color: '#dc2626' },
+                    { icon: 'speed', name: 'حدود السرعة', pct: 48, color: '#8b5cf6' },
+                    { icon: 'directions', name: 'قواعد المرور', pct: 31, color: '#3b82f6' },
+                  ].map((s, j) => (
+                    <div key={j} className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: s.color + '18' }}>
+                        <Icon name={s.icon} size={17} style={{ color: s.color }} filled />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-xs font-semibold text-surface-700">{s.name}</span>
+                          <span className="text-xs text-surface-400">{s.pct}%</span>
+                        </div>
+                        <div className="w-full bg-surface-100 rounded-full h-1.5">
+                          <div className="h-1.5 rounded-full transition-all duration-700" style={{ width: `${s.pct}%`, backgroundColor: s.color }} />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -375,39 +475,44 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section id="testimonials" className="py-24 sm:py-32 bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 relative overflow-hidden" data-animate>
-        <div className="absolute top-0 left-0 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary-400/10 rounded-full blur-3xl" />
+      {/* ═══ TESTIMONIALS ═══ */}
+      <section id="testimonials" className="py-24 relative overflow-hidden" data-animate>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-primary-900 to-slate-900" />
+        <div className="absolute inset-0 opacity-15"
+          style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, #3b82f6 0%, transparent 50%), radial-gradient(circle at 80% 80%, #8b5cf6 0%, transparent 50%)' }} />
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={cn('text-center mb-16 transition-all duration-700', isVisible('testimonials') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
-            <div className="inline-flex items-center gap-2 bg-white/10 text-white px-4 py-1.5 rounded-full text-sm font-semibold mb-4 backdrop-blur-sm border border-white/20">
-              <Icon name="favorite" size={16} filled />
+            <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white border border-white/20 px-5 py-2 rounded-full text-sm font-semibold mb-5">
+              <Icon name="favorite" size={16} filled className="text-red-400" />
               آراء المستخدمين
-            </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mt-3">نجحوا بفضل Patente Hub</h2>
-            <p className="text-primary-200 mt-4 max-w-xl mx-auto text-lg">قصص نجاح حقيقية من مستخدمين عرب في إيطاليا</p>
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-black text-white mt-2">نجحوا بفضل Patente Hub</h2>
+            <p className="text-white/45 mt-4 max-w-xl mx-auto text-lg">قصص نجاح حقيقية من مستخدمين عرب في إيطاليا</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {testimonials.map((t, i) => (
-              <div key={i} className={cn(
-                'bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-500',
-                isVisible('testimonials') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-              )} style={{ transitionDelay: `${i * 100}ms` }}>
-                <div className="flex gap-1 mb-4">
+              <div key={i}
+                className={cn(
+                  'relative bg-white/6 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/10 hover:border-white/18 transition-all duration-500 hover:-translate-y-1',
+                  isVisible('testimonials') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                )}
+                style={{ transitionDelay: `${i * 80}ms` }}>
+                <div className="text-6xl text-white/8 font-black leading-none mb-2 select-none">"</div>
+                <div className="flex gap-1 mb-3">
                   {Array.from({ length: t.rating }).map((_, j) => (
-                    <Icon key={j} name="star" size={18} className="text-yellow-400" filled />
+                    <Icon key={j} name="star" size={14} className="text-amber-400" filled />
                   ))}
                 </div>
-                <p className="text-white/90 mb-5 leading-relaxed text-sm">&ldquo;{t.text}&rdquo;</p>
+                <p className="text-white/75 text-sm leading-relaxed mb-5">{t.text}</p>
                 <div className="flex items-center gap-3 pt-4 border-t border-white/10">
-                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                    <span className="font-bold text-white text-sm">{t.name.charAt(0)}</span>
+                  <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-violet-500 rounded-full flex items-center justify-center shrink-0">
+                    <span className="font-bold text-white text-sm">{t.initials}</span>
                   </div>
                   <div>
                     <p className="text-white font-semibold text-sm">{t.name}</p>
-                    <p className="text-primary-200 text-xs">{t.role} — {t.city}</p>
+                    <p className="text-white/35 text-xs">{t.role} — {t.city}</p>
                   </div>
                 </div>
               </div>
@@ -416,38 +521,40 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
         </div>
       </section>
 
-      {/* FAQ */}
-      <section id="faq" className="py-24 sm:py-32" data-animate>
+      {/* ═══ FAQ ═══ */}
+      <section id="faq" className="py-24 bg-white" data-animate>
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={cn('text-center mb-16 transition-all duration-700', isVisible('faq') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
-            <div className="inline-flex items-center gap-2 bg-orange-50 text-orange-600 px-4 py-1.5 rounded-full text-sm font-semibold mb-4">
+            <span className="inline-flex items-center gap-2 bg-orange-50 text-orange-700 border border-orange-100 px-5 py-2 rounded-full text-sm font-semibold mb-5">
               <Icon name="help" size={16} filled />
-              أسئلة شائعة
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-black text-surface-900 mt-3">هل لديك سؤال؟</h2>
-            <p className="text-surface-500 mt-3">إليك الإجابات على الأسئلة الأكثر شيوعاً</p>
+              الأسئلة الشائعة
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-black text-surface-900 mt-2">لديك سؤال؟</h2>
+            <p className="text-surface-400 mt-3">إليك الإجابات على الأسئلة الأكثر شيوعاً</p>
           </div>
 
           <div className="space-y-3">
             {faqs.map((faq, i) => (
-              <div key={i} className={cn(
-                'bg-white rounded-2xl border border-surface-100 overflow-hidden transition-all duration-500',
-                faqOpen === i ? 'shadow-lg shadow-primary-50 border-primary-200' : 'hover:border-surface-200',
-                isVisible('faq') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-              )} style={{ transitionDelay: `${i * 60}ms` }}>
+              <div key={i}
+                className={cn(
+                  'rounded-2xl border overflow-hidden transition-all duration-400',
+                  faqOpen === i ? 'border-primary-200 shadow-lg shadow-primary-50/50 bg-primary-50/20' : 'border-surface-100 bg-white hover:border-surface-200',
+                  isVisible('faq') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                )}
+                style={{ transitionDelay: `${i * 55}ms` }}>
                 <button
-                  className="w-full flex items-center justify-between p-5 sm:p-6 text-right hover:bg-surface-50 transition-colors"
-                  onClick={() => setFaqOpen(faqOpen === i ? null : i)}
-                >
-                  <span className="font-bold text-surface-800 text-sm sm:text-base">{faq.q}</span>
-                  <div className={cn('w-8 h-8 rounded-full flex items-center justify-center shrink-0 mr-3 transition-all', faqOpen === i ? 'bg-primary-500 rotate-180' : 'bg-surface-100')}>
-                    <Icon name="expand_more" size={20} className={faqOpen === i ? 'text-white' : 'text-surface-400'} />
+                  className="w-full flex items-center justify-between p-5 sm:p-6 text-right gap-3"
+                  onClick={() => setFaqOpen(faqOpen === i ? null : i)}>
+                  <span className="font-bold text-surface-800 text-sm sm:text-base text-right flex-1">{faq.q}</span>
+                  <div className={cn('w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300',
+                    faqOpen === i ? 'bg-primary-500 rotate-45' : 'bg-surface-100')}>
+                    <Icon name="add" size={18} className={faqOpen === i ? 'text-white' : 'text-surface-400'} />
                   </div>
                 </button>
-                <div className={cn('overflow-hidden transition-all duration-300', faqOpen === i ? 'max-h-96' : 'max-h-0')}>
-                  <div className="px-5 sm:px-6 pb-5 sm:pb-6 text-surface-500 leading-relaxed border-t border-surface-100 pt-4">
+                <div className={cn('overflow-hidden transition-all duration-300', faqOpen === i ? 'max-h-60' : 'max-h-0')}>
+                  <p className="px-5 sm:px-6 pb-5 sm:pb-6 text-surface-500 leading-relaxed text-sm border-t border-surface-100 pt-4">
                     {faq.a}
-                  </div>
+                  </p>
                 </div>
               </div>
             ))}
@@ -455,79 +562,97 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 sm:py-32 bg-gradient-to-br from-surface-900 via-surface-800 to-surface-900 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+      {/* ═══ CTA ═══ */}
+      <section className="py-28 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-600 via-primary-700 to-violet-700" />
+        <div className="absolute inset-0 opacity-25"
+          style={{ backgroundImage: 'radial-gradient(ellipse 100% 80% at 50% -10%, rgba(255,255,255,0.25) 0%, transparent 55%)' }} />
+        <div className="absolute inset-0 opacity-[0.03]"
+          style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)', backgroundSize: '44px 44px' }} />
+
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="w-20 h-20 mx-auto bg-gradient-to-br from-primary-500 to-primary-600 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-primary-500/30">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-white/15 backdrop-blur-sm rounded-3xl mb-8 shadow-2xl border border-white/20">
             <Icon name="directions_car" size={40} className="text-white" filled />
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-6">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
             جاهز لبدء رحلتك؟
           </h2>
-          <p className="text-surface-400 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
-            انضم لآلاف العرب الذين نجحوا في امتحان الباتينتي.
-            <br />
-            سجّل مجاناً الآن وابدأ التعلم فوراً!
+          <p className="text-white/65 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
+            انضم لآلاف العرب الذين نجحوا في امتحان الباتينتي. سجّل مجاناً وابدأ فوراً!
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" onClick={() => onNavigate('register')} icon={<Icon name="rocket_launch" size={22} />} className="text-lg px-8">
+            <button onClick={() => onNavigate('register')}
+              className="group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-10 py-4 bg-white text-primary-700 font-bold text-lg rounded-2xl shadow-2xl hover:shadow-white/20 transition-all duration-300 hover:-translate-y-1">
+              <Icon name="rocket_launch" size={22} />
               سجّل مجاناً الآن
-            </Button>
-            <Button size="lg" variant="outline" onClick={() => onNavigate('login')} className="!border-white/30 !text-white hover:!bg-white/10">
+            </button>
+            <button onClick={() => onNavigate('login')}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-10 py-4 border-2 border-white/30 text-white font-bold text-lg rounded-2xl hover:bg-white/10 hover:border-white/50 transition-all duration-300">
               لديك حساب؟ سجّل دخول
-            </Button>
+            </button>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-4 mt-10">
+            {['مجاني 100%', 'بالعربية والإيطالية', 'أسئلة حقيقية', 'إشارات مرورية'].map((b, i) => (
+              <span key={i} className="inline-flex items-center gap-1.5 bg-white/10 border border-white/15 text-white/70 text-sm px-4 py-2 rounded-full">
+                <Icon name="check_circle" size={14} className="text-green-400" filled />
+                {b}
+              </span>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-surface-900 border-t border-surface-800 pt-10 pb-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-start justify-between gap-8 mb-8">
-            {/* Brand */}
-            <div className="flex items-center gap-3 shrink-0">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
-                <Icon name="directions_car" size={20} className="text-white" filled />
+      {/* ═══ FOOTER ═══ */}
+      <footer className="border-t border-white/5" style={{ backgroundColor: '#06101e' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="flex flex-col lg:flex-row items-start justify-between gap-10 mb-10">
+            <div className="max-w-xs">
+              <div className="flex items-center gap-2.5 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
+                  <Icon name="directions_car" size={20} className="text-white" filled />
+                </div>
+                <span className="text-white font-black text-xl">Patente Hub</span>
               </div>
-              <div>
-                <span className="text-white font-bold text-lg">Patente Hub</span>
-                <p className="text-surface-500 text-xs">تطبيق تعليم رخصة القيادة الإيطالية</p>
-              </div>
+              <p className="text-slate-500 text-sm leading-relaxed">
+                التطبيق الأول والأفضل لمساعدة العرب في إيطاليا على اجتياز امتحان رخصة القيادة.
+              </p>
             </div>
 
-            {/* Navigation columns */}
-            <div className="flex flex-wrap gap-10 text-sm">
-              {/* App links */}
+            <div className="flex flex-wrap gap-12 text-sm">
               <div>
-                <p className="text-surface-400 font-semibold mb-3 text-xs uppercase tracking-wider">التطبيق</p>
-                <div className="space-y-2">
-                  <a href="#features" className="block text-surface-500 hover:text-white transition-colors">المميزات</a>
-                  <a href="#testimonials" className="block text-surface-500 hover:text-white transition-colors">آراء المستخدمين</a>
-                  <a href="#faq" className="block text-surface-500 hover:text-white transition-colors">الأسئلة الشائعة</a>
+                <p className="text-slate-400 font-semibold mb-4 text-xs uppercase tracking-widest">التطبيق</p>
+                <div className="space-y-3">
+                  <a href="#features" className="block text-slate-500 hover:text-white transition-colors">المميزات</a>
+                  <a href="#testimonials" className="block text-slate-500 hover:text-white transition-colors">آراء المستخدمين</a>
+                  <a href="#faq" className="block text-slate-500 hover:text-white transition-colors">الأسئلة الشائعة</a>
                 </div>
               </div>
-              {/* Legal links */}
               <div>
-                <p className="text-surface-400 font-semibold mb-3 text-xs uppercase tracking-wider">قانوني</p>
-                <div className="space-y-2">
-                  <button onClick={() => onNavigate('privacy-policy')} className="block text-surface-500 hover:text-white transition-colors text-right w-full">سياسة الخصوصية</button>
-                  <button onClick={() => onNavigate('terms-of-service')} className="block text-surface-500 hover:text-white transition-colors text-right w-full">شروط الاستخدام</button>
-                  <button onClick={() => onNavigate('contact')} className="block text-surface-500 hover:text-white transition-colors text-right w-full">تواصل معنا</button>
+                <p className="text-slate-400 font-semibold mb-4 text-xs uppercase tracking-widest">الحساب</p>
+                <div className="space-y-3">
+                  <button onClick={() => onNavigate('register')} className="block text-slate-500 hover:text-white transition-colors text-right w-full">إنشاء حساب</button>
+                  <button onClick={() => onNavigate('login')} className="block text-slate-500 hover:text-white transition-colors text-right w-full">تسجيل الدخول</button>
+                </div>
+              </div>
+              <div>
+                <p className="text-slate-400 font-semibold mb-4 text-xs uppercase tracking-widest">قانوني</p>
+                <div className="space-y-3">
+                  <button onClick={() => onNavigate('privacy-policy')} className="block text-slate-500 hover:text-white transition-colors text-right w-full">سياسة الخصوصية</button>
+                  <button onClick={() => onNavigate('terms-of-service')} className="block text-slate-500 hover:text-white transition-colors text-right w-full">شروط الاستخدام</button>
+                  <button onClick={() => onNavigate('contact')} className="block text-slate-500 hover:text-white transition-colors text-right w-full">تواصل معنا</button>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Bottom bar */}
-          <div className="border-t border-surface-800 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-surface-600 text-xs">© {new Date().getFullYear()} Patente Hub. جميع الحقوق محفوظة.</p>
-            <div className="flex items-center gap-4 text-xs text-surface-600">
-              <button onClick={() => onNavigate('privacy-policy')} className="hover:text-surface-400 transition-colors">الخصوصية</button>
-              <span>·</span>
-              <button onClick={() => onNavigate('terms-of-service')} className="hover:text-surface-400 transition-colors">الشروط</button>
-              <span>·</span>
-              <button onClick={() => onNavigate('contact')} className="hover:text-surface-400 transition-colors">الاتصال</button>
+          <div className="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-slate-600 text-xs">© {new Date().getFullYear()} Patente Hub. جميع الحقوق محفوظة.</p>
+            <div className="flex items-center gap-5 text-xs text-slate-600">
+              <button onClick={() => onNavigate('privacy-policy')} className="hover:text-slate-400 transition-colors">الخصوصية</button>
+              <span className="text-slate-800">·</span>
+              <button onClick={() => onNavigate('terms-of-service')} className="hover:text-slate-400 transition-colors">الشروط</button>
+              <span className="text-slate-800">·</span>
+              <button onClick={() => onNavigate('contact')} className="hover:text-slate-400 transition-colors">الاتصال</button>
             </div>
           </div>
         </div>
