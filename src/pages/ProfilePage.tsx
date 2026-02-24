@@ -41,9 +41,10 @@ const COUNTRY_CODES = [
 ];
 
 export function ProfilePage({ onNavigate }: ProfilePageProps) {
-  const { user, logout, updateSettings, updateProfile, mistakes, loadMistakes } = useAuthStore();
-  
+  const { user, logout, updateSettings, updateProfile, mistakes, loadMistakes, posts } = useAuthStore();
+
   const [showEditPage, setShowEditPage] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
   const [editForm, setEditForm] = useState({
     firstName: '', lastName: '', username: '', bio: '',
     email: '', phone: '', phoneCode: '+39',
@@ -69,6 +70,13 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
   const editFileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { loadMistakes(); }, [loadMistakes]);
+
+  useEffect(() => {
+    if (!user) return;
+    getDB().then(db => db.getAll('users')).then(all => {
+      setFollowerCount(all.filter(u => u.following?.includes(user.id)).length);
+    });
+  }, [user?.id]);
 
   if (!user) return null;
 
@@ -514,21 +522,27 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-4 gap-2 mt-4">
-          {[
-            { label: 'اختبارات', value: String(progress.totalQuizzes), icon: 'quiz', color: 'text-blue-500' },
-            { label: 'الدقة', value: `${accuracy}%`, icon: 'check_circle', color: 'text-green-500' },
-            { label: 'السلسلة', value: `${progress.currentStreak}`, icon: 'local_fire_department', color: 'text-orange-500' },
-            { label: 'الجاهزية', value: `${progress.examReadiness}%`, icon: 'verified', color: 'text-purple-500' },
-          ].map((stat, i) => (
-            <div key={i} className="bg-surface-50 rounded-xl p-2.5 text-center">
-              <Icon name={stat.icon} size={18} className={cn(stat.color, 'mb-0.5')} filled />
-              <p className="text-base font-bold text-surface-900">{stat.value}</p>
-              <p className="text-[10px] text-surface-500">{stat.label}</p>
+        {/* Social Stats */}
+        {(() => {
+          const myPosts = posts.filter(p => p.userId === user.id && p.type === 'post').length;
+          const myQuizzes = posts.filter(p => p.userId === user.id && p.type === 'quiz').length;
+          const following = user.following?.length || 0;
+          return (
+            <div className="grid grid-cols-4 gap-1.5 mt-4 border-t border-surface-50 pt-4">
+              {[
+                { label: 'منشور', value: myPosts },
+                { label: 'سؤال', value: myQuizzes },
+                { label: 'متابِع', value: followerCount },
+                { label: 'يتابِع', value: following },
+              ].map((s, i) => (
+                <div key={i} className="text-center">
+                  <p className="text-lg font-black text-surface-900 leading-tight">{s.value}</p>
+                  <p className="text-[11px] text-surface-400 font-medium">{s.label}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          );
+        })()}
       </div>
 
       {/* Progress & Exam Readiness */}
@@ -537,33 +551,49 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
           <Icon name="trending_up" size={20} className="text-primary-500" /> التقدم والإحصائيات
         </h2>
 
-        {/* Exam Readiness - Hero Card */}
-        <div className={cn('rounded-2xl p-4 mb-4 text-white', progress.examReadiness >= 70 ? 'bg-gradient-to-br from-success-500 to-success-700' : progress.examReadiness >= 40 ? 'bg-gradient-to-br from-warning-500 to-orange-600' : 'bg-gradient-to-br from-primary-500 to-primary-700')}>
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium opacity-80 mb-1">جاهزية الامتحان</p>
-              <p className="text-4xl font-black leading-none mb-1">{progress.examReadiness}%</p>
-              <p className="text-xs opacity-75">
-                {progress.examReadiness >= 70 ? '✓ أنت جاهز للامتحان' : progress.examReadiness >= 40 ? 'قريب من الجاهزية' : 'تحتاج المزيد من التدريب'}
-              </p>
-            </div>
-            <div className="relative w-20 h-20 shrink-0">
-              <svg viewBox="0 0 80 80" className="w-20 h-20 -rotate-90">
-                <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="8" />
-                <circle cx="40" cy="40" r="30" fill="none" stroke="white" strokeWidth="8"
-                  strokeDasharray={`${2 * Math.PI * 30}`}
-                  strokeDashoffset={`${2 * Math.PI * 30 * (1 - progress.examReadiness / 100)}`}
-                  strokeLinecap="round" />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Icon name="verified" size={22} className="text-white" filled />
+        {/* Exam Readiness - Redesigned */}
+        {(() => {
+          const readinessColor = progress.examReadiness >= 70 ? '#22c55e' : progress.examReadiness >= 40 ? '#f59e0b' : '#6366f1';
+          const readinessBg = progress.examReadiness >= 70 ? 'bg-success-50 text-success-700 border-success-200' : progress.examReadiness >= 40 ? 'bg-warning-50 text-warning-700 border-warning-200' : 'bg-primary-50 text-primary-700 border-primary-200';
+          const readinessLabel = progress.examReadiness >= 70 ? 'جاهز للامتحان ✓' : progress.examReadiness >= 40 ? 'قريب من الجاهزية' : 'تحتاج المزيد من التدريب';
+          const r = 40;
+          const circumference = 2 * Math.PI * r;
+          return (
+            <div className="bg-surface-50 rounded-2xl p-5 mb-4">
+              <div className="flex items-center gap-5">
+                {/* Circular ring with % inside */}
+                <div className="relative shrink-0" style={{ width: 100, height: 100 }}>
+                  <svg width="100" height="100" viewBox="0 0 100 100" className="-rotate-90">
+                    <circle cx="50" cy="50" r={r} fill="none" stroke="#e5e7eb" strokeWidth="9" />
+                    <circle cx="50" cy="50" r={r} fill="none"
+                      stroke={readinessColor} strokeWidth="9"
+                      strokeDasharray={circumference}
+                      strokeDashoffset={circumference * (1 - progress.examReadiness / 100)}
+                      strokeLinecap="round"
+                      style={{ transition: 'stroke-dashoffset 0.7s ease' }} />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-xl font-black text-surface-900 leading-none">{progress.examReadiness}%</span>
+                  </div>
+                </div>
+                {/* Info panel */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <Icon name="verified" size={17} style={{ color: readinessColor }} filled />
+                    <span className="text-sm font-bold text-surface-900">جاهزية الامتحان</span>
+                  </div>
+                  <span className={cn('inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full border mb-3', readinessBg)}>
+                    {readinessLabel}
+                  </span>
+                  <div className="w-full bg-surface-200 rounded-full h-2">
+                    <div className="h-2 rounded-full transition-all duration-700" style={{ width: `${progress.examReadiness}%`, backgroundColor: readinessColor }} />
+                  </div>
+                  <p className="text-[10px] text-surface-400 mt-1.5">{progress.examReadiness} من 100 نقطة</p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="mt-3 bg-white/25 rounded-full h-2">
-            <div className="bg-white rounded-full h-2 transition-all duration-700" style={{ width: `${progress.examReadiness}%` }} />
-          </div>
-        </div>
+          );
+        })()}
 
         {/* Answer Distribution */}
         {totalAnswers > 0 ? (
