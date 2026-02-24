@@ -666,37 +666,6 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
         )}
       </div>
 
-      {/* Legal & Support */}
-      <div className="bg-white rounded-xl border border-surface-100">
-        <div className="px-5 py-3 border-b border-surface-50">
-          <h2 className="text-sm font-bold text-surface-700 flex items-center gap-2">
-            <Icon name="info" size={16} className="text-surface-400" />
-            قانوني ودعم
-          </h2>
-        </div>
-        <div className="divide-y divide-surface-50">
-          {[
-            { label: 'سياسة الخصوصية', icon: 'privacy_tip', page: 'privacy-policy', desc: 'كيفية حماية بياناتك' },
-            { label: 'شروط الاستخدام', icon: 'gavel', page: 'terms-of-service', desc: 'قواعد واتفاقية الاستخدام' },
-            { label: 'تواصل معنا', icon: 'contact_support', page: 'contact', desc: 'الدعم والاستفسارات' },
-          ].map(item => (
-            <button
-              key={item.page}
-              className="w-full flex items-center gap-3 px-5 py-3 hover:bg-surface-50 transition-colors text-right"
-              onClick={() => onNavigate(item.page)}
-            >
-              <div className="w-8 h-8 bg-surface-50 rounded-lg flex items-center justify-center shrink-0">
-                <Icon name={item.icon} size={16} className="text-surface-400" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-surface-800">{item.label}</p>
-                <p className="text-xs text-surface-400">{item.desc}</p>
-              </div>
-              <Icon name="chevron_left" size={18} className="text-surface-300" />
-            </button>
-          ))}
-        </div>
-      </div>
 
       {/* Logout */}
       <Button variant="danger" fullWidth onClick={handleLogout} icon={<Icon name="logout" size={20} />}>تسجيل الخروج</Button>

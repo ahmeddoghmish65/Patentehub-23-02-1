@@ -9,6 +9,7 @@ import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
 import * as api from '@/db/api';
 import type { PostSortMode } from '@/db/api';
 import { apiCreateCommunityNotif, apiGetTrendingHashtags, apiSuggestHashtags } from '@/db/api';
+import { extractHashtags, indexHashtags } from '@/services/hashtagService';
 
 function isReply(c: Comment): boolean { return !!c.parentId || c.content.startsWith('REPLY_TO:'); }
 function getParentId(c: Comment): string | null {
@@ -126,6 +127,9 @@ export function CommunityPage() {
   // Trending hashtags panel
   const [showTrending, setShowTrending] = useState(false);
   const trendingRef = useRef<HTMLDivElement>(null);
+  // Search
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   // Mention autocomplete
   const [mentionSuggestions, setMentionSuggestions] = useState<{ id: string; name: string; username: string }[]>([]);
   const [allUsers, setAllUsers] = useState<{ id: string; name: string; username: string; avatar: string }[]>([]);
@@ -314,16 +318,19 @@ export function CommunityPage() {
     if (postType === 'quiz') {
       const db = await getDB();
       const postId = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36);
+      const quizHashtags = extractHashtags(quizQuestion + ' ' + newPost);
       const quizPost: Post = {
         id: postId, userId: user!.id, userName: user!.name, userAvatar: user!.avatar || '',
         content: newPost.trim() || '', image: '', type: 'quiz',
         quizQuestion: quizQuestion.trim(), quizAnswer: quizAnswer,
         quizStats: { trueCount: 0, falseCount: 0 },
+        hashtags: quizHashtags,
         pinned: false,
         likesCount: 0, commentsCount: 0,
         createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
       };
       await db.put('posts', quizPost);
+      indexHashtags(quizHashtags).catch(() => {});
       await sendMentionNotifs(quizQuestion, postId);
       setQuizQuestion(''); setQuizAnswer(true); setNewPost(''); setPostType('post');
       await loadPosts();
@@ -550,10 +557,18 @@ export function CommunityPage() {
   // Posts from store are already sorted by the API (hot/new/viral) and hashtag-filtered
   const sortedPosts = posts;
 
-  // Filter posts by tab
-  const filteredPosts = activeTab === 'following'
+  // Filter posts by tab then by search query
+  const tabPosts = activeTab === 'following'
     ? sortedPosts.filter(p => following.includes(p.userId) || p.userId === user?.id)
     : sortedPosts;
+  const filteredPosts = searchQuery.trim()
+    ? tabPosts.filter(p => {
+        const q = searchQuery.toLowerCase();
+        return (p.content?.toLowerCase().includes(q)) ||
+               (p.quizQuestion?.toLowerCase().includes(q)) ||
+               (p.userName?.toLowerCase().includes(q));
+      })
+    : tabPosts;
 
   const UserAvatar = ({ avatar, name, userId, size = 'md', onClick }: { avatar?: string; name: string; userId?: string; size?: 'sm' | 'md' | 'lg'; onClick?: () => void }) => {
     // Always use the freshest avatar from allUsers
@@ -992,8 +1007,15 @@ export function CommunityPage() {
           <h1 className="text-2xl font-bold text-surface-900 mb-1">المجتمع</h1>
           <p className="text-surface-500 text-sm">شارك تجربتك مع الآخرين</p>
         </div>
-        {/* Bookmarks + Notifications */}
+        {/* Search + Bookmarks + Trending + Notifications */}
         <div className="flex items-center gap-2">
+          {/* Search button */}
+          <button
+            className={cn('w-10 h-10 rounded-xl flex items-center justify-center hover:bg-surface-200 transition-colors', showSearch ? 'bg-primary-100' : 'bg-surface-100')}
+            onClick={() => { setShowSearch(s => !s); if (showSearch) setSearchQuery(''); setShowBookmarks(false); setShowTrending(false); setShowNotifs(false); }}
+            title="بحث">
+            <Icon name="search" size={22} className={showSearch ? 'text-primary-600' : 'text-surface-600'} />
+          </button>
           {/* Bookmarks */}
           <div className="relative" ref={bookmarkRef}>
             <button
@@ -1190,6 +1212,34 @@ export function CommunityPage() {
         </div>
         </div> {/* end buttons wrapper */}
       </div>
+
+      {/* Search bar — expands when search button is active */}
+      {showSearch && (
+        <div className="mb-4">
+          <div className="relative">
+            <Icon name="search" size={18} className="absolute top-1/2 -translate-y-1/2 right-3 text-surface-400 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="ابحث في المجتمع..."
+              className="w-full bg-white border border-surface-200 rounded-xl pr-10 pl-10 py-3 text-sm focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
+              dir="auto"
+              autoFocus
+            />
+            {searchQuery && (
+              <button className="absolute top-1/2 -translate-y-1/2 left-3 text-surface-400 hover:text-surface-600" onClick={() => setSearchQuery('')}>
+                <Icon name="close" size={18} />
+              </button>
+            )}
+          </div>
+          {searchQuery && (
+            <p className="text-xs text-surface-400 mt-1.5 pr-1">
+              {filteredPosts.length === 0 ? 'لا توجد نتائج' : `${filteredPosts.length} نتيجة`}
+            </p>
+          )}
+        </div>
+      )}
 
       {reportSuccess && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-success-500 text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-2">

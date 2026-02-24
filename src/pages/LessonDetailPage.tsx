@@ -39,7 +39,7 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
       </button>
 
       <div className="bg-white rounded-2xl p-6 border border-surface-100 mb-6">
-        <div className="flex items-start gap-4 mb-4">
+        <div className="flex items-start gap-4">
           <div className="w-14 h-14 rounded-xl flex items-center justify-center" style={{ backgroundColor: (section?.color || '#3b82f6') + '15' }}>
             <Icon name={section?.icon || 'school'} size={28} style={{ color: section?.color || '#3b82f6' }} filled />
           </div>

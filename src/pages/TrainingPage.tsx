@@ -252,9 +252,9 @@ export function TrainingPage({ onNavigate }: Props) {
               </div>
             ) : (
               <div className="text-center space-y-3">
-                <h3 className="text-lg font-bold text-surface-900">{item.nameAr}</h3>
-                <p className="text-base text-primary-500 font-medium" dir="ltr">{item.nameIt}</p>
-                <p className="text-sm text-surface-500">{item.descriptionAr}</p>
+                {(lang === 'ar' || lang === 'both') && <h3 className="text-lg font-bold text-surface-900">{item.nameAr}</h3>}
+                {(lang === 'it' || lang === 'both') && <p className="text-base text-primary-500 font-medium" dir="ltr">{item.nameIt}</p>}
+                {(lang === 'ar' || lang === 'both') && <p className="text-sm text-surface-500">{item.descriptionAr}</p>}
                 <div className="flex gap-2 justify-center pt-2">
                   <Button variant="secondary" onClick={() => handleNext(false)} className="!bg-danger-50 !text-danger-600">لم أعرف ✗</Button>
                   <Button onClick={() => handleNext(true)} className="!bg-success-500">عرفتها ✓</Button>
@@ -277,9 +277,9 @@ export function TrainingPage({ onNavigate }: Props) {
               </div>
             ) : (
               <div className="text-center space-y-3">
-                <h3 className="text-lg font-bold text-surface-900">{item.termAr}</h3>
-                <p className="text-sm text-surface-500">{item.definitionAr}</p>
-                <p className="text-xs text-surface-400" dir="ltr">{item.definitionIt}</p>
+                {(lang === 'ar' || lang === 'both') && <h3 className="text-lg font-bold text-surface-900">{item.termAr}</h3>}
+                {(lang === 'ar' || lang === 'both') && item.definitionAr && <p className="text-sm text-surface-500">{item.definitionAr}</p>}
+                {(lang === 'it' || lang === 'both') && item.definitionIt && <p className="text-xs text-surface-400" dir="ltr">{item.definitionIt}</p>}
                 <div className="flex gap-2 justify-center pt-2">
                   <Button variant="secondary" onClick={() => handleNext(false)} className="!bg-danger-50 !text-danger-600">لم أعرف ✗</Button>
                   <Button onClick={() => handleNext(true)} className="!bg-success-500">عرفتها ✓</Button>
