@@ -35,6 +35,10 @@ interface AppState {
   adminReports: Report[];
   adminLogs: AdminLog[];
   adminStats: { totalUsers: number; totalPosts: number; totalQuestions: number; totalSections: number; totalLessons: number; totalSigns: number; totalReports: number; activeToday: number } | null;
+  // Admin deleted items
+  deletedPosts: Post[];
+  deletedComments: (Comment & { postContent?: string })[];
+  deletedUsers: Omit<User, 'password'>[];
 
   // Auth actions
   register: (email: string, password: string, name: string, username?: string) => Promise<boolean>;
@@ -128,6 +132,15 @@ interface AppState {
   // Admin posts/comments
   adminDeletePost: (id: string) => Promise<boolean>;
   adminDeleteComment: (id: string) => Promise<boolean>;
+  loadDeletedPosts: () => Promise<void>;
+  loadDeletedComments: () => Promise<void>;
+  loadDeletedUsers: () => Promise<void>;
+  restorePost: (id: string) => Promise<boolean>;
+  permanentDeletePost: (id: string) => Promise<boolean>;
+  restoreComment: (id: string) => Promise<boolean>;
+  permanentDeleteComment: (id: string) => Promise<boolean>;
+  restoreUser: (id: string) => Promise<boolean>;
+  permanentDeleteUser: (id: string) => Promise<boolean>;
   updateReport: (id: string, status: 'reviewed' | 'dismissed') => Promise<boolean>;
 
   // Community notifications
@@ -164,6 +177,7 @@ export const useAuthStore = create<AppState>((set, get) => ({
   dictSections: [], dictEntries: [], posts: [],
   quizHistory: [], mistakes: [], notifications: [],
   adminUsers: [], adminReports: [], adminLogs: [], adminStats: null,
+  deletedPosts: [], deletedComments: [], deletedUsers: [],
   communityNotifs: [],
 
   // ============ AUTH ============
@@ -301,7 +315,7 @@ export const useAuthStore = create<AppState>((set, get) => ({
   loadAdminLogs: async () => { const { token } = get(); if (!token) return; const r = await api.apiAdminGetLogs(token); if (r.success && r.data) set({ adminLogs: r.data }); },
   loadAdminStats: async () => { const { token } = get(); if (!token) return; const r = await api.apiAdminGetStats(token); if (r.success && r.data) set({ adminStats: r.data }); },
   banUser: async (userId, banned) => { const { token } = get(); if (!token) return false; const r = await api.apiAdminBanUser(token, userId, banned); if (r.success) await get().loadAdminUsers(); return r.success; },
-  deleteUser: async (userId) => { const { token } = get(); if (!token) return false; const r = await api.apiAdminDeleteUser(token, userId); if (r.success) await get().loadAdminUsers(); return r.success; },
+  deleteUser: async (userId) => { const { token } = get(); if (!token) return false; const r = await api.apiAdminDeleteUser(token, userId); if (r.success) { await get().loadAdminUsers(); await get().loadDeletedUsers(); } return r.success; },
   seedData: async () => { const { token } = get(); if (!token) return false; const r = await api.apiSeedData(token); return r.success; },
 
   // ============ ADMIN CRUD ============
@@ -350,8 +364,17 @@ export const useAuthStore = create<AppState>((set, get) => ({
   exportData: async (storeName) => { const { token } = get(); if (!token) return []; const r = await api.apiExportData(token, storeName); return (r.data || []) as unknown[]; },
   importData: async (storeName, data) => { const { token } = get(); if (!token) return 0; const r = await api.apiImportData(token, storeName, data); return (r.data || 0) as number; },
 
-  adminDeletePost: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiDeletePost(token, id); if (r.success) await get().loadPosts(); return r.success; },
-  adminDeleteComment: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiDeleteComment(token, id); return r.success; },
+  adminDeletePost: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiAdminSoftDeletePost(token, id); if (r.success) { await get().loadPosts(); await get().loadDeletedPosts(); } return r.success; },
+  adminDeleteComment: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiAdminSoftDeleteComment(token, id); if (r.success) await get().loadDeletedComments(); return r.success; },
+  loadDeletedPosts: async () => { const { token } = get(); if (!token) return; const r = await api.apiAdminGetDeletedPosts(token); if (r.success && r.data) set({ deletedPosts: r.data }); },
+  loadDeletedComments: async () => { const { token } = get(); if (!token) return; const r = await api.apiAdminGetDeletedComments(token); if (r.success && r.data) set({ deletedComments: r.data as (Comment & { postContent?: string })[] }); },
+  loadDeletedUsers: async () => { const { token } = get(); if (!token) return; const r = await api.apiAdminGetDeletedUsers(token); if (r.success && r.data) set({ deletedUsers: r.data }); },
+  restorePost: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiAdminRestorePost(token, id); if (r.success) { await get().loadPosts(); await get().loadDeletedPosts(); } return r.success; },
+  permanentDeletePost: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiAdminPermanentDeletePost(token, id); if (r.success) await get().loadDeletedPosts(); return r.success; },
+  restoreComment: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiAdminRestoreComment(token, id); if (r.success) await get().loadDeletedComments(); return r.success; },
+  permanentDeleteComment: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiAdminPermanentDeleteComment(token, id); if (r.success) await get().loadDeletedComments(); return r.success; },
+  restoreUser: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiAdminRestoreUser(token, id); if (r.success) { await get().loadAdminUsers(); await get().loadDeletedUsers(); } return r.success; },
+  permanentDeleteUser: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiAdminPermanentDeleteUser(token, id); if (r.success) await get().loadDeletedUsers(); return r.success; },
   updateReport: async (id, status) => { const { token } = get(); if (!token) return false; const r = await api.apiAdminUpdateReport(token, id, status); if (r.success) await get().loadAdminReports(); return r.success; },
 
   // Community notifications

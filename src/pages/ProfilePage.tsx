@@ -531,63 +531,60 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
         </div>
       </div>
 
-      {/* Language */}
-      <div className="bg-white rounded-xl p-5 border border-surface-100">
-        <h2 className="font-bold text-surface-900 mb-2 flex items-center gap-2"><Icon name="translate" size={20} className="text-primary-500" /> لغة عرض المحتوى</h2>
-        <p className="text-xs text-surface-400 mb-4">تؤثر فقط على عرض المحتوى في الدروس والأسئلة والإشارات والقاموس</p>
-        <div className="grid grid-cols-3 gap-2">
-          {languageOptions.map(opt => (
-            <button key={opt.value} className={cn('flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all', settings.language === opt.value ? 'border-primary-500 bg-primary-50' : 'border-surface-100 hover:border-surface-200')} onClick={() => updateSettings({ language: opt.value })}>
-              {opt.value === 'ar' && (
-                <span className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center text-lg font-bold text-orange-600">ع</span>
-              )}
-              {opt.value === 'it' && (
-                <span className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600" dir="ltr">IT</span>
-              )}
-              {opt.value === 'both' && (
-                <Icon name="translate" size={24} className={settings.language === opt.value ? 'text-primary-600' : 'text-surface-500'} />
-              )}
-              <span className={cn('text-xs font-medium text-center leading-tight', settings.language === opt.value ? 'text-primary-700' : 'text-surface-600')}>{opt.label}</span>
-              {settings.language === opt.value && <Icon name="check_circle" size={16} className="text-primary-500" filled />}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Progress & Exam Readiness */}
       <div className="bg-white rounded-xl p-5 border border-surface-100">
         <h2 className="font-bold text-surface-900 mb-4 flex items-center gap-2">
           <Icon name="trending_up" size={20} className="text-primary-500" /> التقدم والإحصائيات
         </h2>
 
-        {/* Exam Readiness */}
-        <div className="bg-surface-50 rounded-xl p-4 mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Icon name="verified" size={18} className="text-primary-500" filled />
-              <span className="text-sm font-semibold text-surface-800">جاهزية الامتحان</span>
+        {/* Exam Readiness - Hero Card */}
+        <div className={cn('rounded-2xl p-4 mb-4 text-white', progress.examReadiness >= 70 ? 'bg-gradient-to-br from-success-500 to-success-700' : progress.examReadiness >= 40 ? 'bg-gradient-to-br from-warning-500 to-orange-600' : 'bg-gradient-to-br from-primary-500 to-primary-700')}>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium opacity-80 mb-1">جاهزية الامتحان</p>
+              <p className="text-4xl font-black leading-none mb-1">{progress.examReadiness}%</p>
+              <p className="text-xs opacity-75">
+                {progress.examReadiness >= 70 ? '✓ أنت جاهز للامتحان' : progress.examReadiness >= 40 ? 'قريب من الجاهزية' : 'تحتاج المزيد من التدريب'}
+              </p>
             </div>
-            <span className={cn('text-lg font-bold', progress.examReadiness >= 70 ? 'text-success-500' : progress.examReadiness >= 40 ? 'text-warning-500' : 'text-danger-500')}>{progress.examReadiness}%</span>
+            <div className="relative w-20 h-20 shrink-0">
+              <svg viewBox="0 0 80 80" className="w-20 h-20 -rotate-90">
+                <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="8" />
+                <circle cx="40" cy="40" r="30" fill="none" stroke="white" strokeWidth="8"
+                  strokeDasharray={`${2 * Math.PI * 30}`}
+                  strokeDashoffset={`${2 * Math.PI * 30 * (1 - progress.examReadiness / 100)}`}
+                  strokeLinecap="round" />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Icon name="verified" size={22} className="text-white" filled />
+              </div>
+            </div>
           </div>
-          <div className="w-full bg-white rounded-full h-2.5">
-            <div className={cn('rounded-full h-2.5 transition-all duration-700', progress.examReadiness >= 70 ? 'bg-success-500' : progress.examReadiness >= 40 ? 'bg-warning-500' : 'bg-danger-500')} style={{ width: `${progress.examReadiness}%` }} />
+          <div className="mt-3 bg-white/25 rounded-full h-2">
+            <div className="bg-white rounded-full h-2 transition-all duration-700" style={{ width: `${progress.examReadiness}%` }} />
           </div>
         </div>
 
-        {/* Answer Distribution Chart */}
+        {/* Answer Distribution */}
         {totalAnswers > 0 ? (
-          <div className="mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-surface-500">توزيع الإجابات</span>
-              <span className="text-xs font-semibold text-surface-700">{totalAnswers} إجمالي</span>
+          <div className="mb-4 bg-surface-50 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-semibold text-surface-800">توزيع الإجابات</span>
+              <span className="text-xs font-semibold bg-white text-surface-600 px-2.5 py-0.5 rounded-full border border-surface-200">{totalAnswers} إجمالي</span>
             </div>
-            <div className="w-full bg-danger-100 rounded-full h-2.5 overflow-hidden flex mb-2">
+            <div className="w-full bg-danger-100 rounded-full h-2.5 overflow-hidden flex mb-3">
               <div className="h-full bg-success-500 rounded-full transition-all duration-700" style={{ width: `${accuracy}%` }} title={`صحيح: ${progress.correctAnswers}`} />
             </div>
-            <div className="flex justify-between text-xs">
-              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-success-500 inline-block" /><span className="text-surface-600">صحيح <strong className="text-success-600">{progress.correctAnswers}</strong></span></span>
-              <span className="text-surface-500 font-semibold">{accuracy}% دقة</span>
-              <span className="flex items-center gap-1"><span className="text-surface-600">خاطئ <strong className="text-danger-500">{progress.wrongAnswers}</strong></span><span className="w-2.5 h-2.5 rounded-full bg-danger-400 inline-block" /></span>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-3 rounded-full bg-success-500 inline-block" />
+                <span className="text-xs text-surface-600">صحيح <strong className="text-success-600">{progress.correctAnswers}</strong></span>
+              </div>
+              <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2.5 py-0.5 rounded-full border border-primary-100">{accuracy}% دقة</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-surface-600">خاطئ <strong className="text-danger-500">{progress.wrongAnswers}</strong></span>
+                <span className="w-3 h-3 rounded-full bg-danger-400 inline-block" />
+              </div>
             </div>
           </div>
         ) : (
@@ -600,15 +597,17 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
         {/* Key metrics grid */}
         <div className="grid grid-cols-2 gap-3">
           {[
-            { label: 'إجمالي الاختبارات', value: progress.totalQuizzes, icon: 'quiz', color: 'text-blue-500', bg: 'bg-blue-50' },
-            { label: 'السلسلة الحالية', value: `${progress.currentStreak} يوم`, icon: 'local_fire_department', color: 'text-orange-500', bg: 'bg-orange-50' },
-            { label: 'النقاط (XP)', value: progress.xp, icon: 'stars', color: 'text-amber-500', bg: 'bg-amber-50' },
-            { label: 'الدروس المكتملة', value: progress.completedLessons.length, icon: 'school', color: 'text-green-500', bg: 'bg-green-50' },
+            { label: 'إجمالي الاختبارات', value: progress.totalQuizzes, icon: 'quiz', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+            { label: 'السلسلة الحالية', value: `${progress.currentStreak} يوم`, icon: 'local_fire_department', color: 'text-orange-500', bg: 'bg-orange-50', border: 'border-orange-100' },
+            { label: 'النقاط (XP)', value: progress.xp, icon: 'stars', color: 'text-amber-500', bg: 'bg-amber-50', border: 'border-amber-100' },
+            { label: 'الدروس المكتملة', value: progress.completedLessons.length, icon: 'school', color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
           ].map((m, i) => (
-            <div key={i} className={cn('rounded-xl p-3 flex items-center gap-3', m.bg)}>
-              <Icon name={m.icon} size={22} className={m.color} filled />
+            <div key={i} className={cn('rounded-xl p-3.5 border flex items-center gap-3', m.bg, m.border)}>
+              <div className="w-10 h-10 rounded-xl bg-white/80 flex items-center justify-center shrink-0 shadow-sm">
+                <Icon name={m.icon} size={22} className={m.color} filled />
+              </div>
               <div>
-                <p className="text-base font-bold text-surface-900">{m.value}</p>
+                <p className="text-xl font-black text-surface-900 leading-none mb-0.5">{m.value}</p>
                 <p className="text-[10px] text-surface-500">{m.label}</p>
               </div>
             </div>
@@ -631,6 +630,29 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* Language */}
+      <div className="bg-white rounded-xl p-5 border border-surface-100">
+        <h2 className="font-bold text-surface-900 mb-2 flex items-center gap-2"><Icon name="translate" size={20} className="text-primary-500" /> لغة عرض المحتوى</h2>
+        <p className="text-xs text-surface-400 mb-4">تؤثر فقط على عرض المحتوى في الدروس والأسئلة والإشارات والقاموس</p>
+        <div className="grid grid-cols-3 gap-2">
+          {languageOptions.map(opt => (
+            <button key={opt.value} className={cn('flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all', settings.language === opt.value ? 'border-primary-500 bg-primary-50' : 'border-surface-100 hover:border-surface-200')} onClick={() => updateSettings({ language: opt.value })}>
+              {opt.value === 'ar' && (
+                <span className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center text-lg font-bold text-orange-600">ع</span>
+              )}
+              {opt.value === 'it' && (
+                <span className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600" dir="ltr">IT</span>
+              )}
+              {opt.value === 'both' && (
+                <Icon name="translate" size={24} className={settings.language === opt.value ? 'text-primary-600' : 'text-surface-500'} />
+              )}
+              <span className={cn('text-xs font-medium text-center leading-tight', settings.language === opt.value ? 'text-primary-700' : 'text-surface-600')}>{opt.label}</span>
+              {settings.language === opt.value && <Icon name="check_circle" size={16} className="text-primary-500" filled />}
+            </button>
+          ))}
         </div>
       </div>
 

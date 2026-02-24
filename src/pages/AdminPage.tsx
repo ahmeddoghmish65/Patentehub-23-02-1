@@ -60,6 +60,9 @@ export function AdminPage() {
     store.loadPosts();
     store.loadAdminReports();
     store.loadAdminLogs();
+    store.loadDeletedPosts();
+    store.loadDeletedComments();
+    store.loadDeletedUsers();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -165,8 +168,11 @@ export function AdminPage() {
       case 'dictEntry': await store.deleteDictEntry(id); break;
       case 'dictEntry-permanent': await store.permanentDeleteDictEntry(id); break;
       case 'user': await store.deleteUser(id); break;
+      case 'user-permanent': await store.permanentDeleteUser(id); break;
       case 'post': await store.adminDeletePost(id); break;
+      case 'post-permanent': await store.permanentDeletePost(id); break;
       case 'comment': await store.adminDeleteComment(id); await loadAllComments(); break;
+      case 'comment-permanent': await store.permanentDeleteComment(id); break;
     }
     setConfirmDel(null);
   };
@@ -950,6 +956,7 @@ export function AdminPage() {
         }
 
         return (
+        <div className="space-y-4">
         <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
           <div className="p-4 border-b border-surface-100 flex items-center justify-between flex-wrap gap-3">
             <h2 className="font-bold text-surface-900">المستخدمين ({store.adminUsers.length})</h2>
@@ -1051,6 +1058,44 @@ export function AdminPage() {
             </table>
           </div>
         </div>
+
+        {/* Deleted Users */}
+        {store.deletedUsers.length > 0 && (
+          <div className="bg-white rounded-xl border border-danger-100 overflow-hidden">
+            <div className="p-4 border-b border-danger-100 bg-danger-50 flex items-center gap-2">
+              <Icon name="delete" size={18} className="text-danger-500" />
+              <h3 className="font-bold text-danger-700">المحذوفات ({store.deletedUsers.length})</h3>
+              <span className="text-xs text-danger-400 mr-1">يمكن استعادتها أو حذفها نهائياً</span>
+            </div>
+            <div className="divide-y divide-surface-50 max-h-[400px] overflow-y-auto">
+              {store.deletedUsers.map(u => (
+                <div key={u.id} className="p-4 flex items-center gap-3 bg-danger-50/30 hover:bg-danger-50 transition-colors">
+                  {u.avatar ? <img src={u.avatar} className="w-9 h-9 rounded-full object-cover shrink-0" alt="" /> : (
+                    <div className="w-9 h-9 bg-danger-100 rounded-full flex items-center justify-center shrink-0">
+                      <span className="text-sm font-bold text-danger-600">{u.name.charAt(0)}</span>
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-surface-700 truncate">{u.name}</p>
+                    <p className="text-xs text-surface-400 truncate">{u.email}</p>
+                    <p className="text-[10px] text-danger-400">حُذف: {u.deletedAt ? new Date(u.deletedAt).toLocaleDateString('ar') : '—'}</p>
+                  </div>
+                  <div className="flex gap-1.5 shrink-0">
+                    <button title="استعادة" className="p-1.5 rounded-lg bg-success-50 hover:bg-success-100 text-success-600 transition-colors"
+                      onClick={() => store.restoreUser(u.id)}>
+                      <Icon name="restore" size={16} />
+                    </button>
+                    <button title="حذف نهائي" className="p-1.5 rounded-lg bg-danger-50 hover:bg-danger-100 text-danger-600 transition-colors"
+                      onClick={() => setConfirmDel({ type: 'user-permanent', id: u.id })}>
+                      <Icon name="delete_forever" size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        </div>
         );
       })()}
 
@@ -1133,12 +1178,49 @@ export function AdminPage() {
             </div>
           )}
         </div>
+
+        {/* Deleted Posts */}
+        {store.deletedPosts.length > 0 && (
+          <div className="bg-white rounded-xl border border-danger-100 overflow-hidden">
+            <div className="p-4 border-b border-danger-100 bg-danger-50 flex items-center gap-2">
+              <Icon name="delete" size={18} className="text-danger-500" />
+              <h3 className="font-bold text-danger-700">المحذوفات ({store.deletedPosts.length})</h3>
+              <span className="text-xs text-danger-400 mr-1">يمكن استعادتها أو حذفها نهائياً</span>
+            </div>
+            <div className="divide-y divide-surface-50 max-h-[400px] overflow-y-auto">
+              {store.deletedPosts.map(p => (
+                <div key={p.id} className="p-4 flex items-start gap-3 bg-danger-50/30 hover:bg-danger-50 transition-colors">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      {p.userAvatar ? <img src={p.userAvatar} className="w-6 h-6 rounded-full object-cover" alt="" /> :
+                        <div className="w-6 h-6 bg-danger-100 rounded-full flex items-center justify-center shrink-0"><span className="text-[10px] font-bold text-danger-600">{p.userName.charAt(0)}</span></div>}
+                      <span className="text-sm font-semibold text-surface-700">{p.userName}</span>
+                      <span className="text-[10px] text-danger-400 mr-auto">حُذف: {p.deletedAt ? new Date(p.deletedAt).toLocaleDateString('ar') : '—'}</span>
+                    </div>
+                    <p className="text-sm text-surface-500 line-clamp-2">{p.content}</p>
+                  </div>
+                  <div className="flex gap-1.5 shrink-0">
+                    <button title="استعادة" className="p-1.5 rounded-lg bg-success-50 hover:bg-success-100 text-success-600 transition-colors"
+                      onClick={() => store.restorePost(p.id)}>
+                      <Icon name="restore" size={16} />
+                    </button>
+                    <button title="حذف نهائي" className="p-1.5 rounded-lg bg-danger-50 hover:bg-danger-100 text-danger-600 transition-colors"
+                      onClick={() => setConfirmDel({ type: 'post-permanent', id: p.id })}>
+                      <Icon name="delete_forever" size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         </div>
         );
       })()}
 
       {/* Comments */}
       {tab === 'comments' && (
+        <div className="space-y-4">
         <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
           <div className="p-4 border-b border-surface-100">
             <div className="flex items-center justify-between mb-3">
@@ -1189,6 +1271,51 @@ export function AdminPage() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Deleted Comments */}
+        {store.deletedComments.length > 0 && (
+          <div className="bg-white rounded-xl border border-danger-100 overflow-hidden">
+            <div className="p-4 border-b border-danger-100 bg-danger-50 flex items-center gap-2">
+              <Icon name="delete" size={18} className="text-danger-500" />
+              <h3 className="font-bold text-danger-700">المحذوفات ({store.deletedComments.length})</h3>
+              <span className="text-xs text-danger-400 mr-1">يمكن استعادتها أو حذفها نهائياً</span>
+            </div>
+            <div className="divide-y divide-surface-50 max-h-[400px] overflow-y-auto">
+              {store.deletedComments.map(c => (
+                <div key={c.id} className="p-4 flex items-start gap-3 bg-danger-50/30 hover:bg-danger-50 transition-colors">
+                  <div className="w-8 h-8 bg-danger-100 rounded-full flex items-center justify-center shrink-0">
+                    <span className="text-xs font-bold text-danger-600">{c.userName.charAt(0)}</span>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="text-sm font-semibold text-surface-700">{c.userName}</span>
+                      {c.parentId && <span className="text-[10px] bg-blue-50 text-blue-500 px-1.5 rounded-full">رد</span>}
+                      <span className="text-[10px] text-danger-400 mr-auto">حُذف: {c.deletedAt ? new Date(c.deletedAt).toLocaleDateString('ar') : '—'}</span>
+                    </div>
+                    <p className="text-sm text-surface-600">{c.content}</p>
+                    {c.postContent && (
+                      <p className="text-xs text-surface-400 mt-1 flex items-center gap-1 bg-surface-50 rounded-lg px-2 py-1">
+                        <Icon name="reply" size={12} />
+                        على: {c.postContent}...
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex gap-1.5 shrink-0">
+                    <button title="استعادة" className="p-1.5 rounded-lg bg-success-50 hover:bg-success-100 text-success-600 transition-colors"
+                      onClick={() => store.restoreComment(c.id)}>
+                      <Icon name="restore" size={16} />
+                    </button>
+                    <button title="حذف نهائي" className="p-1.5 rounded-lg bg-danger-50 hover:bg-danger-100 text-danger-600 transition-colors"
+                      onClick={() => setConfirmDel({ type: 'comment-permanent', id: c.id })}>
+                      <Icon name="delete_forever" size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         </div>
       )}
 

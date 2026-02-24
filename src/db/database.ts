@@ -35,6 +35,9 @@ export interface User {
   privacyHideStats: boolean;
   nameChangeDate?: string;
   usernameChangeDate?: string;
+  // Soft-delete
+  status?: 'active' | 'deleted';
+  deletedAt?: string;
   createdAt: string;
   lastLogin: string;
   progress: UserProgress;
@@ -180,6 +183,9 @@ export interface Post {
   featured?: boolean;
   locked?: boolean;
   hashtags?: string[];
+  // Soft-delete
+  status?: 'active' | 'deleted';
+  deletedAt?: string;
 }
 
 export interface Hashtag {
@@ -207,6 +213,9 @@ export interface Comment {
   rankScore?: number;
   hashtags?: string[];
   pinned?: boolean;
+  // Soft-delete
+  status?: 'active' | 'deleted';
+  deletedAt?: string;
 }
 
 export interface CommunityNotification {
