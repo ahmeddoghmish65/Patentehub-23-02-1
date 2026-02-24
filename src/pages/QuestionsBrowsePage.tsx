@@ -43,7 +43,9 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
               )}
             </div>
             <div>
-              <h1 className="text-xl font-bold text-surface-900">{section?.nameAr || 'أسئلة'}</h1>
+              <h1 className="text-xl font-bold text-surface-900">
+                {lang === 'it' ? (section?.nameIt || section?.nameAr || 'Domande') : (section?.nameAr || 'أسئلة')}
+              </h1>
               <p className="text-sm text-surface-500">{sectionQuestions.length} سؤال</p>
             </div>
           </div>
@@ -153,10 +155,9 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors">
-                    {section.nameAr}
-                  </h3>
-                  <p className="text-xs text-surface-400 mt-0.5">{section.nameIt}</p>
+                  {lang !== 'it' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors">{section.nameAr}</h3>}
+                  {lang === 'it' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors">{section.nameIt}</h3>}
+                  {lang === 'both' && <p className="text-xs text-surface-400 mt-0.5">{section.nameIt}</p>}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full font-medium">

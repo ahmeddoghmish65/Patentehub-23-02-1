@@ -227,9 +227,9 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
   };
 
   const languageOptions = [
-    { value: 'ar' as const, label: 'العربية فقط', icon: '🇸🇦' },
-    { value: 'it' as const, label: 'Solo italiano', icon: '🇮🇹' },
-    { value: 'both' as const, label: 'العربية + الإيطالية', icon: '🌐' },
+    { value: 'ar' as const, label: 'العربية فقط' },
+    { value: 'it' as const, label: 'Solo italiano' },
+    { value: 'both' as const, label: 'العربية + Italiano' },
   ];
 
   const allBadges = [
@@ -538,8 +538,16 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
         <div className="grid grid-cols-3 gap-2">
           {languageOptions.map(opt => (
             <button key={opt.value} className={cn('flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all', settings.language === opt.value ? 'border-primary-500 bg-primary-50' : 'border-surface-100 hover:border-surface-200')} onClick={() => updateSettings({ language: opt.value })}>
-              <span className="text-xl">{opt.icon}</span>
-              <span className={cn('text-xs font-medium', settings.language === opt.value ? 'text-primary-700' : 'text-surface-600')}>{opt.label}</span>
+              {opt.value === 'ar' && (
+                <span className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center text-lg font-bold text-orange-600">ع</span>
+              )}
+              {opt.value === 'it' && (
+                <span className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600" dir="ltr">IT</span>
+              )}
+              {opt.value === 'both' && (
+                <Icon name="translate" size={24} className={settings.language === opt.value ? 'text-primary-600' : 'text-surface-500'} />
+              )}
+              <span className={cn('text-xs font-medium text-center leading-tight', settings.language === opt.value ? 'text-primary-700' : 'text-surface-600')}>{opt.label}</span>
               {settings.language === opt.value && <Icon name="check_circle" size={16} className="text-primary-500" filled />}
             </button>
           ))}
@@ -561,10 +569,9 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
             </div>
             <span className={cn('text-lg font-bold', progress.examReadiness >= 70 ? 'text-success-500' : progress.examReadiness >= 40 ? 'text-warning-500' : 'text-danger-500')}>{progress.examReadiness}%</span>
           </div>
-          <div className="w-full bg-white rounded-full h-2.5 mb-1.5">
+          <div className="w-full bg-white rounded-full h-2.5">
             <div className={cn('rounded-full h-2.5 transition-all duration-700', progress.examReadiness >= 70 ? 'bg-success-500' : progress.examReadiness >= 40 ? 'bg-warning-500' : 'bg-danger-500')} style={{ width: `${progress.examReadiness}%` }} />
           </div>
-          <p className="text-xs text-surface-500">{progress.examReadiness >= 70 ? '🎉 أنت جاهز للامتحان!' : progress.examReadiness >= 40 ? '📚 تقدم جيد، واصل الدراسة' : '🚀 ابدأ بحل الاختبارات'}</p>
         </div>
 
         {/* Answer Distribution Chart */}

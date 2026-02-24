@@ -25,12 +25,12 @@ export function SignsPage({ onNavigate }: Props) {
     return true;
   });
 
-  const catLabels: Record<string, { label: string; color: string; icon: string }> = {
-    pericolo: { label: 'إشارات الخطر', color: '#ef4444', icon: 'warning' },
-    divieto: { label: 'إشارات المنع', color: '#dc2626', icon: 'block' },
-    obbligo: { label: 'إشارات الإلزام', color: '#2563eb', icon: 'arrow_circle_up' },
-    indicazione: { label: 'إشارات الإرشاد', color: '#16a34a', icon: 'info' },
-    precedenza: { label: 'أولوية المرور', color: '#f59e0b', icon: 'swap_vert' },
+  const catLabels: Record<string, { labelAr: string; labelIt: string; color: string; icon: string }> = {
+    pericolo: { labelAr: 'إشارات الخطر', labelIt: 'Pericolo', color: '#ef4444', icon: 'warning' },
+    divieto: { labelAr: 'إشارات المنع', labelIt: 'Divieto', color: '#dc2626', icon: 'block' },
+    obbligo: { labelAr: 'إشارات الإلزام', labelIt: 'Obbligo', color: '#2563eb', icon: 'arrow_circle_up' },
+    indicazione: { labelAr: 'إشارات الإرشاد', labelIt: 'Indicazione', color: '#16a34a', icon: 'info' },
+    precedenza: { labelAr: 'أولوية المرور', labelIt: 'Precedenza', color: '#f59e0b', icon: 'swap_vert' },
   };
 
   const selectedSignData = activeSigns.find(s => s.id === selectedSign);
@@ -60,7 +60,7 @@ export function SignsPage({ onNavigate }: Props) {
             )}
             onClick={() => setFilter('all')}
           >
-            الكل ({activeSigns.length})
+            {lang === 'it' ? 'Tutti' : 'الكل'} ({activeSigns.length})
           </button>
           {categories.map(c => {
             const info = catLabels[c] || { label: c, color: '#64748b', icon: 'label' };
@@ -75,7 +75,7 @@ export function SignsPage({ onNavigate }: Props) {
                 onClick={() => setFilter(c)}
               >
                 <Icon name={info.icon} size={14} />
-                {info.label} ({count})
+                {lang === 'it' ? info.labelIt : info.labelAr} ({count})
               </button>
             );
           })}

@@ -666,6 +666,7 @@ export function CommunityPage() {
   const renderComment = (c: Comment, postId: string, cmts: Comment[], isDetail: boolean) => {
     const replies = getReplies(c.id, cmts);
     const visibleReplies = isDetail ? replies : replies.slice(0, 3);
+    const isPostLocked = posts.find(p => p.id === postId)?.locked || false;
     const hasMoreReplies = !isDetail && replies.length > 3;
 
     return (
@@ -684,11 +685,13 @@ export function CommunityPage() {
                 <Icon name="favorite" size={13} filled={commentLikes[c.id]} />
                 {(commentLikeCounts[c.id] || 0) > 0 && <span>{commentLikeCounts[c.id]}</span>}
               </button>
-              <button className="text-[11px] text-surface-400 hover:text-primary-500 flex items-center gap-0.5"
-                onClick={() => setReplyingTo({ commentId: c.id, userName: c.userName })}>
-                <Icon name="reply" size={13} /> رد
-                {replies.length > 0 && <span className="text-[10px] bg-primary-50 text-primary-500 px-1 rounded-full">{replies.length}</span>}
-              </button>
+              {!isPostLocked && (
+                <button className="text-[11px] text-surface-400 hover:text-primary-500 flex items-center gap-0.5"
+                  onClick={() => setReplyingTo({ commentId: c.id, userName: c.userName })}>
+                  <Icon name="reply" size={13} /> رد
+                  {replies.length > 0 && <span className="text-[10px] bg-primary-50 text-primary-500 px-1 rounded-full">{replies.length}</span>}
+                </button>
+              )}
               <button className="text-[11px] text-surface-400 hover:text-orange-500" onClick={() => setReportModal({ type: 'comment', id: c.id })}>
                 <Icon name="flag" size={12} />
               </button>
@@ -743,7 +746,7 @@ export function CommunityPage() {
           </div>
         )}
 
-        {replyingTo?.commentId === c.id && (
+        {replyingTo?.commentId === c.id && !isPostLocked && (
           <div className="mr-8 flex gap-2 items-center">
             <div className="flex-1 relative">
               <input dir="auto" className="w-full border border-primary-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-100 pr-16"
@@ -777,7 +780,7 @@ export function CommunityPage() {
     const hasVoted = quizVoted[post.id] || false;
 
     return (
-      <div className={cn(
+      <div id={!showAllComments ? `post-${post.id}` : undefined} className={cn(
         'bg-white rounded-2xl border overflow-hidden',
         post.pinned ? 'border-amber-200 ring-1 ring-amber-100' :
         post.featured ? 'border-blue-200 ring-1 ring-blue-100' :
@@ -999,6 +1002,10 @@ export function CommunityPage() {
     setShowNotifs(false);
     if (n.postId) {
       openPostDetail(String(n.postId));
+      setTimeout(() => {
+        const el = document.getElementById(`post-${String(n.postId)}`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
     }
   };
 

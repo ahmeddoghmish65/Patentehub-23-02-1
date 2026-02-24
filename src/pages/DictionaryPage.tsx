@@ -35,7 +35,7 @@ export function DictionaryPage() {
           {dictSections.map(s => (
             <button key={s.id} className={cn('shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1',
               activeSec === s.id ? 'bg-primary-500 text-white' : 'bg-surface-100 text-surface-600')} onClick={() => setActiveSec(s.id)}>
-              <Icon name={s.icon || 'menu_book'} size={16} />{s.nameAr}
+              <Icon name={s.icon || 'menu_book'} size={16} />{lang === 'it' ? (s.nameIt || s.nameAr) : s.nameAr}
             </button>
           ))}
         </div>
