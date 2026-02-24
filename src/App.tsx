@@ -155,7 +155,7 @@ export function App() {
     
     switch (currentPage) {
       case 'dashboard': return <Dashboard onNavigate={navigate} />;
-      case 'lessons': return <LessonsPage onNavigate={navigate} />;
+      case 'lessons': return <LessonsPage onNavigate={navigate} initialSectionId={pageData.sectionId} />;
       case 'lesson-detail': return <LessonDetailPage lessonId={pageData.lessonId || ''} onNavigate={navigate} />;
       case 'quiz': return <QuizPage lessonId={pageData.lessonId} sectionId={pageData.sectionId} onNavigate={navigate} />;
       case 'signs': return <SignsPage onNavigate={navigate} />;

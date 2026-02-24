@@ -170,15 +170,16 @@ export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
         {(lang === 'it' || lang === 'both') && <p className="text-base text-surface-600" dir="ltr">{q.questionIt}</p>}
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-2 gap-3 mb-6">
         {[true, false].map(val => {
           const isSelected = selectedAnswer === val;
           const isCorrect = val === q.isTrue;
           const show = selectedAnswer !== null;
           return (
             <button key={String(val)}
-              className={cn('p-6 rounded-xl border-2 transition-all text-center font-bold text-lg',
-                !show && 'hover:border-primary-300 border-surface-200 cursor-pointer',
+              className={cn(
+                'py-4 rounded-xl border-2 transition-all flex items-center justify-center gap-2 font-bold text-base',
+                !show && 'border-surface-200 hover:border-primary-300 cursor-pointer',
                 show && isCorrect && 'border-success-500 bg-success-50',
                 show && isSelected && !isCorrect && 'border-danger-500 bg-danger-50',
                 show && !isSelected && !isCorrect && 'border-surface-200 opacity-50',
@@ -186,11 +187,15 @@ export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
               onClick={() => handleAnswer(val)}
               disabled={show}
             >
-              <Icon name={val ? 'check_circle' : 'cancel'} size={32} className={cn('mx-auto mb-2',
+              <Icon name={val ? 'check_circle' : 'cancel'} size={22} className={cn(
                 !show ? (val ? 'text-success-400' : 'text-danger-400') :
                 isCorrect ? 'text-success-500' : isSelected ? 'text-danger-500' : 'text-surface-300'
               )} filled />
-              <span className={cn(!show ? 'text-surface-700' : isCorrect ? 'text-success-600' : isSelected && !isCorrect ? 'text-danger-600' : 'text-surface-400')}>
+              <span className={cn(
+                !show ? 'text-surface-700' :
+                isCorrect ? 'text-success-600' :
+                isSelected && !isCorrect ? 'text-danger-600' : 'text-surface-400'
+              )}>
                 {val ? trueLabel : falseLabel}
               </span>
             </button>
@@ -204,8 +209,8 @@ export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
             <Icon name={selectedAnswer === q.isTrue ? 'lightbulb' : 'info'} size={22} className={selectedAnswer === q.isTrue ? 'text-success-500' : 'text-blue-500'} filled />
             <div>
               <p className="font-semibold text-sm text-surface-800 mb-1">{selectedAnswer === q.isTrue ? '✓ إجابة صحيحة!' : '✗ إجابة خاطئة'}</p>
-              <p className="text-sm text-surface-600">{q.explanationAr}</p>
-              <p className="text-sm text-surface-500 mt-1" dir="ltr">{q.explanationIt}</p>
+              {(lang === 'ar' || lang === 'both') && q.explanationAr && <p className="text-sm text-surface-600">{q.explanationAr}</p>}
+              {(lang === 'it' || lang === 'both') && q.explanationIt && <p className="text-sm text-surface-500 mt-1" dir="ltr">{q.explanationIt}</p>}
             </div>
           </div>
         </div>

@@ -4,12 +4,15 @@ import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
 
-interface Props { onNavigate: (page: string, data?: Record<string, string>) => void; }
+interface Props {
+  onNavigate: (page: string, data?: Record<string, string>) => void;
+  initialSectionId?: string;
+}
 
-export function LessonsPage({ onNavigate }: Props) {
+export function LessonsPage({ onNavigate, initialSectionId }: Props) {
   const { sections, lessons, loadSections, loadLessons, user } = useAuthStore();
   const completed = user?.progress.completedLessons || [];
-  const [selectedSection, setSelectedSection] = useState<string | null>(null);
+  const [selectedSection, setSelectedSection] = useState<string | null>(initialSectionId || null);
 
   useEffect(() => { loadSections(); loadLessons(); }, [loadSections, loadLessons]);
 

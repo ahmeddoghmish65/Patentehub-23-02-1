@@ -33,7 +33,7 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
 
   return (
     <div>
-      <button onClick={() => onNavigate('lessons')} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-6">
+      <button onClick={() => onNavigate('lessons', { sectionId: lesson.sectionId })} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-6">
         <Icon name="arrow_forward" size={20} />
         <span className="text-sm">العودة للدروس</span>
       </button>
@@ -50,18 +50,6 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
           </div>
         </div>
 
-        {sectionLessons.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {sectionLessons.map(l => (
-              <button key={l.id}
-                className={cn('shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-all', l.id === lessonId ? 'bg-primary-500 text-white' : 'bg-surface-100 text-surface-600 hover:bg-surface-200')}
-                onClick={() => onNavigate('lesson-detail', { lessonId: l.id, sectionId: l.sectionId })}
-              >
-                {l.titleAr}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Tabs - Modern gradient design */}
@@ -84,9 +72,8 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
           
           {(lang === 'it' || lang === 'both') && (
             <div>
-              <h3 className="text-sm font-semibold text-primary-600 mb-2 flex items-center gap-1.5">
+              <h3 className="text-sm font-semibold text-primary-600 mb-2 flex items-center gap-1.5" dir="ltr">
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-blue-100 text-blue-700 text-[10px] font-extrabold leading-none">IT</span>
-                Italiano
               </h3>
               <p className="text-base text-surface-700 leading-relaxed whitespace-pre-wrap" dir="ltr">{lesson.contentIt}</p>
             </div>
@@ -98,7 +85,6 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
             <div>
               <h3 className="text-sm font-semibold text-primary-600 mb-2 flex items-center gap-1.5">
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-orange-100 text-orange-700 text-[10px] font-extrabold leading-none">ع</span>
-                الشرح بالعربية
               </h3>
               <p className="text-base text-surface-700 leading-relaxed whitespace-pre-wrap">{lesson.contentAr}</p>
             </div>

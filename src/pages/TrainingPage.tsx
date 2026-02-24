@@ -208,15 +208,15 @@ export function TrainingPage({ onNavigate }: Props) {
             
             {!showAnswer ? (
               <div className="grid grid-cols-2 gap-3">
-                <button className="p-4 rounded-xl border-2 border-success-200 hover:bg-success-50 text-success-600 font-semibold transition-all"
+                <button className="py-4 rounded-xl border-2 border-success-200 hover:bg-success-50 text-success-600 font-bold text-base transition-all flex items-center justify-center gap-2"
                   onClick={() => handleQuestionAnswer(true)}>
-                  <Icon name="check_circle" size={22} className="mx-auto mb-1" />
-                  <span className="text-sm">{trueLabel}</span>
+                  <Icon name="check_circle" size={22} />
+                  <span>{trueLabel}</span>
                 </button>
-                <button className="p-4 rounded-xl border-2 border-danger-200 hover:bg-danger-50 text-danger-600 font-semibold transition-all"
+                <button className="py-4 rounded-xl border-2 border-danger-200 hover:bg-danger-50 text-danger-600 font-bold text-base transition-all flex items-center justify-center gap-2"
                   onClick={() => handleQuestionAnswer(false)}>
-                  <Icon name="cancel" size={22} className="mx-auto mb-1" />
-                  <span className="text-sm">{falseLabel}</span>
+                  <Icon name="cancel" size={22} />
+                  <span>{falseLabel}</span>
                 </button>
               </div>
             ) : (
@@ -227,7 +227,8 @@ export function TrainingPage({ onNavigate }: Props) {
                     {userAnswer === item.isTrue ? 'إجابة صحيحة! 🎉' : 'إجابة خاطئة'}
                   </p>
                   <p className="text-xs text-surface-600 mt-1">الإجابة الصحيحة: {item.isTrue ? trueLabel : falseLabel}</p>
-                  {item.explanationAr && <p className="text-xs text-surface-500 mt-2">{item.explanationAr}</p>}
+                  {(lang === 'ar' || lang === 'both') && item.explanationAr && <p className="text-xs text-surface-500 mt-2">{item.explanationAr}</p>}
+                  {(lang === 'it' || lang === 'both') && item.explanationIt && <p className="text-xs text-surface-500 mt-2" dir="ltr">{item.explanationIt}</p>}
                 </div>
                 <Button fullWidth onClick={() => handleNext(userAnswer === item.isTrue)}>
                   {index < items.length - 1 ? 'التالي' : 'عرض النتيجة'}
