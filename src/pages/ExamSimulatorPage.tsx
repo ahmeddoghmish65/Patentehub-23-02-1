@@ -308,8 +308,8 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
   };
 
   return (
-    /* fill viewport height so the card stretches with no gap below */
-    <div className="max-w-2xl mx-auto flex flex-col" style={{ minHeight: 'calc(100dvh - 7rem)' }}>
+    /* flex-1 fills the height provided by App.tsx flex chain — no gap */
+    <div className="max-w-2xl mx-auto flex flex-col flex-1 w-full">
       {/* Submit warning modal */}
       {showSubmitWarning && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
