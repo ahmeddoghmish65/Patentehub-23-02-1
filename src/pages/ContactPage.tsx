@@ -70,27 +70,28 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto animate-fade-in-up">
-      {/* Back + Header */}
-      <div className="mb-8">
-        <button
-          onClick={() => onNavigate('landing')}
-          className="flex items-center gap-2 text-surface-500 hover:text-primary-600 transition-colors mb-6 text-sm"
-        >
-          <Icon name="arrow_forward" size={18} />
-          <span>العودة للرئيسية</span>
-        </button>
-
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-200 mb-4">
-            <Icon name="mail" size={30} className="text-white" filled />
+    <div className="min-h-screen bg-surface-50 animate-fade-in-up">
+      {/* App Header */}
+      <header className="sticky top-0 z-50 bg-white border-b border-surface-100 shadow-sm">
+        <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
+          <button
+            onClick={() => onNavigate('landing')}
+            className="flex items-center gap-1.5 text-surface-500 hover:text-primary-600 transition-colors"
+          >
+            <Icon name="arrow_forward" size={20} />
+            <span className="text-sm font-medium">رجوع</span>
+          </button>
+          <h1 className="text-base font-bold text-surface-900">تواصل معنا</h1>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center shadow-sm">
+              <Icon name="directions_car" size={16} className="text-white" filled />
+            </div>
+            <span className="text-sm font-bold text-surface-900 hidden sm:block">Patente Hub</span>
           </div>
-          <h1 className="text-3xl font-black text-surface-900 mb-2">تواصل معنا</h1>
-          <p className="text-surface-500 text-sm max-w-md mx-auto leading-relaxed">
-            لديك سؤال أو اقتراح؟ نحن هنا للمساعدة. أرسل لنا رسالة وسنرد عليك في أقرب وقت ممكن.
-          </p>
         </div>
-      </div>
+      </header>
+
+      <div className="max-w-4xl mx-auto px-4 py-6">
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Contact Form */}
@@ -292,6 +293,7 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

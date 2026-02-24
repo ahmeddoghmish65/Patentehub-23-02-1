@@ -468,11 +468,11 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
 
   // ==================== MAIN PROFILE PAGE ====================
   return (
-    <div className="max-w-2xl mx-auto space-y-5">
+    <div className="max-w-2xl mx-auto space-y-4">
       {/* Profile Header */}
-      <div className="bg-white rounded-2xl p-6 border border-surface-100">
-        <div className="flex items-start gap-4 mb-5">
-          <div className="relative group">
+      <div className="bg-white rounded-2xl p-5 border border-surface-100">
+        <div className="flex items-start gap-4">
+          <div className="relative group shrink-0">
             <input type="file" ref={fileRef} className="hidden" accept="image/*" onChange={onFileChange} />
             {user.avatar ? (
               <img src={user.avatar} alt={user.name} className="w-20 h-20 rounded-2xl object-cover shadow-lg cursor-pointer" onClick={handleAvatarChange} />
@@ -501,8 +501,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
               <p className="text-sm text-primary-500 font-medium mb-0.5">@{user.username}</p>
             )}
             <p className="text-xs text-surface-400">{user.email}</p>
-            {storedBio && <p className="text-sm text-surface-600 mt-1">{storedBio}</p>}
-
+            {storedBio && <p className="text-sm text-surface-600 mt-1 line-clamp-2">{storedBio}</p>}
             <div className="flex items-center gap-2 mt-2 flex-wrap">
               <span className="text-xs bg-primary-50 text-primary-600 px-2 py-0.5 rounded-full font-medium">المستوى {progress.level}</span>
               <span className="text-xs bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full font-medium">{progress.xp} XP</span>
@@ -515,7 +514,8 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-4 gap-2">
+        {/* Quick Stats */}
+        <div className="grid grid-cols-4 gap-2 mt-4">
           {[
             { label: 'اختبارات', value: String(progress.totalQuizzes), icon: 'quiz', color: 'text-blue-500' },
             { label: 'الدقة', value: `${accuracy}%`, icon: 'check_circle', color: 'text-green-500' },
@@ -530,30 +530,6 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
           ))}
         </div>
       </div>
-
-      {/* Edit Account Button */}
-      <button
-        className="w-full bg-white rounded-xl p-4 border border-surface-100 flex items-center gap-3 hover:border-primary-200 hover:shadow-md transition-all group"
-        onClick={openEditPage}
-      >
-        <div className="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center group-hover:bg-primary-100 transition-colors">
-          <Icon name="manage_accounts" size={22} className="text-primary-500" />
-        </div>
-        <div className="flex-1 text-right">
-          <h3 className="font-bold text-surface-900">تعديل بيانات الحساب</h3>
-          <p className="text-xs text-surface-400">الاسم، الصورة، البريد، كلمة المرور، الخصوصية...</p>
-        </div>
-        <Icon name="chevron_left" size={22} className="text-surface-300 group-hover:text-primary-500 transition-colors" />
-      </button>
-
-      {/* Admin Panel Button */}
-      {isAdmin && (
-        <button className="w-full bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl p-4 flex items-center gap-3 text-white shadow-lg shadow-primary-200 hover:shadow-xl transition-all" onClick={() => onNavigate('admin')}>
-          <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center"><Icon name="admin_panel_settings" size={24} filled /></div>
-          <div className="flex-1 text-right"><h3 className="font-bold">لوحة التحكم</h3><p className="text-xs text-primary-200">إدارة المحتوى والمستخدمين</p></div>
-          <Icon name="chevron_left" size={22} />
-        </button>
-      )}
 
       {/* Language */}
       <div className="bg-white rounded-xl p-5 border border-surface-100">
@@ -570,32 +546,34 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
         </div>
       </div>
 
-      {/* Exam Readiness */}
-      <div className="bg-white rounded-xl p-5 border border-surface-100">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="font-bold text-surface-900 flex items-center gap-2"><Icon name="verified" size={20} className="text-primary-500" filled /> جاهزية الامتحان</h2>
-          <span className={cn('text-xl font-bold', progress.examReadiness >= 70 ? 'text-success-500' : progress.examReadiness >= 40 ? 'text-warning-500' : 'text-danger-500')}>{progress.examReadiness}%</span>
-        </div>
-        <div className="w-full bg-surface-100 rounded-full h-3 mb-2">
-          <div className={cn('rounded-full h-3 transition-all duration-700', progress.examReadiness >= 70 ? 'bg-success-500' : progress.examReadiness >= 40 ? 'bg-warning-500' : 'bg-danger-500')} style={{ width: `${progress.examReadiness}%` }} />
-        </div>
-        <p className="text-xs text-surface-500">{progress.examReadiness >= 70 ? '🎉 أنت جاهز للامتحان!' : progress.examReadiness >= 40 ? '📚 تقدم جيد، واصل الدراسة' : '🚀 ابدأ بحل الاختبارات'}</p>
-      </div>
-
-      {/* Progress with chart */}
+      {/* Progress & Exam Readiness */}
       <div className="bg-white rounded-xl p-5 border border-surface-100">
         <h2 className="font-bold text-surface-900 mb-4 flex items-center gap-2">
           <Icon name="trending_up" size={20} className="text-primary-500" /> التقدم والإحصائيات
         </h2>
 
+        {/* Exam Readiness */}
+        <div className="bg-surface-50 rounded-xl p-4 mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Icon name="verified" size={18} className="text-primary-500" filled />
+              <span className="text-sm font-semibold text-surface-800">جاهزية الامتحان</span>
+            </div>
+            <span className={cn('text-lg font-bold', progress.examReadiness >= 70 ? 'text-success-500' : progress.examReadiness >= 40 ? 'text-warning-500' : 'text-danger-500')}>{progress.examReadiness}%</span>
+          </div>
+          <div className="w-full bg-white rounded-full h-2.5 mb-1.5">
+            <div className={cn('rounded-full h-2.5 transition-all duration-700', progress.examReadiness >= 70 ? 'bg-success-500' : progress.examReadiness >= 40 ? 'bg-warning-500' : 'bg-danger-500')} style={{ width: `${progress.examReadiness}%` }} />
+          </div>
+          <p className="text-xs text-surface-500">{progress.examReadiness >= 70 ? '🎉 أنت جاهز للامتحان!' : progress.examReadiness >= 40 ? '📚 تقدم جيد، واصل الدراسة' : '🚀 ابدأ بحل الاختبارات'}</p>
+        </div>
+
         {/* Answer Distribution Chart */}
         {totalAnswers > 0 ? (
-          <div className="mb-5">
+          <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-surface-500">توزيع الإجابات</span>
               <span className="text-xs font-semibold text-surface-700">{totalAnswers} إجمالي</span>
             </div>
-            {/* Stacked bar */}
             <div className="w-full h-5 rounded-full overflow-hidden flex mb-2">
               <div className="h-full bg-success-500 transition-all" style={{ width: `${accuracy}%` }} title={`صحيح: ${progress.correctAnswers}`} />
               <div className="h-full bg-danger-400 transition-all" style={{ width: `${100 - accuracy}%` }} title={`خاطئ: ${progress.wrongAnswers}`} />
@@ -650,25 +628,61 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
         </div>
       </div>
 
-
-      {/* Account Info */}
-      <div className="bg-white rounded-xl p-5 border border-surface-100">
-        <h2 className="font-bold text-surface-900 mb-3 flex items-center gap-2"><Icon name="info" size={20} className="text-surface-400" /> معلومات الحساب</h2>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between py-1"><span className="text-surface-500">تاريخ التسجيل</span><span className="text-surface-700">{new Date(user.createdAt).toLocaleDateString('ar')}</span></div>
-          <div className="flex justify-between py-1"><span className="text-surface-500">آخر دخول</span><span className="text-surface-700">{new Date(user.lastLogin).toLocaleDateString('ar')}</span></div>
-          <div className="flex justify-between py-1"><span className="text-surface-500">نوع الحساب</span><span className="text-primary-600 font-medium">{user.role === 'admin' ? 'مسؤول' : user.role === 'manager' ? 'مدير' : 'مستخدم'}</span></div>
+      {/* Account Management */}
+      <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+        <div className="px-5 py-4 border-b border-surface-100">
+          <h2 className="font-bold text-surface-900 flex items-center gap-2"><Icon name="manage_accounts" size={20} className="text-surface-500" /> إدارة الحساب</h2>
         </div>
-        {!user.profileComplete && (
-          <button className="mt-3 w-full bg-warning-50 text-warning-700 rounded-lg py-2.5 text-sm font-medium border border-warning-200 hover:bg-warning-100" onClick={() => setShowCompleteProfile(true)}>
-            ⚠️ أكمل بياناتك الشخصية
+
+        {/* Edit Account */}
+        <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-surface-50 transition-colors border-b border-surface-50 group" onClick={openEditPage}>
+          <div className="w-9 h-9 bg-primary-50 rounded-xl flex items-center justify-center group-hover:bg-primary-100 transition-colors shrink-0">
+            <Icon name="edit" size={18} className="text-primary-500" />
+          </div>
+          <div className="flex-1 text-right">
+            <p className="text-sm font-semibold text-surface-800">تعديل بيانات الحساب</p>
+            <p className="text-xs text-surface-400">الاسم، الصورة، البريد، كلمة المرور، الخصوصية...</p>
+          </div>
+          <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors" />
+        </button>
+
+        {/* Admin Panel */}
+        {isAdmin && (
+          <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-primary-50 transition-colors border-b border-surface-50 group" onClick={() => onNavigate('admin')}>
+            <div className="w-9 h-9 bg-primary-100 rounded-xl flex items-center justify-center shrink-0">
+              <Icon name="admin_panel_settings" size={18} className="text-primary-600" />
+            </div>
+            <div className="flex-1 text-right">
+              <p className="text-sm font-semibold text-surface-800">لوحة التحكم</p>
+              <p className="text-xs text-surface-400">إدارة المحتوى والمستخدمين</p>
+            </div>
+            <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors" />
           </button>
         )}
+
+        {/* Account Info */}
+        <div className="px-5 py-3 space-y-1">
+          <div className="flex justify-between text-sm py-1.5 border-b border-surface-50"><span className="text-surface-500">تاريخ التسجيل</span><span className="text-surface-700">{new Date(user.createdAt).toLocaleDateString('ar')}</span></div>
+          <div className="flex justify-between text-sm py-1.5 border-b border-surface-50"><span className="text-surface-500">آخر دخول</span><span className="text-surface-700">{new Date(user.lastLogin).toLocaleDateString('ar')}</span></div>
+          <div className="flex justify-between text-sm py-1.5"><span className="text-surface-500">نوع الحساب</span><span className="text-primary-600 font-medium">{user.role === 'admin' ? 'مسؤول' : user.role === 'manager' ? 'مدير' : 'مستخدم'}</span></div>
+        </div>
+
+        {!user.profileComplete && (
+          <div className="px-5 pb-3">
+            <button className="w-full bg-warning-50 text-warning-700 rounded-lg py-2.5 text-sm font-medium border border-warning-200 hover:bg-warning-100" onClick={() => setShowCompleteProfile(true)}>
+              ⚠️ أكمل بياناتك الشخصية
+            </button>
+          </div>
+        )}
+
+        {/* Logout */}
+        <div className="px-5 py-4 border-t border-surface-100">
+          <button className="w-full flex items-center justify-center gap-2 bg-danger-50 text-danger-600 rounded-xl py-3 text-sm font-semibold hover:bg-danger-100 transition-colors border border-danger-100" onClick={handleLogout}>
+            <Icon name="logout" size={18} />
+            تسجيل الخروج
+          </button>
+        </div>
       </div>
-
-
-      {/* Logout */}
-      <Button variant="danger" fullWidth onClick={handleLogout} icon={<Icon name="logout" size={20} />}>تسجيل الخروج</Button>
 
       {/* Profile Completion Modal */}
       {showCompleteProfile && (

@@ -99,6 +99,7 @@ export function CommunityPage() {
   const [reportReason, setReportReason] = useState('');
   const [confirmDelete, setConfirmDelete] = useState<{ type: 'post' | 'comment' | 'reply'; id: string } | null>(null);
   const [reportSuccess, setReportSuccess] = useState(false);
+  const [bookmarkRemovedToast, setBookmarkRemovedToast] = useState(false);
   const [replyingTo, setReplyingTo] = useState<{ commentId: string; userName: string } | null>(null);
   const [replyContent, setReplyContent] = useState('');
   const [commentLikes, setCommentLikes] = useState<Record<string, boolean>>({});
@@ -1065,7 +1066,7 @@ export function CommunityPage() {
                             <p className="text-xs text-surface-500 line-clamp-2 mt-0.5">{p.content}</p>
                           </div>
                           <button className="p-1 rounded-lg hover:bg-danger-50 text-surface-300 hover:text-danger-500 shrink-0"
-                            onClick={e => { e.stopPropagation(); toggleSavePost(p.id); }}>
+                            onClick={e => { e.stopPropagation(); toggleSavePost(p.id); setBookmarkRemovedToast(true); setTimeout(() => setBookmarkRemovedToast(false), 2500); }}>
                             <Icon name="close" size={14} />
                           </button>
                         </div>
@@ -1245,6 +1246,13 @@ export function CommunityPage() {
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-success-500 text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-2">
           <Icon name="check_circle" size={20} filled />
           <span className="text-sm font-medium">تم إرسال البلاغ بنجاح</span>
+        </div>
+      )}
+
+      {bookmarkRemovedToast && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-surface-800 text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-2">
+          <Icon name="bookmark_remove" size={20} filled />
+          <span className="text-sm font-medium">تم حذف المنشور من المحفوظات</span>
         </div>
       )}
 

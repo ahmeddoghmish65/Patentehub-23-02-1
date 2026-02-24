@@ -31,15 +31,28 @@ export function TermsOfServicePage({ onNavigate }: TermsOfServicePageProps) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto animate-fade-in-up">
-      {/* Back */}
-      <button
-        onClick={() => onNavigate('landing')}
-        className="flex items-center gap-2 text-surface-500 hover:text-primary-600 transition-colors mb-6 text-sm"
-      >
-        <Icon name="arrow_forward" size={18} />
-        <span>العودة للرئيسية</span>
-      </button>
+    <div className="min-h-screen bg-surface-50 animate-fade-in-up">
+      {/* App Header */}
+      <header className="sticky top-0 z-50 bg-white border-b border-surface-100 shadow-sm">
+        <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
+          <button
+            onClick={() => onNavigate('landing')}
+            className="flex items-center gap-1.5 text-surface-500 hover:text-primary-600 transition-colors"
+          >
+            <Icon name="arrow_forward" size={20} />
+            <span className="text-sm font-medium">رجوع</span>
+          </button>
+          <h1 className="text-base font-bold text-surface-900">شروط الاستخدام</h1>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center shadow-sm">
+              <Icon name="directions_car" size={16} className="text-white" filled />
+            </div>
+            <span className="text-sm font-bold text-surface-900 hidden sm:block">Patente Hub</span>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-4xl mx-auto px-4 py-6">
 
       {/* Page Header */}
       <div className="bg-gradient-to-br from-surface-800 to-surface-900 rounded-2xl p-8 text-center text-white mb-6 relative overflow-hidden">
@@ -506,6 +519,7 @@ export function TermsOfServicePage({ onNavigate }: TermsOfServicePageProps) {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
