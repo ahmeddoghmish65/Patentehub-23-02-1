@@ -4,7 +4,10 @@ import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 
 export function MistakesPage() {
-  const { mistakes, loadMistakes } = useAuthStore();
+  const { mistakes, loadMistakes, user } = useAuthStore();
+  const lang = user?.settings.language || 'both';
+  const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';
+  const falseLabel = lang === 'ar' ? 'خطأ'  : lang === 'it' ? 'Falso' : 'خطأ / Falso';
   useEffect(() => { loadMistakes(); }, [loadMistakes]);
 
   return (
@@ -29,16 +32,16 @@ export function MistakesPage() {
                   <Icon name="error" size={22} className={m.count >= 3 ? 'text-danger-500' : 'text-warning-500'} />
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-surface-800 text-sm mb-1">{m.questionAr}</p>
-                  <p className="text-sm text-surface-400 mb-2" dir="ltr">{m.questionIt}</p>
+                  {(lang === 'ar' || lang === 'both') && <p className="font-semibold text-surface-800 text-sm mb-1">{m.questionAr}</p>}
+                  {(lang === 'it' || lang === 'both') && <p className="text-sm text-surface-400 mb-2" dir="ltr">{m.questionIt}</p>}
                   <div className="flex items-center gap-4 text-xs">
                     <span className="text-danger-500 flex items-center gap-1">
                       <Icon name="close" size={14} />
-                      إجابتك: {m.userAnswer ? 'صحيح' : 'خطأ'}
+                      إجابتك: {m.userAnswer ? trueLabel : falseLabel}
                     </span>
                     <span className="text-success-500 flex items-center gap-1">
                       <Icon name="check" size={14} />
-                      الصحيح: {m.correctAnswer ? 'صحيح' : 'خطأ'}
+                      الصحيح: {m.correctAnswer ? trueLabel : falseLabel}
                     </span>
                     <span className="text-surface-400 flex items-center gap-1">
                       <Icon name="repeat" size={14} />

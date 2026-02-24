@@ -11,7 +11,10 @@ type TrainMode = 'questions' | 'signs' | 'dictionary' | 'weak-points' | 'timed' 
 type Phase = 'select' | 'training' | 'result';
 
 export function TrainingPage({ onNavigate }: Props) {
-  const { questions, signs, dictEntries, mistakes, loadQuestions, loadSigns, loadDictEntries, loadMistakes } = useAuthStore();
+  const { questions, signs, dictEntries, mistakes, loadQuestions, loadSigns, loadDictEntries, loadMistakes, user } = useAuthStore();
+  const lang = user?.settings.language || 'both';
+  const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';
+  const falseLabel = lang === 'ar' ? 'خطأ'  : lang === 'it' ? 'Falso' : 'خطأ / Falso';
   void onNavigate;
   const [mode, setMode] = useState<TrainMode>('questions');
   const [phase, setPhase] = useState<Phase>('select');
@@ -199,20 +202,21 @@ export function TrainingPage({ onNavigate }: Props) {
         {isQuestion(item) && (
           <div className="p-6">
             {item.image && <img src={item.image} alt="" className="w-full rounded-xl mb-4 max-h-40 object-contain bg-surface-50" />}
-            <h2 className="text-base font-bold text-surface-900 mb-2">{item.questionAr}</h2>
-            <p className="text-base text-surface-500 mb-4" dir="ltr">{item.questionIt}</p>
+            {(lang === 'ar' || lang === 'both') && <h2 className="text-base font-bold text-surface-900 mb-2">{item.questionAr}</h2>}
+            {(lang === 'it' || lang === 'both') && <p className="text-base text-surface-500 mb-4" dir="ltr">{item.questionIt}</p>}
+            {lang !== 'both' && <div className="mb-4" />}
             
             {!showAnswer ? (
               <div className="grid grid-cols-2 gap-3">
                 <button className="p-4 rounded-xl border-2 border-success-200 hover:bg-success-50 text-success-600 font-semibold transition-all"
                   onClick={() => handleQuestionAnswer(true)}>
                   <Icon name="check_circle" size={22} className="mx-auto mb-1" />
-                  <span className="text-sm">صحيح / Vero</span>
+                  <span className="text-sm">{trueLabel}</span>
                 </button>
                 <button className="p-4 rounded-xl border-2 border-danger-200 hover:bg-danger-50 text-danger-600 font-semibold transition-all"
                   onClick={() => handleQuestionAnswer(false)}>
                   <Icon name="cancel" size={22} className="mx-auto mb-1" />
-                  <span className="text-sm">خطأ / Falso</span>
+                  <span className="text-sm">{falseLabel}</span>
                 </button>
               </div>
             ) : (
@@ -222,7 +226,7 @@ export function TrainingPage({ onNavigate }: Props) {
                     <Icon name={userAnswer === item.isTrue ? 'check_circle' : 'cancel'} size={18} className={userAnswer === item.isTrue ? 'text-success-500' : 'text-danger-500'} filled />
                     {userAnswer === item.isTrue ? 'إجابة صحيحة! 🎉' : 'إجابة خاطئة'}
                   </p>
-                  <p className="text-xs text-surface-600 mt-1">الإجابة الصحيحة: {item.isTrue ? 'صحيح (Vero)' : 'خطأ (Falso)'}</p>
+                  <p className="text-xs text-surface-600 mt-1">الإجابة الصحيحة: {item.isTrue ? trueLabel : falseLabel}</p>
                   {item.explanationAr && <p className="text-xs text-surface-500 mt-2">{item.explanationAr}</p>}
                 </div>
                 <Button fullWidth onClick={() => handleNext(userAnswer === item.isTrue)}>

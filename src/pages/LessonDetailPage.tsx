@@ -84,7 +84,10 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
           
           {(lang === 'it' || lang === 'both') && (
             <div>
-              <h3 className="text-sm font-semibold text-primary-600 mb-2 flex items-center gap-1">🇮🇹 Italiano</h3>
+              <h3 className="text-sm font-semibold text-primary-600 mb-2 flex items-center gap-1.5">
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-blue-100 text-blue-700 text-[10px] font-extrabold leading-none">IT</span>
+                Italiano
+              </h3>
               <p className="text-base text-surface-700 leading-relaxed whitespace-pre-wrap" dir="ltr">{lesson.contentIt}</p>
             </div>
           )}
@@ -93,7 +96,10 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
 
           {(lang === 'ar' || lang === 'both') && (
             <div>
-              <h3 className="text-sm font-semibold text-primary-600 mb-2 flex items-center gap-1">🇸🇦 الشرح بالعربية</h3>
+              <h3 className="text-sm font-semibold text-primary-600 mb-2 flex items-center gap-1.5">
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-orange-100 text-orange-700 text-[10px] font-extrabold leading-none">ع</span>
+                الشرح بالعربية
+              </h3>
               <p className="text-base text-surface-700 leading-relaxed whitespace-pre-wrap">{lesson.contentAr}</p>
             </div>
           )}
@@ -119,7 +125,9 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
                         <p className={cn("text-sm text-surface-500", lang === 'both' && 'mt-1')} dir="ltr">{q.questionIt}</p>
                       )}
                       <span className={cn('inline-block mt-2 text-xs px-2 py-0.5 rounded-full', q.isTrue ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600')}>
-                        {q.isTrue ? '✓ صحيح / Vero' : '✗ خطأ / Falso'}
+                        {q.isTrue
+                          ? `✓ ${lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero' : 'صحيح / Vero'}`
+                          : `✗ ${lang === 'ar' ? 'خطأ' : lang === 'it' ? 'Falso' : 'خطأ / Falso'}`}
                       </span>
                     </div>
                   </div>

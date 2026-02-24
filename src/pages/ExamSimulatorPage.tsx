@@ -10,7 +10,10 @@ interface Props {
 }
 
 export function ExamSimulatorPage({ onNavigate }: Props) {
-  const { questions, loadQuestions, saveQuizResult } = useAuthStore();
+  const { questions, loadQuestions, saveQuizResult, user } = useAuthStore();
+  const lang = user?.settings.language || 'both';
+  const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';
+  const falseLabel = lang === 'ar' ? 'خطأ'  : lang === 'it' ? 'Falso' : 'خطأ / Falso';
   const [examQuestions, setExamQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, boolean | null>>({});
@@ -270,14 +273,14 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
                     correct ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600'
                   )}>{i + 1}</span>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-surface-800 mb-1">{q.questionAr}</p>
-                    <p className="text-sm text-surface-500 mb-2" dir="ltr">{q.questionIt}</p>
+                    {(lang === 'ar' || lang === 'both') && <p className="text-sm font-medium text-surface-800 mb-1">{q.questionAr}</p>}
+                    {(lang === 'it' || lang === 'both') && <p className="text-sm text-surface-500 mb-2" dir="ltr">{q.questionIt}</p>}
                     <div className="flex items-center gap-4 text-xs">
                       <span className={cn('px-2 py-0.5 rounded-full', userAns === undefined ? 'bg-surface-100 text-surface-500' : correct ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600')}>
-                        إجابتك: {userAns === undefined ? 'لم تُجب' : userAns ? 'صحيح' : 'خطأ'}
+                        إجابتك: {userAns === undefined ? 'لم تُجب' : userAns ? trueLabel : falseLabel}
                       </span>
                       <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
-                        الصحيح: {q.isTrue ? 'صحيح' : 'خطأ'}
+                        الصحيح: {q.isTrue ? trueLabel : falseLabel}
                       </span>
                     </div>
                     {q.explanationAr && (
@@ -411,8 +414,8 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
         {/* Question content */}
         <div className="p-5 sm:p-6">
           {q.image && <img src={q.image} alt="" className="w-full rounded-xl mb-4 max-h-48 object-contain bg-surface-50" />}
-          <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed">{q.questionAr}</h2>
-          <p className="text-base text-surface-600 leading-relaxed" dir="ltr">{q.questionIt}</p>
+          {(lang === 'ar' || lang === 'both') && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed">{q.questionAr}</h2>}
+          {(lang === 'it' || lang === 'both') && <p className="text-base text-surface-600 leading-relaxed" dir="ltr">{q.questionIt}</p>}
         </div>
 
         {/* VERO / FALSO */}
@@ -426,7 +429,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
             onClick={() => handleAnswer(true)}
           >
             <Icon name="check_circle" size={22} className={cn(userAnswer === true ? 'text-green-500' : 'text-surface-200')} filled={userAnswer === true} />
-            <span>VERO</span>
+            <span>{trueLabel}</span>
           </button>
           <button
             className={cn('py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 font-bold text-base',
@@ -437,7 +440,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
             onClick={() => handleAnswer(false)}
           >
             <Icon name="cancel" size={22} className={cn(userAnswer === false ? 'text-red-500' : 'text-surface-200')} filled={userAnswer === false} />
-            <span>FALSO</span>
+            <span>{falseLabel}</span>
           </button>
         </div>
 

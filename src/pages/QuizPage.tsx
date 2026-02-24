@@ -12,7 +12,10 @@ interface QuizPageProps {
 }
 
 export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
-  const { questions, loadQuestions, saveQuizResult, sections } = useAuthStore();
+  const { questions, loadQuestions, saveQuizResult, sections, user } = useAuthStore();
+  const lang = user?.settings.language || 'both';
+  const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';
+  const falseLabel = lang === 'ar' ? 'خطأ'  : lang === 'it' ? 'Falso' : 'خطأ / Falso';
   const [quizQuestions, setQuizQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<boolean | null>(null);
@@ -163,8 +166,8 @@ export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
           {q.difficulty === 'easy' ? 'سهل' : q.difficulty === 'medium' ? 'متوسط' : 'صعب'}
         </span>
         {q.image && <img src={q.image} alt="" className="w-full rounded-xl mb-4 max-h-48 object-contain" />}
-        <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed">{q.questionAr}</h2>
-        <p className="text-base text-surface-600" dir="ltr">{q.questionIt}</p>
+        {(lang === 'ar' || lang === 'both') && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed">{q.questionAr}</h2>}
+        {(lang === 'it' || lang === 'both') && <p className="text-base text-surface-600" dir="ltr">{q.questionIt}</p>}
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-6">
@@ -188,7 +191,7 @@ export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
                 isCorrect ? 'text-success-500' : isSelected ? 'text-danger-500' : 'text-surface-300'
               )} filled />
               <span className={cn(!show ? 'text-surface-700' : isCorrect ? 'text-success-600' : isSelected && !isCorrect ? 'text-danger-600' : 'text-surface-400')}>
-                {val ? 'صحيح / Vero' : 'خطأ / Falso'}
+                {val ? trueLabel : falseLabel}
               </span>
             </button>
           );
