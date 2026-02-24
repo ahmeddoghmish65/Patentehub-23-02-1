@@ -100,6 +100,7 @@ export function CommunityPage() {
   const [confirmDelete, setConfirmDelete] = useState<{ type: 'post' | 'comment' | 'reply'; id: string } | null>(null);
   const [reportSuccess, setReportSuccess] = useState(false);
   const [bookmarkRemovedToast, setBookmarkRemovedToast] = useState(false);
+  const [confirmDeleteBookmarkId, setConfirmDeleteBookmarkId] = useState<string | null>(null);
   const [replyingTo, setReplyingTo] = useState<{ commentId: string; userName: string } | null>(null);
   const [replyContent, setReplyContent] = useState('');
   const [commentLikes, setCommentLikes] = useState<Record<string, boolean>>({});
@@ -1055,21 +1056,41 @@ export function CommunityPage() {
                     return savedList.length === 0 ? (
                       <div className="p-6 text-center text-sm text-surface-400">المنشورات المحفوظة غير متاحة</div>
                     ) : savedList.map(p => (
-                      <div key={p.id} className="p-3 hover:bg-surface-50 cursor-pointer" onClick={() => { openPostDetail(p.id); setShowBookmarks(false); }}>
-                        <div className="flex items-start gap-2">
-                          <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-primary-100 flex items-center justify-center">
-                            {p.userAvatar ? <img src={p.userAvatar} className="w-full h-full object-cover" alt="" /> :
-                              <span className="text-[10px] font-bold text-primary-700">{p.userName.charAt(0)}</span>}
+                      <div key={p.id}>
+                        {confirmDeleteBookmarkId === p.id ? (
+                          <div className="p-3 bg-danger-50 border-b border-danger-100">
+                            <p className="text-xs font-semibold text-danger-700 mb-2 text-center">هل تريد حذف هذا المنشور من المحفوظات؟</p>
+                            <div className="flex gap-2">
+                              <button
+                                className="flex-1 py-1.5 rounded-lg bg-danger-500 text-white text-xs font-bold hover:bg-danger-600 transition-colors"
+                                onClick={e => { e.stopPropagation(); toggleSavePost(p.id); setConfirmDeleteBookmarkId(null); setBookmarkRemovedToast(true); setTimeout(() => setBookmarkRemovedToast(false), 2500); }}>
+                                حذف
+                              </button>
+                              <button
+                                className="flex-1 py-1.5 rounded-lg bg-white border border-surface-200 text-xs font-medium text-surface-600 hover:bg-surface-50 transition-colors"
+                                onClick={e => { e.stopPropagation(); setConfirmDeleteBookmarkId(null); }}>
+                                إلغاء
+                              </button>
+                            </div>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-semibold text-surface-800">{p.userName}</p>
-                            <p className="text-xs text-surface-500 line-clamp-2 mt-0.5">{p.content}</p>
+                        ) : (
+                          <div className="p-3 hover:bg-surface-50 cursor-pointer border-b border-surface-50 last:border-0" onClick={() => { openPostDetail(p.id); setShowBookmarks(false); }}>
+                            <div className="flex items-start gap-2">
+                              <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-primary-100 flex items-center justify-center">
+                                {p.userAvatar ? <img src={p.userAvatar} className="w-full h-full object-cover" alt="" /> :
+                                  <span className="text-[10px] font-bold text-primary-700">{p.userName.charAt(0)}</span>}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-semibold text-surface-800">{p.userName}</p>
+                                <p className="text-xs text-surface-500 line-clamp-2 mt-0.5">{p.content}</p>
+                              </div>
+                              <button className="p-1 rounded-lg hover:bg-danger-50 text-surface-300 hover:text-danger-500 shrink-0"
+                                onClick={e => { e.stopPropagation(); setConfirmDeleteBookmarkId(p.id); }}>
+                                <Icon name="close" size={14} />
+                              </button>
+                            </div>
                           </div>
-                          <button className="p-1 rounded-lg hover:bg-danger-50 text-surface-300 hover:text-danger-500 shrink-0"
-                            onClick={e => { e.stopPropagation(); toggleSavePost(p.id); setBookmarkRemovedToast(true); setTimeout(() => setBookmarkRemovedToast(false), 2500); }}>
-                            <Icon name="close" size={14} />
-                          </button>
-                        </div>
+                        )}
                       </div>
                     ));
                   })()}

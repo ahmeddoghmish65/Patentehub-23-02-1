@@ -228,7 +228,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
 
   const languageOptions = [
     { value: 'ar' as const, label: 'العربية فقط', icon: '🇸🇦' },
-    { value: 'it' as const, label: 'الإيطالية فقط', icon: '🇮🇹' },
+    { value: 'it' as const, label: 'Solo italiano', icon: '🇮🇹' },
     { value: 'both' as const, label: 'العربية + الإيطالية', icon: '🌐' },
   ];
 
@@ -574,9 +574,8 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
               <span className="text-xs text-surface-500">توزيع الإجابات</span>
               <span className="text-xs font-semibold text-surface-700">{totalAnswers} إجمالي</span>
             </div>
-            <div className="w-full h-5 rounded-full overflow-hidden flex mb-2">
-              <div className="h-full bg-success-500 transition-all" style={{ width: `${accuracy}%` }} title={`صحيح: ${progress.correctAnswers}`} />
-              <div className="h-full bg-danger-400 transition-all" style={{ width: `${100 - accuracy}%` }} title={`خاطئ: ${progress.wrongAnswers}`} />
+            <div className="w-full bg-danger-100 rounded-full h-2.5 overflow-hidden flex mb-2">
+              <div className="h-full bg-success-500 rounded-full transition-all duration-700" style={{ width: `${accuracy}%` }} title={`صحيح: ${progress.correctAnswers}`} />
             </div>
             <div className="flex justify-between text-xs">
               <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-success-500 inline-block" /><span className="text-surface-600">صحيح <strong className="text-success-600">{progress.correctAnswers}</strong></span></span>
