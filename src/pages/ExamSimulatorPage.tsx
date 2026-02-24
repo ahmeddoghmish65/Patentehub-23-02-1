@@ -308,8 +308,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
   };
 
   return (
-    /* flex-1 fills the height provided by App.tsx flex chain — no gap */
-    <div className="max-w-2xl mx-auto flex flex-col flex-1 w-full">
+    <div className="max-w-2xl mx-auto">
       {/* Submit warning modal */}
       {showSubmitWarning && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -396,8 +395,8 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
         <div className="bg-primary-500 rounded-full h-1.5 transition-all duration-300" style={{ width: `${((currentIndex + 1) / examQuestions.length) * 100}%` }} />
       </div>
 
-      {/* Question Card — flex-1 so it fills the remaining height with no gap */}
-      <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden flex flex-col flex-1">
+      {/* Question Card */}
+      <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden flex flex-col">
 
         {/* Card header */}
         <div className="bg-surface-50 px-5 py-3 flex items-center justify-between border-b border-surface-100 shrink-0">
@@ -409,8 +408,8 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
           </span>
         </div>
 
-        {/* Question content — grows to fill space */}
-        <div className="p-5 sm:p-6 flex-1 flex flex-col justify-center">
+        {/* Question content */}
+        <div className="p-5 sm:p-6">
           {q.image && <img src={q.image} alt="" className="w-full rounded-xl mb-4 max-h-48 object-contain bg-surface-50" />}
           <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed">{q.questionAr}</h2>
           <p className="text-base text-surface-600 leading-relaxed" dir="ltr">{q.questionIt}</p>
