@@ -85,7 +85,7 @@ function relativeTime(iso: string): string {
   return new Date(iso).toLocaleDateString('ar');
 }
 
-export function CommunityPage() {
+export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
   const { posts, loadPosts, createPost, updatePost, deletePost, toggleLike, checkLike, getComments, createComment, deleteComment, createReport, user, communityNotifs, loadCommunityNotifs, markNotifRead, markAllNotifsRead } = useAuthStore();
   const [newPost, setNewPost] = useState('');
   const [posting, setPosting] = useState(false);
@@ -348,7 +348,7 @@ export function CommunityPage() {
       const quizHashtags = extractHashtags(quizQuestion + ' ' + newPost);
       const quizPost: Post = {
         id: postId, userId: user!.id, userName: user!.name, userAvatar: user!.avatar || '',
-        content: newPost.trim() || '', image: '', type: 'quiz',
+        content: newPost.trim() || '', image: postImage, type: 'quiz',
         quizQuestion: quizQuestion.trim(), quizAnswer: quizAnswer,
         quizStats: { trueCount: 0, falseCount: 0 },
         hashtags: quizHashtags,
@@ -359,7 +359,7 @@ export function CommunityPage() {
       await db.put('posts', quizPost);
       indexHashtags(quizHashtags).catch(() => {});
       await sendMentionNotifs(quizQuestion, postId);
-      setQuizQuestion(''); setQuizAnswer(true); setNewPost(''); setPostType('post');
+      setQuizQuestion(''); setQuizAnswer(true); setNewPost(''); setPostType('post'); setPostImage('');
       await loadPosts();
     } else {
       const ok = await createPost(newPost, postImage);
@@ -609,6 +609,16 @@ export function CommunityPage() {
     const c = await getComments(postId);
     setDetailComments(c); setDetailPostId(postId); setShowComments(postId); setComments(c);
   };
+
+  // Auto-open a post when navigated from ProfilePage
+  const openedPostIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!openPostId || posts.length === 0) return;
+    if (openedPostIdRef.current === openPostId) return;
+    openedPostIdRef.current = openPostId;
+    openPostDetail(openPostId);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openPostId, posts.length]);
 
   const toggleExpandText = (postId: string) => {
     setExpandedTexts(prev => ({ ...prev, [postId]: !prev[postId] }));
@@ -1460,7 +1470,7 @@ export function CommunityPage() {
               <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><Icon name="block" size={12} /> تم تقييد نشرك من قبل المسؤول</p>
             )}
             {/* Image upload — only when admin has enabled it */}
-            {communityAllowImages && postType === 'post' && (
+            {communityAllowImages && (
               <div className="mt-2">
                 {postImage ? (
                   <div className="relative mt-2 rounded-xl overflow-hidden border border-surface-200">
@@ -1771,10 +1781,10 @@ export function CommunityPage() {
                 <p className="text-sm text-surface-400 text-center py-4">لا إعجابات بعد</p>
               )}
               {likersModal.likers.map((l, i) => (
-                <div key={i} className="flex items-center gap-3 cursor-pointer hover:bg-surface-50 rounded-xl p-2 transition-colors"
-                  onClick={() => { setLikersModal(null); openUserProfile(l.userId); }}>
-                  <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 shadow-sm"
-                    style={{ background: l.userAvatar ? undefined : 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}>
+                <div key={i} className="flex items-center gap-3 hover:bg-surface-50 rounded-xl p-2 transition-colors">
+                  <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 shadow-sm cursor-pointer"
+                    style={{ background: l.userAvatar ? undefined : 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}
+                    onClick={() => { setLikersModal(null); openUserProfile(l.userId); }}>
                     {l.userAvatar ? (
                       <img src={l.userAvatar} className="w-full h-full object-cover" alt="" />
                     ) : (
@@ -1783,7 +1793,18 @@ export function CommunityPage() {
                       </div>
                     )}
                   </div>
-                  <span className="text-sm font-semibold text-surface-800">{l.userName}</span>
+                  <span className="text-sm font-semibold text-surface-800 flex-1 cursor-pointer"
+                    onClick={() => { setLikersModal(null); openUserProfile(l.userId); }}>{l.userName}</span>
+                  {l.userId !== user?.id && (
+                    <button
+                      onClick={e => { e.stopPropagation(); toggleFollow(l.userId); }}
+                      className={cn('shrink-0 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all',
+                        following.includes(l.userId)
+                          ? 'bg-surface-100 text-surface-600 hover:bg-danger-50 hover:text-danger-600 border border-surface-200'
+                          : 'bg-primary-500 text-white hover:bg-primary-600 shadow-sm')}>
+                      {following.includes(l.userId) ? 'يتم المتابعة' : 'متابعة'}
+                    </button>
+                  )}
                 </div>
               ))}
             </div>

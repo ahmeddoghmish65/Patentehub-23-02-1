@@ -161,7 +161,7 @@ export function App() {
       case 'signs': return <SignsPage onNavigate={navigate} />;
       case 'dictionary': return <DictionaryPage />;
       case 'training': return <TrainingPage onNavigate={navigate} />;
-      case 'community': return <CommunityPage />;
+      case 'community': return <CommunityPage openPostId={pageData.openPostId} />;
       case 'profile': return <ProfilePage onNavigate={navigate} />;
       case 'admin': return (user.role === 'admin' || user.role === 'manager') ? <AdminPage /> : <Dashboard onNavigate={navigate} />;
       case 'mistakes': return <MistakesPage />;

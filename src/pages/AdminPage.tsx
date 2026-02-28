@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
@@ -27,6 +27,7 @@ export function AdminPage() {
   }, [tab]);
   const [modal, setModal] = useState<{ type: string; data?: Record<string, unknown> } | null>(null);
   const [form, setForm] = useState<Record<string, unknown>>({});
+  const savedRangeRef = useRef<Range | null>(null);
   const [search, setSearch] = useState('');
   const [logTypeFilter, setLogTypeFilter] = useState('');
   const [logPage, setLogPage] = useState(1);
@@ -300,10 +301,30 @@ export function AdminPage() {
               onMouseDown={e => { e.preventDefault(); document.execCommand('formatBlock', false, 'p'); }}
               className="px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-white">P</button>
             <div className="w-px h-4 bg-surface-200 mx-0.5" />
+            <select title="حجم الخط" className="text-xs border border-surface-200 rounded px-1 py-0.5 bg-white cursor-pointer"
+              onMouseDown={e => { e.stopPropagation(); }}
+              onChange={e => { e.preventDefault(); const sel = window.getSelection(); if (savedRangeRef.current && sel) { sel.removeAllRanges(); sel.addRange(savedRangeRef.current); } document.execCommand('fontSize', false, e.target.value); e.target.value = ''; }}>
+              <option value="">حجم</option>
+              <option value="1">صغير جداً</option>
+              <option value="2">صغير</option>
+              <option value="3">عادي</option>
+              <option value="4">كبير</option>
+              <option value="5">كبير جداً</option>
+              <option value="6">ضخم</option>
+              <option value="7">ضخم جداً</option>
+            </select>
             <label title="لون النص" className="flex items-center gap-1 cursor-pointer">
               <span className="text-xs border border-surface-200 rounded px-1.5 py-0.5 bg-white">A</span>
               <input type="color" className="w-5 h-5 p-0 border-0 rounded cursor-pointer"
-                onChange={e => { document.execCommand('foreColor', false, e.target.value); }} />
+                onMouseDown={() => {
+                  const sel = window.getSelection();
+                  if (sel && sel.rangeCount > 0) savedRangeRef.current = sel.getRangeAt(0).cloneRange();
+                }}
+                onChange={e => {
+                  const sel = window.getSelection();
+                  if (savedRangeRef.current && sel) { sel.removeAllRanges(); sel.addRange(savedRangeRef.current); }
+                  document.execCommand('foreColor', false, e.target.value);
+                }} />
             </label>
             <div className="w-px h-4 bg-surface-200 mx-0.5" />
             <button type="button" title="مسح التنسيق"
@@ -316,6 +337,12 @@ export function AdminPage() {
             dir={field.includes('It') ? 'ltr' : 'rtl'}
             dangerouslySetInnerHTML={{ __html: (form[field] as string) || '' }}
             onInput={e => setForm(prev => ({ ...prev, [field]: (e.target as HTMLDivElement).innerHTML }))}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                document.execCommand('insertLineBreak');
+              }
+            }}
           />
         </div>
       ) : type === 'number' ? (
@@ -2304,81 +2331,86 @@ function ContentWithTrash({
   return (
     <div className="space-y-0">
       <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
-        {/* Unified header: title + filter + search + actions + views */}
-        <div className="p-3.5 border-b border-surface-100 space-y-2.5">
-          {/* Row 1: icon+title+count | filter slot | search | export | import | add */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="flex items-center gap-2 mr-auto">
+        {/* Header: view tabs + toolbar */}
+        <div className="border-b border-surface-100">
+          {/* Row 1: icon+title | view tabs */}
+          <div className="flex items-center gap-0 border-b border-surface-50">
+            {/* Icon + title */}
+            <div className="flex items-center gap-2 px-3.5 py-2.5 shrink-0 border-l border-surface-100">
               {icon && (
-                <div className={cn('w-7 h-7 rounded-lg flex items-center justify-center shrink-0', iconColor ? `bg-${iconColor}-50` : 'bg-surface-100')}>
-                  <Icon name={icon} size={15} className={iconColor ? `text-${iconColor}-500` : 'text-surface-500'} filled />
+                <div className={cn('w-6 h-6 rounded-md flex items-center justify-center shrink-0', iconColor ? `bg-${iconColor}-50` : 'bg-surface-100')}>
+                  <Icon name={icon} size={14} className={iconColor ? `text-${iconColor}-500` : 'text-surface-500'} filled />
                 </div>
               )}
-              <span className="font-bold text-surface-900 text-sm">{title}</span>
-              <span className="text-xs text-surface-400 bg-surface-100 px-1.5 py-0.5 rounded-full">{filtered.length}</span>
+              <span className="font-bold text-surface-800 text-sm whitespace-nowrap">{title}</span>
+              <span className="text-[10px] text-surface-400 bg-surface-100 px-1.5 py-0.5 rounded-full shrink-0">{filtered.length}</span>
             </div>
+            {/* View tabs */}
+            <div className="flex flex-1 h-full">
+              {([
+                { id: 'active', label: 'نشط', count: activeItems.length, activeClass: 'border-primary-500 text-primary-600 bg-primary-50/50' },
+                { id: 'archived', label: 'مؤرشف', count: archivedItems.length, activeClass: 'border-amber-500 text-amber-600 bg-amber-50/50' },
+                { id: 'deleted', label: 'محذوف', count: deletedItems.length, activeClass: 'border-danger-500 text-danger-600 bg-danger-50/50' },
+              ] as { id: ContentView; label: string; count: number; activeClass: string }[]).map(v => (
+                <button key={v.id} onClick={() => { setContentView(v.id); setSelectedIds(new Set()); }}
+                  className={cn('flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-semibold border-b-2 transition-all whitespace-nowrap',
+                    contentView === v.id ? v.activeClass : 'border-transparent text-surface-400 hover:text-surface-600 hover:bg-surface-50')}>
+                  {v.label}
+                  {v.count > 0 && (
+                    <span className={cn('rounded-full text-[9px] px-1.5 py-0 font-bold min-w-[16px] text-center',
+                      contentView === v.id ? 'bg-current/10' : 'bg-surface-100 text-surface-500')}>
+                      {v.count}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* Row 2: filter | search | import | export | add | bulk actions */}
+          <div className="flex items-center gap-1.5 px-3 py-2 flex-wrap bg-surface-50/50">
             {filterSlot}
-            <input className="border border-surface-200 rounded-lg px-2.5 py-1.5 text-xs w-32 focus:outline-none focus:border-primary-400" placeholder="بحث..." value={search} onChange={e => setSearch(e.target.value)} />
+            <input className="border border-surface-200 rounded-lg px-2.5 py-1.5 text-xs w-28 focus:outline-none focus:border-primary-400 bg-white" placeholder="بحث..." value={search} onChange={e => setSearch(e.target.value)} />
+            <div className="flex-1" />
             {contentView === 'active' && (
               <>
-                <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-400 border border-surface-200" onClick={onExport} title="تصدير"><Icon name="download" size={16} /></button>
-                <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-400 border border-surface-200" onClick={onImport} title="استيراد"><Icon name="upload" size={16} /></button>
-                <Button size="sm" onClick={onAdd} icon={<Icon name="add" size={15} />}>إضافة</Button>
+                <button className="p-1.5 rounded-lg hover:bg-white text-surface-400 border border-surface-200 bg-white" onClick={onImport} title="استيراد"><Icon name="upload" size={15} /></button>
+                <button className="p-1.5 rounded-lg hover:bg-white text-surface-400 border border-surface-200 bg-white" onClick={onExport} title="تصدير"><Icon name="download" size={15} /></button>
+                <Button size="sm" onClick={onAdd} icon={<Icon name="add" size={14} />}>إضافة</Button>
               </>
-            )}
-          </div>
-          {/* Row 2: view toggle tabs + bulk actions */}
-          <div className="flex items-center gap-2 flex-wrap">
-            {([
-              { id: 'active', label: 'نشط', count: activeItems.length, color: 'bg-primary-500' },
-              { id: 'archived', label: 'مؤرشف', count: archivedItems.length, color: 'bg-amber-500' },
-              { id: 'deleted', label: 'محذوف', count: deletedItems.length, color: 'bg-danger-500' },
-            ] as { id: ContentView; label: string; count: number; color: string }[]).map(v => (
-              <button key={v.id} onClick={() => { setContentView(v.id); setSelectedIds(new Set()); }}
-                className={cn('flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all border',
-                  contentView === v.id ? `${v.color} text-white border-transparent` : 'bg-surface-50 text-surface-600 border-surface-200 hover:border-surface-300')}>
-                {v.label}
-                {v.count > 0 && (
-                  <span className={cn('rounded-full text-[10px] px-1 py-0 font-bold',
-                    contentView === v.id ? 'bg-white/25 text-white' : 'bg-surface-200 text-surface-600')}>
-                    {v.count}
-                  </span>
-                )}
-              </button>
-            ))}
-            {contentView === 'deleted' && deletedItems.length > 0 && (
-              <span className="text-[10px] text-danger-500 mr-1">⏱ تُحذف بعد 30 يوماً</span>
             )}
             {/* Bulk actions */}
             {selectedIds.size > 0 && contentView === 'active' && (
               <>
-                <button className="mr-auto px-2.5 py-1 text-[11px] font-semibold bg-amber-500 text-white rounded-lg hover:bg-amber-600 flex items-center gap-1"
+                <button className="px-2.5 py-1.5 text-[11px] font-semibold bg-amber-500 text-white rounded-lg hover:bg-amber-600 flex items-center gap-1"
                   onClick={async () => { if (!confirm(`أرشفة ${selectedIds.size} عناصر؟`)) return; await onBulkArchive(Array.from(selectedIds)); }}>
-                  <Icon name="inventory_2" size={13} /> أرشفة ({selectedIds.size})
+                  <Icon name="inventory_2" size={12} /> أرشفة ({selectedIds.size})
                 </button>
-                <button className="px-2.5 py-1 text-[11px] font-semibold bg-danger-500 text-white rounded-lg hover:bg-danger-600 flex items-center gap-1"
+                <button className="px-2.5 py-1.5 text-[11px] font-semibold bg-danger-500 text-white rounded-lg hover:bg-danger-600 flex items-center gap-1"
                   onClick={async () => { if (!confirm(`حذف ${selectedIds.size} عناصر؟`)) return; await onBulkDelete(Array.from(selectedIds)); }}>
                   🗑 حذف ({selectedIds.size})
                 </button>
               </>
             )}
             {selectedIds.size > 0 && contentView === 'archived' && (
-              <button className="mr-auto px-2.5 py-1 text-[11px] font-semibold bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-1"
+              <button className="px-2.5 py-1.5 text-[11px] font-semibold bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-1"
                 onClick={async () => { if (!confirm(`استعادة ${selectedIds.size} عناصر؟`)) return; await onBulkRestore(Array.from(selectedIds)); }}>
-                <Icon name="restore" size={13} /> إعادة نشر ({selectedIds.size})
+                <Icon name="restore" size={12} /> إعادة نشر ({selectedIds.size})
               </button>
             )}
             {selectedIds.size > 0 && contentView === 'deleted' && (
               <>
-                <button className="mr-auto px-2.5 py-1 text-[11px] font-semibold bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-1"
+                <button className="px-2.5 py-1.5 text-[11px] font-semibold bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-1"
                   onClick={async () => { if (!confirm(`استعادة ${selectedIds.size} عناصر؟`)) return; await onBulkRestore(Array.from(selectedIds)); }}>
-                  <Icon name="restore" size={13} /> استعادة ({selectedIds.size})
+                  <Icon name="restore" size={12} /> استعادة ({selectedIds.size})
                 </button>
-                <button className="px-2.5 py-1 text-[11px] font-semibold bg-danger-700 text-white rounded-lg hover:bg-danger-800 flex items-center gap-1"
+                <button className="px-2.5 py-1.5 text-[11px] font-semibold bg-danger-700 text-white rounded-lg hover:bg-danger-800 flex items-center gap-1"
                   onClick={async () => { if (!confirm(`حذف نهائي ${selectedIds.size} عناصر؟ لا يمكن التراجع!`)) return; await onBulkPermanentDelete(Array.from(selectedIds)); }}>
-                  🗑 حذف نهائي ({selectedIds.size})
+                  🗑 نهائي ({selectedIds.size})
                 </button>
               </>
+            )}
+            {contentView === 'deleted' && deletedItems.length > 0 && selectedIds.size === 0 && (
+              <span className="text-[10px] text-danger-400">⏱ تُحذف بعد 30 يوماً</span>
             )}
           </div>
         </div>
