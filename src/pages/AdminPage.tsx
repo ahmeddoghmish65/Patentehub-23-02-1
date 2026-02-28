@@ -29,6 +29,13 @@ export function AdminPage() {
   const [form, setForm] = useState<Record<string, unknown>>({});
   const [search, setSearch] = useState('');
   const [logTypeFilter, setLogTypeFilter] = useState('');
+  const [logPage, setLogPage] = useState(1);
+  const [logDeleteFrom, setLogDeleteFrom] = useState('');
+  const [logDeleteTo, setLogDeleteTo] = useState('');
+  const [showDeleteLogsConfirm, setShowDeleteLogsConfirm] = useState(false);
+  const [filterSectionId, setFilterSectionId] = useState('');
+  const [filterSignCategory, setFilterSignCategory] = useState('');
+  const [filterDictSectionId, setFilterDictSectionId] = useState('');
   const [confirmDel, setConfirmDel] = useState<{ type: string; id: string } | null>(null);
   const [allComments, setAllComments] = useState<(Comment & { postContent?: string })[]>([]);
   const [viewUser, setViewUser] = useState<string | null>(null);
@@ -73,6 +80,10 @@ export function AdminPage() {
     setSelectedIds(new Set());
     setUserSelectedIds(new Set());
     setContentView('active');
+    setFilterSectionId('');
+    setFilterSignCategory('');
+    setFilterDictSectionId('');
+    setLogPage(1);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
 
@@ -119,15 +130,33 @@ export function AdminPage() {
     input.click();
   };
 
-  const handleImageUpload = (field: string) => {
+  const resizeImageToSquare = (dataUrl: string, size: number): Promise<string> =>
+    new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = size; canvas.height = size;
+        const ctx = canvas.getContext('2d')!;
+        const scale = Math.max(size / img.width, size / img.height);
+        const x = (size - img.width * scale) / 2;
+        const y = (size - img.height * scale) / 2;
+        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+        resolve(canvas.toDataURL('image/jpeg', 0.88));
+      };
+      img.src = dataUrl;
+    });
+
+  const handleImageUpload = (field: string, squareSize?: number) => {
     const input = document.createElement('input');
     input.type = 'file'; input.accept = 'image/*';
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = () => {
-        setForm(prev => ({ ...prev, [field]: reader.result as string }));
+      reader.onload = async () => {
+        const raw = reader.result as string;
+        const result = squareSize ? await resizeImageToSquare(raw, squareSize) : raw;
+        setForm(prev => ({ ...prev, [field]: result }));
       };
       reader.readAsDataURL(file);
     };
@@ -241,12 +270,13 @@ export function AdminPage() {
         </select>
       ) : type === 'number' ? (
         <input type="number" className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as number) || 0} onChange={e => setForm(prev => ({ ...prev, [field]: parseInt(e.target.value) || 0 }))} />
-      ) : type === 'image' ? (
+      ) : type === 'image' || type === 'image-square' ? (
         <div>
-          <button className="px-4 py-2 bg-surface-100 rounded-lg text-sm hover:bg-surface-200 flex items-center gap-1" onClick={() => handleImageUpload(field)}>
-            <Icon name="upload" size={16} /> رفع صورة
+          <button className="px-4 py-2 bg-surface-100 rounded-lg text-sm hover:bg-surface-200 flex items-center gap-1"
+            onClick={() => handleImageUpload(field, type === 'image-square' ? 1024 : undefined)}>
+            <Icon name="upload" size={16} /> رفع صورة {type === 'image-square' ? '(1024×1024)' : ''}
           </button>
-          {form[field] ? <img src={form[field] as string} alt="" className="mt-2 w-20 h-20 object-cover rounded-lg" /> : null}
+          {form[field] ? <img src={form[field] as string} alt="" className={cn('mt-2 rounded-lg object-cover', type === 'image-square' ? 'w-24 h-24' : 'w-20 h-20')} /> : null}
         </div>
       ) : (
         <input type={type} className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as string) || ''} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))} />
@@ -555,81 +585,144 @@ export function AdminPage() {
 
       {/* Lessons CRUD */}
       {tab === 'lessons' && (
-        <ContentWithTrash
-          title="الدروس"
-          contentView={contentView}
-          setContentView={setContentView}
-          activeItems={store.lessons.filter(s => !s.status || s.status === 'active')}
-          archivedItems={store.lessons.filter(s => s.status === 'archived')}
-          deletedItems={store.lessons.filter(s => s.status === 'deleted')}
-          search={search}
-          setSearch={setSearch}
-          selectedIds={selectedIds}
-          setSelectedIds={setSelectedIds}
-          columns={[
-            { key: 'titleAr', label: 'العنوان' },
-            { key: 'sectionId', label: 'القسم', render: (v) => store.sections.find(s => s.id === v)?.nameAr || String(v) },
-            { key: 'order', label: 'الترتيب' },
-          ]}
-          filterFn={(item) => !search || item.titleAr?.includes(search) || item.titleIt?.toLowerCase().includes(search.toLowerCase())}
-          onAdd={() => { setForm({ sectionId: '', titleAr: '', titleIt: '', contentAr: '', contentIt: '', image: '', order: store.lessons.length + 1 }); setModal({ type: 'lesson' }); }}
-          onEdit={(item) => { setForm(item); setModal({ type: 'lesson', data: item as Record<string, unknown> }); }}
-          onDelete={(id) => setConfirmDel({ type: 'lesson', id })}
-          onPermanentDelete={(id) => setConfirmDel({ type: 'lesson-permanent', id })}
-          onArchive={(id) => store.archiveLesson(id, true)}
-          onUnarchive={(id) => store.archiveLesson(id, false)}
-          onRestore={(id) => store.restoreLesson(id)}
-          onBulkDelete={async (ids) => { for (const id of ids) await store.deleteLesson(id); setSelectedIds(new Set()); }}
-          onBulkPermanentDelete={async (ids) => { for (const id of ids) await store.permanentDeleteLesson(id); setSelectedIds(new Set()); }}
-          onBulkArchive={async (ids) => { for (const id of ids) await store.archiveLesson(id, true); setSelectedIds(new Set()); }}
-          onBulkRestore={async (ids) => { for (const id of ids) await store.restoreLesson(id); setSelectedIds(new Set()); }}
-          onExport={() => handleExport('lessons')} onImport={() => handleImport('lessons')}
-        />
+        <div className="space-y-3">
+          <div className="bg-white rounded-xl border border-surface-100 p-3 flex items-center gap-3">
+            <Icon name="filter_list" size={18} className="text-surface-400 shrink-0" />
+            <span className="text-xs font-semibold text-surface-600 shrink-0">تصفية بالقسم:</span>
+            <div className="flex flex-wrap gap-2">
+              <button onClick={() => setFilterSectionId('')}
+                className={cn('px-3 py-1 rounded-lg text-xs font-medium transition-all border', !filterSectionId ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
+                الكل ({store.lessons.length})
+              </button>
+              {store.sections.map(sec => (
+                <button key={sec.id} onClick={() => setFilterSectionId(sec.id)}
+                  className={cn('px-3 py-1 rounded-lg text-xs font-medium transition-all border', filterSectionId === sec.id ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
+                  {sec.nameAr} ({store.lessons.filter(l => l.sectionId === sec.id).length})
+                </button>
+              ))}
+            </div>
+          </div>
+          <ContentWithTrash
+            title="الدروس"
+            contentView={contentView}
+            setContentView={setContentView}
+            activeItems={store.lessons.filter(s => (!s.status || s.status === 'active') && (!filterSectionId || s.sectionId === filterSectionId))}
+            archivedItems={store.lessons.filter(s => s.status === 'archived' && (!filterSectionId || s.sectionId === filterSectionId))}
+            deletedItems={store.lessons.filter(s => s.status === 'deleted' && (!filterSectionId || s.sectionId === filterSectionId))}
+            search={search}
+            setSearch={setSearch}
+            selectedIds={selectedIds}
+            setSelectedIds={setSelectedIds}
+            columns={[
+              { key: 'titleAr', label: 'العنوان' },
+              { key: 'sectionId', label: 'القسم', render: (v) => store.sections.find(s => s.id === v)?.nameAr || String(v) },
+              { key: 'order', label: 'الترتيب' },
+            ]}
+            filterFn={(item) => !search || item.titleAr?.includes(search) || item.titleIt?.toLowerCase().includes(search.toLowerCase())}
+            onAdd={() => { setForm({ sectionId: filterSectionId || '', titleAr: '', titleIt: '', contentAr: '', contentIt: '', image: '', order: store.lessons.length + 1 }); setModal({ type: 'lesson' }); }}
+            onEdit={(item) => { setForm(item); setModal({ type: 'lesson', data: item as Record<string, unknown> }); }}
+            onDelete={(id) => setConfirmDel({ type: 'lesson', id })}
+            onPermanentDelete={(id) => setConfirmDel({ type: 'lesson-permanent', id })}
+            onArchive={(id) => store.archiveLesson(id, true)}
+            onUnarchive={(id) => store.archiveLesson(id, false)}
+            onRestore={(id) => store.restoreLesson(id)}
+            onBulkDelete={async (ids) => { for (const id of ids) await store.deleteLesson(id); setSelectedIds(new Set()); }}
+            onBulkPermanentDelete={async (ids) => { for (const id of ids) await store.permanentDeleteLesson(id); setSelectedIds(new Set()); }}
+            onBulkArchive={async (ids) => { for (const id of ids) await store.archiveLesson(id, true); setSelectedIds(new Set()); }}
+            onBulkRestore={async (ids) => { for (const id of ids) await store.restoreLesson(id); setSelectedIds(new Set()); }}
+            onExport={() => handleExport('lessons')} onImport={() => handleImport('lessons')}
+          />
+        </div>
       )}
 
       {/* Questions CRUD */}
       {tab === 'questions' && (
-        <ContentWithTrash
-          title="الأسئلة"
-          contentView={contentView}
-          setContentView={setContentView}
-          activeItems={store.questions.filter(s => !s.status || s.status === 'active')}
-          archivedItems={store.questions.filter(s => s.status === 'archived')}
-          deletedItems={store.questions.filter(s => s.status === 'deleted')}
-          search={search}
-          setSearch={setSearch}
-          selectedIds={selectedIds}
-          setSelectedIds={setSelectedIds}
-          columns={[
-            { key: 'questionAr', label: 'السؤال', render: (v: unknown) => String(v || '').substring(0, 50) + '...' },
-            { key: 'isTrue', label: 'الإجابة', render: (v) => v ? '✓ صحيح' as string : '✗ خطأ' as string },
-            { key: 'difficulty', label: 'الصعوبة' },
-          ]}
-          filterFn={(item) => !search || item.questionAr?.includes(search) || item.questionIt?.toLowerCase().includes(search.toLowerCase())}
-          onAdd={() => { setForm({ lessonId: '', sectionId: '', questionAr: '', questionIt: '', isTrue: true, explanationAr: '', explanationIt: '', difficulty: 'easy', image: '', order: store.questions.length + 1 }); setModal({ type: 'question' }); }}
-          onEdit={(item) => { setForm(item); setModal({ type: 'question', data: item as Record<string, unknown> }); }}
-          onDelete={(id) => setConfirmDel({ type: 'question', id })}
-          onPermanentDelete={(id) => setConfirmDel({ type: 'question-permanent', id })}
-          onArchive={(id) => store.archiveQuestion(id, true)}
-          onUnarchive={(id) => store.archiveQuestion(id, false)}
-          onRestore={(id) => store.restoreQuestion(id)}
-          onBulkDelete={async (ids) => { for (const id of ids) await store.deleteQuestion(id); setSelectedIds(new Set()); }}
-          onBulkPermanentDelete={async (ids) => { for (const id of ids) await store.permanentDeleteQuestion(id); setSelectedIds(new Set()); }}
-          onBulkArchive={async (ids) => { for (const id of ids) await store.archiveQuestion(id, true); setSelectedIds(new Set()); }}
-          onBulkRestore={async (ids) => { for (const id of ids) await store.restoreQuestion(id); setSelectedIds(new Set()); }}
-          onExport={() => handleExport('questions')} onImport={() => handleImport('questions')}
-        />
+        <div className="space-y-3">
+          <div className="bg-white rounded-xl border border-surface-100 p-3 flex items-center gap-3">
+            <Icon name="filter_list" size={18} className="text-surface-400 shrink-0" />
+            <span className="text-xs font-semibold text-surface-600 shrink-0">تصفية بالقسم:</span>
+            <div className="flex flex-wrap gap-2">
+              <button onClick={() => setFilterSectionId('')}
+                className={cn('px-3 py-1 rounded-lg text-xs font-medium transition-all border', !filterSectionId ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
+                الكل ({store.questions.length})
+              </button>
+              {store.sections.map(sec => {
+                const sectionLessonIds = store.lessons.filter(l => l.sectionId === sec.id).map(l => l.id);
+                const count = store.questions.filter(q => sectionLessonIds.includes(q.lessonId)).length;
+                return (
+                  <button key={sec.id} onClick={() => setFilterSectionId(sec.id)}
+                    className={cn('px-3 py-1 rounded-lg text-xs font-medium transition-all border', filterSectionId === sec.id ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
+                    {sec.nameAr} ({count})
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <ContentWithTrash
+            title="الأسئلة"
+            contentView={contentView}
+            setContentView={setContentView}
+            activeItems={store.questions.filter(s => (!s.status || s.status === 'active') && (!filterSectionId || store.lessons.find(l => l.id === s.lessonId)?.sectionId === filterSectionId))}
+            archivedItems={store.questions.filter(s => s.status === 'archived' && (!filterSectionId || store.lessons.find(l => l.id === s.lessonId)?.sectionId === filterSectionId))}
+            deletedItems={store.questions.filter(s => s.status === 'deleted' && (!filterSectionId || store.lessons.find(l => l.id === s.lessonId)?.sectionId === filterSectionId))}
+            search={search}
+            setSearch={setSearch}
+            selectedIds={selectedIds}
+            setSelectedIds={setSelectedIds}
+            columns={[
+              { key: 'questionAr', label: 'السؤال', render: (v: unknown) => String(v || '').substring(0, 50) + '...' },
+              { key: 'isTrue', label: 'الإجابة', render: (v) => v ? '✓ صحيح' as string : '✗ خطأ' as string },
+              { key: 'difficulty', label: 'الصعوبة' },
+            ]}
+            filterFn={(item) => !search || item.questionAr?.includes(search) || item.questionIt?.toLowerCase().includes(search.toLowerCase())}
+            onAdd={() => { setForm({ lessonId: '', sectionId: filterSectionId || '', questionAr: '', questionIt: '', isTrue: true, explanationAr: '', explanationIt: '', difficulty: 'easy', image: '', order: store.questions.length + 1 }); setModal({ type: 'question' }); }}
+            onEdit={(item) => { setForm(item); setModal({ type: 'question', data: item as Record<string, unknown> }); }}
+            onDelete={(id) => setConfirmDel({ type: 'question', id })}
+            onPermanentDelete={(id) => setConfirmDel({ type: 'question-permanent', id })}
+            onArchive={(id) => store.archiveQuestion(id, true)}
+            onUnarchive={(id) => store.archiveQuestion(id, false)}
+            onRestore={(id) => store.restoreQuestion(id)}
+            onBulkDelete={async (ids) => { for (const id of ids) await store.deleteQuestion(id); setSelectedIds(new Set()); }}
+            onBulkPermanentDelete={async (ids) => { for (const id of ids) await store.permanentDeleteQuestion(id); setSelectedIds(new Set()); }}
+            onBulkArchive={async (ids) => { for (const id of ids) await store.archiveQuestion(id, true); setSelectedIds(new Set()); }}
+            onBulkRestore={async (ids) => { for (const id of ids) await store.restoreQuestion(id); setSelectedIds(new Set()); }}
+            onExport={() => handleExport('questions')} onImport={() => handleImport('questions')}
+          />
+        </div>
       )}
 
       {/* Signs CRUD */}
-      {tab === 'signs' && (
+      {tab === 'signs' && (() => {
+        const signCategories = [
+          { id: 'pericolo', label: 'تحذير' },
+          { id: 'obbligo', label: 'إلزامي' },
+          { id: 'divieto', label: 'حظر' },
+          { id: 'indicazione', label: 'إرشادي' },
+          { id: 'priorita', label: 'أولوية' },
+        ];
+        return (
+        <div className="space-y-3">
+          <div className="bg-white rounded-xl border border-surface-100 p-3 flex items-center gap-3">
+            <Icon name="filter_list" size={18} className="text-surface-400 shrink-0" />
+            <span className="text-xs font-semibold text-surface-600 shrink-0">تصفية بالتصنيف:</span>
+            <div className="flex flex-wrap gap-2">
+              <button onClick={() => setFilterSignCategory('')} className={cn('px-3 py-1 rounded-lg text-xs font-medium transition-all border', !filterSignCategory ? 'bg-primary-500 text-white border-primary-500 shadow-sm' : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
+                الكل ({store.signs.length})
+              </button>
+              {signCategories.map(cat => (
+                <button key={cat.id} onClick={() => setFilterSignCategory(cat.id)} className={cn('px-3 py-1 rounded-lg text-xs font-medium transition-all border', filterSignCategory === cat.id ? 'bg-primary-500 text-white border-primary-500 shadow-sm' : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
+                  {cat.label} ({store.signs.filter(s => s.category === cat.id).length})
+                </button>
+              ))}
+            </div>
+          </div>
         <ContentWithTrash
           title="الإشارات"
           contentView={contentView}
           setContentView={setContentView}
-          activeItems={store.signs.filter(s => !s.status || s.status === 'active')}
-          archivedItems={store.signs.filter(s => s.status === 'archived')}
-          deletedItems={store.signs.filter(s => s.status === 'deleted')}
+          activeItems={store.signs.filter(s => (!s.status || s.status === 'active') && (!filterSignCategory || s.category === filterSignCategory))}
+          archivedItems={store.signs.filter(s => s.status === 'archived' && (!filterSignCategory || s.category === filterSignCategory))}
+          deletedItems={store.signs.filter(s => s.status === 'deleted' && (!filterSignCategory || s.category === filterSignCategory))}
           search={search}
           setSearch={setSearch}
           selectedIds={selectedIds}
@@ -649,7 +742,9 @@ export function AdminPage() {
           onBulkRestore={async (ids) => { for (const id of ids) await store.restoreSign(id); setSelectedIds(new Set()); }}
           onExport={() => handleExport('signs')} onImport={() => handleImport('signs')}
         />
-      )}
+        </div>
+        );
+      })()}
 
       {/* Dictionary */}
       {tab === 'dictionary' && (
@@ -680,13 +775,28 @@ export function AdminPage() {
             onBulkRestore={async (ids) => { for (const id of ids) await store.restoreDictSection(id); setSelectedIds(new Set()); }}
             onExport={() => handleExport('dictionarySections')} onImport={() => handleImport('dictionarySections')}
           />
+          <div className="space-y-3">
+            <div className="bg-white rounded-xl border border-surface-100 p-3 flex items-center gap-3">
+              <Icon name="filter_list" size={18} className="text-surface-400 shrink-0" />
+              <span className="text-xs font-semibold text-surface-600 shrink-0">تصفية بالقسم:</span>
+              <div className="flex flex-wrap gap-2">
+                <button onClick={() => setFilterDictSectionId('')} className={cn('px-3 py-1 rounded-lg text-xs font-medium transition-all border', !filterDictSectionId ? 'bg-primary-500 text-white border-primary-500 shadow-sm' : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
+                  الكل ({store.dictEntries.length})
+                </button>
+                {store.dictSections.filter(s => !s.status || s.status === 'active').map(sec => (
+                  <button key={sec.id} onClick={() => setFilterDictSectionId(sec.id)} className={cn('px-3 py-1 rounded-lg text-xs font-medium transition-all border', filterDictSectionId === sec.id ? 'bg-primary-500 text-white border-primary-500 shadow-sm' : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
+                    {sec.nameAr} ({store.dictEntries.filter(e => e.sectionId === sec.id).length})
+                  </button>
+                ))}
+              </div>
+            </div>
           <ContentWithTrash
             title="مصطلحات القاموس"
             contentView={contentView}
             setContentView={setContentView}
-            activeItems={store.dictEntries.filter(s => !s.status || s.status === 'active')}
-            archivedItems={store.dictEntries.filter(s => s.status === 'archived')}
-            deletedItems={store.dictEntries.filter(s => s.status === 'deleted')}
+            activeItems={store.dictEntries.filter(s => (!s.status || s.status === 'active') && (!filterDictSectionId || s.sectionId === filterDictSectionId))}
+            archivedItems={store.dictEntries.filter(s => s.status === 'archived' && (!filterDictSectionId || s.sectionId === filterDictSectionId))}
+            deletedItems={store.dictEntries.filter(s => s.status === 'deleted' && (!filterDictSectionId || s.sectionId === filterDictSectionId))}
             search={search}
             setSearch={setSearch}
             selectedIds={selectedIds}
@@ -706,6 +816,7 @@ export function AdminPage() {
             onBulkRestore={async (ids) => { for (const id of ids) await store.restoreDictEntry(id); setSelectedIds(new Set()); }}
             onExport={() => handleExport('dictionaryEntries')} onImport={() => handleImport('dictionaryEntries')}
           />
+          </div>
         </div>
       )}
 
@@ -1680,7 +1791,7 @@ export function AdminPage() {
             </div>
             <input className="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm mb-2"
               placeholder="ابحث بالاجراء أو التفاصيل أو اسم المسؤول..."
-              value={search} onChange={e => setSearch(e.target.value)} />
+              value={search} onChange={e => { setSearch(e.target.value); setLogPage(1); }} />
             <div className="flex gap-1.5 flex-wrap">
               {['الكل', 'إنشاء', 'تعديل', 'حذف', 'حظر', 'تصدير', 'استيراد', 'أرشفة', 'تسجيل', 'كلمة مرور'].map(type => (
                 <button key={type}
@@ -1689,12 +1800,50 @@ export function AdminPage() {
                       ? 'bg-primary-500 text-white border-primary-500'
                       : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300'
                   )}
-                  onClick={() => setLogTypeFilter(type === 'الكل' ? '' : type)}>
+                  onClick={() => { setLogTypeFilter(type === 'الكل' ? '' : type); setLogPage(1); }}>
                   {type}
                 </button>
               ))}
             </div>
+            {/* Delete by date range */}
+            <div className="mt-3 pt-3 border-t border-surface-100">
+              <p className="text-xs font-semibold text-surface-600 mb-2 flex items-center gap-1.5"><Icon name="delete_sweep" size={15} className="text-danger-400" /> حذف السجلات بالتاريخ:</p>
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-surface-500">من:</span>
+                  <input type="date" value={logDeleteFrom} onChange={e => setLogDeleteFrom(e.target.value)}
+                    className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 focus:outline-none focus:border-primary-400" />
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-surface-500">إلى:</span>
+                  <input type="date" value={logDeleteTo} onChange={e => setLogDeleteTo(e.target.value)}
+                    className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 focus:outline-none focus:border-primary-400" />
+                </div>
+                <button
+                  disabled={!logDeleteFrom || !logDeleteTo}
+                  onClick={() => setShowDeleteLogsConfirm(true)}
+                  className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border', logDeleteFrom && logDeleteTo ? 'bg-danger-500 text-white border-danger-500 hover:bg-danger-600' : 'bg-surface-100 text-surface-400 border-surface-200 cursor-not-allowed')}>
+                  <Icon name="delete_sweep" size={14} /> حذف
+                </button>
+              </div>
+            </div>
           </div>
+          {/* Delete confirmation dialog */}
+          {showDeleteLogsConfirm && (
+            <div className="mx-4 mb-3 p-3 bg-danger-50 border border-danger-200 rounded-xl">
+              <p className="text-sm font-semibold text-danger-700 mb-1">تأكيد الحذف</p>
+              <p className="text-xs text-danger-600 mb-3">سيتم حذف جميع السجلات من <strong>{logDeleteFrom}</strong> إلى <strong>{logDeleteTo}</strong>. هذا الإجراء لا يمكن التراجع عنه.</p>
+              <div className="flex gap-2">
+                <button onClick={() => setShowDeleteLogsConfirm(false)} className="flex-1 py-1.5 rounded-lg text-xs font-medium bg-white border border-surface-200 text-surface-600 hover:bg-surface-50">إلغاء</button>
+                <button onClick={async () => {
+                  const deleted = await store.deleteAdminLogsByDateRange(logDeleteFrom, logDeleteTo);
+                  setShowDeleteLogsConfirm(false);
+                  setLogDeleteFrom(''); setLogDeleteTo('');
+                  alert(`تم حذف ${deleted} سجل بنجاح`);
+                }} className="flex-1 py-1.5 rounded-lg text-xs font-medium bg-danger-500 text-white hover:bg-danger-600">تأكيد الحذف</button>
+              </div>
+            </div>
+          )}
           <div className="divide-y divide-surface-50 max-h-[600px] overflow-y-auto">
             {(() => {
               const filtered = store.adminLogs.filter(l => {
@@ -1709,44 +1858,65 @@ export function AdminPage() {
                   <p className="text-surface-400">لا توجد سجلات تطابق البحث</p>
                 </div>
               );
-              return filtered.map(l => {
-                const admin = store.adminUsers.find(u => u.id === l.adminId);
-                const getLogStyle = (action: string) => {
-                  if (action.includes('حذف')) return { color: 'text-danger-500', bg: 'bg-danger-50', icon: 'delete' };
-                  if (action.includes('إنشاء') || action.includes('إضافة')) return { color: 'text-success-500', bg: 'bg-success-50', icon: 'add_circle' };
-                  if (action.includes('تعديل')) return { color: 'text-blue-500', bg: 'bg-blue-50', icon: 'edit' };
-                  if (action.includes('حظر')) return { color: 'text-orange-500', bg: 'bg-orange-50', icon: 'block' };
-                  if (action.includes('تصدير')) return { color: 'text-purple-500', bg: 'bg-purple-50', icon: 'download' };
-                  if (action.includes('استيراد')) return { color: 'text-indigo-500', bg: 'bg-indigo-50', icon: 'upload' };
-                  if (action.includes('أرشفة') || action.includes('استعادة')) return { color: 'text-amber-500', bg: 'bg-amber-50', icon: 'archive' };
-                  if (action.includes('تسجيل') || action.includes('دخول')) return { color: 'text-green-500', bg: 'bg-green-50', icon: 'login' };
-                  if (action.includes('كلمة المرور')) return { color: 'text-cyan-500', bg: 'bg-cyan-50', icon: 'lock_reset' };
-                  if (action.includes('تهيئة')) return { color: 'text-cyan-500', bg: 'bg-cyan-50', icon: 'data_object' };
-                  return { color: 'text-surface-500', bg: 'bg-surface-100', icon: 'info' };
-                };
-                const style = getLogStyle(l.action);
-                return (
-                  <div key={l.id} className="p-3 flex items-start gap-3 hover:bg-surface-50 transition-colors">
-                    <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0', style.bg)}>
-                      <Icon name={style.icon} size={18} className={style.color} filled />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                        <div className="flex items-center gap-1.5">
-                          {admin?.avatar
-                            ? <img src={admin.avatar} className="w-5 h-5 rounded-full object-cover" alt="" />
-                            : <div className="w-5 h-5 bg-primary-100 rounded-full flex items-center justify-center"><span className="text-[9px] font-bold text-primary-700">{(admin?.name || '?').charAt(0)}</span></div>
-                          }
-                          <span className="text-xs font-semibold text-primary-700">{admin?.name || 'نظام'}</span>
+              const PAGE_SIZE = 50;
+              const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+              const paginated = filtered.slice((logPage - 1) * PAGE_SIZE, logPage * PAGE_SIZE);
+              const getLogStyle = (action: string) => {
+                if (action.includes('حذف')) return { color: 'text-danger-500', bg: 'bg-danger-50', icon: 'delete' };
+                if (action.includes('إنشاء') || action.includes('إضافة')) return { color: 'text-success-500', bg: 'bg-success-50', icon: 'add_circle' };
+                if (action.includes('تعديل')) return { color: 'text-blue-500', bg: 'bg-blue-50', icon: 'edit' };
+                if (action.includes('حظر')) return { color: 'text-orange-500', bg: 'bg-orange-50', icon: 'block' };
+                if (action.includes('تصدير')) return { color: 'text-purple-500', bg: 'bg-purple-50', icon: 'download' };
+                if (action.includes('استيراد')) return { color: 'text-indigo-500', bg: 'bg-indigo-50', icon: 'upload' };
+                if (action.includes('أرشفة') || action.includes('استعادة')) return { color: 'text-amber-500', bg: 'bg-amber-50', icon: 'archive' };
+                if (action.includes('تسجيل') || action.includes('دخول')) return { color: 'text-green-500', bg: 'bg-green-50', icon: 'login' };
+                if (action.includes('كلمة المرور')) return { color: 'text-cyan-500', bg: 'bg-cyan-50', icon: 'lock_reset' };
+                if (action.includes('تهيئة')) return { color: 'text-cyan-500', bg: 'bg-cyan-50', icon: 'data_object' };
+                return { color: 'text-surface-500', bg: 'bg-surface-100', icon: 'info' };
+              };
+              return (
+                <>
+                  {paginated.map(l => {
+                    const admin = store.adminUsers.find(u => u.id === l.adminId);
+                    const style = getLogStyle(l.action);
+                    return (
+                      <div key={l.id} className="p-3 flex items-start gap-3 hover:bg-surface-50 transition-colors">
+                        <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0', style.bg)}>
+                          <Icon name={style.icon} size={18} className={style.color} filled />
                         </div>
-                        <span className={cn('text-[10px] font-bold px-1.5 py-0.5 rounded-full', style.bg, style.color)}>{l.action}</span>
-                        <span className="text-[10px] text-surface-400 mr-auto">{new Date(l.createdAt).toLocaleString('ar')}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                            <div className="flex items-center gap-1.5">
+                              {admin?.avatar
+                                ? <img src={admin.avatar} className="w-5 h-5 rounded-full object-cover" alt="" />
+                                : <div className="w-5 h-5 bg-primary-100 rounded-full flex items-center justify-center"><span className="text-[9px] font-bold text-primary-700">{(admin?.name || '?').charAt(0)}</span></div>
+                              }
+                              <span className="text-xs font-semibold text-primary-700">{admin?.name || 'نظام'}</span>
+                            </div>
+                            <span className={cn('text-[10px] font-bold px-1.5 py-0.5 rounded-full', style.bg, style.color)}>{l.action}</span>
+                            <span className="text-[10px] text-surface-400 mr-auto">{new Date(l.createdAt).toLocaleString('ar')}</span>
+                          </div>
+                          <p className="text-xs text-surface-600 leading-relaxed">{l.details}</p>
+                        </div>
                       </div>
-                      <p className="text-xs text-surface-600 leading-relaxed">{l.details}</p>
+                    );
+                  })}
+                  {totalPages > 1 && (
+                    <div className="p-3 flex items-center justify-center gap-2 border-t border-surface-100">
+                      <button disabled={logPage === 1} onClick={() => setLogPage(p => p - 1)}
+                        className={cn('w-8 h-8 rounded-lg flex items-center justify-center text-sm border transition-all', logPage === 1 ? 'text-surface-300 border-surface-100 cursor-not-allowed' : 'text-surface-600 border-surface-200 hover:bg-surface-100')}>
+                        <Icon name="chevron_right" size={18} />
+                      </button>
+                      <span className="text-xs text-surface-500 font-medium">{logPage} / {totalPages}</span>
+                      <span className="text-xs text-surface-400">({filtered.length} سجل)</span>
+                      <button disabled={logPage === totalPages} onClick={() => setLogPage(p => p + 1)}
+                        className={cn('w-8 h-8 rounded-lg flex items-center justify-center text-sm border transition-all', logPage === totalPages ? 'text-surface-300 border-surface-100 cursor-not-allowed' : 'text-surface-600 border-surface-200 hover:bg-surface-100')}>
+                        <Icon name="chevron_left" size={18} />
+                      </button>
                     </div>
-                  </div>
-                );
-              });
+                  )}
+                </>
+              );
             })()}
           </div>
         </div>
@@ -1981,7 +2151,7 @@ export function AdminPage() {
               {renderInput('الوصف بالعربية', 'descriptionAr', 'textarea')}
               {renderInput('الوصف بالإيطالية', 'descriptionIt', 'textarea')}
               {renderInput('التصنيف', 'category')}
-              {renderInput('صورة', 'image', 'image')}
+              {renderInput('صورة', 'image', 'image-square')}
               {renderInput('الترتيب', 'order', 'number')}
             </>)}
             {modal.type === 'dictSection' && (<>

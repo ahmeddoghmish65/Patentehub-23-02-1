@@ -41,7 +41,7 @@ const COUNTRY_CODES = [
 ];
 
 export function ProfilePage({ onNavigate }: ProfilePageProps) {
-  const { user, logout, updateSettings, updateProfile, mistakes, loadMistakes, posts, loadPosts } = useAuthStore();
+  const { user, logout, updateSettings, updateProfile, mistakes, loadMistakes, practiceMistake, posts, loadPosts } = useAuthStore();
 
   const [showEditPage, setShowEditPage] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
@@ -65,6 +65,12 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
     birthDate: '', country: 'Italia', province: '', gender: '',
     phoneCode: '+39', phone: '', italianLevel: '',
   });
+
+  // Mistakes practice
+  const [practiceActive, setPracticeActive] = useState(false);
+  const [practiceIdx, setPracticeIdx] = useState(0);
+  const [practiceChosen, setPracticeChosen] = useState<boolean | null>(null);
+  const [practiceResult, setPracticeResult] = useState<'correct' | 'wrong' | null>(null);
 
   // Stats modal
   const [activeStatView, setActiveStatView] = useState<null | 'posts' | 'quizzes' | 'followers' | 'following'>(null);
@@ -807,6 +813,132 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
           ))}
         </div>
       </div>
+
+      {/* Mistakes Practice */}
+      {mistakes.length > 0 && (
+        <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+          <div className="px-5 py-4 border-b border-surface-100 flex items-center justify-between">
+            <h2 className="font-bold text-surface-900 flex items-center gap-2">
+              <Icon name="psychology" size={20} className="text-danger-500" filled />
+              أخطائي
+              <span className="text-xs bg-danger-50 text-danger-600 px-2 py-0.5 rounded-full font-semibold border border-danger-100">{mistakes.length} سؤال</span>
+            </h2>
+            {!practiceActive ? (
+              <button
+                onClick={() => { setPracticeActive(true); setPracticeIdx(0); setPracticeChosen(null); setPracticeResult(null); }}
+                className="flex items-center gap-1.5 text-xs font-semibold bg-primary-500 text-white px-3 py-1.5 rounded-xl hover:bg-primary-600 transition-colors shadow-sm">
+                <Icon name="fitness_center" size={14} /> تدريب على الأخطاء
+              </button>
+            ) : (
+              <button onClick={() => { setPracticeActive(false); setPracticeChosen(null); setPracticeResult(null); }}
+                className="text-xs text-surface-400 hover:text-danger-500 font-medium transition-colors flex items-center gap-1">
+                <Icon name="close" size={14} /> إنهاء التدريب
+              </button>
+            )}
+          </div>
+
+          {!practiceActive ? (
+            /* List view */
+            <div className="divide-y divide-surface-50 max-h-64 overflow-y-auto">
+              {mistakes.map((m, i) => (
+                <div key={m.id} className="px-5 py-3 flex items-start gap-3">
+                  <div className="w-7 h-7 rounded-lg bg-danger-50 border border-danger-100 flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="text-xs font-black text-danger-600">{m.count}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-surface-800 leading-snug line-clamp-2">{m.questionAr}</p>
+                    <p className="text-xs text-surface-400 mt-0.5" dir="ltr">{m.questionIt}</p>
+                  </div>
+                  <span className={cn('text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 mt-1', m.correctAnswer ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600')}>
+                    {m.correctAnswer ? 'صحيح' : 'خطأ'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : mistakes.length > 0 && practiceIdx < mistakes.length ? (
+            /* Practice mode */
+            (() => {
+              const q = mistakes[practiceIdx];
+              return (
+                <div className="p-5">
+                  {/* Progress */}
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex-1 bg-surface-100 rounded-full h-1.5 overflow-hidden">
+                      <div className="h-full bg-primary-500 rounded-full transition-all" style={{ width: `${(practiceIdx / mistakes.length) * 100}%` }} />
+                    </div>
+                    <span className="text-[10px] text-surface-400 shrink-0">{practiceIdx + 1}/{mistakes.length}</span>
+                    <span className="text-[10px] bg-danger-50 text-danger-500 px-1.5 py-0.5 rounded-full shrink-0 font-semibold">×{q.count}</span>
+                  </div>
+
+                  {/* Question */}
+                  <div className="bg-surface-50 rounded-2xl p-4 mb-4">
+                    <p className="text-sm font-semibold text-surface-800 leading-relaxed mb-1">{q.questionAr}</p>
+                    <p className="text-xs text-surface-400 leading-relaxed" dir="ltr">{q.questionIt}</p>
+                  </div>
+
+                  {practiceResult === null ? (
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        onClick={async () => {
+                          const chosen = true;
+                          setPracticeChosen(chosen);
+                          const isCorrect = chosen === q.correctAnswer;
+                          setPracticeResult(isCorrect ? 'correct' : 'wrong');
+                          if (isCorrect) await practiceMistake(q.questionId, true);
+                        }}
+                        className="py-3 rounded-2xl border-2 border-success-200 hover:bg-success-50 text-success-700 font-bold text-sm transition-all">
+                        ✓ صحيح
+                      </button>
+                      <button
+                        onClick={async () => {
+                          const chosen = false;
+                          setPracticeChosen(chosen);
+                          const isCorrect = chosen === q.correctAnswer;
+                          setPracticeResult(isCorrect ? 'correct' : 'wrong');
+                          if (isCorrect) await practiceMistake(q.questionId, true);
+                        }}
+                        className="py-3 rounded-2xl border-2 border-danger-200 hover:bg-danger-50 text-danger-700 font-bold text-sm transition-all">
+                        ✗ خطأ
+                      </button>
+                    </div>
+                  ) : (
+                    <div className={cn('rounded-2xl p-4 border text-center', practiceResult === 'correct' ? 'bg-success-50 border-success-200' : 'bg-danger-50 border-danger-200')}>
+                      <Icon name={practiceResult === 'correct' ? 'check_circle' : 'cancel'} size={28} className={practiceResult === 'correct' ? 'text-success-500 mx-auto mb-2' : 'text-danger-500 mx-auto mb-2'} filled />
+                      <p className={cn('font-bold text-sm mb-1', practiceResult === 'correct' ? 'text-success-700' : 'text-danger-700')}>
+                        {practiceResult === 'correct' ? '🎉 إجابة صحيحة! تم تخفيض عدد الأخطاء' : '❌ خطأ! الإجابة الصحيحة: ' + (q.correctAnswer ? 'صحيح ✓' : 'خطأ ✗')}
+                      </p>
+                      <button
+                        onClick={() => {
+                          setPracticeChosen(null);
+                          setPracticeResult(null);
+                          const nextIdx = practiceIdx + 1;
+                          if (nextIdx >= mistakes.length) {
+                            setPracticeActive(false);
+                          } else {
+                            setPracticeIdx(nextIdx);
+                          }
+                        }}
+                        className="mt-2 text-xs font-semibold bg-white border border-surface-200 px-4 py-1.5 rounded-xl hover:bg-surface-50 transition-colors">
+                        {practiceIdx + 1 < mistakes.length ? 'التالي ←' : 'إنهاء'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })()
+          ) : (
+            <div className="p-8 text-center">
+              <Icon name="celebration" size={40} className="text-success-400 mx-auto mb-3" filled />
+              <p className="font-bold text-surface-800 mb-1">أحسنت! انتهيت من التدريب</p>
+              <p className="text-xs text-surface-400">استمر في التدريب لإزالة الأخطاء بالكامل</p>
+              <button onClick={() => { setPracticeActive(false); }}
+                className="mt-3 text-xs font-semibold bg-primary-500 text-white px-4 py-2 rounded-xl hover:bg-primary-600 transition-colors">
+                إغلاق
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Badges */}
       <div className="bg-white rounded-xl p-5 border border-surface-100">

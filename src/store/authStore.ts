@@ -62,6 +62,7 @@ interface AppState {
   loadPosts: (sortMode?: PostSortMode, hashtag?: string) => Promise<void>;
   loadQuizHistory: () => Promise<void>;
   loadMistakes: () => Promise<void>;
+  practiceMistake: (questionId: string, correct: boolean) => Promise<void>;
   loadNotifications: () => Promise<void>;
 
   // Quiz
@@ -82,6 +83,7 @@ interface AppState {
   loadAdminUsers: () => Promise<void>;
   loadAdminReports: () => Promise<void>;
   loadAdminLogs: () => Promise<void>;
+  deleteAdminLogsByDateRange: (from: string, to: string) => Promise<number>;
   loadAdminStats: () => Promise<void>;
   banUser: (userId: string, banned: boolean) => Promise<boolean>;
   deleteUser: (userId: string) => Promise<boolean>;
@@ -288,6 +290,12 @@ export const useAuthStore = create<AppState>((set, get) => ({
   loadPosts: async (sortMode = 'hot', hashtag) => { const r = await api.apiGetPosts(sortMode, hashtag); if (r.success && r.data) set({ posts: r.data }); },
   loadQuizHistory: async () => { const { token } = get(); if (!token) return; const r = await api.apiGetQuizHistory(token); if (r.success && r.data) set({ quizHistory: r.data }); },
   loadMistakes: async () => { const { token } = get(); if (!token) return; const r = await api.apiGetUserMistakes(token); if (r.success && r.data) set({ mistakes: r.data }); },
+  practiceMistake: async (questionId, correct) => {
+    const { token } = get(); if (!token) return;
+    await api.apiPracticeMistake(token, questionId, correct);
+    const r = await api.apiGetUserMistakes(token);
+    if (r.success && r.data) set({ mistakes: r.data });
+  },
   loadNotifications: async () => { const { token } = get(); if (!token) return; const r = await api.apiGetNotifications(token); if (r.success && r.data) set({ notifications: r.data }); },
 
   // ============ QUIZ ============
@@ -313,6 +321,7 @@ export const useAuthStore = create<AppState>((set, get) => ({
   loadAdminUsers: async () => { const { token } = get(); if (!token) return; const r = await api.apiAdminGetUsers(token); if (r.success && r.data) set({ adminUsers: r.data }); },
   loadAdminReports: async () => { const { token } = get(); if (!token) return; const r = await api.apiAdminGetReports(token); if (r.success && r.data) set({ adminReports: r.data }); },
   loadAdminLogs: async () => { const { token } = get(); if (!token) return; const r = await api.apiAdminGetLogs(token); if (r.success && r.data) set({ adminLogs: r.data }); },
+  deleteAdminLogsByDateRange: async (from, to) => { const { token } = get(); if (!token) return 0; const r = await api.apiAdminDeleteLogsByDateRange(token, from, to); if (r.success && r.data) { await get().loadAdminLogs(); return r.data.deleted; } return 0; },
   loadAdminStats: async () => { const { token } = get(); if (!token) return; const r = await api.apiAdminGetStats(token); if (r.success && r.data) set({ adminStats: r.data }); },
   banUser: async (userId, banned) => { const { token } = get(); if (!token) return false; const r = await api.apiAdminBanUser(token, userId, banned); if (r.success) await get().loadAdminUsers(); return r.success; },
   deleteUser: async (userId) => { const { token } = get(); if (!token) return false; const r = await api.apiAdminDeleteUser(token, userId); if (r.success) { await get().loadAdminUsers(); await get().loadDeletedUsers(); } return r.success; },

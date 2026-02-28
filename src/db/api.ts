@@ -1035,6 +1035,23 @@ export async function apiGetUserMistakes(token: string): Promise<ApiRes<UserMist
   return ok(all);
 }
 
+export async function apiPracticeMistake(token: string, questionId: string, correct: boolean): Promise<ApiRes<UserMistake | null>> {
+  const user = await getAuthUser(token);
+  if (!user) return err('غير مصرح', 401);
+  if (!correct) return ok(null);
+  const db = await getDB();
+  const all = await db.getAllFromIndex('userMistakes', 'userId', user.id);
+  const existing = all.find(m => m.questionId === questionId);
+  if (!existing) return ok(null);
+  existing.count = Math.max(0, existing.count - 1);
+  if (existing.count === 0) {
+    await db.delete('userMistakes', existing.id);
+    return ok(null);
+  }
+  await db.put('userMistakes', existing);
+  return ok(existing);
+}
+
 export async function apiSaveTrainingSession(token: string, data: Omit<TrainingSession, 'id' | 'userId' | 'createdAt'>): Promise<ApiRes<TrainingSession>> {
   const user = await getAuthUser(token);
   if (!user) return err('غير مصرح', 401);
@@ -1208,12 +1225,29 @@ export async function apiAdminUpdateReport(token: string, id: string, status: Re
   return ok(null);
 }
 
-export async function apiAdminGetLogs(token: string): Promise<ApiRes<AdminLog[]>> {
+export async function apiAdminGetLogs(token: string, limit = 500): Promise<ApiRes<AdminLog[]>> {
   if (!(await isAdmin(token))) return err('غير مصرح', 403);
   const db = await getDB();
   const all = await db.getAll('adminLogs');
   all.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  return ok(all);
+  return ok(limit > 0 ? all.slice(0, limit) : all);
+}
+
+export async function apiAdminDeleteLogsByDateRange(token: string, from: string, to: string): Promise<ApiRes<{ deleted: number }>> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const all = await db.getAll('adminLogs');
+  const fromTime = new Date(from).getTime();
+  const toTime = new Date(to + 'T23:59:59.999Z').getTime();
+  let deleted = 0;
+  for (const log of all) {
+    const t = new Date(log.createdAt).getTime();
+    if (t >= fromTime && t <= toTime) {
+      await db.delete('adminLogs', log.id);
+      deleted++;
+    }
+  }
+  return ok({ deleted });
 }
 
 export async function apiAdminGetStats(token: string): Promise<ApiRes<{
