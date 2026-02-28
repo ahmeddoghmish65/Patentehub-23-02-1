@@ -586,16 +586,23 @@ export function AdminPage() {
       {/* Lessons CRUD */}
       {tab === 'lessons' && (
         <div className="space-y-3">
-          <div className="bg-white rounded-xl border border-surface-100 px-4 py-2.5 flex items-center gap-3">
-            <Icon name="filter_list" size={16} className="text-surface-400 shrink-0" />
-            <span className="text-xs font-semibold text-surface-600 shrink-0">القسم:</span>
-            <select value={filterSectionId} onChange={e => setFilterSectionId(e.target.value)}
-              className="flex-1 border border-surface-200 rounded-lg px-3 py-1.5 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer">
-              <option value="">الكل ({store.lessons.length})</option>
-              {store.sections.map(sec => (
-                <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.lessons.filter(l => l.sectionId === sec.id).length})</option>
-              ))}
-            </select>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-sm font-bold text-surface-800 flex items-center gap-1.5">
+              <Icon name="school" size={16} className="text-primary-500" />
+              الدروس
+              <span className="text-xs font-normal text-surface-400">({store.lessons.length})</span>
+            </h2>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <Icon name="filter_list" size={14} className="text-surface-400" />
+              <span className="text-xs text-surface-500">القسم:</span>
+              <select value={filterSectionId} onChange={e => setFilterSectionId(e.target.value)}
+                className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer max-w-[150px]">
+                <option value="">الكل</option>
+                {store.sections.map(sec => (
+                  <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.lessons.filter(l => l.sectionId === sec.id).length})</option>
+                ))}
+              </select>
+            </div>
           </div>
           <ContentWithTrash
             title="الدروس"
@@ -633,18 +640,25 @@ export function AdminPage() {
       {/* Questions CRUD */}
       {tab === 'questions' && (
         <div className="space-y-3">
-          <div className="bg-white rounded-xl border border-surface-100 px-4 py-2.5 flex items-center gap-3">
-            <Icon name="filter_list" size={16} className="text-surface-400 shrink-0" />
-            <span className="text-xs font-semibold text-surface-600 shrink-0">القسم:</span>
-            <select value={filterSectionId} onChange={e => setFilterSectionId(e.target.value)}
-              className="flex-1 border border-surface-200 rounded-lg px-3 py-1.5 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer">
-              <option value="">الكل ({store.questions.length})</option>
-              {store.sections.map(sec => {
-                const sectionLessonIds = store.lessons.filter(l => l.sectionId === sec.id).map(l => l.id);
-                const count = store.questions.filter(q => sectionLessonIds.includes(q.lessonId)).length;
-                return <option key={sec.id} value={sec.id}>{sec.nameAr} ({count})</option>;
-              })}
-            </select>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-sm font-bold text-surface-800 flex items-center gap-1.5">
+              <Icon name="quiz" size={16} className="text-purple-500" />
+              الأسئلة
+              <span className="text-xs font-normal text-surface-400">({store.questions.length})</span>
+            </h2>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <Icon name="filter_list" size={14} className="text-surface-400" />
+              <span className="text-xs text-surface-500">القسم:</span>
+              <select value={filterSectionId} onChange={e => setFilterSectionId(e.target.value)}
+                className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer max-w-[150px]">
+                <option value="">الكل</option>
+                {store.sections.map(sec => {
+                  const sectionLessonIds = store.lessons.filter(l => l.sectionId === sec.id).map(l => l.id);
+                  const count = store.questions.filter(q => sectionLessonIds.includes(q.lessonId)).length;
+                  return <option key={sec.id} value={sec.id}>{sec.nameAr} ({count})</option>;
+                })}
+              </select>
+            </div>
           </div>
           <ContentWithTrash
             title="الأسئلة"
@@ -690,16 +704,23 @@ export function AdminPage() {
         ];
         return (
         <div className="space-y-3">
-          <div className="bg-white rounded-xl border border-surface-100 px-4 py-2.5 flex items-center gap-3">
-            <Icon name="filter_list" size={16} className="text-surface-400 shrink-0" />
-            <span className="text-xs font-semibold text-surface-600 shrink-0">التصنيف:</span>
-            <select value={filterSignCategory} onChange={e => setFilterSignCategory(e.target.value)}
-              className="flex-1 border border-surface-200 rounded-lg px-3 py-1.5 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer">
-              <option value="">الكل ({store.signs.length})</option>
-              {signCategories.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.label} ({store.signs.filter(s => s.category === cat.id).length})</option>
-              ))}
-            </select>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-sm font-bold text-surface-800 flex items-center gap-1.5">
+              <Icon name="traffic" size={16} className="text-red-500" />
+              الإشارات
+              <span className="text-xs font-normal text-surface-400">({store.signs.length})</span>
+            </h2>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <Icon name="filter_list" size={14} className="text-surface-400" />
+              <span className="text-xs text-surface-500">التصنيف:</span>
+              <select value={filterSignCategory} onChange={e => setFilterSignCategory(e.target.value)}
+                className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
+                <option value="">الكل</option>
+                {signCategories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.label} ({store.signs.filter(s => s.category === cat.id).length})</option>
+                ))}
+              </select>
+            </div>
           </div>
         <ContentWithTrash
           title="الإشارات"
@@ -761,16 +782,23 @@ export function AdminPage() {
             onExport={() => handleExport('dictionarySections')} onImport={() => handleImport('dictionarySections')}
           />
           <div className="space-y-3">
-            <div className="bg-white rounded-xl border border-surface-100 px-4 py-2.5 flex items-center gap-3">
-              <Icon name="filter_list" size={16} className="text-surface-400 shrink-0" />
-              <span className="text-xs font-semibold text-surface-600 shrink-0">القسم:</span>
-              <select value={filterDictSectionId} onChange={e => setFilterDictSectionId(e.target.value)}
-                className="flex-1 border border-surface-200 rounded-lg px-3 py-1.5 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer">
-                <option value="">الكل ({store.dictEntries.length})</option>
-                {store.dictSections.filter(s => !s.status || s.status === 'active').map(sec => (
-                  <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.dictEntries.filter(e => e.sectionId === sec.id).length})</option>
-                ))}
-              </select>
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-sm font-bold text-surface-800 flex items-center gap-1.5">
+                <Icon name="menu_book" size={16} className="text-cyan-500" />
+                مصطلحات القاموس
+                <span className="text-xs font-normal text-surface-400">({store.dictEntries.length})</span>
+              </h2>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <Icon name="filter_list" size={14} className="text-surface-400" />
+                <span className="text-xs text-surface-500">القسم:</span>
+                <select value={filterDictSectionId} onChange={e => setFilterDictSectionId(e.target.value)}
+                  className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer max-w-[150px]">
+                  <option value="">الكل</option>
+                  {store.dictSections.filter(s => !s.status || s.status === 'active').map(sec => (
+                    <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.dictEntries.filter(e => e.sectionId === sec.id).length})</option>
+                  ))}
+                </select>
+              </div>
             </div>
           <ContentWithTrash
             title="مصطلحات القاموس"
