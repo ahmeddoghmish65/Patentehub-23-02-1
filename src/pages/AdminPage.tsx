@@ -636,18 +636,21 @@ export function AdminPage() {
       {/* Lessons CRUD */}
       {tab === 'lessons' && (
         <div className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="text-sm font-bold text-surface-800 flex items-center gap-1.5">
-              <Icon name="school" size={16} className="text-primary-500" />
-              الدروس
-              <span className="text-xs font-normal text-surface-400">({store.lessons.length})</span>
-            </h2>
+          <div className="bg-white rounded-2xl border border-surface-100 p-3.5 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center shrink-0">
+                <Icon name="school" size={18} className="text-primary-500" filled />
+              </div>
+              <div>
+                <h2 className="text-sm font-bold text-surface-800">الدروس</h2>
+                <p className="text-xs text-surface-400">{store.lessons.length} درس</p>
+              </div>
+            </div>
             <div className="flex items-center gap-1.5 shrink-0">
               <Icon name="filter_list" size={14} className="text-surface-400" />
-              <span className="text-xs text-surface-500">القسم:</span>
               <select value={filterSectionId} onChange={e => setFilterSectionId(e.target.value)}
-                className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer max-w-[150px]">
-                <option value="">الكل</option>
+                className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[150px]">
+                <option value="">كل الأقسام</option>
                 {store.sections.map(sec => (
                   <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.lessons.filter(l => l.sectionId === sec.id).length})</option>
                 ))}
@@ -690,18 +693,21 @@ export function AdminPage() {
       {/* Questions CRUD */}
       {tab === 'questions' && (
         <div className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="text-sm font-bold text-surface-800 flex items-center gap-1.5">
-              <Icon name="quiz" size={16} className="text-purple-500" />
-              الأسئلة
-              <span className="text-xs font-normal text-surface-400">({store.questions.length})</span>
-            </h2>
+          <div className="bg-white rounded-2xl border border-surface-100 p-3.5 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center shrink-0">
+                <Icon name="quiz" size={18} className="text-purple-500" filled />
+              </div>
+              <div>
+                <h2 className="text-sm font-bold text-surface-800">الأسئلة</h2>
+                <p className="text-xs text-surface-400">{store.questions.length} سؤال</p>
+              </div>
+            </div>
             <div className="flex items-center gap-1.5 shrink-0">
               <Icon name="filter_list" size={14} className="text-surface-400" />
-              <span className="text-xs text-surface-500">القسم:</span>
               <select value={filterSectionId} onChange={e => setFilterSectionId(e.target.value)}
-                className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer max-w-[150px]">
-                <option value="">الكل</option>
+                className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[150px]">
+                <option value="">كل الأقسام</option>
                 {store.sections.map(sec => {
                   const sectionLessonIds = store.lessons.filter(l => l.sectionId === sec.id).map(l => l.id);
                   const count = store.questions.filter(q => sectionLessonIds.includes(q.lessonId)).length;
@@ -774,23 +780,25 @@ export function AdminPage() {
           />
           {/* Signs list with section+category filters */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-sm font-bold text-surface-800 flex items-center gap-1.5">
-                <Icon name="traffic" size={16} className="text-red-500" />
-                الإشارات
-                <span className="text-xs font-normal text-surface-400">({store.signs.length})</span>
-              </h2>
-              <div className="flex items-center gap-2 flex-wrap justify-end">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-surface-500">القسم:</span>
-                  <select value={filterSignCategory} onChange={e => setFilterSignCategory(e.target.value)}
-                    className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
-                    <option value="">الكل</option>
-                    {store.signSections.filter(s => !s.status || s.status === 'active').map(sec => (
-                      <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.signs.filter(s => s.sectionId === sec.id).length})</option>
-                    ))}
-                  </select>
+            <div className="bg-white rounded-2xl border border-surface-100 p-3.5 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+                  <Icon name="traffic" size={18} className="text-red-500" filled />
                 </div>
+                <div>
+                  <h2 className="text-sm font-bold text-surface-800">الإشارات</h2>
+                  <p className="text-xs text-surface-400">{store.signs.length} إشارة</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <Icon name="filter_list" size={14} className="text-surface-400" />
+                <select value={filterSignCategory} onChange={e => setFilterSignCategory(e.target.value)}
+                  className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
+                  <option value="">كل الأقسام</option>
+                  {store.signSections.filter(s => !s.status || s.status === 'active').map(sec => (
+                    <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.signs.filter(s => s.sectionId === sec.id).length})</option>
+                  ))}
+                </select>
               </div>
             </div>
             <ContentWithTrash
@@ -853,18 +861,21 @@ export function AdminPage() {
             onExport={() => handleExport('dictionarySections')} onImport={() => handleImport('dictionarySections')}
           />
           <div className="space-y-3">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-sm font-bold text-surface-800 flex items-center gap-1.5">
-                <Icon name="menu_book" size={16} className="text-cyan-500" />
-                مصطلحات القاموس
-                <span className="text-xs font-normal text-surface-400">({store.dictEntries.length})</span>
-              </h2>
+            <div className="bg-white rounded-2xl border border-surface-100 p-3.5 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-cyan-50 flex items-center justify-center shrink-0">
+                  <Icon name="menu_book" size={18} className="text-cyan-500" filled />
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-surface-800">مصطلحات القاموس</h2>
+                  <p className="text-xs text-surface-400">{store.dictEntries.length} مصطلح</p>
+                </div>
+              </div>
               <div className="flex items-center gap-1.5 shrink-0">
                 <Icon name="filter_list" size={14} className="text-surface-400" />
-                <span className="text-xs text-surface-500">القسم:</span>
                 <select value={filterDictSectionId} onChange={e => setFilterDictSectionId(e.target.value)}
-                  className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer max-w-[150px]">
-                  <option value="">الكل</option>
+                  className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[150px]">
+                  <option value="">كل الأقسام</option>
                   {store.dictSections.filter(s => !s.status || s.status === 'active').map(sec => (
                     <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.dictEntries.filter(e => e.sectionId === sec.id).length})</option>
                   ))}
@@ -1838,21 +1849,26 @@ export function AdminPage() {
 
       {/* Logs - with admin name */}
       {tab === 'logs' && (
-        <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
-          <div className="p-4 border-b border-surface-100">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="font-bold text-surface-900 flex items-center gap-2">
-                <Icon name="history" size={20} className="text-primary-500" />
-                سجلات الإدارة
-                <span className="text-xs bg-surface-100 text-surface-500 px-2 py-0.5 rounded-full font-normal">
-                  {store.adminLogs.filter(l => {
-                    const adminName = store.adminUsers.find(u => u.id === l.adminId)?.name || '';
-                    const matchSearch = !search || l.action.includes(search) || l.details.includes(search) || adminName.includes(search);
-                    const matchType = !logTypeFilter || logTypeFilter === 'الكل' || l.action.includes(logTypeFilter);
-                    return matchSearch && matchType;
-                  }).length} / {store.adminLogs.length}
-                </span>
-              </h2>
+        <div className="space-y-3">
+          {/* Logs header card */}
+          <div className="bg-white rounded-2xl border border-surface-100 p-3.5">
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center shrink-0">
+                  <Icon name="history" size={18} className="text-slate-500" filled />
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-surface-800">سجلات الإدارة</h2>
+                  <p className="text-xs text-surface-400">
+                    {store.adminLogs.filter(l => {
+                      const adminName = store.adminUsers.find(u => u.id === l.adminId)?.name || '';
+                      const matchSearch = !search || l.action.includes(search) || l.details.includes(search) || adminName.includes(search);
+                      const matchType = !logTypeFilter || logTypeFilter === 'الكل' || l.action.includes(logTypeFilter);
+                      return matchSearch && matchType;
+                    }).length} / {store.adminLogs.length} سجل
+                  </p>
+                </div>
+              </div>
               <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-400 border border-surface-200"
                 title="تصدير السجلات"
                 onClick={() => {
@@ -1870,7 +1886,7 @@ export function AdminPage() {
                 <Icon name="download" size={18} />
               </button>
             </div>
-            <input className="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm mb-2"
+            <input className="w-full border border-surface-200 rounded-xl px-3 py-2 text-sm mb-2.5 focus:outline-none focus:border-primary-400"
               placeholder="ابحث بالاجراء أو التفاصيل أو اسم المسؤول..."
               value={search} onChange={e => { setSearch(e.target.value); setLogPage(1); }} />
             <div className="flex gap-1.5 flex-wrap">
@@ -1909,6 +1925,7 @@ export function AdminPage() {
               </div>
             </div>
           </div>
+        <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
           {/* Delete confirmation dialog */}
           {showDeleteLogsConfirm && (
             <div className="mx-4 mb-3 p-3 bg-danger-50 border border-danger-200 rounded-xl">
@@ -2000,6 +2017,7 @@ export function AdminPage() {
               );
             })()}
           </div>
+        </div>
         </div>
       )}
 

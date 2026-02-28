@@ -1081,15 +1081,15 @@ export async function apiGetUserMistakes(token: string): Promise<ApiRes<UserMist
 export async function apiPracticeMistake(token: string, questionId: string, correct: boolean): Promise<ApiRes<UserMistake | null>> {
   const user = await getAuthUser(token);
   if (!user) return err('غير مصرح', 401);
-  if (!correct) return ok(null);
   const db = await getDB();
   const all = await db.getAllFromIndex('userMistakes', 'userId', user.id);
   const existing = all.find(m => m.questionId === questionId);
   if (!existing) return ok(null);
-  existing.count = Math.max(0, existing.count - 1);
-  if (existing.count === 0) {
-    await db.delete('userMistakes', existing.id);
-    return ok(null);
+  if (correct) {
+    existing.count = Math.max(0, existing.count - 1);
+    if (existing.count === 0) { await db.delete('userMistakes', existing.id); return ok(null); }
+  } else {
+    existing.count += 1;
   }
   await db.put('userMistakes', existing);
   return ok(existing);

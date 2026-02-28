@@ -81,7 +81,7 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
               <h3 className="text-sm font-semibold text-primary-600 mb-2 flex items-center gap-1.5" dir="ltr">
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-blue-100 text-blue-700 text-[10px] font-extrabold leading-none">IT</span>
               </h3>
-              <p className="text-base text-surface-700 leading-relaxed whitespace-pre-wrap" dir="ltr">{lesson.contentIt}</p>
+              <div className="text-base text-surface-700 leading-relaxed prose-sm" dir="ltr" dangerouslySetInnerHTML={{ __html: lesson.contentIt }} />
             </div>
           )}
 
@@ -92,7 +92,7 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
               <h3 className="text-sm font-semibold text-primary-600 mb-2 flex items-center gap-1.5">
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-orange-100 text-orange-700 text-[10px] font-extrabold leading-none">ع</span>
               </h3>
-              <p className="text-base text-surface-700 leading-relaxed whitespace-pre-wrap">{lesson.contentAr}</p>
+              <div className="text-base text-surface-700 leading-relaxed prose-sm" dangerouslySetInnerHTML={{ __html: lesson.contentAr }} />
             </div>
           )}
         </div>
