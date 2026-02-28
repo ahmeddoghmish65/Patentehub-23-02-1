@@ -244,6 +244,21 @@ export function AdminPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // If manager has NO permissions at all, deny access entirely (after all hooks)
+  if (!isFullAdmin && userPerms.length === 0) {
+    return (
+      <div className="max-w-sm mx-auto text-center py-20">
+        <div className="bg-white rounded-2xl p-8 border border-surface-100 shadow-sm">
+          <div className="w-16 h-16 bg-surface-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Icon name="lock" size={32} className="text-surface-400" />
+          </div>
+          <h2 className="text-lg font-bold text-surface-800 mb-2">لا توجد صلاحيات</h2>
+          <p className="text-sm text-surface-500 leading-relaxed">لم يتم منحك أي صلاحيات إدارية. تواصل مع المسؤول الرئيسي لمنح الصلاحيات.</p>
+        </div>
+      </div>
+    );
+  }
+
   const renderInput = (label: string, field: string, type = 'text') => (
     <div className="mb-3">
       <label className="block text-sm font-medium text-surface-700 mb-1">{label}</label>
@@ -1042,11 +1057,13 @@ export function AdminPage() {
 
                 {/* Actions */}
                 <div className="flex flex-wrap gap-2 mt-6 pt-4 border-t border-surface-100">
-                  <Button size="sm" variant={selectedUser.isBanned ? 'primary' : 'danger'}
-                    onClick={() => { store.banUser(selectedUser.id, !selectedUser.isBanned); }}
-                    icon={<Icon name={selectedUser.isBanned ? 'lock_open' : 'block'} size={16} />}>
-                    {selectedUser.isBanned ? 'إلغاء الحظر الكامل' : 'حظر المستخدم كاملاً'}
-                  </Button>
+                  {selectedUser.role !== 'admin' && (
+                    <Button size="sm" variant={selectedUser.isBanned ? 'primary' : 'danger'}
+                      onClick={() => { store.banUser(selectedUser.id, !selectedUser.isBanned); }}
+                      icon={<Icon name={selectedUser.isBanned ? 'lock_open' : 'block'} size={16} />}>
+                      {selectedUser.isBanned ? 'إلغاء الحظر الكامل' : 'حظر المستخدم كاملاً'}
+                    </Button>
+                  )}
                   {selectedUser.email !== 'admin@patente.com' && (
                     <>
                       <Button size="sm" variant="secondary"
@@ -1265,9 +1282,11 @@ export function AdminPage() {
                         <button className="p-1 rounded hover:bg-surface-100" title="عرض التفاصيل" onClick={() => setViewUser(u.id)}>
                           <Icon name="visibility" size={16} className="text-primary-500" />
                         </button>
-                        <button className="p-1 rounded hover:bg-surface-100" onClick={() => store.banUser(u.id, !u.isBanned)}>
-                          <Icon name={u.isBanned ? 'lock_open' : 'block'} size={16} className={u.isBanned ? 'text-success-500' : 'text-warning-500'} />
-                        </button>
+                        {u.role !== 'admin' && (
+                          <button className="p-1 rounded hover:bg-surface-100" onClick={() => store.banUser(u.id, !u.isBanned)}>
+                            <Icon name={u.isBanned ? 'lock_open' : 'block'} size={16} className={u.isBanned ? 'text-success-500' : 'text-warning-500'} />
+                          </button>
+                        )}
                         {u.email !== 'admin@patente.com' && (
                           <button className="p-1 rounded hover:bg-surface-100" onClick={() => setConfirmDel({ type: 'user', id: u.id })}>
                             <Icon name="delete" size={16} className="text-danger-500" />

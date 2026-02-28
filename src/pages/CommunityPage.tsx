@@ -1095,6 +1095,10 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
   const handleNotifClick = (n: Record<string, unknown>) => {
     markNotifRead(String(n.id));
     setShowNotifs(false);
+    if (n.type === 'follow' && n.fromUserId) {
+      openUserProfile(String(n.fromUserId));
+      return;
+    }
     if (n.postId) {
       openPostDetail(String(n.postId));
       setTimeout(() => {
@@ -1313,7 +1317,12 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                         </div>
                         <div className="flex items-center gap-2">
                           <p className="text-[10px] text-surface-400">{relativeTime(String(n.createdAt))}</p>
-                          {!!n.postId && (
+                          {type === 'follow' && (
+                            <span className="text-[10px] text-primary-500 font-medium flex items-center gap-0.5">
+                              <Icon name="person" size={10} /> افتح الملف الشخصي
+                            </span>
+                          )}
+                          {type !== 'follow' && !!n.postId && (
                             <span className="text-[10px] text-primary-500 font-medium flex items-center gap-0.5">
                               <Icon name="open_in_new" size={10} /> افتح المنشور
                             </span>
@@ -1328,7 +1337,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {(communityNotifs as any[]).length > 0 && (
                 <div className="p-2 border-t border-surface-100 bg-surface-50 text-center">
-                  <p className="text-[10px] text-surface-400">اضغط على الإشعار لفتح المنشور المرتبط</p>
+                  <p className="text-[10px] text-surface-400">اضغط على الإشعار لفتح المنشور أو الملف الشخصي</p>
                 </div>
               )}
             </div>
@@ -1431,78 +1440,93 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
         )}
       </div>
 
-      {/* New Post */}
-      <div className="bg-white rounded-2xl p-5 border border-surface-100 mb-6">
-        <div className="flex items-start gap-3">
-          <UserAvatar avatar={user?.avatar} name={user?.name || '?'} />
-          <div className="flex-1">
-            <div className="flex gap-2 mb-3">
-              <button className={cn('px-3 py-1.5 rounded-lg text-xs font-medium', postType === 'post' ? 'bg-primary-500 text-white' : 'bg-surface-100 text-surface-600')} onClick={() => setPostType('post')}>
-                <Icon name="edit_note" size={14} className="ml-1 inline" /> منشور
-              </button>
-              <button className={cn('px-3 py-1.5 rounded-lg text-xs font-medium', postType === 'quiz' ? 'bg-purple-500 text-white' : 'bg-surface-100 text-surface-600')} onClick={() => setPostType('quiz')}>
-                <Icon name="quiz" size={14} className="ml-1 inline" /> سؤال
-              </button>
-            </div>
-            {postType === 'quiz' ? (
-              <div className="space-y-3">
-                <div className="relative">
-                  <textarea dir="auto" className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none focus:border-purple-500" rows={2} placeholder="اكتب السؤال هنا... استخدم @اسم للإشارة لمستخدم" value={quizQuestion} onChange={e => handleTextChange(e.target.value, setQuizQuestion)} />
-                  {mentionSuggestions.length > 0 && <MentionDropdown suggestions={mentionSuggestions} onSelect={u => insertMention(u.username || u.name, quizQuestion, setQuizQuestion)} />}
-                </div>
-                <div>
-                  <label className="text-xs text-surface-600 font-medium mb-1.5 block">الإجابة الصحيحة:</label>
-                  <div className="flex gap-2">
-                    <button className={cn('flex-1 py-2 rounded-lg text-sm font-medium border-2', quizAnswer ? 'border-success-500 bg-success-50 text-success-700' : 'border-surface-200 text-surface-500')} onClick={() => setQuizAnswer(true)}>صحيح</button>
-                    <button className={cn('flex-1 py-2 rounded-lg text-sm font-medium border-2', !quizAnswer ? 'border-danger-500 bg-danger-50 text-danger-700' : 'border-surface-200 text-surface-500')} onClick={() => setQuizAnswer(false)}>خطأ</button>
-                  </div>
-                </div>
-                <textarea dir="auto" className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none" rows={1} placeholder="تعليق إضافي (اختياري)..." value={newPost} onChange={e => setNewPost(e.target.value)} />
-              </div>
-            ) : (
+      {/* New Post — compact composer */}
+      <div className="bg-white rounded-2xl border border-surface-100 mb-6 overflow-hidden">
+        {/* Row 1: avatar + type tabs */}
+        <div className="flex items-center gap-2.5 px-3.5 pt-3 pb-2">
+          <UserAvatar avatar={user?.avatar} name={user?.name || '?'} size="sm" />
+          <div className="flex items-center gap-1">
+            <button
+              className={cn('flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all',
+                postType === 'post' ? 'bg-primary-500 text-white' : 'bg-surface-100 text-surface-500 hover:bg-surface-200')}
+              onClick={() => setPostType('post')}>
+              <Icon name="edit_note" size={13} /> منشور
+            </button>
+            <button
+              className={cn('flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all',
+                postType === 'quiz' ? 'bg-purple-500 text-white' : 'bg-surface-100 text-surface-500 hover:bg-surface-200')}
+              onClick={() => setPostType('quiz')}>
+              <Icon name="quiz" size={13} /> سؤال
+            </button>
+          </div>
+        </div>
+
+        {/* Row 2: content */}
+        <div className="px-3.5 pb-2">
+          {postType === 'quiz' ? (
+            <div className="space-y-2">
               <div className="relative">
-                <textarea dir="auto" className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none focus:border-primary-500" rows={3} placeholder="شارك شيئاً مع المجتمع... استخدم @اسم أو #وسم" value={newPost} onChange={e => handleTextChange(e.target.value, setNewPost)} />
-                {mentionSuggestions.length > 0 && <MentionDropdown suggestions={mentionSuggestions} onSelect={u => insertMention(u.username || u.name, newPost, setNewPost)} />}
-                {hashtagSuggestions.length > 0 && <HashtagDropdown suggestions={hashtagSuggestions} onSelect={h => insertHashtag(h.tag, newPost, setNewPost)} />}
+                <textarea dir="auto" className="w-full border border-purple-200 rounded-xl px-3 py-2 text-sm resize-none focus:border-purple-400 focus:outline-none bg-purple-50/30" rows={2}
+                  placeholder="اكتب السؤال هنا... استخدم @اسم للإشارة لمستخدم"
+                  value={quizQuestion} onChange={e => handleTextChange(e.target.value, setQuizQuestion)} />
+                {mentionSuggestions.length > 0 && <MentionDropdown suggestions={mentionSuggestions} onSelect={u => insertMention(u.username || u.name, quizQuestion, setQuizQuestion)} />}
               </div>
-            )}
-            {!canPost && (
-              <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><Icon name="block" size={12} /> تم تقييد نشرك من قبل المسؤول</p>
-            )}
-            {/* Image upload — only when admin has enabled it */}
-            {communityAllowImages && (
-              <div className="mt-2">
-                {postImage ? (
-                  <div className="relative mt-2 rounded-xl overflow-hidden border border-surface-200">
-                    <img src={postImage} alt="" className="w-full max-h-48 object-cover" />
-                    <button
-                      className="absolute top-2 left-2 w-7 h-7 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center"
-                      onClick={() => setPostImage('')}
-                      title="إزالة الصورة">
-                      <Icon name="close" size={14} />
-                    </button>
-                  </div>
-                ) : (
-                  <label className="flex items-center gap-1.5 text-xs text-surface-500 hover:text-primary-600 cursor-pointer w-fit">
-                    <Icon name="image" size={16} />
-                    إرفاق صورة
-                    <input type="file" accept="image/*" className="hidden" onChange={e => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      const reader = new FileReader();
-                      reader.onload = () => setPostImage(reader.result as string);
-                      reader.readAsDataURL(file);
-                      e.target.value = '';
-                    }} />
-                  </label>
-                )}
+              <div className="flex gap-2">
+                <button className={cn('flex-1 py-1.5 rounded-lg text-xs font-bold border-2 transition-all', quizAnswer ? 'border-success-500 bg-success-50 text-success-700' : 'border-surface-200 text-surface-400 hover:border-success-300')} onClick={() => setQuizAnswer(true)}>✓ صحيح</button>
+                <button className={cn('flex-1 py-1.5 rounded-lg text-xs font-bold border-2 transition-all', !quizAnswer ? 'border-danger-500 bg-danger-50 text-danger-700' : 'border-surface-200 text-surface-400 hover:border-danger-300')} onClick={() => setQuizAnswer(false)}>✗ خطأ</button>
               </div>
-            )}
-            <div className="flex justify-end mt-2">
-              <Button size="sm" onClick={handlePost} loading={posting} disabled={!canPost || (postType === 'quiz' ? !quizQuestion.trim() : !newPost.trim())}
-                className={postType === 'quiz' ? '!bg-purple-500 hover:!bg-purple-600' : ''}>نشر</Button>
+              <textarea dir="auto" className="w-full border border-surface-200 rounded-xl px-3 py-2 text-sm resize-none focus:outline-none focus:border-surface-300" rows={1}
+                placeholder="شرح أو تعليق اختياري..." value={newPost} onChange={e => setNewPost(e.target.value)} />
+            </div>
+          ) : (
+            <div className="relative">
+              <textarea dir="auto"
+                className="w-full border border-surface-200 rounded-xl px-3 py-2 text-sm resize-none focus:border-primary-400 focus:outline-none"
+                rows={3} placeholder="شارك شيئاً مع المجتمع... استخدم @اسم أو #وسم"
+                value={newPost} onChange={e => handleTextChange(e.target.value, setNewPost)} />
+              {mentionSuggestions.length > 0 && <MentionDropdown suggestions={mentionSuggestions} onSelect={u => insertMention(u.username || u.name, newPost, setNewPost)} />}
+              {hashtagSuggestions.length > 0 && <HashtagDropdown suggestions={hashtagSuggestions} onSelect={h => insertHashtag(h.tag, newPost, setNewPost)} />}
+            </div>
+          )}
+        </div>
+
+        {/* Attached image preview */}
+        {communityAllowImages && postImage && (
+          <div className="px-3.5 pb-2">
+            <div className="relative rounded-xl overflow-hidden border border-surface-200">
+              <img src={postImage} alt="" className="w-full max-h-40 object-cover" />
+              <button className="absolute top-1.5 left-1.5 w-6 h-6 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center" onClick={() => setPostImage('')} title="إزالة الصورة">
+                <Icon name="close" size={12} />
+              </button>
             </div>
           </div>
+        )}
+
+        {/* Row 3: tools + post button */}
+        <div className="flex items-center gap-2 px-3.5 pb-3 border-t border-surface-50 pt-2">
+          {communityAllowImages && !postImage && (
+            <label className="flex items-center gap-1 text-xs text-surface-400 hover:text-primary-600 cursor-pointer px-2 py-1 rounded-lg hover:bg-surface-50 transition-colors">
+              <Icon name="image" size={15} />
+              <span>صورة</span>
+              <input type="file" accept="image/*" className="hidden" onChange={e => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = () => setPostImage(reader.result as string);
+                reader.readAsDataURL(file);
+                e.target.value = '';
+              }} />
+            </label>
+          )}
+          {!canPost && (
+            <p className="text-[11px] text-red-500 flex items-center gap-1"><Icon name="block" size={11} /> مقيّد</p>
+          )}
+          <div className="flex-1" />
+          <Button size="sm" onClick={handlePost} loading={posting}
+            disabled={!canPost || (postType === 'quiz' ? !quizQuestion.trim() : !newPost.trim())}
+            className={cn('!text-xs !px-4', postType === 'quiz' ? '!bg-purple-500 hover:!bg-purple-600' : '')}>
+            نشر
+          </Button>
         </div>
       </div>
 

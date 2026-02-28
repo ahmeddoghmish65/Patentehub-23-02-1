@@ -294,226 +294,250 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
 
   // ==================== EDIT PAGE (not overlay - inline page) ====================
   if (showEditPage) {
+    const fieldClass = 'w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary-400 transition-colors';
     return (
-      <div className="max-w-lg mx-auto space-y-5 pb-4">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <button onClick={() => setShowEditPage(false)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600">
-            <Icon name="arrow_forward" size={22} />
-            <span className="text-sm font-medium">رجوع</span>
-          </button>
-          <h2 className="text-lg font-bold text-surface-900">تعديل الحساب</h2>
-          <div className="w-16" />
+      <div className="max-w-lg mx-auto pb-6">
+        {/* Sticky header */}
+        <div className="sticky top-0 z-10 bg-surface-50 -mx-1 px-1 pb-3 pt-1">
+          <div className="bg-white rounded-2xl border border-surface-100 px-4 py-3 flex items-center gap-3 shadow-sm">
+            <button onClick={() => setShowEditPage(false)}
+              className="w-9 h-9 rounded-xl bg-surface-100 hover:bg-surface-200 flex items-center justify-center transition-colors shrink-0">
+              <Icon name="arrow_forward" size={20} className="text-surface-600" />
+            </button>
+            <h2 className="text-base font-bold text-surface-900 flex-1">تعديل الحساب</h2>
+            {saveMsg && (
+              <span className={cn('text-xs font-semibold px-3 py-1 rounded-lg', saveMsg.includes('✓') ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600')}>
+                {saveMsg}
+              </span>
+            )}
+            <Button size="sm" onClick={handleSaveEdit} className="shrink-0">
+              <Icon name="save" size={15} className="ml-1" /> حفظ
+            </Button>
+          </div>
         </div>
 
-        {/* Avatar */}
-        <div className="text-center">
-          <input type="file" ref={editFileRef} className="hidden" accept="image/*" onChange={onEditFileChange} />
-          <div className="relative inline-block">
+        <input type="file" ref={editFileRef} className="hidden" accept="image/*" onChange={onEditFileChange} />
+
+        {/* Avatar banner */}
+        <div className="bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl p-6 flex items-center gap-4 mb-4">
+          <div className="relative shrink-0">
             {user.avatar ? (
-              <img src={user.avatar} alt="" className="w-24 h-24 rounded-2xl object-cover shadow-lg" />
+              <img src={user.avatar} alt="" className="w-20 h-20 rounded-2xl object-cover border-4 border-white/30 shadow-xl" />
             ) : (
-              <div className="w-24 h-24 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center shadow-lg">
-                <span className="text-3xl font-bold text-white">{user.name.charAt(0)}</span>
+              <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center border-4 border-white/30 shadow-xl">
+                <span className="text-3xl font-black text-white">{user.name.charAt(0)}</span>
               </div>
             )}
-            <button className="absolute -bottom-2 -right-2 w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-primary-600"
+            <button
+              className="absolute -bottom-1 -right-1 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-surface-50 transition-colors"
               onClick={() => editFileRef.current?.click()}>
-              <Icon name="camera_alt" size={16} />
+              <Icon name="camera_alt" size={14} className="text-primary-600" />
             </button>
             {user.avatar && (
-              <button className="absolute -top-2 -left-2 w-7 h-7 bg-danger-500 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-danger-600 border-2 border-white"
+              <button
+                className="absolute -top-1 -left-1 w-6 h-6 bg-danger-500 rounded-full flex items-center justify-center border-2 border-white shadow-lg hover:bg-danger-600 transition-colors"
                 onClick={handleDeleteAvatar}>
-                <Icon name="close" size={14} />
+                <Icon name="close" size={12} className="text-white" />
               </button>
             )}
           </div>
-          <p className="text-xs text-surface-400 mt-3">اضغط على الكاميرا لتغيير الصورة</p>
-        </div>
-
-        {/* Personal Info */}
-        <div className="bg-white rounded-2xl p-5 border border-surface-100">
-          <h3 className="text-sm font-bold text-surface-800 mb-4 flex items-center gap-2">
-            <Icon name="person" size={18} className="text-primary-500" /> المعلومات الشخصية
-          </h3>
-          <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-surface-500 mb-1 block">الاسم الأول</label>
-                <input className="w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm" value={editForm.firstName} onChange={e => setEditForm(f => ({ ...f, firstName: e.target.value }))} />
-              </div>
-              <div>
-                <label className="text-xs text-surface-500 mb-1 block">اسم العائلة</label>
-                <input className="w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm" value={editForm.lastName} onChange={e => setEditForm(f => ({ ...f, lastName: e.target.value }))} />
-              </div>
-            </div>
-            {(() => {
-              if (!changeDates.name) return null;
-              const diff = Date.now() - new Date(changeDates.name).getTime();
-              const DAYS_60 = 60 * 24 * 60 * 60 * 1000;
-              if (diff >= DAYS_60) return null;
-              const daysLeft = Math.ceil((DAYS_60 - diff) / (24 * 60 * 60 * 1000));
-              return <p className="text-[11px] text-warning-600 bg-warning-50 rounded-lg px-3 py-1.5 flex items-center gap-1"><Icon name="schedule" size={12} /> يمكن تغيير الاسم بعد {daysLeft} يوم</p>;
-            })()}
-            <div>
-              <label className="text-xs text-surface-500 mb-1 block">اسم المستخدم</label>
-              <div className="relative">
-                <input
-                  className={cn('w-full border rounded-xl px-3 py-2.5 text-sm pr-9', usernameStatus === 'taken' ? 'border-danger-400 bg-danger-50' : usernameStatus === 'ok' ? 'border-success-400' : 'border-surface-200')}
-                  dir="ltr"
-                  value={editForm.username}
-                  onChange={async e => {
-                    const val = e.target.value;
-                    setEditForm(f => ({ ...f, username: val }));
-                    if (!val || val === user.username) { setUsernameStatus('idle'); return; }
-                    if (!/^[a-zA-Z0-9_.]{3,20}$/.test(val)) { setUsernameStatus('invalid'); return; }
-                    setUsernameStatus('checking');
-                    const db2 = await getDB();
-                    const all = await db2.getAll('users');
-                    const taken = all.some(u => u.id !== user.id && (u.username || '').toLowerCase() === val.toLowerCase());
-                    setUsernameStatus(taken ? 'taken' : 'ok');
-                  }}
-                />
-                <span className="absolute left-3 top-1/2 -translate-y-1/2">
-                  {usernameStatus === 'checking' && <Icon name="refresh" size={16} className="text-surface-400 animate-spin" />}
-                  {usernameStatus === 'ok' && <Icon name="check_circle" size={16} className="text-success-500" filled />}
-                  {usernameStatus === 'taken' && <Icon name="cancel" size={16} className="text-danger-500" filled />}
-                  {usernameStatus === 'invalid' && <Icon name="error" size={16} className="text-warning-500" filled />}
-                </span>
-              </div>
-              {usernameStatus === 'taken' && <p className="text-[11px] text-danger-500 mt-0.5">اسم المستخدم مأخوذ</p>}
-              {usernameStatus === 'invalid' && <p className="text-[11px] text-warning-500 mt-0.5">3-20 حرف: حروف إنجليزية، أرقام، _ أو .</p>}
-              {usernameStatus === 'ok' && <p className="text-[11px] text-success-500 mt-0.5">اسم المستخدم متاح ✓</p>}
-              {(() => {
-                if (!changeDates.username) return null;
-                const diff = Date.now() - new Date(changeDates.username).getTime();
-                const DAYS_60 = 60 * 24 * 60 * 60 * 1000;
-                if (diff >= DAYS_60) return null;
-                const daysLeft = Math.ceil((DAYS_60 - diff) / (24 * 60 * 60 * 1000));
-                return <p className="text-[11px] text-warning-600 bg-warning-50 rounded-lg px-3 py-1.5 flex items-center gap-1 mt-0.5"><Icon name="schedule" size={12} /> يمكن تغيير اليوزرنيم بعد {daysLeft} يوم</p>;
-              })()}
-            </div>
-            <div>
-              <label className="text-xs text-surface-500 mb-1 block">نبذة عني</label>
-              <textarea className="w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm resize-none" rows={2} value={editForm.bio} onChange={e => setEditForm(f => ({ ...f, bio: e.target.value }))} maxLength={150} placeholder="اكتب نبذة عنك..." />
-              <span className="text-[10px] text-surface-400">{editForm.bio.length}/150</span>
-            </div>
-            <div>
-              <label className="text-xs text-surface-500 mb-1 block">تاريخ الميلاد</label>
-              <input type="date" className="w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm block" style={{ boxSizing: 'border-box' }} value={editForm.birthDate} onChange={e => setEditForm(f => ({ ...f, birthDate: e.target.value }))} />
-            </div>
-            <div>
-              <label className="text-xs text-surface-500 mb-1 block">الجنس</label>
-              <div className="grid grid-cols-2 gap-2">
-                {[{ value: 'male', label: 'ذكر ♂️' }, { value: 'female', label: 'أنثى ♀️' }].map(g => (
-                  <button key={g.value} className={cn('py-2.5 rounded-xl border-2 text-sm font-medium', editForm.gender === g.value ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-surface-200 text-surface-600')}
-                    onClick={() => setEditForm(f => ({ ...f, gender: g.value }))}>{g.label}</button>
-                ))}
-              </div>
-            </div>
+          <div className="min-w-0">
+            <p className="text-white font-bold text-base truncate">{user.name}</p>
+            {user.username && <p className="text-white/70 text-sm">@{user.username}</p>}
+            <p className="text-white/60 text-xs mt-1">اضغط على أيقونة الكاميرا لتغيير الصورة</p>
           </div>
         </div>
 
-        {/* Contact */}
-        <div className="bg-white rounded-2xl p-5 border border-surface-100">
-          <h3 className="text-sm font-bold text-surface-800 mb-4 flex items-center gap-2">
-            <Icon name="contact_mail" size={18} className="text-primary-500" /> معلومات الاتصال
-          </h3>
-          <div className="space-y-3">
-            <div>
-              <label className="text-xs text-surface-500 mb-1 block">البريد الإلكتروني</label>
-              <input type="email" dir="ltr" className="w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm text-left" value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))} />
-            </div>
-            <div>
-              <label className="text-xs text-surface-500 mb-1 block">رقم الهاتف</label>
-              <div className="flex gap-2">
-                <select className="w-28 border border-surface-200 rounded-xl px-2 py-2.5 text-sm shrink-0" value={editForm.phoneCode} onChange={e => setEditForm(f => ({ ...f, phoneCode: e.target.value }))}>
-                  {COUNTRY_CODES.map(c => <option key={c.code} value={c.code}>{c.country.split(' ')[0]} {c.code}</option>)}
-                </select>
-                <input type="tel" dir="ltr" className={cn('flex-1 border rounded-xl px-3 py-2.5 text-sm text-left', phoneError ? 'border-danger-400 bg-danger-50' : 'border-surface-200')}
-                  value={editForm.phone}
-                  onChange={e => {
-                    const val = e.target.value;
-                    setEditForm(f => ({ ...f, phone: val }));
-                    const raw = val.replace(/\D/g, '');
-                    if (val && (raw.length < 7 || raw.length > 15)) setPhoneError('رقم غير صالح (7-15 رقم)');
-                    else setPhoneError('');
-                  }}
-                  placeholder="1234567890" />
+        {/* Section helper */}
+        {(() => {
+          const SectionHeader = ({ icon, label }: { icon: string; label: string }) => (
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-7 h-7 bg-primary-50 rounded-lg flex items-center justify-center shrink-0">
+                <Icon name={icon} size={15} className="text-primary-500" />
               </div>
-              {phoneError && <p className="text-[11px] text-danger-500 mt-0.5">{phoneError}</p>}
+              <h3 className="text-sm font-bold text-surface-800">{label}</h3>
             </div>
-            <div>
-              <label className="text-xs text-surface-500 mb-1 block">المحافظة (Provincia)</label>
-              <select className="w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm" value={editForm.province} onChange={e => setEditForm(f => ({ ...f, province: e.target.value }))}>
-                <option value="">اختر المحافظة</option>
-                {ITALIAN_PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="text-xs text-surface-500 mb-1 block">مستوى الإيطالية</label>
-              <div className="grid grid-cols-2 gap-2">
-                {[{ value: 'weak', label: 'ضعيف' }, { value: 'good', label: 'جيد' }, { value: 'very_good', label: 'جيد جداً' }, { value: 'native', label: 'أنا إيطالي' }].map(l => (
-                  <button key={l.value} className={cn('py-2 rounded-xl border-2 text-xs font-medium', editForm.italianLevel === l.value ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-surface-200 text-surface-600')}
-                    onClick={() => setEditForm(f => ({ ...f, italianLevel: l.value }))}>{l.label}</button>
-                ))}
+          );
+          return (
+            <div className="space-y-3">
+              {/* Personal info */}
+              <div className="bg-white rounded-2xl p-4 border border-surface-100 space-y-3">
+                <SectionHeader icon="person" label="المعلومات الشخصية" />
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">الاسم الأول</label>
+                    <input className={fieldClass} value={editForm.firstName} onChange={e => setEditForm(f => ({ ...f, firstName: e.target.value }))} />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">اسم العائلة</label>
+                    <input className={fieldClass} value={editForm.lastName} onChange={e => setEditForm(f => ({ ...f, lastName: e.target.value }))} />
+                  </div>
+                </div>
+                {(() => {
+                  if (!changeDates.name) return null;
+                  const diff = Date.now() - new Date(changeDates.name).getTime();
+                  const DAYS_60 = 60 * 24 * 60 * 60 * 1000;
+                  if (diff >= DAYS_60) return null;
+                  const daysLeft = Math.ceil((DAYS_60 - diff) / (24 * 60 * 60 * 1000));
+                  return <p className="text-[11px] text-warning-600 bg-warning-50 rounded-lg px-3 py-1.5 flex items-center gap-1"><Icon name="schedule" size={12} /> يمكن تغيير الاسم بعد {daysLeft} يوم</p>;
+                })()}
+
+                <div>
+                  <label className="text-[11px] text-surface-400 font-medium mb-1 block">اسم المستخدم</label>
+                  <div className="relative">
+                    <input
+                      className={cn(fieldClass, 'pl-8', usernameStatus === 'taken' ? 'border-danger-400 bg-danger-50' : usernameStatus === 'ok' ? 'border-success-400' : '')}
+                      dir="ltr" value={editForm.username}
+                      onChange={async e => {
+                        const val = e.target.value;
+                        setEditForm(f => ({ ...f, username: val }));
+                        if (!val || val === user.username) { setUsernameStatus('idle'); return; }
+                        if (!/^[a-zA-Z0-9_.]{3,20}$/.test(val)) { setUsernameStatus('invalid'); return; }
+                        setUsernameStatus('checking');
+                        const db2 = await getDB();
+                        const all = await db2.getAll('users');
+                        const taken = all.some(u => u.id !== user.id && (u.username || '').toLowerCase() === val.toLowerCase());
+                        setUsernameStatus(taken ? 'taken' : 'ok');
+                      }} />
+                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2">
+                      {usernameStatus === 'checking' && <Icon name="refresh" size={15} className="text-surface-400 animate-spin" />}
+                      {usernameStatus === 'ok' && <Icon name="check_circle" size={15} className="text-success-500" filled />}
+                      {usernameStatus === 'taken' && <Icon name="cancel" size={15} className="text-danger-500" filled />}
+                      {usernameStatus === 'invalid' && <Icon name="error" size={15} className="text-warning-500" filled />}
+                    </span>
+                  </div>
+                  {usernameStatus === 'taken' && <p className="text-[11px] text-danger-500 mt-1">اسم المستخدم مأخوذ</p>}
+                  {usernameStatus === 'invalid' && <p className="text-[11px] text-warning-500 mt-1">3-20 حرف: حروف إنجليزية، أرقام، _ أو .</p>}
+                  {usernameStatus === 'ok' && <p className="text-[11px] text-success-500 mt-1">اسم المستخدم متاح ✓</p>}
+                  {(() => {
+                    if (!changeDates.username) return null;
+                    const diff = Date.now() - new Date(changeDates.username).getTime();
+                    const DAYS_60 = 60 * 24 * 60 * 60 * 1000;
+                    if (diff >= DAYS_60) return null;
+                    const daysLeft = Math.ceil((DAYS_60 - diff) / (24 * 60 * 60 * 1000));
+                    return <p className="text-[11px] text-warning-600 bg-warning-50 rounded-lg px-3 py-1.5 flex items-center gap-1 mt-1"><Icon name="schedule" size={12} /> يمكن تغيير اليوزرنيم بعد {daysLeft} يوم</p>;
+                  })()}
+                </div>
+
+                <div>
+                  <label className="text-[11px] text-surface-400 font-medium mb-1 block">نبذة عني</label>
+                  <textarea className={cn(fieldClass, 'resize-none')} rows={2} value={editForm.bio}
+                    onChange={e => setEditForm(f => ({ ...f, bio: e.target.value }))} maxLength={150} placeholder="اكتب نبذة عنك..." />
+                  <span className="text-[10px] text-surface-400">{editForm.bio.length}/150</span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">تاريخ الميلاد</label>
+                    <input type="date" className={fieldClass} style={{ boxSizing: 'border-box' }} value={editForm.birthDate}
+                      onChange={e => setEditForm(f => ({ ...f, birthDate: e.target.value }))} />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">الجنس</label>
+                    <div className="flex gap-1.5 h-[42px]">
+                      {[{ value: 'male', label: 'ذكر' }, { value: 'female', label: 'أنثى' }].map(g => (
+                        <button key={g.value}
+                          className={cn('flex-1 rounded-xl border-2 text-xs font-semibold transition-all',
+                            editForm.gender === g.value ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-surface-200 text-surface-500 hover:border-surface-300')}
+                          onClick={() => setEditForm(f => ({ ...f, gender: g.value }))}>{g.label}</button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact */}
+              <div className="bg-white rounded-2xl p-4 border border-surface-100 space-y-3">
+                <SectionHeader icon="contact_mail" label="معلومات الاتصال" />
+
+                <div>
+                  <label className="text-[11px] text-surface-400 font-medium mb-1 block">البريد الإلكتروني</label>
+                  <input type="email" dir="ltr" className={cn(fieldClass, 'text-left')} value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))} />
+                </div>
+
+                <div>
+                  <label className="text-[11px] text-surface-400 font-medium mb-1 block">رقم الهاتف</label>
+                  <div className="flex gap-2">
+                    <select className="w-28 border border-surface-200 rounded-xl px-2 py-2.5 text-sm shrink-0 focus:outline-none focus:border-primary-400" value={editForm.phoneCode} onChange={e => setEditForm(f => ({ ...f, phoneCode: e.target.value }))}>
+                      {COUNTRY_CODES.map(c => <option key={c.code} value={c.code}>{c.country.split(' ')[0]} {c.code}</option>)}
+                    </select>
+                    <input type="tel" dir="ltr"
+                      className={cn(fieldClass, 'flex-1 text-left', phoneError ? 'border-danger-400 bg-danger-50' : '')}
+                      value={editForm.phone}
+                      onChange={e => {
+                        const val = e.target.value;
+                        setEditForm(f => ({ ...f, phone: val }));
+                        const raw = val.replace(/\D/g, '');
+                        if (val && (raw.length < 7 || raw.length > 15)) setPhoneError('رقم غير صالح (7-15 رقم)');
+                        else setPhoneError('');
+                      }}
+                      placeholder="1234567890" />
+                  </div>
+                  {phoneError && <p className="text-[11px] text-danger-500 mt-1">{phoneError}</p>}
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">المحافظة (Provincia)</label>
+                    <select className={fieldClass} value={editForm.province} onChange={e => setEditForm(f => ({ ...f, province: e.target.value }))}>
+                      <option value="">اختر المحافظة</option>
+                      {ITALIAN_PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">مستوى الإيطالية</label>
+                    <select className={fieldClass} value={editForm.italianLevel} onChange={e => setEditForm(f => ({ ...f, italianLevel: e.target.value }))}>
+                      <option value="">اختر المستوى</option>
+                      <option value="weak">ضعيف</option>
+                      <option value="good">جيد</option>
+                      <option value="very_good">جيد جداً</option>
+                      <option value="native">أنا إيطالي</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Privacy */}
+              <div className="bg-white rounded-2xl p-4 border border-surface-100">
+                <SectionHeader icon="lock" label="الخصوصية" />
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-surface-700 font-medium">إخفاء إحصائياتي</p>
+                    <p className="text-xs text-surface-400 mt-0.5">لن يتمكن الآخرون من رؤية إحصائياتك</p>
+                  </div>
+                  <button
+                    className={cn('w-11 h-6 rounded-full transition-colors relative shrink-0', editForm.privacyHideStats ? 'bg-primary-500' : 'bg-surface-200')}
+                    onClick={() => setEditForm(f => ({ ...f, privacyHideStats: !f.privacyHideStats }))}>
+                    <div className={cn('w-4.5 h-4.5 rounded-full bg-white shadow-sm absolute top-[3px] transition-all w-[18px] h-[18px]', editForm.privacyHideStats ? 'left-[3px]' : 'left-[23px]')} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Password */}
+              <div className="bg-white rounded-2xl p-4 border border-surface-100 space-y-3">
+                <SectionHeader icon="security" label="تغيير كلمة المرور" />
+                <div>
+                  <label className="text-[11px] text-surface-400 font-medium mb-1 block">كلمة المرور الحالية</label>
+                  <input type="password" dir="ltr" className={cn(fieldClass, 'text-left')} value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">كلمة المرور الجديدة</label>
+                    <input type="password" dir="ltr" className={cn(fieldClass, 'text-left')} value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="6 أحرف+" />
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">تأكيد كلمة المرور</label>
+                    <input type="password" dir="ltr" className={cn(fieldClass, 'text-left', confirmPassword && newPassword !== confirmPassword ? 'border-danger-400' : '')} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
+                  </div>
+                </div>
+                {confirmPassword && newPassword !== confirmPassword && <p className="text-[11px] text-danger-500">كلمة المرور غير متطابقة</p>}
+                {passwordMsg && <p className={cn('text-xs', passwordMsg.includes('✓') ? 'text-success-600' : 'text-danger-500')}>{passwordMsg}</p>}
+                <Button size="sm" onClick={handleChangePassword} disabled={!currentPassword || !newPassword}>تغيير كلمة المرور</Button>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Privacy */}
-        <div className="bg-white rounded-2xl p-5 border border-surface-100">
-          <h3 className="text-sm font-bold text-surface-800 mb-4 flex items-center gap-2">
-            <Icon name="lock" size={18} className="text-primary-500" /> الخصوصية
-          </h3>
-          <label className="flex items-center justify-between cursor-pointer">
-            <div>
-              <p className="text-sm text-surface-700">إخفاء إحصائياتي</p>
-              <p className="text-xs text-surface-400">لن يتمكن الآخرون من رؤية إحصائياتك</p>
-            </div>
-            <button
-              className={cn('w-12 h-6 rounded-full transition-colors relative', editForm.privacyHideStats ? 'bg-primary-500' : 'bg-surface-200')}
-              onClick={() => setEditForm(f => ({ ...f, privacyHideStats: !f.privacyHideStats }))}
-            >
-              <div className={cn('w-5 h-5 rounded-full bg-white shadow-sm absolute top-0.5 transition-all', editForm.privacyHideStats ? 'left-0.5' : 'left-6')} />
-            </button>
-          </label>
-        </div>
-
-        {/* Password */}
-        <div className="bg-white rounded-2xl p-5 border border-surface-100">
-          <h3 className="text-sm font-bold text-surface-800 mb-4 flex items-center gap-2">
-            <Icon name="security" size={18} className="text-primary-500" /> تغيير كلمة المرور
-          </h3>
-          <div className="space-y-3">
-            <div>
-              <label className="text-xs text-surface-500 mb-1 block">كلمة المرور الحالية</label>
-              <input type="password" dir="ltr" className="w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm text-left" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
-            </div>
-            <div>
-              <label className="text-xs text-surface-500 mb-1 block">كلمة المرور الجديدة</label>
-              <input type="password" dir="ltr" className="w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm text-left" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="6 أحرف على الأقل" />
-            </div>
-            <div>
-              <label className="text-xs text-surface-500 mb-1 block">تأكيد كلمة المرور الجديدة</label>
-              <input type="password" dir="ltr" className="w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm text-left" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
-            </div>
-            {confirmPassword && newPassword !== confirmPassword && <p className="text-xs text-danger-500">❌ كلمة المرور غير متطابقة</p>}
-            {passwordMsg && <p className={cn('text-xs', passwordMsg.includes('✓') ? 'text-success-600' : 'text-danger-500')}>{passwordMsg}</p>}
-            <Button size="sm" onClick={handleChangePassword} disabled={!currentPassword || !newPassword}>تغيير كلمة المرور</Button>
-          </div>
-        </div>
-
-        {/* Save */}
-        {saveMsg && (
-          <div className={cn('rounded-xl p-3 text-center text-sm font-medium', saveMsg.includes('✓') ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600')}>
-            {saveMsg}
-          </div>
-        )}
-        <Button fullWidth size="lg" onClick={handleSaveEdit}>
-          <Icon name="save" size={20} className="ml-2" /> حفظ جميع التعديلات
-        </Button>
+          );
+        })()}
       </div>
     );
   }

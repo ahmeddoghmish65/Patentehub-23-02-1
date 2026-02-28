@@ -100,7 +100,8 @@ export function App() {
     );
   }
 
-  const isAdminUser = user.role === 'admin' || user.role === 'manager';
+  const managerPerms: string[] = user.role === 'manager' ? ((user as Record<string, unknown>).permissions as string[] || []) : [];
+  const isAdminUser = user.role === 'admin' || (user.role === 'manager' && managerPerms.length > 0);
 
   // Bottom navigation items (mobile)
   const bottomNavItems = [
@@ -163,7 +164,7 @@ export function App() {
       case 'training': return <TrainingPage onNavigate={navigate} />;
       case 'community': return <CommunityPage openPostId={pageData.openPostId} />;
       case 'profile': return <ProfilePage onNavigate={navigate} />;
-      case 'admin': return (user.role === 'admin' || user.role === 'manager') ? <AdminPage /> : <Dashboard onNavigate={navigate} />;
+      case 'admin': return isAdminUser ? <AdminPage /> : <Dashboard onNavigate={navigate} />;
       case 'mistakes': return <MistakesPage />;
       case 'exam-simulator': return <ExamSimulatorPage onNavigate={navigate} />;
       case 'questions-browse': return <QuestionsBrowsePage onNavigate={navigate} />;
