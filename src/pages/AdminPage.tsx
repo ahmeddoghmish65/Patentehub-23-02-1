@@ -586,21 +586,16 @@ export function AdminPage() {
       {/* Lessons CRUD */}
       {tab === 'lessons' && (
         <div className="space-y-3">
-          <div className="bg-white rounded-xl border border-surface-100 p-3 flex items-center gap-3">
-            <Icon name="filter_list" size={18} className="text-surface-400 shrink-0" />
-            <span className="text-xs font-semibold text-surface-600 shrink-0">تصفية بالقسم:</span>
-            <div className="flex flex-wrap gap-2">
-              <button onClick={() => setFilterSectionId('')}
-                className={cn('px-3 py-1 rounded-lg text-xs font-medium transition-all border', !filterSectionId ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
-                الكل ({store.lessons.length})
-              </button>
+          <div className="bg-white rounded-xl border border-surface-100 px-4 py-2.5 flex items-center gap-3">
+            <Icon name="filter_list" size={16} className="text-surface-400 shrink-0" />
+            <span className="text-xs font-semibold text-surface-600 shrink-0">القسم:</span>
+            <select value={filterSectionId} onChange={e => setFilterSectionId(e.target.value)}
+              className="flex-1 border border-surface-200 rounded-lg px-3 py-1.5 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer">
+              <option value="">الكل ({store.lessons.length})</option>
               {store.sections.map(sec => (
-                <button key={sec.id} onClick={() => setFilterSectionId(sec.id)}
-                  className={cn('px-3 py-1 rounded-lg text-xs font-medium transition-all border', filterSectionId === sec.id ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
-                  {sec.nameAr} ({store.lessons.filter(l => l.sectionId === sec.id).length})
-                </button>
+                <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.lessons.filter(l => l.sectionId === sec.id).length})</option>
               ))}
-            </div>
+            </select>
           </div>
           <ContentWithTrash
             title="الدروس"
@@ -638,25 +633,18 @@ export function AdminPage() {
       {/* Questions CRUD */}
       {tab === 'questions' && (
         <div className="space-y-3">
-          <div className="bg-white rounded-xl border border-surface-100 p-3 flex items-center gap-3">
-            <Icon name="filter_list" size={18} className="text-surface-400 shrink-0" />
-            <span className="text-xs font-semibold text-surface-600 shrink-0">تصفية بالقسم:</span>
-            <div className="flex flex-wrap gap-2">
-              <button onClick={() => setFilterSectionId('')}
-                className={cn('px-3 py-1 rounded-lg text-xs font-medium transition-all border', !filterSectionId ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
-                الكل ({store.questions.length})
-              </button>
+          <div className="bg-white rounded-xl border border-surface-100 px-4 py-2.5 flex items-center gap-3">
+            <Icon name="filter_list" size={16} className="text-surface-400 shrink-0" />
+            <span className="text-xs font-semibold text-surface-600 shrink-0">القسم:</span>
+            <select value={filterSectionId} onChange={e => setFilterSectionId(e.target.value)}
+              className="flex-1 border border-surface-200 rounded-lg px-3 py-1.5 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer">
+              <option value="">الكل ({store.questions.length})</option>
               {store.sections.map(sec => {
                 const sectionLessonIds = store.lessons.filter(l => l.sectionId === sec.id).map(l => l.id);
                 const count = store.questions.filter(q => sectionLessonIds.includes(q.lessonId)).length;
-                return (
-                  <button key={sec.id} onClick={() => setFilterSectionId(sec.id)}
-                    className={cn('px-3 py-1 rounded-lg text-xs font-medium transition-all border', filterSectionId === sec.id ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
-                    {sec.nameAr} ({count})
-                  </button>
-                );
+                return <option key={sec.id} value={sec.id}>{sec.nameAr} ({count})</option>;
               })}
-            </div>
+            </select>
           </div>
           <ContentWithTrash
             title="الأسئلة"
@@ -702,19 +690,16 @@ export function AdminPage() {
         ];
         return (
         <div className="space-y-3">
-          <div className="bg-white rounded-xl border border-surface-100 p-3 flex items-center gap-3">
-            <Icon name="filter_list" size={18} className="text-surface-400 shrink-0" />
-            <span className="text-xs font-semibold text-surface-600 shrink-0">تصفية بالتصنيف:</span>
-            <div className="flex flex-wrap gap-2">
-              <button onClick={() => setFilterSignCategory('')} className={cn('px-3 py-1 rounded-lg text-xs font-medium transition-all border', !filterSignCategory ? 'bg-primary-500 text-white border-primary-500 shadow-sm' : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
-                الكل ({store.signs.length})
-              </button>
+          <div className="bg-white rounded-xl border border-surface-100 px-4 py-2.5 flex items-center gap-3">
+            <Icon name="filter_list" size={16} className="text-surface-400 shrink-0" />
+            <span className="text-xs font-semibold text-surface-600 shrink-0">التصنيف:</span>
+            <select value={filterSignCategory} onChange={e => setFilterSignCategory(e.target.value)}
+              className="flex-1 border border-surface-200 rounded-lg px-3 py-1.5 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer">
+              <option value="">الكل ({store.signs.length})</option>
               {signCategories.map(cat => (
-                <button key={cat.id} onClick={() => setFilterSignCategory(cat.id)} className={cn('px-3 py-1 rounded-lg text-xs font-medium transition-all border', filterSignCategory === cat.id ? 'bg-primary-500 text-white border-primary-500 shadow-sm' : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
-                  {cat.label} ({store.signs.filter(s => s.category === cat.id).length})
-                </button>
+                <option key={cat.id} value={cat.id}>{cat.label} ({store.signs.filter(s => s.category === cat.id).length})</option>
               ))}
-            </div>
+            </select>
           </div>
         <ContentWithTrash
           title="الإشارات"
@@ -776,19 +761,16 @@ export function AdminPage() {
             onExport={() => handleExport('dictionarySections')} onImport={() => handleImport('dictionarySections')}
           />
           <div className="space-y-3">
-            <div className="bg-white rounded-xl border border-surface-100 p-3 flex items-center gap-3">
-              <Icon name="filter_list" size={18} className="text-surface-400 shrink-0" />
-              <span className="text-xs font-semibold text-surface-600 shrink-0">تصفية بالقسم:</span>
-              <div className="flex flex-wrap gap-2">
-                <button onClick={() => setFilterDictSectionId('')} className={cn('px-3 py-1 rounded-lg text-xs font-medium transition-all border', !filterDictSectionId ? 'bg-primary-500 text-white border-primary-500 shadow-sm' : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
-                  الكل ({store.dictEntries.length})
-                </button>
+            <div className="bg-white rounded-xl border border-surface-100 px-4 py-2.5 flex items-center gap-3">
+              <Icon name="filter_list" size={16} className="text-surface-400 shrink-0" />
+              <span className="text-xs font-semibold text-surface-600 shrink-0">القسم:</span>
+              <select value={filterDictSectionId} onChange={e => setFilterDictSectionId(e.target.value)}
+                className="flex-1 border border-surface-200 rounded-lg px-3 py-1.5 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer">
+                <option value="">الكل ({store.dictEntries.length})</option>
                 {store.dictSections.filter(s => !s.status || s.status === 'active').map(sec => (
-                  <button key={sec.id} onClick={() => setFilterDictSectionId(sec.id)} className={cn('px-3 py-1 rounded-lg text-xs font-medium transition-all border', filterDictSectionId === sec.id ? 'bg-primary-500 text-white border-primary-500 shadow-sm' : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
-                    {sec.nameAr} ({store.dictEntries.filter(e => e.sectionId === sec.id).length})
-                  </button>
+                  <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.dictEntries.filter(e => e.sectionId === sec.id).length})</option>
                 ))}
-              </div>
+              </select>
             </div>
           <ContentWithTrash
             title="مصطلحات القاموس"

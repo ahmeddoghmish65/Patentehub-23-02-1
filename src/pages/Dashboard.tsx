@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
@@ -8,7 +8,12 @@ interface DashboardProps {
 }
 
 export function Dashboard({ onNavigate }: DashboardProps) {
-  const { user, loadSections, loadLessons, loadMistakes, loadQuestions, mistakes, sections, lessons, questions } = useAuthStore();
+  const { user, loadSections, loadLessons, loadMistakes, loadQuestions, practiceMistake, mistakes, sections, lessons, questions } = useAuthStore();
+
+  const [practiceActive, setPracticeActive] = useState(false);
+  const [practiceIdx, setPracticeIdx] = useState(0);
+  const [practiceChosen, setPracticeChosen] = useState<boolean | null>(null);
+  const [practiceResult, setPracticeResult] = useState<'correct' | 'wrong' | null>(null);
 
   useEffect(() => {
     loadSections();
@@ -178,27 +183,134 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </button>
       </div>
 
-      {/* أخطائي */}
-      <button
-        className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-red-200 hover:shadow-md transition-all text-right flex items-center gap-4 group"
-        onClick={() => onNavigate('mistakes')}
-      >
-        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-red-50 shrink-0">
-          <Icon name="error_outline" size={26} className="text-red-500" filled />
-        </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-surface-900 text-sm group-hover:text-red-600 transition-colors">أخطائي</h3>
-          <p className="text-[11px] text-surface-400 mt-0.5">
-            {mistakes.length > 0 ? `${mistakes.length} خطأ — راجعها لتتحسن` : 'لا توجد أخطاء بعد'}
-          </p>
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
+      {/* أخطائي — inline practice widget */}
+      <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+        <div className="px-4 py-3 border-b border-surface-100 flex items-center justify-between">
+          <h2 className="font-bold text-surface-900 flex items-center gap-2 text-sm">
+            <Icon name="psychology" size={18} className="text-danger-500" filled />
+            أخطائي
+            {mistakes.length > 0 && (
+              <span className="text-xs bg-danger-50 text-danger-600 px-2 py-0.5 rounded-full font-semibold border border-danger-100">{mistakes.length} سؤال</span>
+            )}
+          </h2>
           {mistakes.length > 0 && (
-            <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{mistakes.length}</span>
+            !practiceActive ? (
+              <button
+                onClick={() => { setPracticeActive(true); setPracticeIdx(0); setPracticeChosen(null); setPracticeResult(null); }}
+                className="flex items-center gap-1.5 text-xs font-semibold bg-primary-500 text-white px-3 py-1.5 rounded-xl hover:bg-primary-600 transition-colors shadow-sm">
+                <Icon name="fitness_center" size={14} /> تدريب
+              </button>
+            ) : (
+              <button onClick={() => { setPracticeActive(false); setPracticeChosen(null); setPracticeResult(null); }}
+                className="text-xs text-surface-400 hover:text-danger-500 font-medium transition-colors flex items-center gap-1">
+                <Icon name="close" size={14} /> إنهاء
+              </button>
+            )
           )}
-          <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-red-400" />
         </div>
-      </button>
+
+        {mistakes.length === 0 ? (
+          <div className="px-4 py-5 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-success-50 flex items-center justify-center shrink-0">
+              <Icon name="check_circle" size={22} className="text-success-500" filled />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-surface-700">لا توجد أخطاء!</p>
+              <p className="text-xs text-surface-400">ابدأ بحل الاختبارات وسيتم تتبع أخطائك هنا</p>
+            </div>
+          </div>
+        ) : !practiceActive ? (
+          /* List view */
+          <div className="divide-y divide-surface-50 max-h-52 overflow-y-auto">
+            {mistakes.map(m => (
+              <div key={m.id} className="px-4 py-2.5 flex items-start gap-3">
+                <div className="w-6 h-6 rounded-lg bg-danger-50 border border-danger-100 flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-[10px] font-black text-danger-600">{m.count}</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-surface-800 leading-snug line-clamp-2">{m.questionAr}</p>
+                </div>
+                <span className={cn('text-[10px] font-semibold px-1.5 py-0.5 rounded-full shrink-0 mt-0.5', m.correctAnswer ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600')}>
+                  {m.correctAnswer ? 'صح' : 'خطأ'}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : mistakes.length > 0 && practiceIdx < mistakes.length ? (
+          /* Practice mode */
+          (() => {
+            const q = mistakes[practiceIdx];
+            return (
+              <div className="p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex-1 bg-surface-100 rounded-full h-1.5 overflow-hidden">
+                    <div className="h-full bg-primary-500 rounded-full transition-all" style={{ width: `${(practiceIdx / mistakes.length) * 100}%` }} />
+                  </div>
+                  <span className="text-[10px] text-surface-400 shrink-0">{practiceIdx + 1}/{mistakes.length}</span>
+                  <span className="text-[10px] bg-danger-50 text-danger-500 px-1.5 py-0.5 rounded-full shrink-0 font-semibold">×{q.count}</span>
+                </div>
+                <div className="bg-surface-50 rounded-xl p-3 mb-3">
+                  <p className="text-sm font-semibold text-surface-800 leading-relaxed mb-1">{q.questionAr}</p>
+                  <p className="text-xs text-surface-400 leading-relaxed" dir="ltr">{q.questionIt}</p>
+                </div>
+                {practiceResult === null ? (
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={async () => {
+                        const chosen = true;
+                        setPracticeChosen(chosen);
+                        const isCorrect = chosen === q.correctAnswer;
+                        setPracticeResult(isCorrect ? 'correct' : 'wrong');
+                        if (isCorrect) await practiceMistake(q.questionId, true);
+                      }}
+                      className="py-2.5 rounded-xl border-2 border-success-200 hover:bg-success-50 text-success-700 font-bold text-sm transition-all">
+                      ✓ صحيح
+                    </button>
+                    <button
+                      onClick={async () => {
+                        const chosen = false;
+                        setPracticeChosen(chosen);
+                        const isCorrect = chosen === q.correctAnswer;
+                        setPracticeResult(isCorrect ? 'correct' : 'wrong');
+                        if (isCorrect) await practiceMistake(q.questionId, true);
+                      }}
+                      className="py-2.5 rounded-xl border-2 border-danger-200 hover:bg-danger-50 text-danger-700 font-bold text-sm transition-all">
+                      ✗ خطأ
+                    </button>
+                  </div>
+                ) : (
+                  <div className={cn('rounded-xl p-3 border text-center', practiceResult === 'correct' ? 'bg-success-50 border-success-200' : 'bg-danger-50 border-danger-200')}>
+                    <Icon name={practiceResult === 'correct' ? 'check_circle' : 'cancel'} size={24} className={practiceResult === 'correct' ? 'text-success-500 mx-auto mb-1.5' : 'text-danger-500 mx-auto mb-1.5'} filled />
+                    <p className={cn('font-bold text-xs mb-2', practiceResult === 'correct' ? 'text-success-700' : 'text-danger-700')}>
+                      {practiceResult === 'correct' ? '🎉 صحيح! تم تخفيض عدد الأخطاء' : '❌ خطأ! الصحيح: ' + (q.correctAnswer ? 'صحيح ✓' : 'خطأ ✗')}
+                    </p>
+                    <button
+                      onClick={() => {
+                        setPracticeChosen(null); setPracticeResult(null);
+                        const nextIdx = practiceIdx + 1;
+                        if (nextIdx >= mistakes.length) { setPracticeActive(false); }
+                        else { setPracticeIdx(nextIdx); }
+                      }}
+                      className="text-xs font-semibold bg-white border border-surface-200 px-4 py-1.5 rounded-xl hover:bg-surface-50 transition-colors">
+                      {practiceIdx + 1 < mistakes.length ? 'التالي ←' : 'إنهاء'}
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })()
+        ) : (
+          <div className="p-6 text-center">
+            <Icon name="celebration" size={36} className="text-success-400 mx-auto mb-2" filled />
+            <p className="font-bold text-surface-800 text-sm mb-1">أحسنت! انتهيت من التدريب</p>
+            <p className="text-xs text-surface-400 mb-3">استمر في التدريب لإزالة الأخطاء بالكامل</p>
+            <button onClick={() => setPracticeActive(false)}
+              className="text-xs font-semibold bg-primary-500 text-white px-4 py-1.5 rounded-xl hover:bg-primary-600 transition-colors">
+              إغلاق
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Study Progress Summary */}
       {(sections.length > 0 || lessons.length > 0) && (
