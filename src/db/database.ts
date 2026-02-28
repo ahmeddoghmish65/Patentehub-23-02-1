@@ -1,7 +1,7 @@
 import { openDB, type IDBPDatabase } from 'idb';
 
 const DB_NAME = 'patente_hub_v3';
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 
 export interface User {
   id: string;
@@ -123,6 +123,16 @@ export interface Question {
   deletedAt?: string;
 }
 
+export interface SignSection {
+  id: string;
+  nameAr: string;
+  nameIt: string;
+  icon: string;
+  order: number;
+  status?: 'active' | 'archived' | 'deleted';
+  createdAt: string;
+}
+
 export interface Sign {
   id: string;
   nameAr: string;
@@ -130,6 +140,7 @@ export interface Sign {
   descriptionAr: string;
   descriptionIt: string;
   category: string;
+  sectionId?: string;
   image: string;
   order: number;
   createdAt: string;
@@ -321,7 +332,8 @@ export async function getDB(): Promise<IDBPDatabase> {
         { name: 'sections', keyPath: 'id', indexes: [{ name: 'order', keyPath: 'order', unique: false }] },
         { name: 'lessons', keyPath: 'id', indexes: [{ name: 'sectionId', keyPath: 'sectionId', unique: false }] },
         { name: 'questions', keyPath: 'id', indexes: [{ name: 'lessonId', keyPath: 'lessonId', unique: false }, { name: 'sectionId', keyPath: 'sectionId', unique: false }] },
-        { name: 'signs', keyPath: 'id', indexes: [{ name: 'category', keyPath: 'category', unique: false }] },
+        { name: 'signs', keyPath: 'id', indexes: [{ name: 'category', keyPath: 'category', unique: false }, { name: 'sectionId', keyPath: 'sectionId', unique: false }] },
+        { name: 'signSections', keyPath: 'id', indexes: [] },
         { name: 'dictionarySections', keyPath: 'id', indexes: [] },
         { name: 'dictionaryEntries', keyPath: 'id', indexes: [{ name: 'sectionId', keyPath: 'sectionId', unique: false }] },
         { name: 'posts', keyPath: 'id', indexes: [{ name: 'userId', keyPath: 'userId', unique: false }] },

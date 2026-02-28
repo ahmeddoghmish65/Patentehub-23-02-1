@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import * as api from '@/db/api';
 import type { PostSortMode } from '@/db/api';
-import type { User, QuizResult, UserMistake, Section, Lesson, Question, Sign, DictionarySection, DictionaryEntry, Post, Comment, Notification, Report, AdminLog } from '@/db/database';
+import type { User, QuizResult, UserMistake, Section, Lesson, Question, Sign, SignSection, DictionarySection, DictionaryEntry, Post, Comment, Notification, Report, AdminLog } from '@/db/database';
 import {
   setCookie,
   getCookie,
@@ -23,6 +23,7 @@ interface AppState {
   lessons: Lesson[];
   questions: Question[];
   signs: Sign[];
+  signSections: SignSection[];
   dictSections: DictionarySection[];
   dictEntries: DictionaryEntry[];
   posts: Post[];
@@ -57,6 +58,7 @@ interface AppState {
   loadLessons: (sectionId?: string) => Promise<void>;
   loadQuestions: (lessonId?: string, sectionId?: string) => Promise<void>;
   loadSigns: (category?: string) => Promise<void>;
+  loadSignSections: () => Promise<void>;
   loadDictSections: () => Promise<void>;
   loadDictEntries: (sectionId?: string) => Promise<void>;
   loadPosts: (sortMode?: PostSortMode, hashtag?: string) => Promise<void>;
@@ -114,6 +116,12 @@ interface AppState {
   archiveSign: (id: string, archive: boolean) => Promise<boolean>;
   restoreSign: (id: string) => Promise<boolean>;
   permanentDeleteSign: (id: string) => Promise<boolean>;
+  createSignSection: (data: Omit<SignSection, 'id' | 'createdAt'>) => Promise<boolean>;
+  updateSignSection: (id: string, data: Partial<SignSection>) => Promise<boolean>;
+  deleteSignSection: (id: string) => Promise<boolean>;
+  archiveSignSection: (id: string, archive: boolean) => Promise<boolean>;
+  restoreSignSection: (id: string) => Promise<boolean>;
+  permanentDeleteSignSection: (id: string) => Promise<boolean>;
   createDictSection: (data: Omit<DictionarySection, 'id' | 'createdAt'>) => Promise<boolean>;
   updateDictSection: (id: string, data: Partial<DictionarySection>) => Promise<boolean>;
   deleteDictSection: (id: string) => Promise<boolean>;
@@ -175,7 +183,7 @@ export function applyTheme(theme: 'light' | 'dark'): void {
 
 export const useAuthStore = create<AppState>((set, get) => ({
   user: null, token: null, isLoading: true, error: null,
-  sections: [], lessons: [], questions: [], signs: [],
+  sections: [], lessons: [], questions: [], signs: [], signSections: [],
   dictSections: [], dictEntries: [], posts: [],
   quizHistory: [], mistakes: [], notifications: [],
   adminUsers: [], adminReports: [], adminLogs: [], adminStats: null,
@@ -285,6 +293,7 @@ export const useAuthStore = create<AppState>((set, get) => ({
   loadLessons: async (sId) => { const r = await api.apiGetLessons(sId); if (r.success && r.data) set({ lessons: r.data }); },
   loadQuestions: async (lId, sId) => { const r = await api.apiGetQuestions(lId, sId); if (r.success && r.data) set({ questions: r.data }); },
   loadSigns: async (cat) => { const r = await api.apiGetSigns(cat); if (r.success && r.data) set({ signs: r.data }); },
+  loadSignSections: async () => { const r = await api.apiGetSignSections(); if (r.success && r.data) set({ signSections: r.data }); },
   loadDictSections: async () => { const r = await api.apiGetDictSections(); if (r.success && r.data) set({ dictSections: r.data }); },
   loadDictEntries: async (sId) => { const r = await api.apiGetDictEntries(sId); if (r.success && r.data) set({ dictEntries: r.data }); },
   loadPosts: async (sortMode = 'hot', hashtag) => { const r = await api.apiGetPosts(sortMode, hashtag); if (r.success && r.data) set({ posts: r.data }); },
@@ -355,6 +364,13 @@ export const useAuthStore = create<AppState>((set, get) => ({
   archiveSign: async (id, archive) => { const { token } = get(); if (!token) return false; const r = await api.apiArchiveSign(token, id, archive); if (r.success) await get().loadSigns(); return r.success; },
   restoreSign: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiRestoreSign(token, id); if (r.success) await get().loadSigns(); return r.success; },
   permanentDeleteSign: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiPermanentDeleteSign(token, id); if (r.success) await get().loadSigns(); return r.success; },
+
+  createSignSection: async (data) => { const { token } = get(); if (!token) return false; const r = await api.apiCreateSignSection(token, data); if (r.success) await get().loadSignSections(); return r.success; },
+  updateSignSection: async (id, data) => { const { token } = get(); if (!token) return false; const r = await api.apiUpdateSignSection(token, id, data); if (r.success) await get().loadSignSections(); return r.success; },
+  deleteSignSection: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiSoftDeleteSignSection(token, id); if (r.success) await get().loadSignSections(); return r.success; },
+  archiveSignSection: async (id, archive) => { const { token } = get(); if (!token) return false; const r = await api.apiArchiveSignSection(token, id, archive); if (r.success) await get().loadSignSections(); return r.success; },
+  restoreSignSection: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiRestoreSignSection(token, id); if (r.success) await get().loadSignSections(); return r.success; },
+  permanentDeleteSignSection: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiPermanentDeleteSignSection(token, id); if (r.success) await get().loadSignSections(); return r.success; },
 
   createDictSection: async (data) => { const { token } = get(); if (!token) return false; const r = await api.apiCreateDictSection(token, data); if (r.success) await get().loadDictSections(); return r.success; },
   updateDictSection: async (id, data) => { const { token } = get(); if (!token) return false; const r = await api.apiUpdateDictSection(token, id, data); if (r.success) await get().loadDictSections(); return r.success; },

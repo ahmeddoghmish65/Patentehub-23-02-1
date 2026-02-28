@@ -61,6 +61,7 @@ export function AdminPage() {
     store.loadLessons();
     store.loadQuestions();
     store.loadSigns();
+    store.loadSignSections();
     store.loadDictSections();
     store.loadDictEntries();
     store.loadAdminUsers();
@@ -174,6 +175,7 @@ export function AdminPage() {
       case 'lesson': ok = isEdit ? await store.updateLesson(data.id as string, form as never) : await store.createLesson(form as never); break;
       case 'question': ok = isEdit ? await store.updateQuestion(data.id as string, form as never) : await store.createQuestion(form as never); break;
       case 'sign': ok = isEdit ? await store.updateSign(data.id as string, form as never) : await store.createSign(form as never); break;
+      case 'signSection': ok = isEdit ? await store.updateSignSection(data.id as string, form as never) : await store.createSignSection(form as never); break;
       case 'dictSection': ok = isEdit ? await store.updateDictSection(data.id as string, form as never) : await store.createDictSection(form as never); break;
       case 'dictEntry': ok = isEdit ? await store.updateDictEntry(data.id as string, form as never) : await store.createDictEntry(form as never); break;
     }
@@ -192,6 +194,8 @@ export function AdminPage() {
       case 'question-permanent': await store.permanentDeleteQuestion(id); break;
       case 'sign': await store.deleteSign(id); break;
       case 'sign-permanent': await store.permanentDeleteSign(id); break;
+      case 'signSection': await store.deleteSignSection(id); break;
+      case 'signSection-permanent': await store.permanentDeleteSignSection(id); break;
       case 'dictSection': await store.deleteDictSection(id); break;
       case 'dictSection-permanent': await store.permanentDeleteDictSection(id); break;
       case 'dictEntry': await store.deleteDictEntry(id); break;
@@ -268,6 +272,52 @@ export function AdminPage() {
           <option value="">اختر قسم</option>
           {store.dictSections.map(s => <option key={s.id} value={s.id}>{s.nameAr}</option>)}
         </select>
+      ) : type === 'select-sign-section' ? (
+        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as string) || ''} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}>
+          <option value="">بدون قسم</option>
+          {store.signSections.filter(s => !s.status || s.status === 'active').map(s => <option key={s.id} value={s.id}>{s.nameAr}</option>)}
+        </select>
+      ) : type === 'richtext' ? (
+        <div className="border border-surface-200 rounded-xl overflow-hidden">
+          <div className="flex items-center gap-1 p-1.5 bg-surface-50 border-b border-surface-200 flex-wrap">
+            {[
+              { cmd: 'bold', icon: 'B', title: 'عريض', style: 'font-bold' },
+              { cmd: 'italic', icon: 'I', title: 'مائل', style: 'italic' },
+              { cmd: 'underline', icon: 'U', title: 'تحت خط', style: 'underline' },
+              { cmd: 'strikeThrough', icon: 'S̶', title: 'فوق خط', style: '' },
+            ].map(b => (
+              <button key={b.cmd} type="button" title={b.title}
+                onMouseDown={e => { e.preventDefault(); document.execCommand(b.cmd); }}
+                className={`px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-white ${b.style}`}>{b.icon}</button>
+            ))}
+            <div className="w-px h-4 bg-surface-200 mx-0.5" />
+            {['H2','H3','H4'].map((h, i) => (
+              <button key={h} type="button" title={h}
+                onMouseDown={e => { e.preventDefault(); document.execCommand('formatBlock', false, ['h2','h3','h4'][i]); }}
+                className="px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-white font-bold">{h}</button>
+            ))}
+            <button type="button" title="نص عادي"
+              onMouseDown={e => { e.preventDefault(); document.execCommand('formatBlock', false, 'p'); }}
+              className="px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-white">P</button>
+            <div className="w-px h-4 bg-surface-200 mx-0.5" />
+            <label title="لون النص" className="flex items-center gap-1 cursor-pointer">
+              <span className="text-xs border border-surface-200 rounded px-1.5 py-0.5 bg-white">A</span>
+              <input type="color" className="w-5 h-5 p-0 border-0 rounded cursor-pointer"
+                onChange={e => { document.execCommand('foreColor', false, e.target.value); }} />
+            </label>
+            <div className="w-px h-4 bg-surface-200 mx-0.5" />
+            <button type="button" title="مسح التنسيق"
+              onMouseDown={e => { e.preventDefault(); document.execCommand('removeFormat'); }}
+              className="px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-white text-surface-400">✕</button>
+          </div>
+          <div
+            className="w-full p-3 text-sm min-h-[100px] focus:outline-none"
+            contentEditable suppressContentEditableWarning
+            dir={field.includes('It') ? 'ltr' : 'rtl'}
+            dangerouslySetInnerHTML={{ __html: (form[field] as string) || '' }}
+            onInput={e => setForm(prev => ({ ...prev, [field]: (e.target as HTMLDivElement).innerHTML }))}
+          />
+        </div>
       ) : type === 'number' ? (
         <input type="number" className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as number) || 0} onChange={e => setForm(prev => ({ ...prev, [field]: parseInt(e.target.value) || 0 }))} />
       ) : type === 'image' || type === 'image-square' ? (
@@ -694,63 +744,84 @@ export function AdminPage() {
       )}
 
       {/* Signs CRUD */}
-      {tab === 'signs' && (() => {
-        const signCategories = [
-          { id: 'pericolo', label: 'تحذير' },
-          { id: 'obbligo', label: 'إلزامي' },
-          { id: 'divieto', label: 'حظر' },
-          { id: 'indicazione', label: 'إرشادي' },
-          { id: 'priorita', label: 'أولوية' },
-        ];
-        return (
-        <div className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="text-sm font-bold text-surface-800 flex items-center gap-1.5">
-              <Icon name="traffic" size={16} className="text-red-500" />
-              الإشارات
-              <span className="text-xs font-normal text-surface-400">({store.signs.length})</span>
-            </h2>
-            <div className="flex items-center gap-1.5 shrink-0">
-              <Icon name="filter_list" size={14} className="text-surface-400" />
-              <span className="text-xs text-surface-500">التصنيف:</span>
-              <select value={filterSignCategory} onChange={e => setFilterSignCategory(e.target.value)}
-                className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
-                <option value="">الكل</option>
-                {signCategories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.label} ({store.signs.filter(s => s.category === cat.id).length})</option>
-                ))}
-              </select>
+      {tab === 'signs' && (
+        <div className="space-y-6">
+          {/* Sign Sections */}
+          <ContentWithTrash
+            title="أقسام الإشارات"
+            contentView={contentView}
+            setContentView={setContentView}
+            activeItems={store.signSections.filter(s => !s.status || s.status === 'active')}
+            archivedItems={store.signSections.filter(s => s.status === 'archived')}
+            deletedItems={store.signSections.filter(s => s.status === 'deleted')}
+            search={search}
+            setSearch={setSearch}
+            selectedIds={selectedIds}
+            setSelectedIds={setSelectedIds}
+            columns={[{ key: 'nameAr', label: 'الاسم' }, { key: 'nameIt', label: 'بالإيطالية' }]}
+            filterFn={(item) => !search || item.nameAr?.includes(search) || item.nameIt?.toLowerCase().includes(search.toLowerCase())}
+            onAdd={() => { setForm({ nameAr: '', nameIt: '', icon: 'traffic', order: store.signSections.length + 1 }); setModal({ type: 'signSection' }); }}
+            onEdit={(item) => { setForm(item); setModal({ type: 'signSection', data: item as Record<string, unknown> }); }}
+            onDelete={(id) => setConfirmDel({ type: 'signSection', id })}
+            onPermanentDelete={(id) => setConfirmDel({ type: 'signSection-permanent', id })}
+            onArchive={(id) => store.archiveSignSection(id, true)}
+            onUnarchive={(id) => store.archiveSignSection(id, false)}
+            onRestore={(id) => store.restoreSignSection(id)}
+            onBulkDelete={async (ids) => { for (const id of ids) await store.deleteSignSection(id); setSelectedIds(new Set()); }}
+            onBulkPermanentDelete={async (ids) => { for (const id of ids) await store.permanentDeleteSignSection(id); setSelectedIds(new Set()); }}
+            onBulkArchive={async (ids) => { for (const id of ids) await store.archiveSignSection(id, true); setSelectedIds(new Set()); }}
+            onBulkRestore={async (ids) => { for (const id of ids) await store.restoreSignSection(id); setSelectedIds(new Set()); }}
+          />
+          {/* Signs list with section+category filters */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-sm font-bold text-surface-800 flex items-center gap-1.5">
+                <Icon name="traffic" size={16} className="text-red-500" />
+                الإشارات
+                <span className="text-xs font-normal text-surface-400">({store.signs.length})</span>
+              </h2>
+              <div className="flex items-center gap-2 flex-wrap justify-end">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-surface-500">القسم:</span>
+                  <select value={filterSignCategory} onChange={e => setFilterSignCategory(e.target.value)}
+                    className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 bg-white focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
+                    <option value="">الكل</option>
+                    {store.signSections.filter(s => !s.status || s.status === 'active').map(sec => (
+                      <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.signs.filter(s => s.sectionId === sec.id).length})</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
             </div>
+            <ContentWithTrash
+              title="الإشارات"
+              contentView={contentView}
+              setContentView={setContentView}
+              activeItems={store.signs.filter(s => (!s.status || s.status === 'active') && (!filterSignCategory || s.sectionId === filterSignCategory))}
+              archivedItems={store.signs.filter(s => s.status === 'archived' && (!filterSignCategory || s.sectionId === filterSignCategory))}
+              deletedItems={store.signs.filter(s => s.status === 'deleted' && (!filterSignCategory || s.sectionId === filterSignCategory))}
+              search={search}
+              setSearch={setSearch}
+              selectedIds={selectedIds}
+              setSelectedIds={setSelectedIds}
+              columns={[{ key: 'nameAr', label: 'الاسم' }, { key: 'nameIt', label: 'بالإيطالية' }, { key: 'sectionId', label: 'القسم', render: (v: unknown) => store.signSections.find(s => s.id === v)?.nameAr || '' }]}
+              filterFn={(item) => !search || item.nameAr?.includes(search)}
+              onAdd={() => { setForm({ nameAr: '', nameIt: '', descriptionAr: '', descriptionIt: '', sectionId: filterSignCategory || '', category: 'pericolo', image: '', order: store.signs.length + 1 }); setModal({ type: 'sign' }); }}
+              onEdit={(item) => { setForm(item); setModal({ type: 'sign', data: item as Record<string, unknown> }); }}
+              onDelete={(id) => setConfirmDel({ type: 'sign', id })}
+              onPermanentDelete={(id) => setConfirmDel({ type: 'sign-permanent', id })}
+              onArchive={(id) => store.archiveSign(id, true)}
+              onUnarchive={(id) => store.archiveSign(id, false)}
+              onRestore={(id) => store.restoreSign(id)}
+              onBulkDelete={async (ids) => { for (const id of ids) await store.deleteSign(id); setSelectedIds(new Set()); }}
+              onBulkPermanentDelete={async (ids) => { for (const id of ids) await store.permanentDeleteSign(id); setSelectedIds(new Set()); }}
+              onBulkArchive={async (ids) => { for (const id of ids) await store.archiveSign(id, true); setSelectedIds(new Set()); }}
+              onBulkRestore={async (ids) => { for (const id of ids) await store.restoreSign(id); setSelectedIds(new Set()); }}
+              onExport={() => handleExport('signs')} onImport={() => handleImport('signs')}
+            />
           </div>
-        <ContentWithTrash
-          title="الإشارات"
-          contentView={contentView}
-          setContentView={setContentView}
-          activeItems={store.signs.filter(s => (!s.status || s.status === 'active') && (!filterSignCategory || s.category === filterSignCategory))}
-          archivedItems={store.signs.filter(s => s.status === 'archived' && (!filterSignCategory || s.category === filterSignCategory))}
-          deletedItems={store.signs.filter(s => s.status === 'deleted' && (!filterSignCategory || s.category === filterSignCategory))}
-          search={search}
-          setSearch={setSearch}
-          selectedIds={selectedIds}
-          setSelectedIds={setSelectedIds}
-          columns={[{ key: 'nameAr', label: 'الاسم' }, { key: 'nameIt', label: 'بالإيطالية' }, { key: 'category', label: 'التصنيف' }]}
-          filterFn={(item) => !search || item.nameAr?.includes(search)}
-          onAdd={() => { setForm({ nameAr: '', nameIt: '', descriptionAr: '', descriptionIt: '', category: 'pericolo', image: '', order: store.signs.length + 1 }); setModal({ type: 'sign' }); }}
-          onEdit={(item) => { setForm(item); setModal({ type: 'sign', data: item as Record<string, unknown> }); }}
-          onDelete={(id) => setConfirmDel({ type: 'sign', id })}
-          onPermanentDelete={(id) => setConfirmDel({ type: 'sign-permanent', id })}
-          onArchive={(id) => store.archiveSign(id, true)}
-          onUnarchive={(id) => store.archiveSign(id, false)}
-          onRestore={(id) => store.restoreSign(id)}
-          onBulkDelete={async (ids) => { for (const id of ids) await store.deleteSign(id); setSelectedIds(new Set()); }}
-          onBulkPermanentDelete={async (ids) => { for (const id of ids) await store.permanentDeleteSign(id); setSelectedIds(new Set()); }}
-          onBulkArchive={async (ids) => { for (const id of ids) await store.archiveSign(id, true); setSelectedIds(new Set()); }}
-          onBulkRestore={async (ids) => { for (const id of ids) await store.restoreSign(id); setSelectedIds(new Set()); }}
-          onExport={() => handleExport('signs')} onImport={() => handleImport('signs')}
-        />
         </div>
-        );
-      })()}
+      )}
 
       {/* Dictionary */}
       {tab === 'dictionary' && (
@@ -2138,8 +2209,8 @@ export function AdminPage() {
               {renderInput('القسم', 'sectionId', 'select-section')}
               {renderInput('العنوان بالعربية', 'titleAr')}
               {renderInput('العنوان بالإيطالية', 'titleIt')}
-              {renderInput('المحتوى بالعربية', 'contentAr', 'textarea')}
-              {renderInput('المحتوى بالإيطالية', 'contentIt', 'textarea')}
+              {renderInput('المحتوى بالعربية', 'contentAr', 'richtext')}
+              {renderInput('المحتوى بالإيطالية', 'contentIt', 'richtext')}
               {renderInput('صورة', 'image', 'image')}
               {renderInput('الترتيب', 'order', 'number')}
             </>)}
@@ -2160,8 +2231,15 @@ export function AdminPage() {
               {renderInput('الاسم بالإيطالية', 'nameIt')}
               {renderInput('الوصف بالعربية', 'descriptionAr', 'textarea')}
               {renderInput('الوصف بالإيطالية', 'descriptionIt', 'textarea')}
+              {renderInput('القسم', 'sectionId', 'select-sign-section')}
               {renderInput('التصنيف', 'category')}
               {renderInput('صورة', 'image', 'image-square')}
+              {renderInput('الترتيب', 'order', 'number')}
+            </>)}
+            {modal.type === 'signSection' && (<>
+              {renderInput('الاسم بالعربية', 'nameAr')}
+              {renderInput('الاسم بالإيطالية', 'nameIt')}
+              {renderInput('الأيقونة', 'icon')}
               {renderInput('الترتيب', 'order', 'number')}
             </>)}
             {modal.type === 'dictSection' && (<>

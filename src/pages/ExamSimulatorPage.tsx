@@ -283,8 +283,11 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
                         الصحيح: {q.isTrue ? trueLabel : falseLabel}
                       </span>
                     </div>
-                    {q.explanationAr && (
-                      <p className="text-xs text-surface-500 mt-2 bg-surface-50 rounded-lg p-2">{q.explanationAr}</p>
+                    {(lang === 'ar' || lang === 'both') && q.explanationAr && (
+                      <p className="text-xs text-surface-500 mt-2 bg-surface-50 rounded-lg p-2" dir="rtl">{q.explanationAr}</p>
+                    )}
+                    {(lang === 'it' || lang === 'both') && q.explanationIt && (
+                      <p className="text-xs text-surface-500 mt-1 bg-blue-50 rounded-lg p-2" dir="ltr">{q.explanationIt}</p>
                     )}
                   </div>
                 </div>

@@ -1,6 +1,6 @@
 import {
   getDB, generateId, generateToken, hashPassword, verifyPassword,
-  type User, type Section, type Lesson, type Question, type Sign,
+  type User, type Section, type Lesson, type Question, type Sign, type SignSection,
   type DictionarySection, type DictionaryEntry, type Post, type Comment,
   type Like, type Report, type QuizResult, type UserMistake,
   type TrainingSession, type Notification, type AdminLog
@@ -534,6 +534,49 @@ export async function apiPermanentDeleteSign(token: string, id: string): Promise
   await db.delete('signs', id);
   await logAdmin(token, 'حذف نهائي إشارة', id);
   return ok(null);
+}
+
+// ============ SIGN SECTIONS API ============
+export async function apiGetSignSections(): Promise<ApiRes<SignSection[]>> {
+  const db = await getDB();
+  const all = await db.getAll('signSections');
+  all.sort((a, b) => a.order - b.order);
+  return ok(all);
+}
+export async function apiCreateSignSection(token: string, data: Omit<SignSection, 'id' | 'createdAt'>): Promise<ApiRes<SignSection>> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const s: SignSection = { ...data, id: generateId(), createdAt: new Date().toISOString() };
+  const db = await getDB(); await db.put('signSections', s);
+  return ok(s, 201);
+}
+export async function apiUpdateSignSection(token: string, id: string, data: Partial<SignSection>): Promise<ApiRes<SignSection>> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const s = await db.get('signSections', id); if (!s) return err('غير موجود', 404);
+  Object.assign(s, data); await db.put('signSections', s);
+  return ok(s);
+}
+export async function apiSoftDeleteSignSection(token: string, id: string): Promise<ApiRes> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const s = await db.get('signSections', id); if (!s) return err('غير موجود', 404);
+  s.status = 'deleted'; await db.put('signSections', s); return ok(null);
+}
+export async function apiArchiveSignSection(token: string, id: string, archive: boolean): Promise<ApiRes> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const s = await db.get('signSections', id); if (!s) return err('غير موجود', 404);
+  s.status = archive ? 'archived' : 'active'; await db.put('signSections', s); return ok(null);
+}
+export async function apiRestoreSignSection(token: string, id: string): Promise<ApiRes> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const s = await db.get('signSections', id); if (!s) return err('غير موجود', 404);
+  s.status = 'active'; await db.put('signSections', s); return ok(null);
+}
+export async function apiPermanentDeleteSignSection(token: string, id: string): Promise<ApiRes> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB(); await db.delete('signSections', id); return ok(null);
 }
 
 // ============ DICTIONARY API ============

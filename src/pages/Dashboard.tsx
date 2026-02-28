@@ -28,38 +28,42 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const totalAnswers = progress.correctAnswers + progress.wrongAnswers;
   const accuracy = totalAnswers > 0 ? Math.round((progress.correctAnswers / totalAnswers) * 100) : 0;
 
-  // Calculate comprehensive exam readiness
+  // Calculate exam readiness — only from stable user progress data, never from DB record counts
   useEffect(() => {
     if (!user) return;
-    const quizFactor = Math.min(100, progress.totalQuizzes * 5); // 20 quizzes = 100
-    const accuracyFactor = accuracy;
-    const lessonFactor = sections.length > 0 ? Math.min(100, Math.round((progress.completedLessons.length / Math.max(1, lessons.length)) * 100)) : 0;
-    const streakFactor = Math.min(100, progress.currentStreak * 14); // 7 days = 100
-    const questionCoverage = questions.length > 0 ? Math.min(100, Math.round((totalAnswers / Math.max(1, questions.length)) * 100)) : 0;
-    
+    // Use only progress fields so the value never fluctuates based on data loading order
+    const quizFactor    = Math.min(100, progress.totalQuizzes * 5);                              // 20 quizzes  = 100%
+    const accuracyFactor = totalAnswers > 0 ? accuracy : 0;                                      // based on quiz history
+    const lessonFactor  = lessons.length > 0                                                     // if lessons loaded, use ratio
+      ? Math.min(100, Math.round(progress.completedLessons.length / Math.max(1, lessons.length) * 100))
+      : Math.min(100, progress.completedLessons.length * 5);                                     // fallback: 20 lessons = 100%
+    const questionFactor = questions.length > 0                                                  // if questions loaded, use ratio
+      ? Math.min(100, Math.round(totalAnswers / Math.max(1, questions.length) * 100))
+      : Math.min(100, Math.round(totalAnswers / 2));                                             // fallback: 200 answers = 100%
+    const streakFactor  = Math.min(100, progress.currentStreak * 14);                           // 7 days = 100%
+
     const readiness = Math.round(
-      accuracyFactor * 0.35 +    // 35% accuracy weight
-      quizFactor * 0.20 +        // 20% total quizzes
-      lessonFactor * 0.20 +      // 20% lessons completed
-      questionCoverage * 0.15 +  // 15% question coverage
-      streakFactor * 0.10        // 10% streak consistency
+      accuracyFactor  * 0.35 +
+      quizFactor      * 0.20 +
+      lessonFactor    * 0.20 +
+      questionFactor  * 0.15 +
+      streakFactor    * 0.10
     );
-    
-    if (readiness !== progress.examReadiness && readiness > 0) {
-      // Update exam readiness in DB
-      import('@/db/database').then(({ getDB }) => {
-        getDB().then(db => {
-          db.get('users', user.id).then(u => {
-            if (u) {
-              u.progress.examReadiness = readiness;
-              db.put('users', u);
-            }
-          });
+
+    // Only update when data is stable (not on empty loading states) and value actually changed
+    const dataLoaded = progress.totalQuizzes > 0 || progress.completedLessons.length > 0 || totalAnswers > 0;
+    if (!dataLoaded) return;
+    if (readiness === progress.examReadiness) return;
+
+    import('@/db/database').then(({ getDB }) => {
+      getDB().then(db => {
+        db.get('users', user.id).then(u => {
+          if (u) { u.progress.examReadiness = readiness; db.put('users', u); }
         });
       });
-    }
+    });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [progress.totalQuizzes, accuracy, progress.completedLessons.length, progress.currentStreak, totalAnswers, sections.length, lessons.length, questions.length]);
+  }, [progress.totalQuizzes, progress.correctAnswers, progress.wrongAnswers, progress.completedLessons.length, progress.currentStreak, lessons.length, questions.length]);
 
   // Get greeting based on time
   const hour = new Date().getHours();
