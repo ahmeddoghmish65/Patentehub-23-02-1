@@ -114,6 +114,9 @@ export function CommunityPage() {
   const [viewUserId, setViewUserId] = useState<string | null>(null);
   const [viewUserData, setViewUserData] = useState<{ name: string; username: string; avatar: string; bio: string; verified: boolean; postsCount: number; followersCount: number; followingCount: number; hideStats: boolean; joinedAt?: string } | null>(null);
   const [viewProfileTab, setViewProfileTab] = useState<'posts' | 'quizzes'>('posts');
+  const [viewProfileStatView, setViewProfileStatView] = useState<'followers' | 'following' | null>(null);
+  const [viewProfileFollowers, setViewProfileFollowers] = useState<{ id: string; name: string; avatar: string }[]>([]);
+  const [viewProfileFollowing, setViewProfileFollowing] = useState<{ id: string; name: string; avatar: string }[]>([]);
   const [detailPostId, setDetailPostId] = useState<string | null>(null);
   const [detailComments, setDetailComments] = useState<Comment[]>([]);
   const [verifiedUsers, setVerifiedUsers] = useState<Record<string, boolean>>({});
@@ -567,12 +570,33 @@ export function CommunityPage() {
         } catch { /* */ }
         return 0;
       })();
+      // Build followers list
+      const followersList = allUsers.filter(x => {
+        try {
+          const f = localStorage.getItem(`following_${x.id}`);
+          if (f) { const arr = JSON.parse(f); return Array.isArray(arr) && arr.includes(userId); }
+        } catch { /* */ }
+        return false;
+      }).map(x => ({ id: x.id, name: x.name, avatar: x.avatar || '' }));
+      // Build following list
+      const followingIds: string[] = (() => {
+        try {
+          const f = localStorage.getItem(`following_${userId}`);
+          if (f) { const arr = JSON.parse(f); return Array.isArray(arr) ? arr : []; }
+        } catch { /* */ }
+        return [];
+      })();
+      const followingList = allUsers.filter(x => followingIds.includes(x.id)).map(x => ({ id: x.id, name: x.name, avatar: x.avatar || '' }));
+
+      setViewProfileFollowers(followersList);
+      setViewProfileFollowing(followingList);
+      setViewProfileStatView(null);
       setViewUserData({
         name: u.name, username: u.username || '', avatar: u.avatar || '', bio: u.bio || '',
         verified: u.verified || false,
         postsCount: posts.filter(p => p.userId === userId && p.type !== 'quiz').length,
-        followersCount: realFollowers,
-        followingCount: userFollowing,
+        followersCount: followersList.length,
+        followingCount: followingList.length,
         hideStats: u.privacyHideStats || false,
         joinedAt: u.createdAt || undefined,
       });
@@ -1611,23 +1635,77 @@ export function CommunityPage() {
               ) : (
                 <div className="grid grid-cols-4 gap-2 mt-4">
                   {[
-                    { label: 'منشور', value: viewUserData.postsCount, icon: 'article', color: 'text-primary-600', bg: 'bg-primary-50' },
-                    { label: 'سؤال', value: posts.filter(p => p.userId === viewUserId && p.type === 'quiz').length, icon: 'quiz', color: 'text-purple-600', bg: 'bg-purple-50' },
-                    { label: 'متابِع', value: viewUserData.followersCount, icon: 'group', color: 'text-green-600', bg: 'bg-green-50' },
-                    { label: 'يتابِع', value: viewUserData.followingCount, icon: 'person_add', color: 'text-blue-600', bg: 'bg-blue-50' },
+                    { label: 'منشور', value: viewUserData.postsCount, icon: 'article', color: 'text-primary-600', bg: 'bg-primary-50', stat: null as null },
+                    { label: 'سؤال', value: posts.filter(p => p.userId === viewUserId && p.type === 'quiz').length, icon: 'quiz', color: 'text-purple-600', bg: 'bg-purple-50', stat: null as null },
+                    { label: 'متابِع', value: viewUserData.followersCount, icon: 'group', color: 'text-green-600', bg: 'bg-green-50', stat: 'followers' as 'followers' | 'following' | null },
+                    { label: 'يتابِع', value: viewUserData.followingCount, icon: 'person_add', color: 'text-blue-600', bg: 'bg-blue-50', stat: 'following' as 'followers' | 'following' | null },
                   ].map((s) => (
-                    <div key={s.label} className={cn('rounded-xl p-2.5 text-center', s.bg)}>
+                    <div key={s.label}
+                      className={cn('rounded-xl p-2.5 text-center transition-all', s.bg, s.stat ? 'cursor-pointer hover:ring-2 hover:ring-inset hover:ring-current/20 active:scale-95' : '')}
+                      onClick={() => s.stat && setViewProfileStatView(s.stat)}>
                       <Icon name={s.icon} size={16} className={cn('mx-auto mb-1', s.color)} />
                       <p className={cn('text-base font-black', s.color)}>{s.value}</p>
                       <p className="text-[9px] text-surface-500 leading-tight">{s.label}</p>
+                      {s.stat && <Icon name="chevron_right" size={10} className={cn('mx-auto mt-0.5 rotate-90', s.color)} />}
                     </div>
                   ))}
                 </div>
               )}
             </div>
 
+            {/* Followers / Following sub-panel */}
+            {viewProfileStatView && (
+              <div className="border-t border-surface-100 flex-1 overflow-y-auto">
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-surface-100 bg-surface-50 sticky top-0 z-10">
+                  <button onClick={() => setViewProfileStatView(null)}
+                    className="w-7 h-7 rounded-lg hover:bg-surface-200 flex items-center justify-center transition-colors">
+                    <Icon name="arrow_back" size={16} className="text-surface-600 rotate-180" />
+                  </button>
+                  <h4 className="text-sm font-bold text-surface-800">
+                    {viewProfileStatView === 'followers' ? `المتابِعون (${viewProfileFollowers.length})` : `يتابِع (${viewProfileFollowing.length})`}
+                  </h4>
+                </div>
+                <div className="divide-y divide-surface-50">
+                  {(viewProfileStatView === 'followers' ? viewProfileFollowers : viewProfileFollowing).length === 0 ? (
+                    <div className="py-10 text-center">
+                      <Icon name={viewProfileStatView === 'followers' ? 'group' : 'person_add'} size={32} className="text-surface-200 mx-auto mb-2" />
+                      <p className="text-xs text-surface-400">لا يوجد {viewProfileStatView === 'followers' ? 'متابِعون' : 'متابَعون'} بعد</p>
+                    </div>
+                  ) : (
+                    (viewProfileStatView === 'followers' ? viewProfileFollowers : viewProfileFollowing).map(u => (
+                      <div key={u.id} className="flex items-center gap-3 px-4 py-3">
+                        <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 cursor-pointer"
+                          style={{ background: u.avatar ? undefined : 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}
+                          onClick={() => { setViewProfileStatView(null); openUserProfile(u.id); }}>
+                          {u.avatar ? <img src={u.avatar} className="w-full h-full object-cover" alt="" /> : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <span className="text-sm font-bold text-white">{u.name.charAt(0)}</span>
+                            </div>
+                          )}
+                        </div>
+                        <span className="flex-1 text-sm font-semibold text-surface-800 truncate cursor-pointer"
+                          onClick={() => { setViewProfileStatView(null); openUserProfile(u.id); }}>
+                          {u.name}
+                        </span>
+                        {u.id !== user?.id && (
+                          <button
+                            onClick={() => toggleFollow(u.id)}
+                            className={cn('shrink-0 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all',
+                              following.includes(u.id)
+                                ? 'bg-surface-100 text-surface-600 hover:bg-danger-50 hover:text-danger-600 border border-surface-200'
+                                : 'bg-primary-500 text-white hover:bg-primary-600 shadow-sm')}>
+                            {following.includes(u.id) ? 'يتم المتابعة' : 'متابعة'}
+                          </button>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Tabs + Posts */}
-            <div className="flex-1 overflow-y-auto border-t border-surface-100">
+            {!viewProfileStatView && <div className="flex-1 overflow-y-auto border-t border-surface-100">
               <div className="flex border-b border-surface-100 sticky top-0 bg-white z-10">
                 {([['posts', 'منشوراته', 'article'], ['quizzes', 'أسئلته', 'quiz']] as const).map(([tab, label, icon]) => (
                   <button key={tab} onClick={() => setViewProfileTab(tab)}
@@ -1670,7 +1748,7 @@ export function CommunityPage() {
                   </div>
                 )}
               </div>
-            </div>
+            </div>}
           </div>
         </div>
       )}

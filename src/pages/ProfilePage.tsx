@@ -41,7 +41,7 @@ const COUNTRY_CODES = [
 ];
 
 export function ProfilePage({ onNavigate }: ProfilePageProps) {
-  const { user, logout, updateSettings, updateProfile, mistakes, loadMistakes, posts } = useAuthStore();
+  const { user, logout, updateSettings, updateProfile, mistakes, loadMistakes, posts, loadPosts } = useAuthStore();
 
   const [showEditPage, setShowEditPage] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
@@ -71,11 +71,17 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
   const [followersList, setFollowersList] = useState<{ id: string; name: string; avatar?: string; username?: string }[]>([]);
   const [followingList, setFollowingList] = useState<{ id: string; name: string; avatar?: string; username?: string }[]>([]);
   const [followingCount, setFollowingCount] = useState(0);
+  // My current following IDs (for follow/unfollow in lists)
+  const [myFollowing, setMyFollowing] = useState<string[]>(() => {
+    if (!user) return [];
+    try { return JSON.parse(localStorage.getItem(`following_${user.id}`) || '[]'); } catch { return []; }
+  });
 
   const fileRef = useRef<HTMLInputElement>(null);
   const editFileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { loadMistakes(); }, [loadMistakes]);
+  useEffect(() => { loadPosts(); }, [loadPosts]);
 
   useEffect(() => {
     if (!user) return;
@@ -96,6 +102,26 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
       setFollowingList(followingUsers.map(u => ({ id: u.id, name: u.name, avatar: u.avatar, username: u.username })));
     });
   }, [user?.id]);
+
+  const toggleFollowUser = (targetId: string, targetName: string, targetAvatar?: string, targetUsername?: string) => {
+    if (!user) return;
+    const raw = localStorage.getItem(`following_${user.id}`);
+    let arr: string[] = raw ? (() => { try { return JSON.parse(raw); } catch { return []; } })() : [];
+    const isFollowing = arr.includes(targetId);
+    if (isFollowing) {
+      arr = arr.filter(id => id !== targetId);
+    } else {
+      arr = [...arr, targetId];
+    }
+    localStorage.setItem(`following_${user.id}`, JSON.stringify(arr));
+    setMyFollowing(arr);
+    setFollowingCount(arr.length);
+    if (!isFollowing) {
+      setFollowingList(prev => prev.find(u => u.id === targetId) ? prev : [...prev, { id: targetId, name: targetName, avatar: targetAvatar, username: targetUsername }]);
+    } else {
+      setFollowingList(prev => prev.filter(u => u.id !== targetId));
+    }
+  };
 
   if (!user) return null;
 
@@ -628,10 +654,18 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                               <span className="font-bold text-primary-700">{u.name.charAt(0)}</span>
                             </div>
                           )}
-                          <div>
-                            <p className="text-sm font-semibold text-surface-800">{u.name}</p>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-surface-800 truncate">{u.name}</p>
                             {u.username && <p className="text-xs text-primary-500">@{u.username}</p>}
                           </div>
+                          <button
+                            onClick={() => toggleFollowUser(u.id, u.name, u.avatar, u.username)}
+                            className={cn('shrink-0 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all',
+                              myFollowing.includes(u.id)
+                                ? 'bg-surface-100 text-surface-600 hover:bg-danger-50 hover:text-danger-600 border border-surface-200'
+                                : 'bg-primary-500 text-white hover:bg-primary-600 shadow-sm')}>
+                            {myFollowing.includes(u.id) ? 'يتم المتابعة' : 'متابعة'}
+                          </button>
                         </div>
                       ))}
                     </div>
@@ -651,10 +685,18 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                               <span className="font-bold text-primary-700">{u.name.charAt(0)}</span>
                             </div>
                           )}
-                          <div>
-                            <p className="text-sm font-semibold text-surface-800">{u.name}</p>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-surface-800 truncate">{u.name}</p>
                             {u.username && <p className="text-xs text-primary-500">@{u.username}</p>}
                           </div>
+                          <button
+                            onClick={() => toggleFollowUser(u.id, u.name, u.avatar, u.username)}
+                            className={cn('shrink-0 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all',
+                              myFollowing.includes(u.id)
+                                ? 'bg-surface-100 text-surface-600 hover:bg-danger-50 hover:text-danger-600 border border-surface-200'
+                                : 'bg-primary-500 text-white hover:bg-primary-600 shadow-sm')}>
+                            {myFollowing.includes(u.id) ? 'يتم المتابعة' : 'متابعة'}
+                          </button>
                         </div>
                       ))}
                     </div>

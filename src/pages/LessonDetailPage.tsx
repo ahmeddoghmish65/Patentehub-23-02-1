@@ -40,8 +40,12 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
 
       <div className="bg-white rounded-2xl p-6 border border-surface-100 mb-6">
         <div className="flex items-start gap-4">
-          <div className="w-14 h-14 rounded-xl flex items-center justify-center" style={{ backgroundColor: (section?.color || '#3b82f6') + '15' }}>
-            <Icon name={section?.icon || 'school'} size={28} style={{ color: section?.color || '#3b82f6' }} filled />
+          <div className="w-14 h-14 rounded-xl overflow-hidden flex items-center justify-center shrink-0" style={{ backgroundColor: (section?.color || '#3b82f6') + '15' }}>
+            {lesson.image ? (
+              <img src={lesson.image} className="w-full h-full object-cover" alt="" />
+            ) : (
+              <Icon name={section?.icon || 'school'} size={28} style={{ color: section?.color || '#3b82f6' }} filled />
+            )}
           </div>
           <div className="flex-1">
             <h1 className="text-xl font-bold text-surface-900" dir={lang === 'it' ? 'ltr' : 'rtl'}>
