@@ -95,11 +95,11 @@ export function MistakesPage() {
               <div className="grid grid-cols-2 gap-3">
                 <button onClick={() => handleAnswer(true)}
                   className="py-4 rounded-2xl border-2 border-success-200 bg-success-50/50 hover:bg-success-50 text-success-700 font-bold text-base transition-all active:scale-[.97]">
-                  ✓ {lang === 'it' ? 'Vero' : 'صحيح'}
+                  ✓ {trueLabel}
                 </button>
                 <button onClick={() => handleAnswer(false)}
                   className="py-4 rounded-2xl border-2 border-danger-200 bg-danger-50/50 hover:bg-danger-50 text-danger-700 font-bold text-base transition-all active:scale-[.97]">
-                  ✗ {lang === 'it' ? 'Falso' : 'خطأ'}
+                  ✗ {falseLabel}
                 </button>
               </div>
             ) : (
@@ -108,12 +108,9 @@ export function MistakesPage() {
                   className={cn('mx-auto mb-2', practiceResult === 'correct' ? 'text-success-500' : 'text-danger-500')} filled />
                 <p className={cn('font-bold text-base mb-1', practiceResult === 'correct' ? 'text-success-700' : 'text-danger-700')}>
                   {practiceResult === 'correct'
-                    ? (lang === 'it' ? '🎉 Corretto! Errori ridotti.' : '🎉 إجابة صحيحة! تم تخفيض عدد الأخطاء')
-                    : (lang === 'it' ? `❌ Sbagliato! Giusto: ${q.correctAnswer ? 'Vero' : 'Falso'}` : `❌ خطأ! الإجابة الصحيحة: ${q.correctAnswer ? 'صحيح ✓' : 'خطأ ✗'}`)}
+                    ? '🎉 إجابة صحيحة! تم تخفيض عدد الأخطاء'
+                    : `❌ إجابة خاطئة! الصحيح: ${q.correctAnswer ? trueLabel : falseLabel}`}
                 </p>
-                {lang === 'both' && practiceResult === 'wrong' && (
-                  <p className="text-sm text-danger-600 mb-2" dir="ltr">Risposta corretta: {q.correctAnswer ? 'Vero' : 'Falso'}</p>
-                )}
                 <p className={cn('text-xs mb-4', practiceResult === 'correct' ? 'text-success-600' : 'text-danger-600')}>
                   {practiceResult === 'correct'
                     ? `عدد الأخطاء أصبح: ${Math.max(0, q.count - 1)}`
@@ -121,7 +118,7 @@ export function MistakesPage() {
                 </p>
                 <button onClick={nextQuestion}
                   className="bg-white border border-surface-200 text-surface-700 font-semibold text-sm px-6 py-2 rounded-xl hover:bg-surface-50 transition-colors">
-                  {practiceIdx + 1 < mistakes.length ? (lang === 'it' ? 'Prossimo →' : 'التالي ←') : (lang === 'it' ? 'Fine' : 'إنهاء')}
+                  {practiceIdx + 1 < mistakes.length ? 'التالي ←' : 'إنهاء'}
                 </button>
               </div>
             )}
@@ -143,11 +140,11 @@ export function MistakesPage() {
                   <div className="flex items-center gap-4 text-xs flex-wrap">
                     <span className="text-danger-500 flex items-center gap-1">
                       <Icon name="close" size={14} />
-                      {lang === 'it' ? 'Tua risposta' : 'إجابتك'}: {m.userAnswer ? trueLabel : falseLabel}
+                      إجابتك: {m.userAnswer ? trueLabel : falseLabel}
                     </span>
                     <span className="text-success-500 flex items-center gap-1">
                       <Icon name="check" size={14} />
-                      {lang === 'it' ? 'Corretto' : 'الصحيح'}: {m.correctAnswer ? trueLabel : falseLabel}
+                      الصحيح: {m.correctAnswer ? trueLabel : falseLabel}
                     </span>
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
@@ -8,12 +8,7 @@ interface DashboardProps {
 }
 
 export function Dashboard({ onNavigate }: DashboardProps) {
-  const { user, loadSections, loadLessons, loadMistakes, loadQuestions, practiceMistake, mistakes, sections, lessons, questions } = useAuthStore();
-
-  const [practiceActive, setPracticeActive] = useState(false);
-  const [practiceIdx, setPracticeIdx] = useState(0);
-  const [practiceChosen, setPracticeChosen] = useState<boolean | null>(null);
-  const [practiceResult, setPracticeResult] = useState<'correct' | 'wrong' | null>(null);
+  const { user, loadSections, loadLessons, loadMistakes, loadQuestions, mistakes, sections, lessons, questions } = useAuthStore();
 
   useEffect(() => {
     loadSections();
@@ -28,19 +23,15 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const totalAnswers = progress.correctAnswers + progress.wrongAnswers;
   const accuracy = totalAnswers > 0 ? Math.round((progress.correctAnswers / totalAnswers) * 100) : 0;
 
-  // Calculate exam readiness — only from stable user progress data, never from DB record counts
+  // Calculate exam readiness — derived solely from stored progress fields (no live DB counts)
+  // so the value is deterministic and never changes between app sessions unless the user makes progress.
   useEffect(() => {
     if (!user) return;
-    // Use only progress fields so the value never fluctuates based on data loading order
-    const quizFactor    = Math.min(100, progress.totalQuizzes * 5);                              // 20 quizzes  = 100%
-    const accuracyFactor = totalAnswers > 0 ? accuracy : 0;                                      // based on quiz history
-    const lessonFactor  = lessons.length > 0                                                     // if lessons loaded, use ratio
-      ? Math.min(100, Math.round(progress.completedLessons.length / Math.max(1, lessons.length) * 100))
-      : Math.min(100, progress.completedLessons.length * 5);                                     // fallback: 20 lessons = 100%
-    const questionFactor = questions.length > 0                                                  // if questions loaded, use ratio
-      ? Math.min(100, Math.round(totalAnswers / Math.max(1, questions.length) * 100))
-      : Math.min(100, Math.round(totalAnswers / 2));                                             // fallback: 200 answers = 100%
-    const streakFactor  = Math.min(100, progress.currentStreak * 14);                           // 7 days = 100%
+    const quizFactor     = Math.min(100, progress.totalQuizzes * 5);           // 20 quizzes  = 100%
+    const accuracyFactor = totalAnswers > 0 ? accuracy : 0;
+    const lessonFactor   = Math.min(100, progress.completedLessons.length * 5); // 20 lessons  = 100%
+    const questionFactor = Math.min(100, Math.round(totalAnswers / 2));          // 200 answers = 100%
+    const streakFactor   = Math.min(100, progress.currentStreak * 14);          // 7 days      = 100%
 
     const readiness = Math.round(
       accuracyFactor  * 0.35 +
@@ -50,9 +41,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       streakFactor    * 0.10
     );
 
-    // Only update when data is stable (not on empty loading states) and value actually changed
-    const dataLoaded = progress.totalQuizzes > 0 || progress.completedLessons.length > 0 || totalAnswers > 0;
-    if (!dataLoaded) return;
+    // Skip if no user activity yet, or value hasn't changed
+    if (progress.totalQuizzes === 0 && progress.completedLessons.length === 0 && totalAnswers === 0) return;
     if (readiness === progress.examReadiness) return;
 
     import('@/db/database').then(({ getDB }) => {
@@ -62,8 +52,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         });
       });
     });
+  // Only re-run when the actual progress data changes — never on lesson/question counts loading
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [progress.totalQuizzes, progress.correctAnswers, progress.wrongAnswers, progress.completedLessons.length, progress.currentStreak, lessons.length, questions.length]);
+  }, [progress.totalQuizzes, progress.correctAnswers, progress.wrongAnswers, progress.completedLessons.length, progress.currentStreak]);
 
   // Get greeting based on time
   const hour = new Date().getHours();
@@ -188,93 +179,26 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       </div>
 
       {/* أخطائي */}
-      <div>
-        <button
-          className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-red-200 hover:shadow-md transition-all text-right flex items-center gap-4 group"
-          onClick={() => !practiceActive && onNavigate('mistakes')}
-        >
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-red-50 shrink-0">
-            <Icon name="error_outline" size={26} className="text-red-500" filled />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-surface-900 text-sm group-hover:text-red-600 transition-colors">أخطائي</h3>
-            <p className="text-[11px] text-surface-400 mt-0.5">
-              {mistakes.length > 0 ? `${mistakes.length} خطأ — راجعها لتتحسن` : 'لا توجد أخطاء بعد'}
-            </p>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            {mistakes.length > 0 && (
-              <>
-                <button
-                  onClick={e => {
-                    e.stopPropagation();
-                    if (practiceActive) {
-                      setPracticeActive(false); setPracticeChosen(null); setPracticeResult(null);
-                    } else {
-                      setPracticeActive(true); setPracticeIdx(0); setPracticeChosen(null); setPracticeResult(null);
-                    }
-                  }}
-                  className={cn('flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg transition-all border', practiceActive ? 'bg-surface-100 text-surface-500 border-surface-200' : 'bg-primary-50 text-primary-600 border-primary-200 hover:bg-primary-100')}>
-                  <Icon name={practiceActive ? 'close' : 'fitness_center'} size={13} />
-                  {practiceActive ? 'إنهاء' : 'تدريب'}
-                </button>
-                <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{mistakes.length}</span>
-              </>
-            )}
-            {!practiceActive && <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-red-400" />}
-          </div>
-        </button>
-
-        {/* Practice panel — expands below the card */}
-        {practiceActive && mistakes.length > 0 && (
-          <div className="mt-1 bg-white rounded-xl border border-primary-100 overflow-hidden shadow-sm">
-            {practiceIdx < mistakes.length ? (() => {
-              const q = mistakes[practiceIdx];
-              return (
-                <div className="p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="flex-1 bg-surface-100 rounded-full h-1.5 overflow-hidden">
-                      <div className="h-full bg-primary-500 rounded-full transition-all" style={{ width: `${(practiceIdx / mistakes.length) * 100}%` }} />
-                    </div>
-                    <span className="text-[10px] text-surface-400 shrink-0">{practiceIdx + 1}/{mistakes.length}</span>
-                    <span className="text-[10px] bg-danger-50 text-danger-500 px-1.5 py-0.5 rounded-full font-semibold">×{q.count}</span>
-                  </div>
-                  <div className="bg-surface-50 rounded-xl p-3 mb-3">
-                    <p className="text-sm font-semibold text-surface-800 leading-relaxed mb-1">{q.questionAr}</p>
-                    <p className="text-xs text-surface-400" dir="ltr">{q.questionIt}</p>
-                  </div>
-                  {practiceResult === null ? (
-                    <div className="grid grid-cols-2 gap-2">
-                      <button onClick={async () => { const c = true; setPracticeChosen(c); const ok = c === q.correctAnswer; setPracticeResult(ok ? 'correct' : 'wrong'); if (ok) await practiceMistake(q.questionId, true); }}
-                        className="py-2.5 rounded-xl border-2 border-success-200 hover:bg-success-50 text-success-700 font-bold text-sm transition-all">✓ صحيح</button>
-                      <button onClick={async () => { const c = false; setPracticeChosen(c); const ok = c === q.correctAnswer; setPracticeResult(ok ? 'correct' : 'wrong'); if (ok) await practiceMistake(q.questionId, true); }}
-                        className="py-2.5 rounded-xl border-2 border-danger-200 hover:bg-danger-50 text-danger-700 font-bold text-sm transition-all">✗ خطأ</button>
-                    </div>
-                  ) : (
-                    <div className={cn('rounded-xl p-3 border text-center', practiceResult === 'correct' ? 'bg-success-50 border-success-200' : 'bg-danger-50 border-danger-200')}>
-                      <Icon name={practiceResult === 'correct' ? 'check_circle' : 'cancel'} size={24} className={cn('mx-auto mb-1', practiceResult === 'correct' ? 'text-success-500' : 'text-danger-500')} filled />
-                      <p className={cn('font-bold text-xs mb-2', practiceResult === 'correct' ? 'text-success-700' : 'text-danger-700')}>
-                        {practiceResult === 'correct' ? '🎉 صحيح! تم تخفيض الخطأ' : '❌ خطأ! الصحيح: ' + (q.correctAnswer ? 'صحيح ✓' : 'خطأ ✗')}
-                      </p>
-                      <button onClick={() => { setPracticeChosen(null); setPracticeResult(null); const next = practiceIdx + 1; if (next >= mistakes.length) { setPracticeActive(false); } else { setPracticeIdx(next); } }}
-                        className="text-xs font-semibold bg-white border border-surface-200 px-4 py-1.5 rounded-xl hover:bg-surface-50">
-                        {practiceIdx + 1 < mistakes.length ? 'التالي ←' : 'إنهاء'}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              );
-            })() : (
-              <div className="p-5 text-center">
-                <Icon name="celebration" size={32} className="text-success-400 mx-auto mb-2" filled />
-                <p className="font-bold text-surface-800 text-sm mb-1">أحسنت! انتهيت من التدريب</p>
-                <button onClick={() => setPracticeActive(false)}
-                  className="mt-1 text-xs font-semibold bg-primary-500 text-white px-4 py-1.5 rounded-xl hover:bg-primary-600">إغلاق</button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+      <button
+        className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-red-200 hover:shadow-md transition-all text-right flex items-center gap-4 group"
+        onClick={() => onNavigate('mistakes')}
+      >
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-red-50 shrink-0">
+          <Icon name="error_outline" size={26} className="text-red-500" filled />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-bold text-surface-900 text-sm group-hover:text-red-600 transition-colors">أخطائي</h3>
+          <p className="text-[11px] text-surface-400 mt-0.5">
+            {mistakes.length > 0 ? `${mistakes.length} خطأ — راجعها لتتحسن` : 'لا توجد أخطاء بعد'}
+          </p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {mistakes.length > 0 && (
+            <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{mistakes.length}</span>
+          )}
+          <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-red-400" />
+        </div>
+      </button>
 
       {/* Study Progress Summary */}
       {(sections.length > 0 || lessons.length > 0) && (

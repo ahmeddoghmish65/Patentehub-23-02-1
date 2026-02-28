@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
@@ -606,7 +606,7 @@ export function AdminPage() {
       {/* Sections CRUD */}
       {tab === 'sections' && (
         <ContentWithTrash
-          title="الأقسام"
+          title="الأقسام" icon="folder" iconColor="indigo"
           contentView={contentView}
           setContentView={setContentView}
           activeItems={store.sections.filter(s => !s.status || s.status === 'active')}
@@ -635,30 +635,18 @@ export function AdminPage() {
 
       {/* Lessons CRUD */}
       {tab === 'lessons' && (
-        <div className="space-y-3">
-          <div className="bg-white rounded-2xl border border-surface-100 p-3.5 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center shrink-0">
-                <Icon name="school" size={18} className="text-primary-500" filled />
-              </div>
-              <div>
-                <h2 className="text-sm font-bold text-surface-800">الدروس</h2>
-                <p className="text-xs text-surface-400">{store.lessons.length} درس</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-1.5 shrink-0">
-              <Icon name="filter_list" size={14} className="text-surface-400" />
+        <ContentWithTrash
+            title="الدروس" icon="school" iconColor="primary"
+            filterSlot={
               <select value={filterSectionId} onChange={e => setFilterSectionId(e.target.value)}
-                className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[150px]">
+                className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
                 <option value="">كل الأقسام</option>
                 {store.sections.map(sec => (
                   <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.lessons.filter(l => l.sectionId === sec.id).length})</option>
                 ))}
               </select>
-            </div>
-          </div>
-          <ContentWithTrash
-            title="الدروس"
+            }
+
             contentView={contentView}
             setContentView={setContentView}
             activeItems={store.lessons.filter(s => (!s.status || s.status === 'active') && (!filterSectionId || s.sectionId === filterSectionId))}
@@ -687,26 +675,15 @@ export function AdminPage() {
             onBulkRestore={async (ids) => { for (const id of ids) await store.restoreLesson(id); setSelectedIds(new Set()); }}
             onExport={() => handleExport('lessons')} onImport={() => handleImport('lessons')}
           />
-        </div>
       )}
 
       {/* Questions CRUD */}
       {tab === 'questions' && (
-        <div className="space-y-3">
-          <div className="bg-white rounded-2xl border border-surface-100 p-3.5 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center shrink-0">
-                <Icon name="quiz" size={18} className="text-purple-500" filled />
-              </div>
-              <div>
-                <h2 className="text-sm font-bold text-surface-800">الأسئلة</h2>
-                <p className="text-xs text-surface-400">{store.questions.length} سؤال</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-1.5 shrink-0">
-              <Icon name="filter_list" size={14} className="text-surface-400" />
+        <ContentWithTrash
+            title="الأسئلة" icon="quiz" iconColor="purple"
+            filterSlot={
               <select value={filterSectionId} onChange={e => setFilterSectionId(e.target.value)}
-                className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[150px]">
+                className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
                 <option value="">كل الأقسام</option>
                 {store.sections.map(sec => {
                   const sectionLessonIds = store.lessons.filter(l => l.sectionId === sec.id).map(l => l.id);
@@ -714,10 +691,7 @@ export function AdminPage() {
                   return <option key={sec.id} value={sec.id}>{sec.nameAr} ({count})</option>;
                 })}
               </select>
-            </div>
-          </div>
-          <ContentWithTrash
-            title="الأسئلة"
+            }
             contentView={contentView}
             setContentView={setContentView}
             activeItems={store.questions.filter(s => (!s.status || s.status === 'active') && (!filterSectionId || store.lessons.find(l => l.id === s.lessonId)?.sectionId === filterSectionId))}
@@ -746,15 +720,14 @@ export function AdminPage() {
             onBulkRestore={async (ids) => { for (const id of ids) await store.restoreQuestion(id); setSelectedIds(new Set()); }}
             onExport={() => handleExport('questions')} onImport={() => handleImport('questions')}
           />
-        </div>
       )}
 
       {/* Signs CRUD */}
       {tab === 'signs' && (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Sign Sections */}
           <ContentWithTrash
-            title="أقسام الإشارات"
+            title="أقسام الإشارات" icon="traffic" iconColor="orange"
             contentView={contentView}
             setContentView={setContentView}
             activeItems={store.signSections.filter(s => !s.status || s.status === 'active')}
@@ -778,20 +751,10 @@ export function AdminPage() {
             onBulkArchive={async (ids) => { for (const id of ids) await store.archiveSignSection(id, true); setSelectedIds(new Set()); }}
             onBulkRestore={async (ids) => { for (const id of ids) await store.restoreSignSection(id); setSelectedIds(new Set()); }}
           />
-          {/* Signs list with section+category filters */}
-          <div className="space-y-3">
-            <div className="bg-white rounded-2xl border border-surface-100 p-3.5 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
-                  <Icon name="traffic" size={18} className="text-red-500" filled />
-                </div>
-                <div>
-                  <h2 className="text-sm font-bold text-surface-800">الإشارات</h2>
-                  <p className="text-xs text-surface-400">{store.signs.length} إشارة</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1.5 shrink-0">
-                <Icon name="filter_list" size={14} className="text-surface-400" />
+          {/* Signs list with section filter */}
+          <ContentWithTrash
+              title="الإشارات" icon="traffic" iconColor="red"
+              filterSlot={
                 <select value={filterSignCategory} onChange={e => setFilterSignCategory(e.target.value)}
                   className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
                   <option value="">كل الأقسام</option>
@@ -799,10 +762,7 @@ export function AdminPage() {
                     <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.signs.filter(s => s.sectionId === sec.id).length})</option>
                   ))}
                 </select>
-              </div>
-            </div>
-            <ContentWithTrash
-              title="الإشارات"
+              }
               contentView={contentView}
               setContentView={setContentView}
               activeItems={store.signs.filter(s => (!s.status || s.status === 'active') && (!filterSignCategory || s.sectionId === filterSignCategory))}
@@ -827,15 +787,14 @@ export function AdminPage() {
               onBulkRestore={async (ids) => { for (const id of ids) await store.restoreSign(id); setSelectedIds(new Set()); }}
               onExport={() => handleExport('signs')} onImport={() => handleImport('signs')}
             />
-          </div>
         </div>
       )}
 
       {/* Dictionary */}
       {tab === 'dictionary' && (
-        <div className="space-y-6">
+        <div className="space-y-4">
           <ContentWithTrash
-            title="أقسام القاموس"
+            title="أقسام القاموس" icon="menu_book" iconColor="teal"
             contentView={contentView}
             setContentView={setContentView}
             activeItems={store.dictSections.filter(s => !s.status || s.status === 'active')}
@@ -860,30 +819,17 @@ export function AdminPage() {
             onBulkRestore={async (ids) => { for (const id of ids) await store.restoreDictSection(id); setSelectedIds(new Set()); }}
             onExport={() => handleExport('dictionarySections')} onImport={() => handleImport('dictionarySections')}
           />
-          <div className="space-y-3">
-            <div className="bg-white rounded-2xl border border-surface-100 p-3.5 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-cyan-50 flex items-center justify-center shrink-0">
-                  <Icon name="menu_book" size={18} className="text-cyan-500" filled />
-                </div>
-                <div>
-                  <h2 className="text-sm font-bold text-surface-800">مصطلحات القاموس</h2>
-                  <p className="text-xs text-surface-400">{store.dictEntries.length} مصطلح</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1.5 shrink-0">
-                <Icon name="filter_list" size={14} className="text-surface-400" />
-                <select value={filterDictSectionId} onChange={e => setFilterDictSectionId(e.target.value)}
-                  className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[150px]">
-                  <option value="">كل الأقسام</option>
-                  {store.dictSections.filter(s => !s.status || s.status === 'active').map(sec => (
-                    <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.dictEntries.filter(e => e.sectionId === sec.id).length})</option>
-                  ))}
-                </select>
-              </div>
-            </div>
           <ContentWithTrash
-            title="مصطلحات القاموس"
+            title="مصطلحات القاموس" icon="menu_book" iconColor="cyan"
+            filterSlot={
+              <select value={filterDictSectionId} onChange={e => setFilterDictSectionId(e.target.value)}
+                className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
+                <option value="">كل الأقسام</option>
+                {store.dictSections.filter(s => !s.status || s.status === 'active').map(sec => (
+                  <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.dictEntries.filter(e => e.sectionId === sec.id).length})</option>
+                ))}
+              </select>
+            }
             contentView={contentView}
             setContentView={setContentView}
             activeItems={store.dictEntries.filter(s => (!s.status || s.status === 'active') && (!filterDictSectionId || s.sectionId === filterDictSectionId))}
@@ -908,7 +854,6 @@ export function AdminPage() {
             onBulkRestore={async (ids) => { for (const id of ids) await store.restoreDictEntry(id); setSelectedIds(new Set()); }}
             onExport={() => handleExport('dictionaryEntries')} onImport={() => handleImport('dictionaryEntries')}
           />
-          </div>
         </div>
       )}
 
@@ -1850,25 +1795,27 @@ export function AdminPage() {
       {/* Logs - with admin name */}
       {tab === 'logs' && (
         <div className="space-y-3">
-          {/* Logs header card */}
-          <div className="bg-white rounded-2xl border border-surface-100 p-3.5">
-            <div className="flex items-center justify-between gap-3 mb-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center shrink-0">
-                  <Icon name="history" size={18} className="text-slate-500" filled />
+          {/* Logs header card — consistent with other tabs */}
+          <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+          <div className="p-3.5 border-b border-surface-100 space-y-2.5">
+            {/* Row 1: icon+title+count | search | export */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-2 mr-auto">
+                <div className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
+                  <Icon name="history" size={15} className="text-slate-500" filled />
                 </div>
-                <div>
-                  <h2 className="text-sm font-bold text-surface-800">سجلات الإدارة</h2>
-                  <p className="text-xs text-surface-400">
-                    {store.adminLogs.filter(l => {
-                      const adminName = store.adminUsers.find(u => u.id === l.adminId)?.name || '';
-                      const matchSearch = !search || l.action.includes(search) || l.details.includes(search) || adminName.includes(search);
-                      const matchType = !logTypeFilter || logTypeFilter === 'الكل' || l.action.includes(logTypeFilter);
-                      return matchSearch && matchType;
-                    }).length} / {store.adminLogs.length} سجل
-                  </p>
-                </div>
+                <span className="font-bold text-surface-900 text-sm">سجلات الإدارة</span>
+                <span className="text-xs text-surface-400 bg-surface-100 px-1.5 py-0.5 rounded-full">
+                  {store.adminLogs.filter(l => {
+                    const adminName = store.adminUsers.find(u => u.id === l.adminId)?.name || '';
+                    const matchSearch = !search || l.action.includes(search) || l.details.includes(search) || adminName.includes(search);
+                    const matchType = !logTypeFilter || logTypeFilter === 'الكل' || l.action.includes(logTypeFilter);
+                    return matchSearch && matchType;
+                  }).length} / {store.adminLogs.length}
+                </span>
               </div>
+              <input className="border border-surface-200 rounded-lg px-2.5 py-1.5 text-xs w-40 focus:outline-none focus:border-primary-400"
+                placeholder="بحث في السجلات..." value={search} onChange={e => { setSearch(e.target.value); setLogPage(1); }} />
               <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-400 border border-surface-200"
                 title="تصدير السجلات"
                 onClick={() => {
@@ -1886,46 +1833,41 @@ export function AdminPage() {
                 <Icon name="download" size={18} />
               </button>
             </div>
-            <input className="w-full border border-surface-200 rounded-xl px-3 py-2 text-sm mb-2.5 focus:outline-none focus:border-primary-400"
-              placeholder="ابحث بالاجراء أو التفاصيل أو اسم المسؤول..."
-              value={search} onChange={e => { setSearch(e.target.value); setLogPage(1); }} />
+            {/* Row 2: type filter pills */}
             <div className="flex gap-1.5 flex-wrap">
               {['الكل', 'إنشاء', 'تعديل', 'حذف', 'حظر', 'تصدير', 'استيراد', 'أرشفة', 'تسجيل', 'كلمة مرور'].map(type => (
                 <button key={type}
                   className={cn('px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all border',
                     (logTypeFilter === type || (!logTypeFilter && type === 'الكل'))
                       ? 'bg-primary-500 text-white border-primary-500'
-                      : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300'
+                      : 'bg-surface-50 text-surface-500 border-surface-200 hover:border-primary-300'
                   )}
                   onClick={() => { setLogTypeFilter(type === 'الكل' ? '' : type); setLogPage(1); }}>
                   {type}
                 </button>
               ))}
             </div>
-            {/* Delete by date range */}
-            <div className="mt-3 pt-3 border-t border-surface-100">
-              <p className="text-xs font-semibold text-surface-600 mb-2 flex items-center gap-1.5"><Icon name="delete_sweep" size={15} className="text-danger-400" /> حذف السجلات بالتاريخ:</p>
-              <div className="flex items-center gap-2 flex-wrap">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-surface-500">من:</span>
-                  <input type="date" value={logDeleteFrom} onChange={e => setLogDeleteFrom(e.target.value)}
-                    className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 focus:outline-none focus:border-primary-400" />
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-surface-500">إلى:</span>
-                  <input type="date" value={logDeleteTo} onChange={e => setLogDeleteTo(e.target.value)}
-                    className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 focus:outline-none focus:border-primary-400" />
-                </div>
-                <button
-                  disabled={!logDeleteFrom || !logDeleteTo}
-                  onClick={() => setShowDeleteLogsConfirm(true)}
-                  className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border', logDeleteFrom && logDeleteTo ? 'bg-danger-500 text-white border-danger-500 hover:bg-danger-600' : 'bg-surface-100 text-surface-400 border-surface-200 cursor-not-allowed')}>
-                  <Icon name="delete_sweep" size={14} /> حذف
-                </button>
+            {/* Row 3: delete by date range */}
+            <div className="pt-2 border-t border-surface-100 flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-semibold text-surface-500 flex items-center gap-1"><Icon name="delete_sweep" size={14} className="text-danger-400" /> حذف بالتاريخ:</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-surface-400">من:</span>
+                <input type="date" value={logDeleteFrom} onChange={e => setLogDeleteFrom(e.target.value)}
+                  className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 focus:outline-none focus:border-primary-400" />
               </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-surface-400">إلى:</span>
+                <input type="date" value={logDeleteTo} onChange={e => setLogDeleteTo(e.target.value)}
+                  className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 focus:outline-none focus:border-primary-400" />
+              </div>
+              <button
+                disabled={!logDeleteFrom || !logDeleteTo}
+                onClick={() => setShowDeleteLogsConfirm(true)}
+                className={cn('flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all border', logDeleteFrom && logDeleteTo ? 'bg-danger-500 text-white border-danger-500 hover:bg-danger-600' : 'bg-surface-100 text-surface-400 border-surface-200 cursor-not-allowed')}>
+                <Icon name="delete_sweep" size={13} /> حذف
+              </button>
             </div>
           </div>
-        <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
           {/* Delete confirmation dialog */}
           {showDeleteLogsConfirm && (
             <div className="mx-4 mb-3 p-3 bg-danger-50 border border-danger-200 rounded-xl">
@@ -2313,13 +2255,15 @@ export function AdminPage() {
 type AnyItem = any;
 
 function ContentWithTrash({
-  title, contentView, setContentView, activeItems, archivedItems, deletedItems,
+  title, icon, iconColor, contentView, setContentView, activeItems, archivedItems, deletedItems,
   search, setSearch, columns, filterFn,
   onAdd, onEdit, onDelete, onPermanentDelete, onArchive, onUnarchive, onRestore,
   onBulkDelete, onBulkPermanentDelete, onBulkArchive, onBulkRestore,
-  onExport, onImport, selectedIds, setSelectedIds,
+  onExport, onImport, selectedIds, setSelectedIds, filterSlot,
 }: {
   title: string;
+  icon?: string;
+  iconColor?: string;
   contentView: ContentView;
   setContentView: (v: ContentView) => void;
   activeItems: AnyItem[];
@@ -2344,6 +2288,7 @@ function ContentWithTrash({
   onImport: () => void;
   selectedIds: Set<string>;
   setSelectedIds: (s: Set<string>) => void;
+  filterSlot?: React.ReactNode;
 }) {
   const items = contentView === 'active' ? activeItems : contentView === 'archived' ? archivedItems : deletedItems;
   const filtered = items.filter(filterFn);
@@ -2358,75 +2303,81 @@ function ContentWithTrash({
 
   return (
     <div className="space-y-0">
-      {/* Sub-tab bar */}
-      <div className="flex gap-2 mb-4 flex-wrap">
-        {([
-          { id: 'active', label: 'نشط', count: activeItems.length, color: 'bg-primary-500' },
-          { id: 'archived', label: 'مؤرشف', count: archivedItems.length, color: 'bg-amber-500' },
-          { id: 'deleted', label: 'المحذوفات', count: deletedItems.length, color: 'bg-danger-500' },
-        ] as { id: ContentView; label: string; count: number; color: string }[]).map(v => (
-          <button key={v.id} onClick={() => { setContentView(v.id); setSelectedIds(new Set()); }}
-            className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border',
-              contentView === v.id ? `${v.color} text-white border-transparent` : 'bg-white text-surface-600 border-surface-200 hover:border-surface-300')}>
-            {v.label}
-            {v.count > 0 && (
-              <span className={cn('rounded-full text-[10px] px-1.5 py-0.5 font-bold',
-                contentView === v.id ? 'bg-white/25 text-white' : 'bg-surface-100 text-surface-600')}>
-                {v.count}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
       <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
-        <div className="p-4 border-b border-surface-100 flex items-center justify-between flex-wrap gap-3">
-          <div>
-            <h2 className="font-bold text-surface-900">
-              {title} — {contentView === 'active' ? 'نشط' : contentView === 'archived' ? 'مؤرشف' : 'المحذوفات'} ({filtered.length})
-            </h2>
-            {contentView === 'deleted' && deletedItems.length > 0 && (
-              <p className="text-[10px] text-danger-500 mt-0.5">⏱ تُحذف تلقائياً بعد 30 يوماً من الحذف</p>
+        {/* Unified header: title + filter + search + actions + views */}
+        <div className="p-3.5 border-b border-surface-100 space-y-2.5">
+          {/* Row 1: icon+title+count | filter slot | search | export | import | add */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 mr-auto">
+              {icon && (
+                <div className={cn('w-7 h-7 rounded-lg flex items-center justify-center shrink-0', iconColor ? `bg-${iconColor}-50` : 'bg-surface-100')}>
+                  <Icon name={icon} size={15} className={iconColor ? `text-${iconColor}-500` : 'text-surface-500'} filled />
+                </div>
+              )}
+              <span className="font-bold text-surface-900 text-sm">{title}</span>
+              <span className="text-xs text-surface-400 bg-surface-100 px-1.5 py-0.5 rounded-full">{filtered.length}</span>
+            </div>
+            {filterSlot}
+            <input className="border border-surface-200 rounded-lg px-2.5 py-1.5 text-xs w-32 focus:outline-none focus:border-primary-400" placeholder="بحث..." value={search} onChange={e => setSearch(e.target.value)} />
+            {contentView === 'active' && (
+              <>
+                <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-400 border border-surface-200" onClick={onExport} title="تصدير"><Icon name="download" size={16} /></button>
+                <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-400 border border-surface-200" onClick={onImport} title="استيراد"><Icon name="upload" size={16} /></button>
+                <Button size="sm" onClick={onAdd} icon={<Icon name="add" size={15} />}>إضافة</Button>
+              </>
             )}
           </div>
+          {/* Row 2: view toggle tabs + bulk actions */}
           <div className="flex items-center gap-2 flex-wrap">
-            {/* Bulk action buttons */}
+            {([
+              { id: 'active', label: 'نشط', count: activeItems.length, color: 'bg-primary-500' },
+              { id: 'archived', label: 'مؤرشف', count: archivedItems.length, color: 'bg-amber-500' },
+              { id: 'deleted', label: 'محذوف', count: deletedItems.length, color: 'bg-danger-500' },
+            ] as { id: ContentView; label: string; count: number; color: string }[]).map(v => (
+              <button key={v.id} onClick={() => { setContentView(v.id); setSelectedIds(new Set()); }}
+                className={cn('flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all border',
+                  contentView === v.id ? `${v.color} text-white border-transparent` : 'bg-surface-50 text-surface-600 border-surface-200 hover:border-surface-300')}>
+                {v.label}
+                {v.count > 0 && (
+                  <span className={cn('rounded-full text-[10px] px-1 py-0 font-bold',
+                    contentView === v.id ? 'bg-white/25 text-white' : 'bg-surface-200 text-surface-600')}>
+                    {v.count}
+                  </span>
+                )}
+              </button>
+            ))}
+            {contentView === 'deleted' && deletedItems.length > 0 && (
+              <span className="text-[10px] text-danger-500 mr-1">⏱ تُحذف بعد 30 يوماً</span>
+            )}
+            {/* Bulk actions */}
             {selectedIds.size > 0 && contentView === 'active' && (
               <>
-                <button className="px-3 py-1.5 text-xs font-semibold bg-amber-500 text-white rounded-lg hover:bg-amber-600 flex items-center gap-1"
+                <button className="mr-auto px-2.5 py-1 text-[11px] font-semibold bg-amber-500 text-white rounded-lg hover:bg-amber-600 flex items-center gap-1"
                   onClick={async () => { if (!confirm(`أرشفة ${selectedIds.size} عناصر؟`)) return; await onBulkArchive(Array.from(selectedIds)); }}>
-                  <Icon name="inventory_2" size={14} /> أرشفة ({selectedIds.size})
+                  <Icon name="inventory_2" size={13} /> أرشفة ({selectedIds.size})
                 </button>
-                <button className="px-3 py-1.5 text-xs font-semibold bg-danger-500 text-white rounded-lg hover:bg-danger-600 flex items-center gap-1"
+                <button className="px-2.5 py-1 text-[11px] font-semibold bg-danger-500 text-white rounded-lg hover:bg-danger-600 flex items-center gap-1"
                   onClick={async () => { if (!confirm(`حذف ${selectedIds.size} عناصر؟`)) return; await onBulkDelete(Array.from(selectedIds)); }}>
                   🗑 حذف ({selectedIds.size})
                 </button>
               </>
             )}
             {selectedIds.size > 0 && contentView === 'archived' && (
-              <button className="px-3 py-1.5 text-xs font-semibold bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-1"
+              <button className="mr-auto px-2.5 py-1 text-[11px] font-semibold bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-1"
                 onClick={async () => { if (!confirm(`استعادة ${selectedIds.size} عناصر؟`)) return; await onBulkRestore(Array.from(selectedIds)); }}>
-                <Icon name="restore" size={14} /> إعادة نشر ({selectedIds.size})
+                <Icon name="restore" size={13} /> إعادة نشر ({selectedIds.size})
               </button>
             )}
             {selectedIds.size > 0 && contentView === 'deleted' && (
               <>
-                <button className="px-3 py-1.5 text-xs font-semibold bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-1"
+                <button className="mr-auto px-2.5 py-1 text-[11px] font-semibold bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-1"
                   onClick={async () => { if (!confirm(`استعادة ${selectedIds.size} عناصر؟`)) return; await onBulkRestore(Array.from(selectedIds)); }}>
-                  <Icon name="restore" size={14} /> استعادة ({selectedIds.size})
+                  <Icon name="restore" size={13} /> استعادة ({selectedIds.size})
                 </button>
-                <button className="px-3 py-1.5 text-xs font-semibold bg-danger-700 text-white rounded-lg hover:bg-danger-800 flex items-center gap-1"
+                <button className="px-2.5 py-1 text-[11px] font-semibold bg-danger-700 text-white rounded-lg hover:bg-danger-800 flex items-center gap-1"
                   onClick={async () => { if (!confirm(`حذف نهائي ${selectedIds.size} عناصر؟ لا يمكن التراجع!`)) return; await onBulkPermanentDelete(Array.from(selectedIds)); }}>
                   🗑 حذف نهائي ({selectedIds.size})
                 </button>
-              </>
-            )}
-            <input className="border border-surface-200 rounded-lg px-3 py-1.5 text-sm w-36" placeholder="بحث..." value={search} onChange={e => setSearch(e.target.value)} />
-            {contentView === 'active' && (
-              <>
-                <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-400" onClick={onExport} title="تصدير"><Icon name="download" size={18} /></button>
-                <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-400" onClick={onImport} title="استيراد"><Icon name="upload" size={18} /></button>
-                <Button size="sm" onClick={onAdd} icon={<Icon name="add" size={16} />}>إضافة</Button>
               </>
             )}
           </div>
