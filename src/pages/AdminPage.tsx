@@ -7,7 +7,7 @@ import type { Comment, Report } from '@/db/database';
 import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
 
 type Tab = 'overview' | 'sections' | 'lessons' | 'questions' | 'signs' | 'dictionary' | 'users' | 'posts' | 'comments' | 'reports' | 'logs' | 'analytics';
-type ContentView = 'active' | 'archived' | 'deleted';
+type ContentView = 'active' | 'archived' | 'deleted' | 'banned';
 
 export function AdminPage() {
   const store = useAuthStore();
@@ -1150,13 +1150,17 @@ export function AdminPage() {
         return (
         <div className="space-y-4">
         {/* View toggle for Users */}
-        <div className="flex gap-2">
-          {(['active', 'deleted'] as const).map(v => (
+        <div className="flex gap-2 flex-wrap">
+          {([
+            { v: 'active',  icon: 'group',       label: `نشط (${store.adminUsers.filter(u => !u.isBanned).length})`,       color: 'bg-primary-500 border-primary-500' },
+            { v: 'banned',  icon: 'block',        label: `محظور (${store.adminUsers.filter(u => u.isBanned).length})`,      color: 'bg-danger-500 border-danger-500' },
+            { v: 'deleted', icon: 'delete',       label: `محذوف (${store.deletedUsers.length})`,                           color: 'bg-danger-500 border-danger-500' },
+          ] as { v: ContentView; icon: string; label: string; color: string }[]).map(({ v, icon, label, color }) => (
             <button key={v} onClick={() => setContentView(v)}
               className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border',
-                contentView === v ? (v === 'deleted' ? 'bg-danger-500 text-white border-danger-500' : 'bg-primary-500 text-white border-primary-500') : 'bg-white text-surface-600 border-surface-200 hover:border-primary-200')}>
-              <Icon name={v === 'deleted' ? 'delete' : 'group'} size={14} />
-              {v === 'active' ? `نشط (${store.adminUsers.filter(u => !u.deletedAt).length})` : `محذوف (${store.deletedUsers.length})`}
+                contentView === v ? `${color} text-white` : 'bg-white text-surface-600 border-surface-200 hover:border-primary-200')}>
+              <Icon name={icon} size={14} />
+              {label}
             </button>
           ))}
         </div>
@@ -1196,10 +1200,41 @@ export function AdminPage() {
               </div>
             )}
           </div>
+        ) : contentView === 'banned' ? (
+          <div className="bg-white rounded-xl border border-danger-100 overflow-hidden">
+            <div className="p-4 border-b border-danger-100 bg-danger-50 flex items-center gap-2">
+              <Icon name="block" size={18} className="text-danger-500" />
+              <h3 className="font-bold text-danger-700">المستخدمين المحظورين ({store.adminUsers.filter(u => u.isBanned).length})</h3>
+            </div>
+            {store.adminUsers.filter(u => u.isBanned).length === 0 ? (
+              <div className="p-8 text-center text-surface-400"><Icon name="block" size={36} className="mx-auto mb-2 opacity-30" /><p>لا يوجد مستخدمين محظورين</p></div>
+            ) : (
+              <div className="divide-y divide-surface-50">
+                {store.adminUsers.filter(u => u.isBanned).map(u => (
+                  <div key={u.id} className="p-4 flex items-center gap-3 hover:bg-danger-50/40 transition-colors">
+                    {u.avatar ? <img src={u.avatar} className="w-9 h-9 rounded-full object-cover shrink-0" alt="" /> : (
+                      <div className="w-9 h-9 bg-danger-100 rounded-full flex items-center justify-center shrink-0">
+                        <span className="text-sm font-bold text-danger-600">{u.name.charAt(0)}</span>
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-surface-700 truncate">{u.name}</p>
+                      <p className="text-xs text-surface-400 truncate">{u.email}</p>
+                    </div>
+                    <button className="p-1.5 rounded-lg bg-success-50 hover:bg-success-100 text-success-600 transition-colors text-xs font-medium flex items-center gap-1"
+                      onClick={() => store.banUser(u.id, false)}>
+                      <Icon name="lock_open" size={15} />
+                      رفع الحظر
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         ) : (
         <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
           <div className="p-4 border-b border-surface-100 flex items-center justify-between flex-wrap gap-3">
-            <h2 className="font-bold text-surface-900">المستخدمين ({store.adminUsers.length})</h2>
+            <h2 className="font-bold text-surface-900">المستخدمين النشطين ({store.adminUsers.filter(u => !u.isBanned).length})</h2>
             <div className="flex items-center gap-2">
               <input className="border border-surface-200 rounded-lg px-3 py-1.5 text-sm w-48" placeholder="بحث..." value={search} onChange={e => setSearch(e.target.value)} />
               {userSelectedIds.size > 0 && (
@@ -1248,7 +1283,7 @@ export function AdminPage() {
                 <th className="text-right p-3 font-semibold text-surface-600 w-28">إجراءات</th>
               </tr></thead>
               <tbody>
-                {store.adminUsers.filter(u => !search || u.name.includes(search) || u.email.includes(search)).map(u => (
+                {store.adminUsers.filter(u => !u.isBanned && (!search || u.name.includes(search) || u.email.includes(search))).map(u => (
                   <tr key={u.id} className={cn('border-t border-surface-50 hover:bg-surface-50 cursor-pointer', userSelectedIds.has(u.id) && 'bg-primary-50')} onClick={() => setViewUser(u.id)}>
                     <td className="p-3" onClick={e => e.stopPropagation()}>
                       <input type="checkbox" className="rounded" checked={userSelectedIds.has(u.id)}

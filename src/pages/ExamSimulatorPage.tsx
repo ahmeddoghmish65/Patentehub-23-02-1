@@ -104,52 +104,48 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
 
   // INTRO
   if (phase === 'intro') return (
-    <div className="max-w-lg mx-auto">
-      <button onClick={() => onNavigate('dashboard')} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-6">
-        <Icon name="arrow_forward" size={20} /><span className="text-sm">العودة</span>
+    <div className="max-w-md mx-auto">
+      <button onClick={() => onNavigate('dashboard')} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-4">
+        <Icon name="arrow_forward" size={18} /><span className="text-sm">العودة</span>
       </button>
       <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden">
-        <div className="p-8 text-center">
-          <div className="w-20 h-20 mx-auto bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-            <Icon name="assignment" size={40} className="text-white" filled />
+        {/* Header */}
+        <div className="flex items-center gap-3 p-4 border-b border-surface-100">
+          <div className="w-11 h-11 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow shrink-0">
+            <Icon name="assignment" size={24} className="text-white" filled />
           </div>
-          <h1 className="text-2xl font-bold text-surface-900 mb-1">محاكي امتحان الباتينتي</h1>
-          <p className="text-sm text-surface-500 mb-1">Simulazione Esame Patente B</p>
-          <p className="text-xs text-surface-400 mb-6">محاكاة حقيقية لامتحان رخصة القيادة الإيطالية</p>
-
-          <div className="bg-surface-50 rounded-xl p-5 mb-6 text-right space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-surface-600">عدد الأسئلة</span>
-              <span className="font-bold text-surface-900">{Math.min(EXAM_QUESTIONS, activeQuestions.length)}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-surface-600">الوقت المتاح</span>
-              <span className="font-bold text-surface-900">30 دقيقة</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-surface-600">الحد الأقصى للأخطاء</span>
-              <span className="font-bold text-danger-600">{MAX_ERRORS} أخطاء</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-surface-600">نوع الأسئلة</span>
-              <span className="font-bold text-surface-900">صحيح / خطأ</span>
-            </div>
+          <div className="text-right">
+            <h1 className="text-base font-bold text-surface-900">محاكي امتحان الباتينتي</h1>
+            <p className="text-xs text-surface-400">Simulazione Esame Patente B</p>
           </div>
+        </div>
 
-          <div className="bg-amber-50 rounded-xl p-4 mb-6 flex items-start gap-3 text-right border border-amber-100">
-            <Icon name="info" size={20} className="text-amber-500 shrink-0 mt-0.5" filled />
-            <div className="text-sm text-amber-700">
-              <p className="font-semibold mb-1">تعليمات الامتحان:</p>
-              <ul className="space-y-1 text-xs">
-                <li>• يمكنك التنقل بين الأسئلة بحرية</li>
-                <li>• يمكنك تغيير إجابتك قبل التسليم</li>
-                <li>• أكثر من {MAX_ERRORS} أخطاء = راسب</li>
-                <li>• ينتهي الامتحان تلقائياً عند انتهاء الوقت</li>
-              </ul>
-            </div>
+        <div className="p-4 space-y-3">
+          {/* Exam details grid */}
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { label: 'عدد الأسئلة', value: String(Math.min(EXAM_QUESTIONS, activeQuestions.length)), icon: 'quiz' },
+              { label: 'الوقت المتاح', value: '30 دقيقة', icon: 'timer' },
+              { label: 'الحد الأقصى للأخطاء', value: `${MAX_ERRORS} أخطاء`, icon: 'close', danger: true },
+              { label: 'نوع الأسئلة', value: 'صحيح / خطأ', icon: 'check_circle' },
+            ].map(item => (
+              <div key={item.label} className="bg-surface-50 rounded-xl p-3 text-right">
+                <p className="text-[10px] text-surface-400 mb-0.5">{item.label}</p>
+                <p className={cn('text-sm font-bold', item.danger ? 'text-danger-600' : 'text-surface-900')}>{item.value}</p>
+              </div>
+            ))}
           </div>
 
-          <Button size="lg" fullWidth onClick={start} icon={<Icon name="play_arrow" size={22} />}>
+          {/* Instructions - compact */}
+          <div className="bg-amber-50 rounded-xl p-3 flex items-start gap-2 border border-amber-100">
+            <Icon name="info" size={16} className="text-amber-500 shrink-0 mt-0.5" filled />
+            <ul className="text-xs text-amber-700 space-y-0.5 text-right">
+              <li>• يمكنك التنقل بين الأسئلة بحرية وتغيير إجابتك قبل التسليم</li>
+              <li>• أكثر من {MAX_ERRORS} أخطاء = راسب • ينتهي تلقائياً عند انتهاء الوقت</li>
+            </ul>
+          </div>
+
+          <Button size="md" fullWidth onClick={start} icon={<Icon name="play_arrow" size={20} />}>
             ابدأ الامتحان
           </Button>
         </div>
