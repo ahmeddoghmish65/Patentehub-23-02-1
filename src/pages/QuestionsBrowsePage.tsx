@@ -81,12 +81,14 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                     )}
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium',
-                      q.isTrue ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600'
+                    <span className={cn(
+                      'w-7 h-7 rounded-full flex items-center justify-center text-sm font-black',
+                      q.isTrue
+                        ? 'bg-emerald-100 text-emerald-600'
+                        : 'bg-rose-100 text-rose-600'
                     )}>
-                      {q.isTrue ? 'صحيح' : 'خطأ'}
+                      {q.isTrue ? 'V' : 'F'}
                     </span>
-                    <Icon name={expandedQ === q.id ? 'expand_less' : 'expand_more'} size={20} className="text-surface-400" />
                   </div>
                 </button>
 
