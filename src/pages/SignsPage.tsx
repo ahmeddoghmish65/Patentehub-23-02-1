@@ -175,9 +175,9 @@ export function SignsPage({ onNavigate }: Props) {
 
               <div className="bg-surface-50 rounded-xl p-4 space-y-3">
                 {(lang === 'it' || lang === 'both') && selectedSignData.descriptionIt && (
-                  <div>
+                  <div dir="ltr">
                     <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-blue-100 text-blue-700 text-[10px] font-extrabold leading-none mb-1">IT</span>
-                    <p className="text-sm text-surface-700 leading-relaxed" dir="ltr">{selectedSignData.descriptionIt}</p>
+                    <p className="text-sm text-surface-700 leading-relaxed">{selectedSignData.descriptionIt}</p>
                   </div>
                 )}
                 {(lang === 'ar' || lang === 'both') && (
