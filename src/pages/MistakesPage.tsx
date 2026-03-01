@@ -94,11 +94,11 @@ export function MistakesPage() {
             {practiceResult === null ? (
               <div className="grid grid-cols-2 gap-3">
                 <button onClick={() => handleAnswer(true)}
-                  className="py-4 rounded-2xl border-2 border-success-200 bg-success-50/50 hover:bg-success-50 text-success-700 font-bold text-base transition-all active:scale-[.97]">
+                  className="py-4 rounded-2xl border-2 border-success-500 bg-success-500 hover:bg-success-600 hover:border-success-600 text-white font-bold text-base transition-all active:scale-[.97]">
                   ✓ {trueLabel}
                 </button>
                 <button onClick={() => handleAnswer(false)}
-                  className="py-4 rounded-2xl border-2 border-danger-200 bg-danger-50/50 hover:bg-danger-50 text-danger-700 font-bold text-base transition-all active:scale-[.97]">
+                  className="py-4 rounded-2xl border-2 border-danger-500 bg-danger-500 hover:bg-danger-600 hover:border-danger-600 text-white font-bold text-base transition-all active:scale-[.97]">
                   ✗ {falseLabel}
                 </button>
               </div>
