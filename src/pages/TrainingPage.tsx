@@ -197,45 +197,13 @@ export function TrainingPage({ onNavigate }: Props) {
         <div className="bg-primary-500 rounded-full h-2 transition-all" style={{ width: `${((index + 1) / total) * 100}%` }} />
       </div>
 
-      <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden mb-6">
-        {/* Question training */}
+      <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden mb-4">
+        {/* Question training — card shows question only */}
         {isQuestion(item) && (
           <div className="p-6">
             {item.image && <img src={item.image} alt="" className="w-full rounded-xl mb-4 max-h-40 object-contain bg-surface-50" />}
-            {(lang === 'ar' || lang === 'both') && <h2 className="text-base font-bold text-surface-900 mb-2">{item.questionAr}</h2>}
-            {(lang === 'it' || lang === 'both') && <p className="text-base text-surface-500 mb-4" dir="ltr">{item.questionIt}</p>}
-            {lang !== 'both' && <div className="mb-4" />}
-            
-            {!showAnswer ? (
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  className="py-3 rounded-2xl border-2 border-surface-900 bg-teal-50 hover:bg-teal-100 text-surface-900 font-bold text-base transition-all"
-                  onClick={() => handleQuestionAnswer(true)}>
-                  ✓ {trueLabel}
-                </button>
-                <button
-                  className="py-3 rounded-2xl border-2 border-surface-900 bg-rose-50 hover:bg-rose-100 text-surface-900 font-bold text-base transition-all"
-                  onClick={() => handleQuestionAnswer(false)}>
-                  ✗ {falseLabel}
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <div className={cn('p-4 rounded-xl border', userAnswer === item.isTrue ? 'bg-success-50 border-success-200' : 'bg-danger-50 border-danger-200')}>
-                  <p className="font-semibold text-sm flex items-center gap-2">
-                    <Icon name={userAnswer === item.isTrue ? 'check_circle' : 'cancel'} size={18} className={userAnswer === item.isTrue ? 'text-success-500' : 'text-danger-500'} filled />
-                    {userAnswer === item.isTrue ? 'إجابة صحيحة! 🎉' : 'إجابة خاطئة'}
-                  </p>
-                  <p className="text-xs text-surface-600 mt-1">الإجابة الصحيحة: {item.isTrue ? trueLabel : falseLabel}</p>
-                  {(lang === 'ar' || lang === 'both') && item.explanationAr && <p className="text-xs text-surface-500 mt-2">{item.explanationAr}</p>}
-                  {(lang === 'it' || lang === 'both') && item.explanationIt && <p className="text-xs text-surface-500 mt-2" dir="ltr">{item.explanationIt}</p>}
-                </div>
-                <Button fullWidth onClick={() => handleNext(userAnswer === item.isTrue)}>
-                  {index < items.length - 1 ? 'التالي' : 'عرض النتيجة'}
-                  <Icon name="arrow_back" size={18} className="mr-1" />
-                </Button>
-              </div>
-            )}
+            {(lang === 'ar' || lang === 'both') && <h2 className="text-base font-bold text-surface-900 mb-1">{item.questionAr}</h2>}
+            {(lang === 'it' || lang === 'both') && <p className="text-base text-surface-500" dir="ltr">{item.questionIt}</p>}
           </div>
         )}
 
@@ -289,6 +257,41 @@ export function TrainingPage({ onNavigate }: Props) {
           </div>
         )}
       </div>
+
+      {/* Vero/Falso buttons outside the card — questions only */}
+      {isQuestion(item) && !showAnswer && (
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <button
+            className="py-3 rounded-2xl border-2 border-surface-900 bg-teal-50 hover:bg-teal-100 text-surface-900 font-bold text-base transition-all"
+            onClick={() => handleQuestionAnswer(true)}>
+            ✓ {trueLabel}
+          </button>
+          <button
+            className="py-3 rounded-2xl border-2 border-surface-900 bg-rose-50 hover:bg-rose-100 text-surface-900 font-bold text-base transition-all"
+            onClick={() => handleQuestionAnswer(false)}>
+            ✗ {falseLabel}
+          </button>
+        </div>
+      )}
+
+      {/* Feedback outside the card — questions only */}
+      {isQuestion(item) && showAnswer && (
+        <div className="space-y-3 mb-4">
+          <div className={cn('p-4 rounded-xl border', userAnswer === item.isTrue ? 'bg-success-50 border-success-200' : 'bg-danger-50 border-danger-200')}>
+            <p className="font-semibold text-sm flex items-center gap-2">
+              <Icon name={userAnswer === item.isTrue ? 'check_circle' : 'cancel'} size={18} className={userAnswer === item.isTrue ? 'text-success-500' : 'text-danger-500'} filled />
+              {userAnswer === item.isTrue ? 'إجابة صحيحة! 🎉' : 'إجابة خاطئة'}
+            </p>
+            <p className="text-xs text-surface-600 mt-1">الإجابة الصحيحة: {item.isTrue ? trueLabel : falseLabel}</p>
+            {(lang === 'ar' || lang === 'both') && item.explanationAr && <p className="text-xs text-surface-500 mt-2">{item.explanationAr}</p>}
+            {(lang === 'it' || lang === 'both') && item.explanationIt && <p className="text-xs text-surface-500 mt-2" dir="ltr">{item.explanationIt}</p>}
+          </div>
+          <Button fullWidth onClick={() => handleNext(userAnswer === item.isTrue)}>
+            {index < items.length - 1 ? 'التالي' : 'عرض النتيجة'}
+            <Icon name="arrow_back" size={18} className="mr-1" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
