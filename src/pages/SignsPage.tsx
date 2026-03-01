@@ -174,22 +174,16 @@ export function SignsPage({ onNavigate }: Props) {
               )}
 
               <div className="bg-surface-50 rounded-xl p-4 space-y-3">
-                {(lang === 'ar' || lang === 'both') && (
-                  <div>
-                    <p className="text-xs font-semibold text-primary-600 mb-1 flex items-center gap-1.5">
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-orange-100 text-orange-700 text-[10px] font-extrabold leading-none">ع</span>
-                      الوصف بالعربية
-                    </p>
-                    <p className="text-sm text-surface-700 leading-relaxed">{selectedSignData.descriptionAr}</p>
-                  </div>
-                )}
                 {(lang === 'it' || lang === 'both') && selectedSignData.descriptionIt && (
                   <div>
-                    <p className="text-xs font-semibold text-primary-600 mb-1 flex items-center gap-1.5" dir="ltr">
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-blue-100 text-blue-700 text-[10px] font-extrabold leading-none">IT</span>
-                      Descrizione
-                    </p>
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-blue-100 text-blue-700 text-[10px] font-extrabold leading-none mb-1">IT</span>
                     <p className="text-sm text-surface-700 leading-relaxed" dir="ltr">{selectedSignData.descriptionIt}</p>
+                  </div>
+                )}
+                {(lang === 'ar' || lang === 'both') && (
+                  <div>
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-orange-100 text-orange-700 text-[10px] font-extrabold leading-none mb-1">ع</span>
+                    <p className="text-sm text-surface-700 leading-relaxed">{selectedSignData.descriptionAr}</p>
                   </div>
                 )}
               </div>
