@@ -503,8 +503,8 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                 <SectionHeader icon="lock" label="الخصوصية" />
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-surface-700 font-medium">إخفاء إحصائياتي</p>
-                    <p className="text-xs text-surface-400 mt-0.5">لن يتمكن الآخرون من رؤية إحصائياتك</p>
+                    <p className="text-sm text-surface-700 font-medium">إخفاء إحصائيات التعلم</p>
+                    <p className="text-xs text-surface-400 mt-0.5">إخفاء جاهزية الامتحان، الإجابات، والمستوى عن الآخرين في بروفايلك</p>
                   </div>
                   <button
                     className={cn('w-11 h-6 rounded-full transition-colors relative shrink-0', editForm.privacyHideStats ? 'bg-primary-500' : 'bg-surface-200')}
@@ -932,50 +932,84 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
 
       {/* Profile Completion Modal */}
       {showCompleteProfile && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="text-center mb-6">
-              <div className="w-16 h-16 mx-auto bg-primary-50 rounded-2xl flex items-center justify-center mb-3">
-                <Icon name="person_add" size={32} className="text-primary-500" filled />
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
+          <div className="bg-white w-full sm:rounded-2xl sm:max-w-md max-h-[95vh] overflow-y-auto shadow-2xl flex flex-col" onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div className="bg-gradient-to-br from-primary-500 to-primary-700 p-6 sm:rounded-t-2xl shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center shrink-0">
+                  <Icon name="person_add" size={28} className="text-white" filled />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-white leading-tight">أكمل بياناتك الشخصية</h3>
+                  <p className="text-white/70 text-xs mt-0.5">لفتح جميع ميزات التطبيق</p>
+                </div>
               </div>
-              <h3 className="text-lg font-bold text-surface-900">أكمل بياناتك الشخصية</h3>
-              <p className="text-sm text-surface-500 mt-1">لاستمرار استخدام جميع ميزات التطبيق</p>
+              {/* Progress steps */}
+              <div className="flex items-center gap-1.5 mt-4">
+                {[profileForm.birthDate, profileForm.province, profileForm.gender, profileForm.phone, profileForm.italianLevel].map((v, i) => (
+                  <div key={i} className={cn('h-1.5 flex-1 rounded-full transition-all', v ? 'bg-white' : 'bg-white/30')} />
+                ))}
+              </div>
+              <p className="text-white/60 text-[10px] mt-1.5">
+                {[profileForm.birthDate, profileForm.province, profileForm.gender, profileForm.phone, profileForm.italianLevel].filter(Boolean).length} / 5 مكتمل
+              </p>
             </div>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-surface-700 mb-1">تاريخ الميلاد *</label>
-                <input type="date" className="w-full border border-surface-200 rounded-xl p-3 text-sm block" style={{ boxSizing: 'border-box' }} value={profileForm.birthDate} onChange={e => setProfileForm(p => ({ ...p, birthDate: e.target.value }))} />
+
+            {/* Form */}
+            <div className="p-5 space-y-4 flex-1">
+              {/* Row: birthdate + gender */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[11px] text-surface-500 font-semibold mb-1.5 flex items-center gap-1 uppercase tracking-wide">
+                    <Icon name="cake" size={12} /> تاريخ الميلاد
+                  </label>
+                  <input type="date" className="w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary-400" style={{ boxSizing: 'border-box' }}
+                    value={profileForm.birthDate} onChange={e => setProfileForm(p => ({ ...p, birthDate: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="text-[11px] text-surface-500 font-semibold mb-1.5 flex items-center gap-1 uppercase tracking-wide">
+                    <Icon name="wc" size={12} /> الجنس
+                  </label>
+                  <div className="flex gap-1.5 h-[42px]">
+                    {[{ value: 'male', label: 'ذكر', icon: '♂' }, { value: 'female', label: 'أنثى', icon: '♀' }].map(g => (
+                      <button key={g.value}
+                        className={cn('flex-1 rounded-xl border-2 text-xs font-bold transition-all',
+                          profileForm.gender === g.value ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-surface-200 text-surface-500 hover:border-surface-300')}
+                        onClick={() => setProfileForm(p => ({ ...p, gender: g.value }))}>
+                        <span className="mr-0.5">{g.icon}</span> {g.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
+
+              {/* Province */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 mb-1">الدولة *</label>
-                <select className="w-full border border-surface-200 rounded-xl p-3 text-sm bg-surface-50" disabled>
-                  <option>🇮🇹 Italia (إيطاليا)</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-surface-700 mb-1">المحافظة *</label>
-                <select className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={profileForm.province} onChange={e => setProfileForm(p => ({ ...p, province: e.target.value }))}>
-                  <option value="">اختر المحافظة</option>
+                <label className="text-[11px] text-surface-500 font-semibold mb-1.5 flex items-center gap-1 uppercase tracking-wide">
+                  <Icon name="location_on" size={12} /> 🇮🇹 المحافظة (Provincia)
+                </label>
+                <select className="w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary-400"
+                  value={profileForm.province} onChange={e => setProfileForm(p => ({ ...p, province: e.target.value }))}>
+                  <option value="">اختر مدينتك في إيطاليا...</option>
                   {ITALIAN_PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
                 </select>
               </div>
+
+              {/* Phone */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 mb-1">الجنس *</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {[{ value: 'male', label: 'ذكر ♂️' }, { value: 'female', label: 'أنثى ♀️' }].map(g => (
-                    <button key={g.value} className={cn('p-3 rounded-xl border-2 text-sm font-medium', profileForm.gender === g.value ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-surface-200 text-surface-600')} onClick={() => setProfileForm(p => ({ ...p, gender: g.value }))}>{g.label}</button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-surface-700 mb-1">رقم الهاتف *</label>
+                <label className="text-[11px] text-surface-500 font-semibold mb-1.5 flex items-center gap-1 uppercase tracking-wide">
+                  <Icon name="phone" size={12} /> رقم الهاتف
+                </label>
                 <div className="flex gap-2">
-                  <select className="w-28 border border-surface-200 rounded-xl p-3 text-sm shrink-0" value={profileForm.phoneCode} onChange={e => setProfileForm(p => ({ ...p, phoneCode: e.target.value }))}>
+                  <select className="w-28 border border-surface-200 rounded-xl px-2 py-2.5 text-sm shrink-0 focus:outline-none focus:border-primary-400"
+                    value={profileForm.phoneCode} onChange={e => setProfileForm(p => ({ ...p, phoneCode: e.target.value }))}>
                     {COUNTRY_CODES.map(c => <option key={c.code} value={c.code}>{c.country.split(' ')[0]} {c.code}</option>)}
                   </select>
-                  <input type="tel" dir="ltr" className={cn('flex-1 border rounded-xl p-3 text-sm text-left', profilePhoneError ? 'border-danger-400 bg-danger-50' : 'border-surface-200')}
-                    placeholder="1234567890"
-                    value={profileForm.phone}
+                  <input type="tel" dir="ltr"
+                    className={cn('flex-1 border rounded-xl px-3 py-2.5 text-sm text-left focus:outline-none focus:border-primary-400',
+                      profilePhoneError ? 'border-danger-400 bg-danger-50' : 'border-surface-200')}
+                    placeholder="1234567890" value={profileForm.phone}
                     onChange={e => {
                       const val = e.target.value;
                       setProfileForm(p => ({ ...p, phone: val }));
@@ -984,20 +1018,46 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                       else setProfilePhoneError('');
                     }} />
                 </div>
-                {profilePhoneError && <p className="text-[11px] text-danger-500 mt-0.5">{profilePhoneError}</p>}
+                {profilePhoneError && <p className="text-[11px] text-danger-500 mt-1">{profilePhoneError}</p>}
               </div>
+
+              {/* Italian level */}
               <div>
-                <label className="block text-sm font-medium text-surface-700 mb-1">مستوى الإيطالية *</label>
+                <label className="text-[11px] text-surface-500 font-semibold mb-1.5 flex items-center gap-1 uppercase tracking-wide">
+                  <Icon name="translate" size={12} /> مستوى اللغة الإيطالية
+                </label>
                 <div className="grid grid-cols-2 gap-2">
-                  {[{ value: 'weak', label: 'ضعيف' }, { value: 'good', label: 'جيد' }, { value: 'very_good', label: 'جيد جداً' }, { value: 'native', label: 'أنا إيطالي' }].map(l => (
-                    <button key={l.value} className={cn('p-2.5 rounded-xl border-2 text-xs font-medium', profileForm.italianLevel === l.value ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-surface-200 text-surface-600')} onClick={() => setProfileForm(p => ({ ...p, italianLevel: l.value }))}>{l.label}</button>
+                  {[
+                    { value: 'weak', label: 'مبتدئ', desc: 'أتعلم الآن', icon: '🌱' },
+                    { value: 'good', label: 'متوسط', desc: 'أفهم الأساسيات', icon: '📖' },
+                    { value: 'very_good', label: 'متقدم', desc: 'أتحدث جيداً', icon: '🎯' },
+                    { value: 'native', label: 'إيطالي', desc: 'لغتي الأم', icon: '🇮🇹' },
+                  ].map(l => (
+                    <button key={l.value}
+                      className={cn('p-2.5 rounded-xl border-2 text-right transition-all',
+                        profileForm.italianLevel === l.value ? 'border-primary-500 bg-primary-50' : 'border-surface-200 hover:border-surface-300')}
+                      onClick={() => setProfileForm(p => ({ ...p, italianLevel: l.value }))}>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-base">{l.icon}</span>
+                        <div>
+                          <p className={cn('text-xs font-bold', profileForm.italianLevel === l.value ? 'text-primary-700' : 'text-surface-700')}>{l.label}</p>
+                          <p className="text-[9px] text-surface-400">{l.desc}</p>
+                        </div>
+                      </div>
+                    </button>
                   ))}
                 </div>
               </div>
             </div>
-            <div className="flex gap-3 mt-6">
-              <Button fullWidth variant="ghost" onClick={() => setShowCompleteProfile(false)}>لاحقاً</Button>
-              <Button fullWidth onClick={handleSaveProfile}>حفظ البيانات</Button>
+
+            {/* Actions */}
+            <div className="px-5 pb-6 pt-2 flex gap-3 shrink-0 border-t border-surface-50">
+              <button className="px-4 py-2.5 text-sm text-surface-400 hover:text-surface-600 transition-colors" onClick={() => setShowCompleteProfile(false)}>
+                لاحقاً
+              </button>
+              <Button fullWidth onClick={handleSaveProfile}>
+                <Icon name="check_circle" size={16} className="ml-1.5" /> حفظ البيانات
+              </Button>
             </div>
           </div>
         </div>

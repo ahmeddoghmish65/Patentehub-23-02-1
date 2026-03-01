@@ -6,21 +6,26 @@ import { cn } from '@/utils/cn';
 interface Props { onNavigate: (page: string, data?: Record<string, string>) => void; }
 
 export function SignsPage({ onNavigate }: Props) {
-  const { signs, loadSigns, user } = useAuthStore();
+  const { signs, loadSigns, signSections, loadSignSections, user } = useAuthStore();
   const lang = user?.settings.language || 'both';
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [selectedSign, setSelectedSign] = useState<string | null>(null);
   void onNavigate;
 
-  useEffect(() => { loadSigns(); }, [loadSigns]);
+  useEffect(() => { loadSigns(); loadSignSections(); }, [loadSigns, loadSignSections]);
 
   // Only show active signs
   const activeSigns = signs.filter(s => !s.status || s.status === 'active');
 
-  const categories = [...new Set(activeSigns.map(s => s.category))];
+  // Active sections that have at least one sign
+  const activeSections = signSections
+    .filter(sec => !sec.status || sec.status === 'active')
+    .filter(sec => activeSigns.some(s => s.sectionId === sec.id))
+    .sort((a, b) => a.order - b.order);
+
   const filtered = activeSigns.filter(s => {
-    if (filter !== 'all' && s.category !== filter) return false;
+    if (filter !== 'all' && s.sectionId !== filter) return false;
     if (search && !s.nameAr.includes(search) && !s.nameIt.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
@@ -62,23 +67,21 @@ export function SignsPage({ onNavigate }: Props) {
           >
             {lang === 'it' ? 'Tutti' : 'الكل'} ({activeSigns.length})
           </button>
-          {categories.map(c => {
-            const info = catLabels[c] || { label: c, color: '#64748b', icon: 'label' };
-            const count = activeSigns.filter(s => s.category === c).length;
+          {activeSections.length > 0 ? activeSections.map(sec => {
+            const count = activeSigns.filter(s => s.sectionId === sec.id).length;
             return (
               <button
-                key={c}
+                key={sec.id}
                 className={cn('shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold transition-all',
-                  filter === c ? 'text-white shadow-sm' : 'bg-surface-100 text-surface-600 hover:bg-surface-200'
+                  filter === sec.id ? 'bg-primary-500 text-white shadow-sm' : 'bg-surface-100 text-surface-600 hover:bg-surface-200'
                 )}
-                style={filter === c ? { backgroundColor: info.color } : {}}
-                onClick={() => setFilter(c)}
+                onClick={() => setFilter(sec.id)}
               >
-                <Icon name={info.icon} size={14} />
-                {lang === 'it' ? info.labelIt : info.labelAr} ({count})
+                <Icon name={sec.icon || 'label'} size={14} />
+                {lang === 'it' ? sec.nameIt : sec.nameAr} ({count})
               </button>
             );
-          })}
+          }) : null}
         </div>
       </div>
 

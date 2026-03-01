@@ -112,7 +112,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
   const [quizSelected, setQuizSelected] = useState<Record<string, boolean>>({});
   const [following, setFollowing] = useState<string[]>([]);
   const [viewUserId, setViewUserId] = useState<string | null>(null);
-  const [viewUserData, setViewUserData] = useState<{ name: string; username: string; avatar: string; bio: string; verified: boolean; postsCount: number; followersCount: number; followingCount: number; hideStats: boolean; joinedAt?: string } | null>(null);
+  const [viewUserData, setViewUserData] = useState<{ name: string; username: string; avatar: string; bio: string; verified: boolean; postsCount: number; followersCount: number; followingCount: number; hideStats: boolean; joinedAt?: string; examReadiness?: number; totalQuizzes?: number; correctAnswers?: number; wrongAnswers?: number; level?: number; xp?: number } | null>(null);
   const [viewProfileTab, setViewProfileTab] = useState<'posts' | 'quizzes'>('posts');
   const [viewProfileStatView, setViewProfileStatView] = useState<'followers' | 'following' | null>(null);
   const [viewProfileFollowers, setViewProfileFollowers] = useState<{ id: string; name: string; avatar: string }[]>([]);
@@ -301,8 +301,11 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
     if (lastWord.startsWith('@') && lastWord.length > 1) {
       const q = lastWord.slice(1).toLowerCase();
       setMentionSuggestions(allUsers.filter(u =>
-        (u.username || u.name).toLowerCase().includes(q) && u.id !== user?.id
-      ).slice(0, 5));
+        u.id !== user?.id && (
+          u.name.toLowerCase().includes(q) ||
+          (u.username && u.username.toLowerCase().includes(q))
+        )
+      ).slice(0, 6));
       setHashtagSuggestions([]);
     } else if (lastWord.startsWith('#') && lastWord.length > 1) {
       const q = lastWord.slice(1).toLowerCase();
@@ -591,6 +594,8 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
       setViewProfileFollowers(followersList);
       setViewProfileFollowing(followingList);
       setViewProfileStatView(null);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const prog = (u as any).progress || {};
       setViewUserData({
         name: u.name, username: u.username || '', avatar: u.avatar || '', bio: u.bio || '',
         verified: u.verified || false,
@@ -599,6 +604,12 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
         followingCount: followingList.length,
         hideStats: u.privacyHideStats || false,
         joinedAt: u.createdAt || undefined,
+        examReadiness: prog.examReadiness || 0,
+        totalQuizzes: prog.totalQuizzes || 0,
+        correctAnswers: prog.correctAnswers || 0,
+        wrongAnswers: prog.wrongAnswers || 0,
+        level: prog.level || 1,
+        xp: prog.xp || 0,
       });
       setViewUserId(userId);
       setViewProfileTab('posts');
@@ -1660,31 +1671,54 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                 </div>
               </div>
 
-              {/* Stats */}
+              {/* Social Stats */}
+              <div className="grid grid-cols-4 gap-2 mt-4">
+                {[
+                  { label: 'منشور', value: viewUserData.postsCount, icon: 'article', color: 'text-primary-600', bg: 'bg-primary-50', stat: null as null },
+                  { label: 'سؤال', value: posts.filter(p => p.userId === viewUserId && p.type === 'quiz').length, icon: 'quiz', color: 'text-purple-600', bg: 'bg-purple-50', stat: null as null },
+                  { label: 'متابِع', value: viewUserData.followersCount, icon: 'group', color: 'text-green-600', bg: 'bg-green-50', stat: 'followers' as 'followers' | 'following' | null },
+                  { label: 'يتابِع', value: viewUserData.followingCount, icon: 'person_add', color: 'text-blue-600', bg: 'bg-blue-50', stat: 'following' as 'followers' | 'following' | null },
+                ].map((s) => (
+                  <div key={s.label}
+                    className={cn('rounded-xl p-2.5 text-center transition-all', s.bg, s.stat ? 'cursor-pointer hover:ring-2 hover:ring-inset hover:ring-current/20 active:scale-95' : '')}
+                    onClick={() => s.stat && setViewProfileStatView(s.stat)}>
+                    <Icon name={s.icon} size={16} className={cn('mx-auto mb-1', s.color)} />
+                    <p className={cn('text-base font-black', s.color)}>{s.value}</p>
+                    <p className="text-[9px] text-surface-500 leading-tight">{s.label}</p>
+                    {s.stat && <Icon name="chevron_right" size={10} className={cn('mx-auto mt-0.5 rotate-90', s.color)} />}
+                  </div>
+                ))}
+              </div>
+
+              {/* Learning stats — hidden if user chose to hide them */}
               {viewUserData.hideStats ? (
-                <div className="bg-surface-50 rounded-2xl p-3 text-center mt-4 border border-surface-100">
-                  <Icon name="lock" size={20} className="text-surface-300 mx-auto mb-1" />
-                  <p className="text-xs text-surface-500">أخفى هذا المستخدم إحصائياته</p>
+                <div className="bg-surface-50 rounded-xl px-3 py-2 mt-3 border border-surface-100 flex items-center gap-2">
+                  <Icon name="lock" size={14} className="text-surface-300" />
+                  <p className="text-xs text-surface-400">أخفى هذا المستخدم إحصائيات تعلمه</p>
                 </div>
-              ) : (
-                <div className="grid grid-cols-4 gap-2 mt-4">
-                  {[
-                    { label: 'منشور', value: viewUserData.postsCount, icon: 'article', color: 'text-primary-600', bg: 'bg-primary-50', stat: null as null },
-                    { label: 'سؤال', value: posts.filter(p => p.userId === viewUserId && p.type === 'quiz').length, icon: 'quiz', color: 'text-purple-600', bg: 'bg-purple-50', stat: null as null },
-                    { label: 'متابِع', value: viewUserData.followersCount, icon: 'group', color: 'text-green-600', bg: 'bg-green-50', stat: 'followers' as 'followers' | 'following' | null },
-                    { label: 'يتابِع', value: viewUserData.followingCount, icon: 'person_add', color: 'text-blue-600', bg: 'bg-blue-50', stat: 'following' as 'followers' | 'following' | null },
-                  ].map((s) => (
-                    <div key={s.label}
-                      className={cn('rounded-xl p-2.5 text-center transition-all', s.bg, s.stat ? 'cursor-pointer hover:ring-2 hover:ring-inset hover:ring-current/20 active:scale-95' : '')}
-                      onClick={() => s.stat && setViewProfileStatView(s.stat)}>
-                      <Icon name={s.icon} size={16} className={cn('mx-auto mb-1', s.color)} />
-                      <p className={cn('text-base font-black', s.color)}>{s.value}</p>
-                      <p className="text-[9px] text-surface-500 leading-tight">{s.label}</p>
-                      {s.stat && <Icon name="chevron_right" size={10} className={cn('mx-auto mt-0.5 rotate-90', s.color)} />}
+              ) : (viewUserData.totalQuizzes || 0) > 0 ? (
+                <div className="mt-3 bg-gradient-to-br from-primary-50 to-purple-50 rounded-xl p-3 border border-primary-100">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Icon name="school" size={13} className="text-primary-500" />
+                    <p className="text-[11px] font-bold text-surface-700">إحصائيات التعلم</p>
+                    <span className="mr-auto text-[10px] bg-primary-100 text-primary-600 px-1.5 py-0.5 rounded-full font-semibold">المستوى {viewUserData.level || 1}</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    <div className="bg-white/70 rounded-lg p-1.5 text-center">
+                      <p className="text-sm font-black text-primary-700">{viewUserData.examReadiness || 0}%</p>
+                      <p className="text-[9px] text-surface-400">جاهزية</p>
                     </div>
-                  ))}
+                    <div className="bg-white/70 rounded-lg p-1.5 text-center">
+                      <p className="text-sm font-black text-success-600">{viewUserData.correctAnswers || 0}</p>
+                      <p className="text-[9px] text-surface-400">صحيح</p>
+                    </div>
+                    <div className="bg-white/70 rounded-lg p-1.5 text-center">
+                      <p className="text-sm font-black text-surface-600">{viewUserData.totalQuizzes || 0}</p>
+                      <p className="text-[9px] text-surface-400">اختبار</p>
+                    </div>
+                  </div>
                 </div>
-              )}
+              ) : null}
             </div>
 
             {/* Followers / Following sub-panel */}
@@ -1841,25 +1875,33 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
 
 // ── MentionDropdown Component ─────────────────────────────────────────────────
 function MentionDropdown({ suggestions, onSelect }: {
-  suggestions: { id: string; name: string; username: string }[];
+  suggestions: { id: string; name: string; username: string; avatar?: string }[];
   onSelect: (u: { id: string; name: string; username: string }) => void;
 }) {
   return (
-    <div className="absolute bottom-full left-0 right-0 bg-white border border-surface-200 rounded-xl shadow-2xl z-[200] overflow-hidden mb-1 max-h-48 overflow-y-auto">
-      <div className="px-3 py-1.5 bg-surface-50 border-b border-surface-100">
+    <div className="absolute bottom-full left-0 right-0 bg-white border border-surface-200 rounded-xl shadow-2xl z-[200] overflow-hidden mb-1 max-h-52 overflow-y-auto">
+      <div className="px-3 py-1.5 bg-surface-50 border-b border-surface-100 flex items-center gap-1.5">
+        <Icon name="alternate_email" size={12} className="text-surface-400" />
         <p className="text-[10px] text-surface-400 font-medium">اختر مستخدماً للإشارة</p>
       </div>
       {suggestions.map(u => (
         <button key={u.id} type="button"
-          className="w-full flex items-center gap-2 px-3 py-2 hover:bg-primary-50 text-right transition-colors"
+          className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-primary-50 text-right transition-colors border-b border-surface-50 last:border-0"
           onMouseDown={e => { e.preventDefault(); onSelect(u); }}>
-          <div className="w-7 h-7 bg-primary-100 rounded-lg flex items-center justify-center shrink-0">
-            <span className="text-xs font-bold text-primary-700">{u.name.charAt(0)}</span>
+          <div className="w-8 h-8 rounded-full overflow-hidden shrink-0" style={{ background: u.avatar ? undefined : 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}>
+            {u.avatar ? (
+              <img src={u.avatar} className="w-full h-full object-cover" alt="" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <span className="text-xs font-bold text-white">{u.name.charAt(0)}</span>
+              </div>
+            )}
           </div>
-          <div className="min-w-0">
-            <p className="text-xs font-semibold text-surface-900 truncate">{u.name}</p>
-            <p className="text-[10px] text-primary-500">@{u.username || u.name}</p>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold text-surface-900 truncate">{u.name}</p>
+            {u.username && <p className="text-[10px] text-primary-500 truncate">@{u.username}</p>}
           </div>
+          <span className="text-[10px] text-surface-300 shrink-0">إشارة</span>
         </button>
       ))}
     </div>
