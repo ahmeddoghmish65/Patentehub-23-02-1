@@ -207,16 +207,16 @@ export function TrainingPage({ onNavigate }: Props) {
             {lang !== 'both' && <div className="mb-4" />}
             
             {!showAnswer ? (
-              <div className="grid grid-cols-2 gap-3">
-                <button className="py-4 rounded-xl border-2 border-success-200 hover:bg-success-50 text-success-600 font-bold text-base transition-all flex items-center justify-center gap-2"
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  className="py-6 rounded-2xl border-2 border-surface-900 bg-teal-50 hover:bg-teal-100 text-surface-900 font-bold text-lg transition-all"
                   onClick={() => handleQuestionAnswer(true)}>
-                  <Icon name="check_circle" size={22} />
-                  <span>{trueLabel}</span>
+                  ✓ {trueLabel}
                 </button>
-                <button className="py-4 rounded-xl border-2 border-danger-200 hover:bg-danger-50 text-danger-600 font-bold text-base transition-all flex items-center justify-center gap-2"
+                <button
+                  className="py-6 rounded-2xl border-2 border-surface-900 bg-rose-50 hover:bg-rose-100 text-surface-900 font-bold text-lg transition-all"
                   onClick={() => handleQuestionAnswer(false)}>
-                  <Icon name="cancel" size={22} />
-                  <span>{falseLabel}</span>
+                  ✗ {falseLabel}
                 </button>
               </div>
             ) : (

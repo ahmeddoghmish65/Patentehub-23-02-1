@@ -170,7 +170,7 @@ export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
         {(lang === 'it' || lang === 'both') && <p className="text-base text-surface-600" dir="ltr">{q.questionIt}</p>}
       </div>
 
-      <div className="grid grid-cols-2 gap-3 mb-6">
+      <div className="grid grid-cols-2 gap-4 mb-6">
         {[true, false].map(val => {
           const isSelected = selectedAnswer === val;
           const isCorrect = val === q.isTrue;
@@ -178,26 +178,17 @@ export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
           return (
             <button key={String(val)}
               className={cn(
-                'py-4 rounded-xl border-2 transition-all flex items-center justify-center gap-2 font-bold text-base',
-                !show && 'border-surface-200 hover:border-primary-300 cursor-pointer',
-                show && isCorrect && 'border-success-500 bg-success-50',
-                show && isSelected && !isCorrect && 'border-danger-500 bg-danger-50',
-                show && !isSelected && !isCorrect && 'border-surface-200 opacity-50',
+                'py-6 rounded-2xl border-2 transition-all font-bold text-lg text-center',
+                !show && val === true  && 'bg-teal-50 border-surface-900 hover:bg-teal-100 text-surface-900',
+                !show && val === false && 'bg-rose-50 border-surface-900 hover:bg-rose-100 text-surface-900',
+                show && isCorrect && 'border-success-500 bg-success-50 text-success-700',
+                show && isSelected && !isCorrect && 'border-danger-500 bg-danger-50 text-danger-700',
+                show && !isSelected && !isCorrect && 'border-surface-200 bg-white text-surface-400 opacity-50',
               )}
               onClick={() => handleAnswer(val)}
               disabled={show}
             >
-              <Icon name={val ? 'check_circle' : 'cancel'} size={22} className={cn(
-                !show ? (val ? 'text-success-400' : 'text-danger-400') :
-                isCorrect ? 'text-success-500' : isSelected ? 'text-danger-500' : 'text-surface-300'
-              )} filled />
-              <span className={cn(
-                !show ? 'text-surface-700' :
-                isCorrect ? 'text-success-600' :
-                isSelected && !isCorrect ? 'text-danger-600' : 'text-surface-400'
-              )}>
-                {val ? trueLabel : falseLabel}
-              </span>
+              {val ? `✓ ${trueLabel}` : `✗ ${falseLabel}`}
             </button>
           );
         })}
