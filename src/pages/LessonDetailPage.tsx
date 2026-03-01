@@ -108,7 +108,20 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
               {lessonQuestions.map((q, i) => (
                 <div key={q.id} className="bg-white rounded-xl p-4 border border-surface-100">
                   <div className="flex items-start gap-3">
-                    <span className="w-7 h-7 rounded-lg bg-surface-100 flex items-center justify-center text-xs font-bold text-surface-500 shrink-0">{i + 1}</span>
+                    <div className="flex flex-col items-center shrink-0 gap-0.5">
+                      <span className={cn(
+                        'w-8 h-8 rounded-lg flex items-center justify-center text-sm font-black',
+                        q.isTrue ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'
+                      )}>
+                        {q.isTrue ? 'V' : 'F'}
+                      </span>
+                      <span className={cn(
+                        'text-[8px] font-semibold opacity-50',
+                        q.isTrue ? 'text-emerald-600' : 'text-rose-600'
+                      )}>
+                        {i + 1}
+                      </span>
+                    </div>
                     <div>
                       {(lang === 'ar' || lang === 'both') && (
                         <p className="text-sm font-medium text-surface-800">{q.questionAr}</p>
@@ -116,11 +129,6 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
                       {(lang === 'it' || lang === 'both') && (
                         <p className={cn("text-sm text-surface-500", lang === 'both' && 'mt-1')} dir="ltr">{q.questionIt}</p>
                       )}
-                      <span className={cn('inline-block mt-2 text-xs px-2 py-0.5 rounded-full', q.isTrue ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600')}>
-                        {q.isTrue
-                          ? `✓ ${lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero' : 'صحيح / Vero'}`
-                          : `✗ ${lang === 'ar' ? 'خطأ' : lang === 'it' ? 'Falso' : 'خطأ / Falso'}`}
-                      </span>
                     </div>
                   </div>
                 </div>

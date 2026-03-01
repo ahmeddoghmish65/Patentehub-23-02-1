@@ -80,7 +80,7 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                   </div>
                   <div className="flex-1 min-w-0">
                     {q.image && (
-                      <img src={q.image} alt="" className="w-full rounded-lg mb-2 max-h-36 object-contain bg-surface-50" />
+                      <img src={q.image} alt="" className="w-full rounded-lg mb-2 max-h-36 object-contain bg-white" />
                     )}
                     {(lang === 'ar' || lang === 'both') && (
                       <p className="text-sm font-medium text-surface-800 leading-relaxed">{q.questionAr}</p>
