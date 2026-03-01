@@ -109,11 +109,11 @@ export function SignsPage({ onNavigate }: Props) {
                 onClick={() => setSelectedSign(sign.id)}
               >
                 {/* Image area */}
-                <div className="w-full aspect-square bg-surface-50 flex items-center justify-center p-4 relative">
+                <div className="w-full aspect-square relative overflow-hidden">
                   {sign.image ? (
                     <img src={sign.image} alt={sign.nameAr} className="w-full h-full object-contain" />
                   ) : (
-                    <div className="w-20 h-20 rounded-full flex items-center justify-center"
+                    <div className="w-full h-full flex items-center justify-center"
                       style={{ backgroundColor: catInfo.color + '12' }}>
                       <Icon name="traffic" size={40} style={{ color: catInfo.color }} />
                     </div>
@@ -145,11 +145,11 @@ export function SignsPage({ onNavigate }: Props) {
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setSelectedSign(null)}>
           <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>
             {/* Image */}
-            <div className="w-full aspect-square bg-surface-50 flex items-center justify-center p-8 relative">
+            <div className="w-full aspect-square relative overflow-hidden">
               {selectedSignData.image ? (
                 <img src={selectedSignData.image} alt={selectedSignData.nameAr} className="w-full h-full object-contain" />
               ) : (
-                <div className="w-40 h-40 rounded-full flex items-center justify-center"
+                <div className="w-full h-full flex items-center justify-center"
                   style={{ backgroundColor: (catLabels[selectedSignData.category]?.color || '#64748b') + '12' }}>
                   <Icon name="traffic" size={80} style={{ color: catLabels[selectedSignData.category]?.color || '#64748b' }} />
                 </div>
