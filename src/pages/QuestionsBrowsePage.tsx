@@ -64,8 +64,11 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                   className="w-full p-4 text-right flex items-start gap-3 hover:bg-surface-50 transition-colors"
                   onClick={() => setExpandedQ(expandedQ === q.id ? null : q.id)}
                 >
-                  <span className="w-8 h-8 rounded-lg bg-surface-100 flex items-center justify-center text-xs font-bold text-surface-500 shrink-0 mt-0.5">
-                    {idx + 1}
+                  <span className={cn(
+                    'w-8 h-8 rounded-lg flex items-center justify-center text-sm font-black shrink-0 mt-0.5',
+                    q.isTrue ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'
+                  )}>
+                    {q.isTrue ? 'V' : 'F'}
                   </span>
                   <div className="flex-1 min-w-0">
                     {q.image && (
@@ -79,16 +82,6 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                         {q.questionIt}
                       </p>
                     )}
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className={cn(
-                      'w-7 h-7 rounded-full flex items-center justify-center text-sm font-black',
-                      q.isTrue
-                        ? 'bg-emerald-100 text-emerald-600'
-                        : 'bg-rose-100 text-rose-600'
-                    )}>
-                      {q.isTrue ? 'V' : 'F'}
-                    </span>
                   </div>
                 </button>
 
