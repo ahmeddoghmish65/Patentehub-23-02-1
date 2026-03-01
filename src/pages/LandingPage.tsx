@@ -188,7 +188,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             <div className="text-center lg:text-right order-2 lg:order-1">
               <div className="inline-flex items-center gap-2.5 bg-primary-50 border border-primary-200/70 text-primary-700 px-5 py-2.5 rounded-full text-sm font-medium mb-8 animate-fade-in-up shadow-sm">
               <Icon name="auto_awesome" size={18} filled className="text-primary-500" />
-              <span>قريبًا سيكون التطبيق مدعومًا بالذكاء الاصطناعي </span>
+              <span> التطبيق مدعومًا بالذكاء الاصطناعي</span>
             </div>
 
 
@@ -221,7 +221,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
 
               {/* Mini badges */}
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mt-10 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-                {['مجاني 100%', 'بالعربية', '+5000 مستخدم', '92% نجاح'].map((b, i) => (
+                {['مجاني 100%', 'يدعم العربية', 'محدّث 2026', '92% نجاح'].map((b, i) => (
                   <span key={i} className="inline-flex items-center gap-1.5 bg-white border border-surface-200 text-surface-600 text-xs px-3 py-1.5 rounded-full shadow-sm">
                     <Icon name="check_circle" size={12} className="text-green-500" filled />
                     {b}
