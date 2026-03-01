@@ -64,12 +64,20 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                   className="w-full p-4 text-right flex items-start gap-3 hover:bg-surface-50 transition-colors"
                   onClick={() => setExpandedQ(expandedQ === q.id ? null : q.id)}
                 >
-                  <span className={cn(
-                    'w-8 h-8 rounded-lg flex items-center justify-center text-sm font-black shrink-0 mt-0.5',
-                    q.isTrue ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'
-                  )}>
-                    {q.isTrue ? 'V' : 'F'}
-                  </span>
+                  <div className="flex flex-col items-center shrink-0 mt-0.5 gap-0.5">
+                    <span className={cn(
+                      'w-8 h-8 rounded-lg flex items-center justify-center text-sm font-black',
+                      q.isTrue ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'
+                    )}>
+                      {q.isTrue ? 'V' : 'F'}
+                    </span>
+                    <span className={cn(
+                      'text-[8px] font-semibold opacity-50',
+                      q.isTrue ? 'text-emerald-600' : 'text-rose-600'
+                    )}>
+                      {idx + 1}
+                    </span>
+                  </div>
                   <div className="flex-1 min-w-0">
                     {q.image && (
                       <img src={q.image} alt="" className="w-full rounded-lg mb-2 max-h-36 object-contain bg-surface-50" />
