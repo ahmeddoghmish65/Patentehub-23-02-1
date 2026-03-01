@@ -92,7 +92,7 @@ export function MistakesPage() {
 
             {/* Answer buttons or result */}
             {practiceResult === null ? (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <button onClick={() => handleAnswer(true)}
                   className="py-4 rounded-2xl border-2 border-surface-900 bg-teal-50 hover:bg-teal-100 text-surface-900 font-bold text-base transition-all active:scale-[.97]">
                   ✓ {trueLabel}
