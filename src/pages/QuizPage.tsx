@@ -179,8 +179,8 @@ export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
             <button key={String(val)}
               className={cn(
                 'py-3 rounded-2xl border-2 transition-all font-bold text-base text-center',
-                !show && val === true  && 'bg-white border-surface-900 hover:bg-surface-50 text-surface-900',
-                !show && val === false && 'bg-white border-surface-900 hover:bg-surface-50 text-surface-900',
+                !show && val === true  && 'bg-teal-50 border-surface-900 hover:bg-teal-100 text-surface-900',
+                !show && val === false && 'bg-rose-50 border-surface-900 hover:bg-rose-100 text-surface-900',
                 show && isCorrect && 'border-emerald-400 bg-emerald-50 text-emerald-800',
                 show && isSelected && !isCorrect && 'border-rose-400 bg-rose-100 text-rose-800',
                 show && !isSelected && !isCorrect && 'border-surface-200 bg-white text-surface-400 opacity-40',
