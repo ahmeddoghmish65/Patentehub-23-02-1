@@ -187,9 +187,9 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             {/* Content */}
             <div className="text-center lg:text-right order-2 lg:order-1">
               <div className="inline-flex items-center gap-2.5 bg-primary-50 border border-primary-200/70 text-primary-700 px-5 py-2.5 rounded-full text-sm font-medium mb-8 animate-fade-in-up shadow-sm">
-<Icon name="auto_awesome" size={18} filled className="text-primary-500" />
-              <span> التطبيق مدعوم بالذكاء الاصطناعي </span>
-            </div>
+                           <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse shrink-0" />
+                🇮🇹 التطبيق الأول للعرب في إيطاليا
+              </div>
 
 
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-surface-900 leading-[1.05] mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
