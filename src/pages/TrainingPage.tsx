@@ -209,12 +209,12 @@ export function TrainingPage({ onNavigate }: Props) {
             {!showAnswer ? (
               <div className="grid grid-cols-2 gap-4">
                 <button
-                  className="py-6 rounded-2xl border-2 border-surface-900 bg-teal-50 hover:bg-teal-100 text-surface-900 font-bold text-lg transition-all"
+                  className="py-3 rounded-2xl border-2 border-surface-900 bg-teal-50 hover:bg-teal-100 text-surface-900 font-bold text-base transition-all"
                   onClick={() => handleQuestionAnswer(true)}>
                   ✓ {trueLabel}
                 </button>
                 <button
-                  className="py-6 rounded-2xl border-2 border-surface-900 bg-rose-50 hover:bg-rose-100 text-surface-900 font-bold text-lg transition-all"
+                  className="py-3 rounded-2xl border-2 border-surface-900 bg-rose-50 hover:bg-rose-100 text-surface-900 font-bold text-base transition-all"
                   onClick={() => handleQuestionAnswer(false)}>
                   ✗ {falseLabel}
                 </button>
