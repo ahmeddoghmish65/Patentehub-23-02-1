@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
 import { verifyPassword, hashPassword, getDB } from '@/db/database';
 import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
+import { useTranslation } from '@/i18n';
 
 interface ProfilePageProps {
   onNavigate: (page: string, data?: Record<string, string>) => void;
@@ -41,6 +42,8 @@ const COUNTRY_CODES = [
 ];
 
 export function ProfilePage({ onNavigate }: ProfilePageProps) {
+  const { t, uiLang } = useTranslation();
+  void uiLang;
   const { user, logout, updateSettings, updateProfile, posts, loadPosts } = useAuthStore();
 
   const [showEditPage, setShowEditPage] = useState(false);
@@ -136,7 +139,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { alert('حجم الصورة يجب أن يكون أقل من 5 ميجابايت'); return; }
+    if (file.size > 5 * 1024 * 1024) { alert(t('profile.photo_too_large')); return; }
     const reader = new FileReader();
     reader.onload = () => { updateProfile({ avatar: reader.result as string }); };
     reader.readAsDataURL(file);
@@ -184,7 +187,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
       const diff = now.getTime() - new Date(u.nameChangeDate).getTime();
       if (diff < DAYS_60) {
         const daysLeft = Math.ceil((DAYS_60 - diff) / (24 * 60 * 60 * 1000));
-        setSaveMsg(`❌ لا يمكن تغيير الاسم إلا بعد ${daysLeft} يوم`); return;
+        setSaveMsg(`${t('profile.name_cooldown')} ${daysLeft} ${t('profile.name_cooldown_days')}`); return;
       }
     }
     // 60-day cooldown for username
@@ -192,19 +195,19 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
       const diff = now.getTime() - new Date(u.usernameChangeDate).getTime();
       if (diff < DAYS_60) {
         const daysLeft = Math.ceil((DAYS_60 - diff) / (24 * 60 * 60 * 1000));
-        setSaveMsg(`❌ لا يمكن تغيير اسم المستخدم إلا بعد ${daysLeft} يوم`); return;
+        setSaveMsg(`${t('profile.username_cooldown')} ${daysLeft} ${t('profile.username_cooldown_days')}`); return;
       }
     }
     // Phone validation
     const rawPhone = editForm.phone.replace(/\D/g, '');
     if (editForm.phone && (rawPhone.length < 7 || rawPhone.length > 15)) {
-      setPhoneError('رقم الهاتف غير صالح (7-15 رقم)'); return;
+      setPhoneError(t('profile.phone_invalid_long')); return;
     }
     setPhoneError('');
     // Username uniqueness check
     if (editForm.username && editForm.username !== user.username) {
-      if (usernameStatus === 'taken') { setSaveMsg('❌ اسم المستخدم مأخوذ'); return; }
-      if (!/^[a-zA-Z0-9_.]{3,20}$/.test(editForm.username)) { setSaveMsg('❌ اسم المستخدم: 3-20 حرف إنجليزي أو رقم أو _ أو .'); return; }
+      if (usernameStatus === 'taken') { setSaveMsg(`❌ ${t('profile.username_taken')}`); return; }
+      if (!/^[a-zA-Z0-9_.]{3,20}$/.test(editForm.username)) { setSaveMsg(`❌ ${t('profile.username_invalid')}`); return; }
     }
     if (newFullName !== user.name) u.nameChangeDate = now.toISOString();
     if (editForm.username && editForm.username !== user.username) u.usernameChangeDate = now.toISOString();
@@ -227,30 +230,30 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
     }
     localStorage.setItem(`bio_${user.id}`, editForm.bio);
     await db.put('users', u);
-    setSaveMsg('✓ تم حفظ التعديلات بنجاح');
+    setSaveMsg(t('profile.changes_saved'));
     setTimeout(() => { setSaveMsg(''); setShowEditPage(false); window.location.reload(); }, 1500);
   };
 
   const handleChangePassword = async () => {
     setPasswordMsg('');
-    if (!currentPassword) { setPasswordMsg('يرجى إدخال كلمة المرور الحالية'); return; }
-    if (!newPassword || newPassword.length < 6) { setPasswordMsg('كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل'); return; }
-    if (newPassword !== confirmPassword) { setPasswordMsg('كلمة المرور الجديدة وتأكيدها غير متطابقين'); return; }
+    if (!currentPassword) { setPasswordMsg(t('profile.password_required')); return; }
+    if (!newPassword || newPassword.length < 6) { setPasswordMsg(t('profile.password_short')); return; }
+    if (newPassword !== confirmPassword) { setPasswordMsg(t('profile.password_mismatch_long')); return; }
     const db = await getDB();
     const fullUser = await db.get('users', user.id);
-    if (!fullUser) { setPasswordMsg('حدث خطأ'); return; }
+    if (!fullUser) { setPasswordMsg(t('profile.error_occurred')); return; }
     const isValid = await verifyPassword(currentPassword, fullUser.password);
-    if (!isValid) { setPasswordMsg('كلمة المرور الحالية غير صحيحة'); return; }
+    if (!isValid) { setPasswordMsg(t('profile.wrong_password')); return; }
     fullUser.password = await hashPassword(newPassword);
     await db.put('users', fullUser);
-    setPasswordMsg('✓ تم تغيير كلمة المرور بنجاح');
+    setPasswordMsg(t('profile.password_changed'));
     setCurrentPassword(''); setNewPassword(''); setConfirmPassword('');
   };
 
   const onEditFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { alert('حجم الصورة يجب أن يكون أقل من 5 ميجابايت'); return; }
+    if (file.size > 5 * 1024 * 1024) { alert(t('profile.photo_too_large')); return; }
     const reader = new FileReader();
     reader.onload = () => { updateProfile({ avatar: reader.result as string }); };
     reader.readAsDataURL(file);
@@ -259,11 +262,11 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
   const handleSaveProfile = async () => {
     const { birthDate, province, gender, phoneCode, phone, italianLevel } = profileForm;
     if (!birthDate || !province || !gender || !phone || !italianLevel) {
-      alert('يرجى ملء جميع الحقول المطلوبة'); return;
+      alert(t('profile.fill_required')); return;
     }
     const rawPhone = phone.replace(/\D/g, '');
     if (rawPhone.length < 7 || rawPhone.length > 15) {
-      setProfilePhoneError('رقم الهاتف غير صالح (7-15 رقم)'); return;
+      setProfilePhoneError(t('profile.phone_invalid_long')); return;
     }
     setProfilePhoneError('');
     const db = await getDB();
@@ -279,17 +282,17 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
   };
 
   const languageOptions = [
-    { value: 'ar' as const, label: 'العربية فقط' },
+    { value: 'ar' as const, label: uiLang === 'it' ? 'Solo arabo' : 'العربية فقط' },
     { value: 'it' as const, label: 'Solo italiano' },
     { value: 'both' as const, label: 'العربية + Italiano' },
   ];
 
   const allBadges = [
-    { id: 'newcomer', name: 'عضو جديد', icon: 'waving_hand', color: 'bg-blue-500' },
-    { id: 'quiz_master', name: 'خبير الاختبارات', icon: 'quiz', color: 'bg-purple-500' },
-    { id: 'perfect_score', name: 'علامة كاملة', icon: 'star', color: 'bg-yellow-500' },
-    { id: 'week_streak', name: 'أسبوع متواصل', icon: 'local_fire_department', color: 'bg-orange-500' },
-    { id: 'level_5', name: 'المستوى 5', icon: 'military_tech', color: 'bg-green-500' },
+    { id: 'newcomer', name: t('profile.badge_newcomer'), icon: 'waving_hand', color: 'bg-blue-500' },
+    { id: 'quiz_master', name: t('profile.badge_quiz_master'), icon: 'quiz', color: 'bg-purple-500' },
+    { id: 'perfect_score', name: t('profile.badge_perfect'), icon: 'star', color: 'bg-yellow-500' },
+    { id: 'week_streak', name: t('profile.badge_week_streak'), icon: 'local_fire_department', color: 'bg-orange-500' },
+    { id: 'level_5', name: t('profile.badge_level5'), icon: 'military_tech', color: 'bg-green-500' },
   ];
 
   // ==================== EDIT PAGE (not overlay - inline page) ====================
@@ -304,14 +307,14 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
               className="w-9 h-9 rounded-xl bg-surface-100 hover:bg-surface-200 flex items-center justify-center transition-colors shrink-0">
               <Icon name="arrow_forward" size={20} className="text-surface-600" />
             </button>
-            <h2 className="text-base font-bold text-surface-900 flex-1">تعديل الحساب</h2>
+            <h2 className="text-base font-bold text-surface-900 flex-1">{t('profile.edit_title')}</h2>
             {saveMsg && (
               <span className={cn('text-xs font-semibold px-3 py-1 rounded-lg', saveMsg.includes('✓') ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600')}>
                 {saveMsg}
               </span>
             )}
             <Button size="sm" onClick={handleSaveEdit} className="shrink-0">
-              <Icon name="save" size={15} className="ml-1" /> حفظ
+              <Icon name="save" size={15} className="ml-1" /> {t('profile.save')}
             </Button>
           </div>
         </div>
@@ -344,7 +347,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
           <div className="min-w-0">
             <p className="text-white font-bold text-base truncate">{user.name}</p>
             {user.username && <p className="text-white/70 text-sm">@{user.username}</p>}
-            <p className="text-white/60 text-xs mt-1">اضغط على أيقونة الكاميرا لتغيير الصورة</p>
+            <p className="text-white/60 text-xs mt-1">{t('profile.tap_camera')}</p>
           </div>
         </div>
 
@@ -362,15 +365,15 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
             <div className="space-y-3">
               {/* Personal info */}
               <div className="bg-white rounded-2xl p-4 border border-surface-100 space-y-3">
-                <SectionHeader icon="person" label="المعلومات الشخصية" />
+                <SectionHeader icon="person" label={t('profile.personal_info')} />
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">الاسم الأول</label>
+                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">{t('profile.first_name')}</label>
                     <input className={fieldClass} value={editForm.firstName} onChange={e => setEditForm(f => ({ ...f, firstName: e.target.value }))} />
                   </div>
                   <div>
-                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">اسم العائلة</label>
+                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">{t('profile.last_name')}</label>
                     <input className={fieldClass} value={editForm.lastName} onChange={e => setEditForm(f => ({ ...f, lastName: e.target.value }))} />
                   </div>
                 </div>
@@ -380,11 +383,11 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                   const DAYS_60 = 60 * 24 * 60 * 60 * 1000;
                   if (diff >= DAYS_60) return null;
                   const daysLeft = Math.ceil((DAYS_60 - diff) / (24 * 60 * 60 * 1000));
-                  return <p className="text-[11px] text-warning-600 bg-warning-50 rounded-lg px-3 py-1.5 flex items-center gap-1"><Icon name="schedule" size={12} /> يمكن تغيير الاسم بعد {daysLeft} يوم</p>;
+                  return <p className="text-[11px] text-warning-600 bg-warning-50 rounded-lg px-3 py-1.5 flex items-center gap-1"><Icon name="schedule" size={12} /> {t('profile.name_cooldown')} {daysLeft} {t('profile.name_cooldown_days')}</p>;
                 })()}
 
                 <div>
-                  <label className="text-[11px] text-surface-400 font-medium mb-1 block">اسم المستخدم</label>
+                  <label className="text-[11px] text-surface-400 font-medium mb-1 block">{t('profile.username_label')}</label>
                   <div className="relative">
                     <input
                       className={cn(fieldClass, 'pl-8', usernameStatus === 'taken' ? 'border-danger-400 bg-danger-50' : usernameStatus === 'ok' ? 'border-success-400' : '')}
@@ -407,36 +410,36 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                       {usernameStatus === 'invalid' && <Icon name="error" size={15} className="text-warning-500" filled />}
                     </span>
                   </div>
-                  {usernameStatus === 'taken' && <p className="text-[11px] text-danger-500 mt-1">اسم المستخدم مأخوذ</p>}
-                  {usernameStatus === 'invalid' && <p className="text-[11px] text-warning-500 mt-1">3-20 حرف: حروف إنجليزية، أرقام، _ أو .</p>}
-                  {usernameStatus === 'ok' && <p className="text-[11px] text-success-500 mt-1">اسم المستخدم متاح ✓</p>}
+                  {usernameStatus === 'taken' && <p className="text-[11px] text-danger-500 mt-1">{t('profile.username_taken')}</p>}
+                  {usernameStatus === 'invalid' && <p className="text-[11px] text-warning-500 mt-1">{t('profile.username_invalid')}</p>}
+                  {usernameStatus === 'ok' && <p className="text-[11px] text-success-500 mt-1">{t('profile.username_available')}</p>}
                   {(() => {
                     if (!changeDates.username) return null;
                     const diff = Date.now() - new Date(changeDates.username).getTime();
                     const DAYS_60 = 60 * 24 * 60 * 60 * 1000;
                     if (diff >= DAYS_60) return null;
                     const daysLeft = Math.ceil((DAYS_60 - diff) / (24 * 60 * 60 * 1000));
-                    return <p className="text-[11px] text-warning-600 bg-warning-50 rounded-lg px-3 py-1.5 flex items-center gap-1 mt-1"><Icon name="schedule" size={12} /> يمكن تغيير اليوزرنيم بعد {daysLeft} يوم</p>;
+                    return <p className="text-[11px] text-warning-600 bg-warning-50 rounded-lg px-3 py-1.5 flex items-center gap-1 mt-1"><Icon name="schedule" size={12} /> {t('profile.username_cooldown')} {daysLeft} {t('profile.username_cooldown_days')}</p>;
                   })()}
                 </div>
 
                 <div>
-                  <label className="text-[11px] text-surface-400 font-medium mb-1 block">نبذة عني</label>
+                  <label className="text-[11px] text-surface-400 font-medium mb-1 block">{t('profile.bio_label')}</label>
                   <textarea className={cn(fieldClass, 'resize-none')} rows={2} value={editForm.bio}
-                    onChange={e => setEditForm(f => ({ ...f, bio: e.target.value }))} maxLength={150} placeholder="اكتب نبذة عنك..." />
+                    onChange={e => setEditForm(f => ({ ...f, bio: e.target.value }))} maxLength={150} placeholder={t('profile.bio_placeholder')} />
                   <span className="text-[10px] text-surface-400">{editForm.bio.length}/150</span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">تاريخ الميلاد</label>
+                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">{t('profile.birth_date')}</label>
                     <input type="date" className={fieldClass} style={{ boxSizing: 'border-box' }} value={editForm.birthDate}
                       onChange={e => setEditForm(f => ({ ...f, birthDate: e.target.value }))} />
                   </div>
                   <div>
-                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">الجنس</label>
+                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">{t('profile.gender')}</label>
                     <div className="flex gap-1.5 h-[42px]">
-                      {[{ value: 'male', label: 'ذكر' }, { value: 'female', label: 'أنثى' }].map(g => (
+                      {[{ value: 'male', label: t('profile.male') }, { value: 'female', label: t('profile.female') }].map(g => (
                         <button key={g.value}
                           className={cn('flex-1 rounded-xl border-2 text-xs font-semibold transition-all',
                             editForm.gender === g.value ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-surface-200 text-surface-500 hover:border-surface-300')}
@@ -449,15 +452,15 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
 
               {/* Contact */}
               <div className="bg-white rounded-2xl p-4 border border-surface-100 space-y-3">
-                <SectionHeader icon="contact_mail" label="معلومات الاتصال" />
+                <SectionHeader icon="contact_mail" label={t('profile.contact_info')} />
 
                 <div>
-                  <label className="text-[11px] text-surface-400 font-medium mb-1 block">البريد الإلكتروني</label>
+                  <label className="text-[11px] text-surface-400 font-medium mb-1 block">{t('profile.email_label')}</label>
                   <input type="email" dir="ltr" className={cn(fieldClass, 'text-left')} value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))} />
                 </div>
 
                 <div>
-                  <label className="text-[11px] text-surface-400 font-medium mb-1 block">رقم الهاتف</label>
+                  <label className="text-[11px] text-surface-400 font-medium mb-1 block">{t('profile.phone_label')}</label>
                   <div className="flex gap-2">
                     <select className="w-28 border border-surface-200 rounded-xl px-2 py-2.5 text-sm shrink-0 focus:outline-none focus:border-primary-400" value={editForm.phoneCode} onChange={e => setEditForm(f => ({ ...f, phoneCode: e.target.value }))}>
                       {COUNTRY_CODES.map(c => <option key={c.code} value={c.code}>{c.country.split(' ')[0]} {c.code}</option>)}
@@ -469,7 +472,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                         const val = e.target.value;
                         setEditForm(f => ({ ...f, phone: val }));
                         const raw = val.replace(/\D/g, '');
-                        if (val && (raw.length < 7 || raw.length > 15)) setPhoneError('رقم غير صالح (7-15 رقم)');
+                        if (val && (raw.length < 7 || raw.length > 15)) setPhoneError(t('profile.phone_invalid'));
                         else setPhoneError('');
                       }}
                       placeholder="1234567890" />
@@ -479,20 +482,20 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">المحافظة (Provincia)</label>
+                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">{t('profile.province_label')}</label>
                     <select className={fieldClass} value={editForm.province} onChange={e => setEditForm(f => ({ ...f, province: e.target.value }))}>
-                      <option value="">اختر المحافظة</option>
+                      <option value="">{t('profile.select_province')}</option>
                       {ITALIAN_PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">مستوى الإيطالية</label>
+                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">{t('profile.italian_level')}</label>
                     <select className={fieldClass} value={editForm.italianLevel} onChange={e => setEditForm(f => ({ ...f, italianLevel: e.target.value }))}>
-                      <option value="">اختر المستوى</option>
-                      <option value="weak">ضعيف</option>
-                      <option value="good">جيد</option>
-                      <option value="very_good">جيد جداً</option>
-                      <option value="native">أنا إيطالي</option>
+                      <option value="">{t('profile.select_level')}</option>
+                      <option value="weak">{t('profile.level_weak')}</option>
+                      <option value="good">{t('profile.level_good')}</option>
+                      <option value="very_good">{t('profile.level_very_good')}</option>
+                      <option value="native">{t('profile.level_native_edit')}</option>
                     </select>
                   </div>
                 </div>
@@ -500,11 +503,11 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
 
               {/* Privacy */}
               <div className="bg-white rounded-2xl p-4 border border-surface-100">
-                <SectionHeader icon="lock" label="الخصوصية" />
+                <SectionHeader icon="lock" label={t('profile.privacy_label')} />
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-surface-700 font-medium">إخفاء إحصائيات التعلم</p>
-                    <p className="text-xs text-surface-400 mt-0.5">إخفاء جاهزية الامتحان، الإجابات، والمستوى عن الآخرين في بروفايلك</p>
+                    <p className="text-sm text-surface-700 font-medium">{t('profile.hide_stats')}</p>
+                    <p className="text-xs text-surface-400 mt-0.5">{t('profile.hide_stats_desc')}</p>
                   </div>
                   <button
                     className={cn('w-11 h-6 rounded-full transition-colors relative shrink-0', editForm.privacyHideStats ? 'bg-primary-500' : 'bg-surface-200')}
@@ -516,24 +519,24 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
 
               {/* Password */}
               <div className="bg-white rounded-2xl p-4 border border-surface-100 space-y-3">
-                <SectionHeader icon="security" label="تغيير كلمة المرور" />
+                <SectionHeader icon="security" label={t('profile.change_password')} />
                 <div>
-                  <label className="text-[11px] text-surface-400 font-medium mb-1 block">كلمة المرور الحالية</label>
+                  <label className="text-[11px] text-surface-400 font-medium mb-1 block">{t('profile.current_password')}</label>
                   <input type="password" dir="ltr" className={cn(fieldClass, 'text-left')} value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">كلمة المرور الجديدة</label>
-                    <input type="password" dir="ltr" className={cn(fieldClass, 'text-left')} value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="6 أحرف+" />
+                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">{t('profile.new_password')}</label>
+                    <input type="password" dir="ltr" className={cn(fieldClass, 'text-left')} value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder={t('profile.password_min')} />
                   </div>
                   <div>
-                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">تأكيد كلمة المرور</label>
+                    <label className="text-[11px] text-surface-400 font-medium mb-1 block">{t('profile.confirm_password')}</label>
                     <input type="password" dir="ltr" className={cn(fieldClass, 'text-left', confirmPassword && newPassword !== confirmPassword ? 'border-danger-400' : '')} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
                   </div>
                 </div>
-                {confirmPassword && newPassword !== confirmPassword && <p className="text-[11px] text-danger-500">كلمة المرور غير متطابقة</p>}
+                {confirmPassword && newPassword !== confirmPassword && <p className="text-[11px] text-danger-500">{t('profile.password_mismatch')}</p>}
                 {passwordMsg && <p className={cn('text-xs', passwordMsg.includes('✓') ? 'text-success-600' : 'text-danger-500')}>{passwordMsg}</p>}
-                <Button size="sm" onClick={handleChangePassword} disabled={!currentPassword || !newPassword}>تغيير كلمة المرور</Button>
+                <Button size="sm" onClick={handleChangePassword} disabled={!currentPassword || !newPassword}>{t('profile.change_btn')}</Button>
               </div>
             </div>
           );
@@ -562,7 +565,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
             </div>
             {user.avatar && (
               <button className="absolute -top-1 -left-1 w-6 h-6 bg-danger-500 rounded-full flex items-center justify-center border-2 border-white shadow-sm hover:bg-danger-600"
-                onClick={handleDeleteAvatar} title="حذف الصورة">
+                onClick={handleDeleteAvatar} title={t('profile.delete_avatar')}>
                 <Icon name="close" size={14} className="text-white" />
               </button>
             )}
@@ -579,11 +582,11 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
             <p className="text-xs text-surface-400">{user.email}</p>
             {storedBio && <p className="text-sm text-surface-600 mt-1 line-clamp-2">{storedBio}</p>}
             <div className="flex items-center gap-2 mt-2 flex-wrap">
-              <span className="text-xs bg-primary-50 text-primary-600 px-2 py-0.5 rounded-full font-medium">المستوى {progress.level}</span>
+              <span className="text-xs bg-primary-50 text-primary-600 px-2 py-0.5 rounded-full font-medium">{t('profile.level_label')} {progress.level}</span>
               <span className="text-xs bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full font-medium">{progress.xp} XP</span>
               {!user.profileComplete && (
                 <button className="text-xs bg-warning-50 text-warning-600 px-2 py-0.5 rounded-full font-medium animate-pulse" onClick={() => setShowCompleteProfile(true)}>
-                  ⚠️ أكمل بياناتك
+                  {t('profile.complete_badge')}
                 </button>
               )}
             </div>
@@ -595,10 +598,10 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
           const myPosts = posts.filter(p => p.userId === user.id && p.type === 'post').length;
           const myQuizzes = posts.filter(p => p.userId === user.id && p.type === 'quiz').length;
           const statsItems: { label: string; value: number; view: 'posts' | 'quizzes' | 'followers' | 'following' }[] = [
-            { label: 'منشور', value: myPosts, view: 'posts' },
-            { label: 'سؤال', value: myQuizzes, view: 'quizzes' },
-            { label: 'متابِع', value: followerCount, view: 'followers' },
-            { label: 'يتابِع', value: followingCount, view: 'following' },
+            { label: t('profile.posts_stat'), value: myPosts, view: 'posts' },
+            { label: t('profile.questions_stat'), value: myQuizzes, view: 'quizzes' },
+            { label: t('profile.followers_stat'), value: followerCount, view: 'followers' },
+            { label: t('profile.following_stat'), value: followingCount, view: 'following' },
           ];
           return (
             <div className="grid grid-cols-4 gap-1.5 mt-4 border-t border-surface-50 pt-4">
@@ -618,7 +621,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
             <div className="bg-white rounded-2xl w-full max-w-md max-h-[70vh] overflow-hidden shadow-2xl flex flex-col" onClick={e => e.stopPropagation()}>
               <div className="flex items-center justify-between p-4 border-b border-surface-100 shrink-0">
                 <h3 className="font-bold text-surface-900">
-                  {activeStatView === 'posts' ? 'منشوراتي' : activeStatView === 'quizzes' ? 'أسئلتي' : activeStatView === 'followers' ? 'المتابِعون' : 'يتابِع'}
+                  {activeStatView === 'posts' ? t('profile.my_posts') : activeStatView === 'quizzes' ? t('profile.my_quizzes') : activeStatView === 'followers' ? t('profile.followers_modal') : t('profile.following_modal')}
                 </h3>
                 <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-400" onClick={() => setActiveStatView(null)}>
                   <Icon name="close" size={18} />
@@ -628,7 +631,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                 {activeStatView === 'posts' && (() => {
                   const myPosts = posts.filter(p => p.userId === user.id && p.type === 'post');
                   return myPosts.length === 0 ? (
-                    <div className="p-8 text-center text-surface-400"><Icon name="forum" size={36} className="mx-auto mb-2 opacity-30" /><p>لا توجد منشورات بعد</p></div>
+                    <div className="p-8 text-center text-surface-400"><Icon name="forum" size={36} className="mx-auto mb-2 opacity-30" /><p>{t('profile.no_posts')}</p></div>
                   ) : (
                     <div className="divide-y divide-surface-50">
                       {myPosts.map(p => (
@@ -648,13 +651,13 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                 {activeStatView === 'quizzes' && (() => {
                   const myQuizzes = posts.filter(p => p.userId === user.id && p.type === 'quiz');
                   return myQuizzes.length === 0 ? (
-                    <div className="p-8 text-center text-surface-400"><Icon name="quiz" size={36} className="mx-auto mb-2 opacity-30" /><p>لا توجد أسئلة بعد</p></div>
+                    <div className="p-8 text-center text-surface-400"><Icon name="quiz" size={36} className="mx-auto mb-2 opacity-30" /><p>{t('profile.no_quizzes')}</p></div>
                   ) : (
                     <div className="divide-y divide-surface-50">
                       {myQuizzes.map(p => (
                         <div key={p.id} className="p-4 cursor-pointer hover:bg-surface-50 transition-colors"
                           onClick={() => { setActiveStatView(null); onNavigate('community', { openPostId: p.id }); }}>
-                          <span className="text-[10px] bg-purple-50 text-purple-600 px-1.5 rounded-full mb-1 inline-block">سؤال</span>
+                          <span className="text-[10px] bg-purple-50 text-purple-600 px-1.5 rounded-full mb-1 inline-block">{t('community.quiz_badge')}</span>
                           <p className="text-sm text-surface-800 line-clamp-3">{p.content || p.quizQuestion}</p>
                           <div className="flex items-center gap-3 mt-2">
                             <span className="text-[10px] text-surface-400 flex items-center gap-0.5"><Icon name="chat_bubble" size={11} /> {p.commentsCount}</span>
@@ -667,7 +670,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                 })()}
                 {activeStatView === 'followers' && (
                   followersList.length === 0 ? (
-                    <div className="p-8 text-center text-surface-400"><Icon name="people" size={36} className="mx-auto mb-2 opacity-30" /><p>لا يوجد متابِعون بعد</p></div>
+                    <div className="p-8 text-center text-surface-400"><Icon name="people" size={36} className="mx-auto mb-2 opacity-30" /><p>{t('profile.no_followers')}</p></div>
                   ) : (
                     <div className="divide-y divide-surface-50">
                       {followersList.map(u => (
@@ -689,7 +692,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                               myFollowing.includes(u.id)
                                 ? 'bg-surface-100 text-surface-600 hover:bg-danger-50 hover:text-danger-600 border border-surface-200'
                                 : 'bg-primary-500 text-white hover:bg-primary-600 shadow-sm')}>
-                            {myFollowing.includes(u.id) ? 'يتم المتابعة' : 'متابعة'}
+                            {myFollowing.includes(u.id) ? t('profile.following_btn') : t('profile.follow_btn')}
                           </button>
                         </div>
                       ))}
@@ -698,7 +701,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                 )}
                 {activeStatView === 'following' && (
                   followingList.length === 0 ? (
-                    <div className="p-8 text-center text-surface-400"><Icon name="person_add" size={36} className="mx-auto mb-2 opacity-30" /><p>لا تتابع أحداً بعد</p></div>
+                    <div className="p-8 text-center text-surface-400"><Icon name="person_add" size={36} className="mx-auto mb-2 opacity-30" /><p>{t('profile.no_following')}</p></div>
                   ) : (
                     <div className="divide-y divide-surface-50">
                       {followingList.map(u => (
@@ -720,7 +723,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                               myFollowing.includes(u.id)
                                 ? 'bg-surface-100 text-surface-600 hover:bg-danger-50 hover:text-danger-600 border border-surface-200'
                                 : 'bg-primary-500 text-white hover:bg-primary-600 shadow-sm')}>
-                            {myFollowing.includes(u.id) ? 'يتم المتابعة' : 'متابعة'}
+                            {myFollowing.includes(u.id) ? t('profile.following_btn') : t('profile.follow_btn')}
                           </button>
                         </div>
                       ))}
@@ -736,14 +739,14 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
       {/* Progress & Exam Readiness */}
       <div className="bg-white rounded-xl p-5 border border-surface-100">
         <h2 className="font-bold text-surface-900 mb-4 flex items-center gap-2">
-          <Icon name="trending_up" size={20} className="text-primary-500" /> التقدم والإحصائيات
+          <Icon name="trending_up" size={20} className="text-primary-500" /> {t('profile.progress_stats')}
         </h2>
 
         {/* Exam Readiness - Redesigned */}
         {(() => {
           const readinessColor = progress.examReadiness >= 70 ? '#22c55e' : progress.examReadiness >= 40 ? '#f59e0b' : '#6366f1';
           const readinessBg = progress.examReadiness >= 70 ? 'bg-success-50 text-success-700 border-success-200' : progress.examReadiness >= 40 ? 'bg-warning-50 text-warning-700 border-warning-200' : 'bg-primary-50 text-primary-700 border-primary-200';
-          const readinessLabel = progress.examReadiness >= 70 ? 'جاهز للامتحان ✓' : progress.examReadiness >= 40 ? 'قريب من الجاهزية' : 'تحتاج المزيد من التدريب';
+          const readinessLabel = progress.examReadiness >= 70 ? t('profile.ready') : progress.examReadiness >= 40 ? t('profile.almost_ready') : t('profile.need_more');
           const r = 40;
           const circumference = 2 * Math.PI * r;
           return (
@@ -768,7 +771,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 mb-2">
                     <Icon name="verified" size={17} style={{ color: readinessColor }} filled />
-                    <span className="text-sm font-bold text-surface-900">جاهزية الامتحان</span>
+                    <span className="text-sm font-bold text-surface-900">{t('profile.exam_readiness')}</span>
                   </div>
                   <span className={cn('inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full border mb-3', readinessBg)}>
                     {readinessLabel}
@@ -776,7 +779,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                   <div className="w-full bg-surface-200 rounded-full h-2">
                     <div className="h-2 rounded-full transition-all duration-700" style={{ width: `${progress.examReadiness}%`, backgroundColor: readinessColor }} />
                   </div>
-                  <p className="text-[10px] text-surface-400 mt-1.5">{progress.examReadiness} من 100 نقطة</p>
+                  <p className="text-[10px] text-surface-400 mt-1.5">{progress.examReadiness} {t('profile.of_100')}</p>
                 </div>
               </div>
             </div>
@@ -787,20 +790,20 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
         {totalAnswers > 0 ? (
           <div className="mb-4 bg-surface-50 rounded-xl p-4">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-semibold text-surface-800">توزيع الإجابات</span>
-              <span className="text-xs font-semibold bg-white text-surface-600 px-2.5 py-0.5 rounded-full border border-surface-200">{totalAnswers} إجمالي</span>
+              <span className="text-sm font-semibold text-surface-800">{t('profile.answer_dist')}</span>
+              <span className="text-xs font-semibold bg-white text-surface-600 px-2.5 py-0.5 rounded-full border border-surface-200">{totalAnswers} {t('profile.total_label')}</span>
             </div>
             <div className="w-full bg-danger-100 rounded-full h-2.5 overflow-hidden flex mb-3">
-              <div className="h-full bg-success-500 rounded-full transition-all duration-700" style={{ width: `${accuracy}%` }} title={`صحيح: ${progress.correctAnswers}`} />
+              <div className="h-full bg-success-500 rounded-full transition-all duration-700" style={{ width: `${accuracy}%` }} title={`${t('profile.correct_label')}: ${progress.correctAnswers}`} />
             </div>
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-1.5">
                 <span className="w-3 h-3 rounded-full bg-success-500 inline-block" />
-                <span className="text-xs text-surface-600">صحيح <strong className="text-success-600">{progress.correctAnswers}</strong></span>
+                <span className="text-xs text-surface-600">{t('profile.correct_label')} <strong className="text-success-600">{progress.correctAnswers}</strong></span>
               </div>
-              <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2.5 py-0.5 rounded-full border border-primary-100">{accuracy}% دقة</span>
+              <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2.5 py-0.5 rounded-full border border-primary-100">{accuracy}% {t('profile.total_label')}</span>
               <div className="flex items-center gap-1.5">
-                <span className="text-xs text-surface-600">خاطئ <strong className="text-danger-500">{progress.wrongAnswers}</strong></span>
+                <span className="text-xs text-surface-600">{t('profile.wrong_label')} <strong className="text-danger-500">{progress.wrongAnswers}</strong></span>
                 <span className="w-3 h-3 rounded-full bg-danger-400 inline-block" />
               </div>
             </div>
@@ -808,17 +811,17 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
         ) : (
           <div className="mb-4 bg-surface-50 rounded-xl p-4 text-center">
             <Icon name="quiz" size={28} className="text-surface-300 mx-auto mb-2" />
-            <p className="text-sm text-surface-400">لم تحل اختبارات بعد</p>
+            <p className="text-sm text-surface-400">{t('profile.no_quizzes_label')}</p>
           </div>
         )}
 
         {/* Key metrics grid */}
         <div className="grid grid-cols-2 gap-3">
           {[
-            { label: 'إجمالي الاختبارات', value: progress.totalQuizzes, icon: 'quiz', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-            { label: 'السلسلة الحالية', value: `${progress.currentStreak} يوم`, icon: 'local_fire_department', color: 'text-orange-500', bg: 'bg-orange-50', border: 'border-orange-100' },
-            { label: 'النقاط (XP)', value: progress.xp, icon: 'stars', color: 'text-amber-500', bg: 'bg-amber-50', border: 'border-amber-100' },
-            { label: 'الدروس المكتملة', value: progress.completedLessons.length, icon: 'school', color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
+            { label: t('profile.total_quizzes'), value: progress.totalQuizzes, icon: 'quiz', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+            { label: t('profile.current_streak'), value: `${progress.currentStreak} ${t('profile.streak_days')}`, icon: 'local_fire_department', color: 'text-orange-500', bg: 'bg-orange-50', border: 'border-orange-100' },
+            { label: t('profile.xp_points'), value: progress.xp, icon: 'stars', color: 'text-amber-500', bg: 'bg-amber-50', border: 'border-amber-100' },
+            { label: t('profile.completed_lessons_label'), value: progress.completedLessons.length, icon: 'school', color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
           ].map((m, i) => (
             <div key={i} className={cn('rounded-xl p-3.5 border flex items-center gap-3', m.bg, m.border)}>
               <div className="w-10 h-10 rounded-xl bg-white/80 flex items-center justify-center shrink-0 shadow-sm">
@@ -835,7 +838,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
 
       {/* Badges */}
       <div className="bg-white rounded-xl p-5 border border-surface-100">
-        <h2 className="font-bold text-surface-900 mb-4 flex items-center gap-2"><Icon name="emoji_events" size={20} className="text-orange-500" /> الإنجازات ({progress.badges.length}/{allBadges.length})</h2>
+        <h2 className="font-bold text-surface-900 mb-4 flex items-center gap-2"><Icon name="emoji_events" size={20} className="text-orange-500" /> {t('profile.achievements')} ({progress.badges.length}/{allBadges.length})</h2>
         <div className="grid grid-cols-5 gap-2">
           {allBadges.map(badge => {
             const isEarned = progress.badges.includes(badge.id);
@@ -853,8 +856,8 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
 
       {/* Language */}
       <div className="bg-white rounded-xl p-5 border border-surface-100">
-        <h2 className="font-bold text-surface-900 mb-2 flex items-center gap-2"><Icon name="translate" size={20} className="text-primary-500" /> لغة عرض المحتوى</h2>
-        <p className="text-xs text-surface-400 mb-4">تؤثر فقط على عرض المحتوى في الدروس والأسئلة والإشارات والقاموس</p>
+        <h2 className="font-bold text-surface-900 mb-2 flex items-center gap-2"><Icon name="translate" size={20} className="text-primary-500" /> {t('profile.content_language')}</h2>
+        <p className="text-xs text-surface-400 mb-4">{t('profile.content_language_desc')}</p>
         <div className="grid grid-cols-3 gap-2">
           {languageOptions.map(opt => (
             <button key={opt.value} className={cn('flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all', settings.language === opt.value ? 'border-primary-500 bg-primary-50' : 'border-surface-100 hover:border-surface-200')} onClick={() => updateSettings({ language: opt.value })}>
@@ -877,7 +880,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
       {/* Account Management */}
       <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
         <div className="px-5 py-4 border-b border-surface-100">
-          <h2 className="font-bold text-surface-900 flex items-center gap-2"><Icon name="manage_accounts" size={20} className="text-surface-500" /> إدارة الحساب</h2>
+          <h2 className="font-bold text-surface-900 flex items-center gap-2"><Icon name="manage_accounts" size={20} className="text-surface-500" /> {t('profile.account_management')}</h2>
         </div>
 
         {/* Edit Account */}
@@ -886,8 +889,8 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
             <Icon name="edit" size={18} className="text-primary-500" />
           </div>
           <div className="flex-1 text-right">
-            <p className="text-sm font-semibold text-surface-800">تعديل بيانات الحساب</p>
-            <p className="text-xs text-surface-400">الاسم، الصورة، البريد، كلمة المرور، الخصوصية...</p>
+            <p className="text-sm font-semibold text-surface-800">{t('profile.edit_account_btn')}</p>
+            <p className="text-xs text-surface-400">{t('profile.edit_account_desc')}</p>
           </div>
           <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors" />
         </button>
@@ -899,8 +902,8 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
               <Icon name="admin_panel_settings" size={18} className="text-primary-600" />
             </div>
             <div className="flex-1 text-right">
-              <p className="text-sm font-semibold text-surface-800">لوحة التحكم</p>
-              <p className="text-xs text-surface-400">إدارة المحتوى والمستخدمين</p>
+              <p className="text-sm font-semibold text-surface-800">{t('profile.admin_panel')}</p>
+              <p className="text-xs text-surface-400">{t('profile.admin_desc')}</p>
             </div>
             <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors" />
           </button>
@@ -908,15 +911,15 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
 
         {/* Account Info */}
         <div className="px-5 py-3 space-y-1">
-          <div className="flex justify-between text-sm py-1.5 border-b border-surface-50"><span className="text-surface-500">تاريخ التسجيل</span><span className="text-surface-700">{new Date(user.createdAt).toLocaleDateString('ar')}</span></div>
-          <div className="flex justify-between text-sm py-1.5 border-b border-surface-50"><span className="text-surface-500">آخر دخول</span><span className="text-surface-700">{new Date(user.lastLogin).toLocaleDateString('ar')}</span></div>
-          <div className="flex justify-between text-sm py-1.5"><span className="text-surface-500">نوع الحساب</span><span className="text-primary-600 font-medium">{user.role === 'admin' ? 'مسؤول' : user.role === 'manager' ? 'مدير' : 'مستخدم'}</span></div>
+          <div className="flex justify-between text-sm py-1.5 border-b border-surface-50"><span className="text-surface-500">{t('profile.join_date')}</span><span className="text-surface-700">{new Date(user.createdAt).toLocaleDateString(uiLang === 'it' ? 'it' : 'ar')}</span></div>
+          <div className="flex justify-between text-sm py-1.5 border-b border-surface-50"><span className="text-surface-500">{t('profile.last_login')}</span><span className="text-surface-700">{new Date(user.lastLogin).toLocaleDateString('ar')}</span></div>
+          <div className="flex justify-between text-sm py-1.5"><span className="text-surface-500">{t('profile.account_type')}</span><span className="text-primary-600 font-medium">{user.role === 'admin' ? t('profile.role_admin') : user.role === 'manager' ? t('profile.role_manager') : t('profile.role_user')}</span></div>
         </div>
 
         {!user.profileComplete && (
           <div className="px-5 pb-3">
             <button className="w-full bg-warning-50 text-warning-700 rounded-lg py-2.5 text-sm font-medium border border-warning-200 hover:bg-warning-100" onClick={() => setShowCompleteProfile(true)}>
-              ⚠️ أكمل بياناتك الشخصية
+              {t('profile.complete_profile_btn')}
             </button>
           </div>
         )}
@@ -925,7 +928,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
         <div className="px-5 py-4 border-t border-surface-100">
           <button className="w-full flex items-center justify-center gap-2 bg-danger-50 text-danger-600 rounded-xl py-3 text-sm font-semibold hover:bg-danger-100 transition-colors border border-danger-100" onClick={handleLogout}>
             <Icon name="logout" size={18} />
-            تسجيل الخروج
+            {t('profile.logout')}
           </button>
         </div>
       </div>
@@ -941,8 +944,8 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                   <Icon name="person_add" size={28} className="text-white" filled />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-white leading-tight">أكمل بياناتك الشخصية</h3>
-                  <p className="text-white/70 text-xs mt-0.5">لفتح جميع ميزات التطبيق</p>
+                  <h3 className="text-lg font-black text-white leading-tight">{t('profile.complete_profile_title')}</h3>
+                  <p className="text-white/70 text-xs mt-0.5">{t('profile.complete_profile_unlock')}</p>
                 </div>
               </div>
               {/* Progress steps */}
@@ -952,7 +955,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                 ))}
               </div>
               <p className="text-white/60 text-[10px] mt-1.5">
-                {[profileForm.birthDate, profileForm.province, profileForm.gender, profileForm.phone, profileForm.italianLevel].filter(Boolean).length} / 5 مكتمل
+                {[profileForm.birthDate, profileForm.province, profileForm.gender, profileForm.phone, profileForm.italianLevel].filter(Boolean).length} / 5 {t('profile.completed_of')}
               </p>
             </div>
 
@@ -962,17 +965,17 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="text-[11px] text-surface-500 font-semibold mb-1.5 flex items-center gap-1 uppercase tracking-wide">
-                    <Icon name="cake" size={12} /> تاريخ الميلاد
+                    <Icon name="cake" size={12} /> {t('profile.birth_date')}
                   </label>
                   <input type="date" className="w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary-400" style={{ boxSizing: 'border-box' }}
                     value={profileForm.birthDate} onChange={e => setProfileForm(p => ({ ...p, birthDate: e.target.value }))} />
                 </div>
                 <div>
                   <label className="text-[11px] text-surface-500 font-semibold mb-1.5 flex items-center gap-1 uppercase tracking-wide">
-                    <Icon name="wc" size={12} /> الجنس
+                    <Icon name="wc" size={12} /> {t('profile.gender')}
                   </label>
                   <div className="flex gap-1.5 h-[42px]">
-                    {[{ value: 'male', label: 'ذكر', icon: '♂' }, { value: 'female', label: 'أنثى', icon: '♀' }].map(g => (
+                    {[{ value: 'male', label: t('profile.male'), icon: '♂' }, { value: 'female', label: t('profile.female'), icon: '♀' }].map(g => (
                       <button key={g.value}
                         className={cn('flex-1 rounded-xl border-2 text-xs font-bold transition-all',
                           profileForm.gender === g.value ? 'border-primary-500 bg-primary-50 text-primary-700' : 'border-surface-200 text-surface-500 hover:border-surface-300')}
@@ -987,11 +990,11 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
               {/* Province */}
               <div>
                 <label className="text-[11px] text-surface-500 font-semibold mb-1.5 flex items-center gap-1 uppercase tracking-wide">
-                  <Icon name="location_on" size={12} /> 🇮🇹 المحافظة (Provincia)
+                  <Icon name="location_on" size={12} /> 🇮🇹 {t('profile.province_label')}
                 </label>
                 <select className="w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary-400"
                   value={profileForm.province} onChange={e => setProfileForm(p => ({ ...p, province: e.target.value }))}>
-                  <option value="">اختر مدينتك في إيطاليا...</option>
+                  <option value="">{t('profile.select_city')}</option>
                   {ITALIAN_PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
                 </select>
               </div>
@@ -999,7 +1002,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
               {/* Phone */}
               <div>
                 <label className="text-[11px] text-surface-500 font-semibold mb-1.5 flex items-center gap-1 uppercase tracking-wide">
-                  <Icon name="phone" size={12} /> رقم الهاتف
+                  <Icon name="phone" size={12} /> {t('profile.phone_label')}
                 </label>
                 <div className="flex gap-2">
                   <select className="w-28 border border-surface-200 rounded-xl px-2 py-2.5 text-sm shrink-0 focus:outline-none focus:border-primary-400"
@@ -1014,7 +1017,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                       const val = e.target.value;
                       setProfileForm(p => ({ ...p, phone: val }));
                       const raw = val.replace(/\D/g, '');
-                      if (val && (raw.length < 7 || raw.length > 15)) setProfilePhoneError('رقم غير صالح (7-15 رقم)');
+                      if (val && (raw.length < 7 || raw.length > 15)) setProfilePhoneError(t('profile.phone_invalid'));
                       else setProfilePhoneError('');
                     }} />
                 </div>
@@ -1024,14 +1027,14 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
               {/* Italian level */}
               <div>
                 <label className="text-[11px] text-surface-500 font-semibold mb-1.5 flex items-center gap-1 uppercase tracking-wide">
-                  <Icon name="translate" size={12} /> مستوى اللغة الإيطالية
+                  <Icon name="translate" size={12} /> {t('profile.italian_level')}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    { value: 'weak', label: 'مبتدئ', desc: 'أتعلم الآن', icon: '🌱' },
-                    { value: 'good', label: 'متوسط', desc: 'أفهم الأساسيات', icon: '📖' },
-                    { value: 'very_good', label: 'متقدم', desc: 'أتحدث جيداً', icon: '🎯' },
-                    { value: 'native', label: 'إيطالي', desc: 'لغتي الأم', icon: '🇮🇹' },
+                    { value: 'weak', label: t('profile.level_beginner'), desc: t('profile.level_beginner_desc'), icon: '🌱' },
+                    { value: 'good', label: t('profile.level_medium'), desc: t('profile.level_medium_desc'), icon: '📖' },
+                    { value: 'very_good', label: t('profile.level_advanced'), desc: t('profile.level_advanced_desc'), icon: '🎯' },
+                    { value: 'native', label: t('profile.level_native'), desc: t('profile.level_native_desc'), icon: '🇮🇹' },
                   ].map(l => (
                     <button key={l.value}
                       className={cn('p-2.5 rounded-xl border-2 text-right transition-all',
@@ -1053,10 +1056,10 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
             {/* Actions */}
             <div className="px-5 pb-6 pt-2 flex gap-3 shrink-0 border-t border-surface-50">
               <button className="px-4 py-2.5 text-sm text-surface-400 hover:text-surface-600 transition-colors" onClick={() => setShowCompleteProfile(false)}>
-                لاحقاً
+                {t('profile.later')}
               </button>
               <Button fullWidth onClick={handleSaveProfile}>
-                <Icon name="check_circle" size={16} className="ml-1.5" /> حفظ البيانات
+                <Icon name="check_circle" size={16} className="ml-1.5" /> {t('profile.save_data')}
               </Button>
             </div>
           </div>

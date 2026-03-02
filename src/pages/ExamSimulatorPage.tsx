@@ -3,6 +3,7 @@ import { useAuthStore } from '@/store/authStore';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
+import { useTranslation } from '@/i18n';
 import type { Question } from '@/db/database';
 
 interface Props {
@@ -11,6 +12,7 @@ interface Props {
 
 export function ExamSimulatorPage({ onNavigate }: Props) {
   const { questions, loadQuestions, saveQuizResult, user } = useAuthStore();
+  const { t } = useTranslation();
   const lang = user?.settings.language || 'both';
   const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';
   const falseLabel = lang === 'ar' ? 'خطأ'  : lang === 'it' ? 'Falso' : 'خطأ / Falso';
@@ -97,8 +99,8 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
   if (examQuestions.length === 0 && activeQuestions.length === 0) return (
     <div className="text-center py-20">
       <Icon name="assignment" size={48} className="text-surface-300 mx-auto mb-4" />
-      <p className="text-surface-500 mb-4">لا توجد أسئلة كافية لمحاكاة الامتحان</p>
-      <Button onClick={() => onNavigate('dashboard')}>العودة</Button>
+      <p className="text-surface-500 mb-4">{t('exam.no_questions')}</p>
+      <Button onClick={() => onNavigate('dashboard')}>{t('exam.back')}</Button>
     </div>
   );
 
@@ -106,7 +108,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
   if (phase === 'intro') return (
     <div className="max-w-md mx-auto">
       <button onClick={() => onNavigate('dashboard')} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-4">
-        <Icon name="arrow_forward" size={18} /><span className="text-sm">العودة</span>
+        <Icon name="arrow_forward" size={18} /><span className="text-sm">{t('exam.back')}</span>
       </button>
       <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden">
         {/* Header */}
@@ -115,7 +117,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
             <Icon name="assignment" size={24} className="text-white" filled />
           </div>
           <div className="text-right">
-            <h1 className="text-base font-bold text-surface-900">محاكي امتحان الباتينتي</h1>
+            <h1 className="text-base font-bold text-surface-900">{t('exam.title')}</h1>
             <p className="text-xs text-surface-400">Simulazione Esame Patente B</p>
           </div>
         </div>
@@ -124,10 +126,10 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
           {/* Exam details grid */}
           <div className="grid grid-cols-2 gap-2">
             {[
-              { label: 'عدد الأسئلة', value: String(Math.min(EXAM_QUESTIONS, activeQuestions.length)), icon: 'quiz' },
-              { label: 'الوقت المتاح', value: '30 دقيقة', icon: 'timer' },
-              { label: 'الحد الأقصى للأخطاء', value: `${MAX_ERRORS} أخطاء`, icon: 'close', danger: true },
-              { label: 'نوع الأسئلة', value: 'صحيح / خطأ', icon: 'check_circle' },
+              { label: t('exam.q_count_label'), value: String(Math.min(EXAM_QUESTIONS, activeQuestions.length)), icon: 'quiz' },
+              { label: t('exam.time_label'), value: t('exam.time_value'), icon: 'timer' },
+              { label: t('exam.max_errors_label'), value: `${MAX_ERRORS} ${t('exam.errors_plural')}`, icon: 'close', danger: true },
+              { label: t('exam.q_type_label'), value: t('exam.q_type_value'), icon: 'check_circle' },
             ].map(item => (
               <div key={item.label} className="bg-surface-50 rounded-xl p-3 text-right">
                 <p className="text-[10px] text-surface-400 mb-0.5">{item.label}</p>
@@ -140,13 +142,13 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
           <div className="bg-amber-50 rounded-xl p-3 flex items-start gap-2 border border-amber-100">
             <Icon name="info" size={16} className="text-amber-500 shrink-0 mt-0.5" filled />
             <ul className="text-xs text-amber-700 space-y-0.5 text-right">
-              <li>• يمكنك التنقل بين الأسئلة بحرية وتغيير إجابتك قبل التسليم</li>
-              <li>• أكثر من {MAX_ERRORS} أخطاء = راسب • ينتهي تلقائياً عند انتهاء الوقت</li>
+              <li>• {t('exam.info1')}</li>
+              <li>• {t('exam.errors_detail')} {MAX_ERRORS} {t('exam.errors_allowed')}</li>
             </ul>
           </div>
 
           <Button size="md" fullWidth onClick={start} icon={<Icon name="play_arrow" size={20} />}>
-            ابدأ الامتحان
+            {t('exam.start')}
           </Button>
         </div>
       </div>
@@ -171,10 +173,12 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
             <div className={cn('w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6', passed ? 'bg-success-50' : 'bg-danger-50')}>
               <Icon name={passed ? 'celebration' : 'sentiment_dissatisfied'} size={48} className={passed ? 'text-success-500' : 'text-danger-500'} filled />
             </div>
-            <h1 className="text-3xl font-bold text-surface-900 mb-1">{passed ? 'ناجح!' : 'راسب'}</h1>
+            <h1 className="text-3xl font-bold text-surface-900 mb-1">{passed ? t('exam.passed') : t('exam.failed')}</h1>
             <p className="text-lg text-surface-600 mb-1">{passed ? 'IDONEO' : 'NON IDONEO'}</p>
             <p className="text-surface-500 text-sm mb-6">
-              {passed ? `أحسنت! ارتكبت ${errors} ${errors === 1 ? 'خطأ' : 'أخطاء'} فقط` : `ارتكبت ${errors} أخطاء — المسموح ${MAX_ERRORS} فقط`}
+              {passed
+                ? `${errors} ${errors === 1 ? t('exam.error_singular') : t('exam.errors_plural')}`
+                : `${errors} ${t('exam.errors_plural')} — ${t('exam.errors_allowed')} ${MAX_ERRORS}`}
             </p>
 
             {/* Score circle */}
@@ -192,19 +196,19 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
             <div className="grid grid-cols-4 gap-3 mb-6">
               <div className="bg-success-50 rounded-xl p-3 border border-success-100">
                 <p className="text-xl font-bold text-success-600">{correctCount}</p>
-                <p className="text-[10px] text-success-500">صحيح</p>
+                <p className="text-[10px] text-success-500">{t('exam.correct_label')}</p>
               </div>
               <div className="bg-danger-50 rounded-xl p-3 border border-danger-100">
                 <p className="text-xl font-bold text-danger-600">{errors}</p>
-                <p className="text-[10px] text-danger-500">خطأ</p>
+                <p className="text-[10px] text-danger-500">{t('exam.errors_label')}</p>
               </div>
               <div className="bg-surface-50 rounded-xl p-3 border border-surface-100">
                 <p className="text-xl font-bold text-surface-600">{unanswered}</p>
-                <p className="text-[10px] text-surface-500">بدون إجابة</p>
+                <p className="text-[10px] text-surface-500">{t('exam.unanswered_label')}</p>
               </div>
               <div className="bg-blue-50 rounded-xl p-3 border border-blue-100">
                 <p className="text-xl font-bold text-blue-600">{fmt(elapsed)}</p>
-                <p className="text-[10px] text-blue-500">الوقت</p>
+                <p className="text-[10px] text-blue-500">{t('exam.time_used')}</p>
               </div>
             </div>
 
@@ -213,20 +217,22 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
               <Icon name={passed ? 'check_circle' : 'error'} size={24} className={passed ? 'text-success-500' : 'text-danger-500'} filled />
               <div className="text-right">
                 <p className={cn('text-sm font-bold', passed ? 'text-success-700' : 'text-danger-700')}>
-                  عدد الأخطاء: {errors} من أصل {MAX_ERRORS} مسموح
+                  {t('exam.errors_of')} {errors} / {MAX_ERRORS} {t('exam.errors_allowed')}
                 </p>
                 <p className={cn('text-xs', passed ? 'text-success-500' : 'text-danger-500')}>
-                  {passed ? `لديك هامش ${MAX_ERRORS - errors} ${MAX_ERRORS - errors === 1 ? 'خطأ' : 'أخطاء'} إضافية` : `تجاوزت الحد بـ ${errors - MAX_ERRORS} ${errors - MAX_ERRORS === 1 ? 'خطأ' : 'أخطاء'}`}
+                  {passed
+                    ? `${t('exam.margin')} ${MAX_ERRORS - errors} ${t('exam.extra')}`
+                    : `${t('exam.exceeded')} ${errors - MAX_ERRORS} ${errors - MAX_ERRORS === 1 ? t('exam.error_singular') : t('exam.errors_plural')}`}
                 </p>
               </div>
             </div>
 
             <div className="space-y-3">
               <Button fullWidth variant="secondary" onClick={() => setPhase('review')} icon={<Icon name="visibility" size={20} />}>
-                مراجعة الإجابات
+                {t('exam.review_btn')}
               </Button>
-              <Button fullWidth onClick={start} icon={<Icon name="replay" size={20} />}>إعادة الامتحان</Button>
-              <Button fullWidth variant="outline" onClick={() => onNavigate('dashboard')}>العودة للرئيسية</Button>
+              <Button fullWidth onClick={start} icon={<Icon name="replay" size={20} />}>{t('exam.restart_btn')}</Button>
+              <Button fullWidth variant="outline" onClick={() => onNavigate('dashboard')}>{t('exam.back_home')}</Button>
             </div>
           </div>
         </div>
@@ -244,20 +250,20 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
     return (
       <div className="max-w-2xl mx-auto">
         <button onClick={() => setPhase('result')} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-4">
-          <Icon name="arrow_forward" size={20} /><span className="text-sm">العودة للنتيجة</span>
+          <Icon name="arrow_forward" size={20} /><span className="text-sm">{t('exam.back_result')}</span>
         </button>
         
         {/* Error summary at top */}
         <div className={cn('rounded-xl p-3 mb-4 flex items-center justify-between', totalErrors <= MAX_ERRORS ? 'bg-success-50 border border-success-100' : 'bg-danger-50 border border-danger-100')}>
           <span className={cn('text-sm font-bold', totalErrors <= MAX_ERRORS ? 'text-success-700' : 'text-danger-700')}>
-            {totalErrors <= MAX_ERRORS ? 'ناجح' : 'راسب'}
+            {totalErrors <= MAX_ERRORS ? t('exam.passed_badge') : t('exam.failed_badge')}
           </span>
           <span className={cn('text-sm font-bold', totalErrors <= MAX_ERRORS ? 'text-success-600' : 'text-danger-600')}>
-            الأخطاء: {totalErrors}/{MAX_ERRORS}
+            {t('exam.errors_of')} {totalErrors}/{MAX_ERRORS}
           </span>
         </div>
 
-        <h2 className="text-xl font-bold text-surface-900 mb-4">مراجعة الإجابات</h2>
+        <h2 className="text-xl font-bold text-surface-900 mb-4">{t('exam.review_title')}</h2>
         <div className="space-y-3">
           {examQuestions.map((q, i) => {
             const userAns = answers[i];
@@ -273,10 +279,10 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
                     {(lang === 'it' || lang === 'both') && <p className="text-sm text-surface-500 mb-2" dir="ltr">{q.questionIt}</p>}
                     <div className="flex items-center gap-4 text-xs">
                       <span className={cn('px-2 py-0.5 rounded-full', userAns === undefined ? 'bg-surface-100 text-surface-500' : correct ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600')}>
-                        إجابتك: {userAns === undefined ? 'لم تُجب' : userAns ? trueLabel : falseLabel}
+                        {t('exam.your_answer')} {userAns === undefined ? t('exam.not_answered') : userAns ? trueLabel : falseLabel}
                       </span>
                       <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
-                        الصحيح: {q.isTrue ? trueLabel : falseLabel}
+                        {t('exam.correct')} {q.isTrue ? trueLabel : falseLabel}
                       </span>
                     </div>
                     {(lang === 'ar' || lang === 'both') && q.explanationAr && (
@@ -318,19 +324,19 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
             <div className="w-14 h-14 bg-warning-50 rounded-full flex items-center justify-center mx-auto mb-4">
               <Icon name="warning" size={30} className="text-warning-500" filled />
             </div>
-            <h3 className="text-lg font-bold text-surface-900 text-center mb-2">لم تُجب على جميع الأسئلة!</h3>
+            <h3 className="text-lg font-bold text-surface-900 text-center mb-2">{t('exam.not_answered_warning')}</h3>
             <p className="text-sm text-surface-600 text-center mb-1">
-              تبقّت لديك <strong className="text-danger-600">{unansweredCount} سؤال</strong> بدون إجابة.
+              {t('exam.remaining_q')} <strong className="text-danger-600">{unansweredCount}</strong> {t('exam.q_without_answer')}
             </p>
-            <p className="text-xs text-surface-400 text-center mb-5">الأسئلة غير المجابة ستُحتسب أخطاء.</p>
+            <p className="text-xs text-surface-400 text-center mb-5">{t('exam.unanswered_counted')}</p>
             <div className="grid grid-cols-2 gap-3">
               <button onClick={() => setShowSubmitWarning(false)}
                 className="py-2.5 rounded-xl border-2 border-surface-200 text-sm font-semibold text-surface-600 hover:bg-surface-50 transition-all">
-                العودة للمراجعة
+                {t('exam.back_review')}
               </button>
               <button onClick={() => { setShowSubmitWarning(false); finishExam(); }}
                 className="py-2.5 rounded-xl bg-danger-500 text-white text-sm font-bold hover:bg-danger-600 transition-all">
-                تسليم رغماً
+                {t('exam.force_submit')}
               </button>
             </div>
           </div>
@@ -340,7 +346,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
       {/* Exam Header */}
       <div className="bg-white rounded-xl border border-surface-100 p-3 mb-3">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-bold text-surface-700">محاكي الامتحان</span>
+          <span className="text-sm font-bold text-surface-700">{t('exam.simulator_label')}</span>
           <button
             onClick={handleSubmitClick}
             className={cn(
@@ -350,7 +356,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
                 : 'bg-surface-100 text-surface-600 hover:bg-surface-200'
             )}>
             <Icon name="send" size={15} />
-            تسليم
+            {t('exam.submit_btn')}
           </button>
         </div>
         <div className="flex items-center justify-between">
@@ -361,7 +367,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
             {fmt(remaining)}
           </div>
           <div className="text-xs font-semibold text-surface-500 bg-surface-50 px-2.5 py-1.5 rounded-lg">
-            {answeredCount}/{examQuestions.length} مُجاب
+            {answeredCount}/{examQuestions.length} {t('exam.answered_label')}
           </div>
           <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-500" onClick={() => setShowGrid(!showGrid)}>
             <Icon name="grid_view" size={20} />
@@ -372,7 +378,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
       {/* Question Navigation Grid */}
       {showGrid && (
         <div className="bg-white rounded-xl border border-surface-100 p-4 mb-3">
-          <p className="text-xs font-semibold text-surface-600 mb-3">انتقل إلى سؤال:</p>
+          <p className="text-xs font-semibold text-surface-600 mb-3">{t('exam.go_to_q')}</p>
           <div className="grid grid-cols-10 gap-1.5">
             {examQuestions.map((_, i) => {
               const isAnswered = answers[i] !== undefined;
@@ -402,11 +408,11 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
 
         {/* Card header */}
         <div className="bg-surface-50 px-5 py-3 flex items-center justify-between border-b border-surface-100 shrink-0">
-          <span className="text-sm font-bold text-surface-700">سؤال {currentIndex + 1} من {examQuestions.length}</span>
+          <span className="text-sm font-bold text-surface-700">{t('exam.q_number')} {currentIndex + 1} {t('exam.of')} {examQuestions.length}</span>
           <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium',
             q.difficulty === 'easy' ? 'bg-success-50 text-success-600' : q.difficulty === 'medium' ? 'bg-warning-50 text-warning-600' : 'bg-danger-50 text-danger-600'
           )}>
-            {q.difficulty === 'easy' ? 'سهل' : q.difficulty === 'medium' ? 'متوسط' : 'صعب'}
+            {q.difficulty === 'easy' ? t('exam.difficulty_easy') : q.difficulty === 'medium' ? t('exam.difficulty_medium') : t('exam.difficulty_hard')}
           </span>
         </div>
 
@@ -452,7 +458,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
             onClick={prevQuestion}
             disabled={currentIndex === 0}
           >
-            <Icon name="chevron_right" size={18} /> السابق
+            <Icon name="chevron_right" size={18} /> {t('exam.prev')}
           </button>
           <span className="text-xs text-surface-400 font-medium tabular-nums">
             {currentIndex + 1} / {examQuestions.length}
@@ -464,7 +470,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
             onClick={nextQuestion}
             disabled={currentIndex >= examQuestions.length - 1}
           >
-            التالي <Icon name="chevron_left" size={18} />
+            {t('exam.next')} <Icon name="chevron_left" size={18} />
           </button>
         </div>
       </div>

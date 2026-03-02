@@ -3,6 +3,7 @@ import { useAuthStore } from '@/store/authStore';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
+import { useTranslation } from '@/i18n';
 import { getDB } from '@/db/database';
 import type { Comment, Post, Hashtag } from '@/db/database';
 import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
@@ -73,19 +74,21 @@ function renderWithMentionsAndHashtags(
 }
 
 // Relative time formatter — used for posts, comments, replies, notifications
-function relativeTime(iso: string): string {
+function relativeTime(iso: string, uiLang?: string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'الآن';
-  if (mins < 60) return `منذ ${mins} د`;
+  const isIt = uiLang === 'it';
+  if (mins < 1) return isIt ? 'adesso' : 'الآن';
+  if (mins < 60) return isIt ? `${mins} min fa` : `منذ ${mins} د`;
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `منذ ${hours} س`;
+  if (hours < 24) return isIt ? `${hours} h fa` : `منذ ${hours} س`;
   const days = Math.floor(hours / 24);
-  if (days < 7) return `منذ ${days} يوم`;
-  return new Date(iso).toLocaleDateString('ar');
+  if (days < 7) return isIt ? `${days} giorni fa` : `منذ ${days} يوم`;
+  return new Date(iso).toLocaleDateString(isIt ? 'it' : 'ar');
 }
 
 export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
+  const { t, uiLang } = useTranslation();
   const { posts, loadPosts, createPost, updatePost, deletePost, toggleLike, checkLike, getComments, createComment, deleteComment, createReport, user, communityNotifs, loadCommunityNotifs, markNotifRead, markAllNotifsRead } = useAuthStore();
   const [newPost, setNewPost] = useState('');
   const [posting, setPosting] = useState(false);
@@ -167,7 +170,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
       const map: Record<string, { userId: string; userName: string; userAvatar: string }[]> = {};
       for (const l of allLikes) {
         if (!map[l.postId]) map[l.postId] = [];
-        map[l.postId].push({ userId: l.userId, userName: userMap[l.userId]?.name || 'مستخدم', userAvatar: userMap[l.userId]?.avatar || '' });
+        map[l.postId].push({ userId: l.userId, userName: userMap[l.userId]?.name || t('community.user_label'), userAvatar: userMap[l.userId]?.avatar || '' });
       }
       setPostLikers(map);
     })();
@@ -341,7 +344,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
   const canReply = !restrictions || restrictions.canReply !== false;
 
   const handlePost = async () => {
-    if (!canPost) { alert('تم تقييد نشرك في المجتمع من قبل المسؤول'); return; }
+    if (!canPost) { alert(t('community.restricted_post')); return; }
     if (postType === 'post' && !newPost.trim()) return;
     if (postType === 'quiz' && !quizQuestion.trim()) return;
     setPosting(true);
@@ -429,7 +432,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
   };
 
   const handleComment = async (postId: string) => {
-    if (!canComment) { alert('تم تقييد تعليقك في المجتمع من قبل المسؤول'); return; }
+    if (!canComment) { alert(t('community.restricted_comment')); return; }
     if (!newComment.trim()) return;
     await createComment(postId, newComment);
     // Send mention notifications
@@ -451,7 +454,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
   };
 
   const handleReply = async (postId: string) => {
-    if (!canReply) { alert('تم تقييد ردودك في المجتمع من قبل المسؤول'); return; }
+    if (!canReply) { alert(t('community.restricted_reply')); return; }
     if (!replyContent.trim() || !replyingTo) return;
     await createComment(postId, `REPLY_TO:${replyingTo.commentId}:${replyContent}`);
     await sendMentionNotifs(replyContent, postId);
@@ -728,7 +731,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
             {renderWithMentionsAndHashtags(text, handleMentionClick, handleHashtagClick)}
           </p>
           <button className="text-primary-500 text-xs font-medium mt-1 hover:text-primary-700" onClick={() => toggleExpandText(post.id)}>
-            عرض أقل
+            {t('community.show_less')}
           </button>
         </div>
       );
@@ -741,7 +744,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
           {renderWithMentionsAndHashtags(truncated, handleMentionClick, handleHashtagClick)}
         </p>
         <button className="text-primary-500 text-xs font-medium mt-1 hover:text-primary-700" onClick={() => toggleExpandText(post.id)}>
-          عرض المزيد
+          {t('community.show_more')}
         </button>
       </div>
     );
@@ -760,7 +763,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
           <div className="flex-1 bg-white rounded-xl px-3 py-2">
             <div className="flex items-center justify-between">
               <UserName userId={c.userId} name={c.userName} className="text-xs text-surface-800" onClick={() => openUserProfile(c.userId)} />
-              <span className="text-[10px] text-surface-400">{relativeTime(c.createdAt)}</span>
+              <span className="text-[10px] text-surface-400">{relativeTime(c.createdAt, uiLang)}</span>
             </div>
             <p dir="auto" className="text-sm text-surface-600 mt-0.5">{renderWithMentionsAndHashtags(c.content, handleMentionClick, handleHashtagClick)}</p>
             <div className="flex items-center gap-3 mt-1.5">
@@ -799,7 +802,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                     <UserName userId={r.userId} name={r.userName} className="text-xs text-surface-800" onClick={() => openUserProfile(r.userId)} />
                     <Icon name="arrow_back" size={10} className="text-surface-300" />
                     <span className="text-[10px] text-primary-500">{c.userName}</span>
-                    <span className="text-[10px] text-surface-400 mr-auto">{relativeTime(r.createdAt)}</span>
+                    <span className="text-[10px] text-surface-400 mr-auto">{relativeTime(r.createdAt, uiLang)}</span>
                   </div>
                   <p dir="auto" className="text-sm text-surface-600 mt-0.5">{renderWithMentionsAndHashtags(getReplyContent(r), handleMentionClick, handleHashtagClick)}</p>
                   <div className="flex items-center gap-3 mt-1.5">
@@ -824,7 +827,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
             {hasMoreReplies && (
               <button className="text-xs text-primary-500 font-medium mr-8 hover:text-primary-700"
                 onClick={() => openPostDetail(postId)}>
-                عرض كل الردود ({replies.length})
+                {t('community.show_all_replies')} ({replies.length})
               </button>
             )}
           </div>
@@ -834,12 +837,12 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
           <div className="mr-8 flex gap-2 items-center">
             <div className="flex-1 relative">
               <input dir="auto" className="w-full border border-primary-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-100 pr-16"
-                placeholder={`رد على ${replyingTo.userName}...`} value={replyContent}
+                placeholder={`${t('community.reply')} ${replyingTo.userName}...`} value={replyContent}
                 onChange={e => setReplyContent(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') handleReply(isDetail ? detailPostId! : postId); }}
                 autoFocus />
               <button className="absolute left-1 top-1/2 -translate-y-1/2 text-xs text-surface-400 hover:text-surface-600 px-2"
-                onClick={() => { setReplyingTo(null); setReplyContent(''); }}>إلغاء</button>
+                onClick={() => { setReplyingTo(null); setReplyContent(''); }}>{t('common.cancel')}</button>
             </div>
             <Button size="sm" onClick={() => handleReply(isDetail ? detailPostId! : postId)} disabled={!replyContent.trim()}>
               <Icon name="send" size={14} />
@@ -873,19 +876,19 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
         {post.pinned && (
           <div className="bg-amber-50 px-4 py-1.5 flex items-center gap-1.5 border-b border-amber-100">
             <Icon name="push_pin" size={14} className="text-amber-500" filled />
-            <span className="text-xs font-semibold text-amber-600">منشور مثبت</span>
+            <span className="text-xs font-semibold text-amber-600">{t('community.pinned')}</span>
           </div>
         )}
         {post.featured && !post.pinned && (
           <div className="bg-blue-50 px-4 py-1.5 flex items-center gap-1.5 border-b border-blue-100">
             <Icon name="star" size={14} className="text-blue-500" filled />
-            <span className="text-xs font-semibold text-blue-600">منشور مميز</span>
+            <span className="text-xs font-semibold text-blue-600">{t('community.featured')}</span>
           </div>
         )}
         {post.locked && (
           <div className="bg-surface-50 px-4 py-1 flex items-center gap-1.5 border-b border-surface-100">
             <Icon name="lock" size={12} className="text-surface-400" />
-            <span className="text-[11px] text-surface-400">التعليقات مغلقة</span>
+            <span className="text-[11px] text-surface-400">{t('community.comments_locked_label')}</span>
           </div>
         )}
 
@@ -896,29 +899,29 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
               <div>
                 <div className="flex items-center gap-1">
                   <UserName userId={post.userId} name={post.userName} className="text-sm text-surface-900" onClick={() => openUserProfile(post.userId)} />
-                  {isQuiz && <span className="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded-full font-medium">سؤال</span>}
+                  {isQuiz && <span className="text-[10px] bg-purple-50 text-purple-600 px-1.5 py-0.5 rounded-full font-medium">{t('community.quiz_badge')}</span>}
                 </div>
                 {getUserUsername(post.userId) && (
                   <p className="text-[11px] text-surface-400">@{getUserUsername(post.userId)}</p>
                 )}
-                <p className="text-xs text-surface-400">{relativeTime(post.createdAt)}</p>
+                <p className="text-xs text-surface-400">{relativeTime(post.createdAt, uiLang)}</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
               {isAdminUser && (
                 <>
                   <button className={cn('p-1.5 rounded-lg hover:bg-surface-100', post.pinned ? 'text-amber-500' : 'text-surface-400')}
-                    onClick={() => togglePinPost(post.id)} title={post.pinned ? 'إلغاء التثبيت' : 'تثبيت'}>
+                    onClick={() => togglePinPost(post.id)} title={post.pinned ? 'Rimuovi pin' : 'Fissa'}>
                     <Icon name="push_pin" size={18} filled={post.pinned} />
                   </button>
                   <button className={cn('p-1.5 rounded-lg hover:bg-surface-100', post.featured ? 'text-blue-500' : 'text-surface-400')}
                     onClick={async () => { const { token } = useAuthStore.getState(); if (token) { await api.apiFeaturePost(token, post.id, !post.featured); loadPosts(postSortMode, activeHashtag ?? undefined); } }}
-                    title={post.featured ? 'إلغاء التمييز' : 'تمييز'}>
+                    title={post.featured ? 'Togli evidenza' : 'Evidenzia'}>
                     <Icon name="star" size={18} filled={post.featured} />
                   </button>
                   <button className={cn('p-1.5 rounded-lg hover:bg-surface-100', post.locked ? 'text-surface-600' : 'text-surface-400')}
                     onClick={async () => { const { token } = useAuthStore.getState(); if (token) { await api.apiLockPost(token, post.id, !post.locked); loadPosts(postSortMode, activeHashtag ?? undefined); } }}
-                    title={post.locked ? 'فتح التعليقات' : 'قفل التعليقات'}>
+                    title={post.locked ? 'Sblocca commenti' : 'Blocca commenti'}>
                     <Icon name={post.locked ? 'lock' : 'lock_open'} size={18} />
                   </button>
                 </>
@@ -945,8 +948,8 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
             <div className="space-y-2">
               <textarea dir="auto" className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none" rows={3} value={editContent} onChange={e => setEditContent(e.target.value)} />
               <div className="flex gap-2 justify-end">
-                <Button size="sm" variant="ghost" onClick={() => setEditingPost(null)}>إلغاء</Button>
-                <Button size="sm" onClick={() => handleEdit(post.id)}>حفظ</Button>
+                <Button size="sm" variant="ghost" onClick={() => setEditingPost(null)}>{t('common.cancel')}</Button>
+                <Button size="sm" onClick={() => handleEdit(post.id)}>{t('common.save')}</Button>
               </div>
             </div>
           ) : (
@@ -959,7 +962,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
               {hasVoted ? (
                 <div className="space-y-2">
                   <div className={cn('flex items-center justify-between p-2.5 rounded-lg border', post.quizAnswer === true ? 'bg-success-50 border-success-200' : quizSelected[post.id] === true ? 'bg-danger-50 border-danger-200' : 'bg-white border-surface-200')}>
-                    <span className="text-sm font-medium">صحيح (Vero)</span>
+                    <span className="text-sm font-medium">{t('community.quiz_correct_opt')}</span>
                     <div className="flex items-center gap-2">
                       {post.quizAnswer === true && <Icon name="check_circle" size={16} className="text-success-500" filled />}
                       <div className="w-20 bg-surface-200 rounded-full h-1.5"><div className="bg-primary-500 rounded-full h-1.5" style={{ width: `${truePct}%` }} /></div>
@@ -967,29 +970,29 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                     </div>
                   </div>
                   <div className={cn('flex items-center justify-between p-2.5 rounded-lg border', post.quizAnswer === false ? 'bg-success-50 border-success-200' : quizSelected[post.id] === false ? 'bg-danger-50 border-danger-200' : 'bg-white border-surface-200')}>
-                    <span className="text-sm font-medium">خطأ (Falso)</span>
+                    <span className="text-sm font-medium">{t('community.quiz_wrong_opt')}</span>
                     <div className="flex items-center gap-2">
                       {post.quizAnswer === false && <Icon name="check_circle" size={16} className="text-success-500" filled />}
                       <div className="w-20 bg-surface-200 rounded-full h-1.5"><div className="bg-primary-500 rounded-full h-1.5" style={{ width: `${falsePct}%` }} /></div>
                       <span className="text-xs text-surface-600 w-8 text-left">{falsePct}%</span>
                     </div>
                   </div>
-                  <p className="text-xs text-surface-400 text-center mt-1">{totalAns} شخص أجاب</p>
+                  <p className="text-xs text-surface-400 text-center mt-1">{totalAns} {t('community.quiz_voted')}</p>
                   {quizSelected[post.id] !== post.quizAnswer && (
                     <div className="bg-danger-50 rounded-lg p-2 border border-danger-100 mt-2">
-                      <p className="text-xs text-danger-600 flex items-center gap-1"><Icon name="info" size={14} /> إجابتك خاطئة — الصحيح: {post.quizAnswer ? 'صحيح' : 'خطأ'}</p>
+                      <p className="text-xs text-danger-600 flex items-center gap-1"><Icon name="info" size={14} /> {t('community.quiz_wrong_feedback')} {post.quizAnswer ? t('community.quiz_correct_opt') : t('community.quiz_wrong_opt')}</p>
                     </div>
                   )}
                   {quizSelected[post.id] === post.quizAnswer && (
                     <div className="bg-success-50 rounded-lg p-2 border border-success-100 mt-2">
-                      <p className="text-xs text-success-600 flex items-center gap-1"><Icon name="check_circle" size={14} /> إجابة صحيحة!</p>
+                      <p className="text-xs text-success-600 flex items-center gap-1"><Icon name="check_circle" size={14} /> {t('community.quiz_right_feedback')}</p>
                     </div>
                   )}
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-2">
-                  <button className="p-3 rounded-xl border-2 border-success-200 hover:bg-success-50 text-success-700 font-medium text-sm" onClick={() => handleQuizAnswer(post.id, true)}>صحيح (Vero)</button>
-                  <button className="p-3 rounded-xl border-2 border-danger-200 hover:bg-danger-50 text-danger-700 font-medium text-sm" onClick={() => handleQuizAnswer(post.id, false)}>خطأ (Falso)</button>
+                  <button className="p-3 rounded-xl border-2 border-success-200 hover:bg-success-50 text-success-700 font-medium text-sm" onClick={() => handleQuizAnswer(post.id, true)}>{t('community.quiz_correct_opt')}</button>
+                  <button className="p-3 rounded-xl border-2 border-danger-200 hover:bg-danger-50 text-danger-700 font-medium text-sm" onClick={() => handleQuizAnswer(post.id, false)}>{t('community.quiz_wrong_opt')}</button>
                 </div>
               )}
             </div>
@@ -1007,7 +1010,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
             <button
               className="flex items-center gap-0.5 hover:opacity-80 transition-opacity"
               onClick={() => setLikersModal({ postId: post.id, likers: postLikers[post.id] || [] })}
-              title="عرض الإعجابات">
+              title={t('community.likers_title')}>
               <div className="flex -space-x-1.5 rtl:space-x-reverse">
                 {(postLikers[post.id] || []).slice(0, 3).map((liker, i) => (
                   <div key={i} className="w-5 h-5 rounded-full border-2 border-white overflow-hidden shrink-0 shadow-sm"
@@ -1027,18 +1030,18 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
           <button
             className={cn('flex items-center gap-1 text-sm', post.locked ? 'text-surface-400 hover:text-surface-600' : 'text-surface-400 hover:text-primary-500')}
             onClick={() => openComments(post.id)}
-            title={post.locked ? 'التعليقات مغلقة — عرض فقط' : undefined}>
+            title={post.locked ? t('community.comments_locked_label') : undefined}>
             <Icon name={post.locked ? 'lock' : 'chat_bubble'} size={20} />{post.commentsCount}
           </button>
           <button
             className={cn('flex items-center gap-1 text-sm mr-auto', savedPosts.includes(post.id) ? 'text-primary-500' : 'text-surface-400 hover:text-primary-400')}
             onClick={() => toggleSavePost(post.id)}
-            title={savedPosts.includes(post.id) ? 'إلغاء الحفظ' : 'حفظ المنشور'}>
+            title={savedPosts.includes(post.id) ? t('community.unsave_post') : t('community.save_post')}>
             <Icon name="bookmark" size={20} filled={savedPosts.includes(post.id)} />
           </button>
           {!showAllComments && post.commentsCount > 3 && (
             <button className="text-xs text-primary-500 font-medium hover:text-primary-700" onClick={() => openPostDetail(post.id)}>
-              عرض كل التعليقات
+              {t('community.view_all_comments')}
             </button>
           )}
         </div>
@@ -1048,20 +1051,20 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
             {post.locked && (
               <div className="flex items-center gap-2 bg-surface-100 rounded-xl px-3 py-2 border border-surface-200">
                 <Icon name="lock" size={14} className="text-surface-400" />
-                <span className="text-xs text-surface-500">التعليقات مغلقة — لا يمكن إضافة تعليقات جديدة</span>
+                <span className="text-xs text-surface-500">{t('community.comments_locked_notice')}</span>
               </div>
             )}
             {previewCmts.map(c => renderComment(c, post.id, currentAllCmts, showAllComments))}
             {hasMoreCmts && (
               <button className="w-full text-center text-sm text-primary-500 font-medium py-2 hover:text-primary-700" onClick={() => openPostDetail(post.id)}>
-                عرض كل التعليقات ({currentCmts.length})
+                {t('community.view_all_comments')} ({currentCmts.length})
               </button>
             )}
             {!post.locked && (
               <div className="flex gap-2 items-center relative">
                 <UserAvatar avatar={user?.avatar} name={user?.name || '?'} size="sm" />
                 <div className="flex-1 relative">
-                  <input dir="auto" className="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm focus:border-primary-500" placeholder="اكتب تعليقاً... (@اسم للإشارة)" value={newComment} onChange={e => handleTextChange(e.target.value, setNewComment)}
+                  <input dir="auto" className="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm focus:border-primary-500" placeholder={t('community.comment_placeholder')} value={newComment} onChange={e => handleTextChange(e.target.value, setNewComment)}
                     onKeyDown={e => { if (e.key === 'Enter') handleComment(post.id); }} />
                   {mentionSuggestions.length > 0 && <MentionDropdown suggestions={mentionSuggestions} onSelect={u => insertMention(u.username || u.name, newComment, setNewComment)} />}
                 </div>
@@ -1083,7 +1086,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
     return (
       <div className="max-w-2xl mx-auto">
         <button onClick={() => { setDetailPostId(null); setDetailComments([]); }} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-4">
-          <Icon name="arrow_forward" size={20} /><span className="text-sm">العودة</span>
+          <Icon name="arrow_forward" size={20} /><span className="text-sm">{t('community.back')}</span>
         </button>
         {renderPost(post, true)}
       </div>
@@ -1123,8 +1126,8 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
     <div className="max-w-2xl mx-auto">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-surface-900 mb-1">المجتمع</h1>
-          <p className="text-surface-500 text-sm">شارك تجربتك مع الآخرين</p>
+          <h1 className="text-2xl font-bold text-surface-900 mb-1">{t('community.title')}</h1>
+          <p className="text-surface-500 text-sm">{t('community.desc')}</p>
         </div>
         {/* Search + Bookmarks + Trending + Notifications */}
         <div className="flex items-center gap-2">
@@ -1132,7 +1135,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
           <button
             className={cn('w-10 h-10 rounded-xl flex items-center justify-center hover:bg-surface-200 transition-colors', showSearch ? 'bg-primary-100' : 'bg-surface-100')}
             onClick={() => { setShowSearch(s => !s); if (showSearch) setSearchQuery(''); setShowBookmarks(false); setShowTrending(false); setShowNotifs(false); }}
-            title="بحث">
+            title={t('community.search_placeholder')}>
             <Icon name="search" size={22} className={showSearch ? 'text-primary-600' : 'text-surface-600'} />
           </button>
           {/* Bookmarks */}
@@ -1140,7 +1143,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
             <button
               className={cn('relative w-10 h-10 rounded-xl flex items-center justify-center hover:bg-surface-200 transition-colors', showBookmarks ? 'bg-primary-100' : 'bg-surface-100')}
               onClick={() => { setShowBookmarks(!showBookmarks); setShowNotifs(false); }}
-              title="المنشورات المحفوظة">
+              title={t('community.bookmarks_title')}>
               <Icon name="bookmark" size={22} className={showBookmarks ? 'text-primary-600' : 'text-surface-600'} filled={showBookmarks} />
               {savedPosts.length > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">{savedPosts.length > 9 ? '9+' : savedPosts.length}</span>
@@ -1151,13 +1154,13 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                 <div className="flex items-center justify-between p-4 border-b border-surface-100 bg-surface-50">
                   <div className="flex items-center gap-2">
                     <Icon name="bookmark" size={18} className="text-primary-500" filled />
-                    <h3 className="font-bold text-surface-900">المنشورات المحفوظة</h3>
+                    <h3 className="font-bold text-surface-900">{t('community.bookmarks_title')}</h3>
                     <span className="bg-primary-100 text-primary-600 text-[10px] font-bold px-1.5 py-0.5 rounded-full">{savedPosts.length}</span>
                   </div>
                   {savedPosts.length > 0 && (
                     <button className="text-xs text-danger-500 hover:text-danger-700 font-medium"
                       onClick={() => setConfirmClearBookmarks(true)}>
-                      مسح الكل
+                      {t('community.clear_all')}
                     </button>
                   )}
                 </div>
@@ -1165,28 +1168,28 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                   {savedPosts.length === 0 ? (
                     <div className="p-8 text-center">
                       <Icon name="bookmark_border" size={36} className="text-surface-200 mx-auto mb-2" />
-                      <p className="text-sm text-surface-400">لا توجد منشورات محفوظة</p>
-                      <p className="text-xs text-surface-300 mt-1">اضغط على أيقونة الحفظ في أي منشور</p>
+                      <p className="text-sm text-surface-400">{t('community.no_saved')}</p>
+                      <p className="text-xs text-surface-300 mt-1">{t('community.press_to_save')}</p>
                     </div>
                   ) : (() => {
                     const savedList = posts.filter(p => savedPosts.includes(p.id));
                     return savedList.length === 0 ? (
-                      <div className="p-6 text-center text-sm text-surface-400">المنشورات المحفوظة غير متاحة</div>
+                      <div className="p-6 text-center text-sm text-surface-400">{t('community.saved_unavailable')}</div>
                     ) : savedList.map(p => (
                       <div key={p.id}>
                         {confirmDeleteBookmarkId === p.id ? (
                           <div className="p-3 bg-danger-50 border-b border-danger-100">
-                            <p className="text-xs font-semibold text-danger-700 mb-2 text-center">هل تريد حذف هذا المنشور من المحفوظات؟</p>
+                            <p className="text-xs font-semibold text-danger-700 mb-2 text-center">{t('community.confirm_remove_bookmark')}</p>
                             <div className="flex gap-2">
                               <button
                                 className="flex-1 py-1.5 rounded-lg bg-danger-500 text-white text-xs font-bold hover:bg-danger-600 transition-colors"
                                 onClick={e => { e.stopPropagation(); toggleSavePost(p.id); setConfirmDeleteBookmarkId(null); setBookmarkRemovedToast(true); setTimeout(() => setBookmarkRemovedToast(false), 2500); }}>
-                                حذف
+                                {t('community.delete_btn')}
                               </button>
                               <button
                                 className="flex-1 py-1.5 rounded-lg bg-white border border-surface-200 text-xs font-medium text-surface-600 hover:bg-surface-50 transition-colors"
                                 onClick={e => { e.stopPropagation(); setConfirmDeleteBookmarkId(null); }}>
-                                إلغاء
+                                {t('common.cancel')}
                               </button>
                             </div>
                           </div>
@@ -1221,20 +1224,20 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
             <button
               className={cn('relative w-10 h-10 rounded-xl flex items-center justify-center hover:bg-surface-200 transition-colors', showTrending ? 'bg-primary-100' : 'bg-surface-100')}
               onClick={() => { setShowTrending(!showTrending); setShowBookmarks(false); setShowNotifs(false); }}
-              title="الوسوم الرائجة">
+              title={t('community.trending_title')}>
               <Icon name="trending_up" size={22} className={showTrending ? 'text-primary-600' : 'text-surface-600'} filled={showTrending} />
             </button>
             {showTrending && (
               <div className="absolute left-0 top-12 bg-white rounded-2xl shadow-2xl border border-surface-100 z-50 overflow-hidden" style={{ width: 300 }}>
                 <div className="flex items-center gap-2 p-4 border-b border-surface-100 bg-surface-50">
                   <Icon name="trending_up" size={18} className="text-primary-500" filled />
-                  <h3 className="font-bold text-surface-900">الوسوم الرائجة</h3>
+                  <h3 className="font-bold text-surface-900">{t('community.trending_title')}</h3>
                 </div>
                 <div className="p-3">
                   {trendingHashtags.length === 0 ? (
                     <div className="py-6 text-center">
                       <Icon name="tag" size={32} className="text-surface-200 mx-auto mb-2" />
-                      <p className="text-sm text-surface-400">لا توجد وسوم رائجة بعد</p>
+                      <p className="text-sm text-surface-400">{t('community.no_trending')}</p>
                     </div>
                   ) : (
                     <div className="flex flex-wrap gap-2">
@@ -1276,7 +1279,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
               <div className="flex items-center justify-between p-4 border-b border-surface-100 bg-surface-50">
                 <div className="flex items-center gap-2">
                   <Icon name="notifications" size={18} className="text-primary-500" filled />
-                  <h3 className="font-bold text-surface-900">الإشعارات</h3>
+                  <h3 className="font-bold text-surface-900">{t('community.notifications_title')}</h3>
                   {unreadNotifs > 0 && (
                     <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{unreadNotifs}</span>
                   )}
@@ -1284,7 +1287,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                 {unreadNotifs > 0 && (
                   <button className="text-xs text-primary-600 hover:text-primary-700 font-medium"
                     onClick={() => markAllNotifsRead()}>
-                    تعيين كمقروء
+                    {t('community.mark_read')}
                   </button>
                 )}
               </div>
@@ -1293,7 +1296,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                 {(communityNotifs as any[]).length === 0 ? (
                   <div className="p-8 text-center">
                     <Icon name="notifications_none" size={36} className="text-surface-200 mx-auto mb-2" />
-                    <p className="text-sm text-surface-400">لا توجد إشعارات بعد</p>
+                    <p className="text-sm text-surface-400">{t('community.no_notifications')}</p>
                   </div>
                 ) : (communityNotifs as Record<string, unknown>[]).map(n => {
                   const type = String(n.type);
@@ -1319,23 +1322,23 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                           )}
                           <p className="text-xs text-surface-800 leading-snug">
                             <span className="font-semibold">{String(n.fromUserName)}</span>
-                            {type === 'like' && ' ❤️ أعجب بمنشورك'}
-                            {type === 'comment' && ' 💬 علّق على منشورك'}
-                            {type === 'reply' && ' ↩️ ردّ على تعليقك'}
-                            {type === 'mention' && ' 📢 ذكرك في منشور'}
-                            {type === 'follow' && ' 👤 بدأ بمتابعتك'}
+                            {type === 'like' && ` ${t('community.notif_liked')}`}
+                            {type === 'comment' && ` ${t('community.notif_commented')}`}
+                            {type === 'reply' && ` ${t('community.notif_replied')}`}
+                            {type === 'mention' && ` ${t('community.notif_mentioned')}`}
+                            {type === 'follow' && ` ${t('community.notif_followed')}`}
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <p className="text-[10px] text-surface-400">{relativeTime(String(n.createdAt))}</p>
+                          <p className="text-[10px] text-surface-400">{relativeTime(String(n.createdAt), uiLang)}</p>
                           {type === 'follow' && (
                             <span className="text-[10px] text-primary-500 font-medium flex items-center gap-0.5">
-                              <Icon name="person" size={10} /> افتح الملف الشخصي
+                              <Icon name="person" size={10} /> {t('community.open_profile')}
                             </span>
                           )}
                           {type !== 'follow' && !!n.postId && (
                             <span className="text-[10px] text-primary-500 font-medium flex items-center gap-0.5">
-                              <Icon name="open_in_new" size={10} /> افتح المنشور
+                              <Icon name="open_in_new" size={10} /> {t('community.open_post')}
                             </span>
                           )}
                         </div>
@@ -1348,7 +1351,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {(communityNotifs as any[]).length > 0 && (
                 <div className="p-2 border-t border-surface-100 bg-surface-50 text-center">
-                  <p className="text-[10px] text-surface-400">اضغط على الإشعار لفتح المنشور أو الملف الشخصي</p>
+                  <p className="text-[10px] text-surface-400">{t('community.notif_footer')}</p>
                 </div>
               )}
             </div>
@@ -1366,7 +1369,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              placeholder="ابحث في المجتمع..."
+              placeholder={t('community.search_placeholder')}
               className="w-full bg-white border border-surface-200 rounded-xl pr-10 pl-10 py-3 text-sm focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
               dir="auto"
               autoFocus
@@ -1379,7 +1382,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
           </div>
           {searchQuery && (
             <p className="text-xs text-surface-400 mt-1.5 pr-1">
-              {filteredPosts.length === 0 ? 'لا توجد نتائج' : `${filteredPosts.length} نتيجة`}
+              {filteredPosts.length === 0 ? t('community.no_results') : `${filteredPosts.length} ${t('community.results_count')}`}
             </p>
           )}
         </div>
@@ -1388,23 +1391,23 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
       {reportSuccess && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-success-500 text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-2">
           <Icon name="check_circle" size={20} filled />
-          <span className="text-sm font-medium">تم إرسال البلاغ بنجاح</span>
+          <span className="text-sm font-medium">{t('community.report_success')}</span>
         </div>
       )}
 
       {bookmarkRemovedToast && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-surface-800 text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-2">
           <Icon name="bookmark_remove" size={20} filled />
-          <span className="text-sm font-medium">تم حذف المنشور من المحفوظات</span>
+          <span className="text-sm font-medium">{t('community.bookmark_removed')}</span>
         </div>
       )}
 
       {/* Feed Sort Controls + Following toggle — single scrollable row */}
       <div className="flex items-center gap-2 mb-4 overflow-x-auto pb-0.5 no-scrollbar">
         {([
-          { mode: 'hot' as PostSortMode, icon: 'local_fire_department', label: 'الأكثر تفاعلاً' },
-          { mode: 'new' as PostSortMode, icon: 'schedule', label: 'الأحدث' },
-          { mode: 'viral' as PostSortMode, icon: 'trending_up', label: 'رائج' },
+          { mode: 'hot' as PostSortMode, icon: 'local_fire_department', label: t('community.sort_hot') },
+          { mode: 'new' as PostSortMode, icon: 'schedule', label: t('community.sort_new') },
+          { mode: 'viral' as PostSortMode, icon: 'trending_up', label: t('community.sort_viral') },
         ] as const).map(({ mode, icon, label }) => (
           <button
             key={mode}
@@ -1432,7 +1435,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
           onClick={() => setActiveTab(activeTab === 'following' ? 'discover' : 'following')}
         >
           <Icon name="people" size={14} filled={activeTab === 'following'} />
-          المتابَعون
+          {t('community.following_tab')}
           {following.length > 0 && (
             <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full', activeTab === 'following' ? 'bg-white/20 text-white' : 'bg-primary-100 text-primary-600')}>
               {following.length}
@@ -1461,13 +1464,13 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
               className={cn('flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all',
                 postType === 'post' ? 'bg-primary-500 text-white' : 'bg-surface-100 text-surface-500 hover:bg-surface-200')}
               onClick={() => setPostType('post')}>
-              <Icon name="edit_note" size={13} /> منشور
+              <Icon name="edit_note" size={13} /> {t('community.post_type')}
             </button>
             <button
               className={cn('flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all',
                 postType === 'quiz' ? 'bg-purple-500 text-white' : 'bg-surface-100 text-surface-500 hover:bg-surface-200')}
               onClick={() => setPostType('quiz')}>
-              <Icon name="quiz" size={13} /> سؤال
+              <Icon name="quiz" size={13} /> {t('community.quiz_type')}
             </button>
           </div>
         </div>
@@ -1478,22 +1481,22 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
             <div className="space-y-2">
               <div className="relative">
                 <textarea dir="auto" className="w-full border border-purple-200 rounded-xl px-3 py-2 text-sm resize-none focus:border-purple-400 focus:outline-none bg-purple-50/30" rows={2}
-                  placeholder="اكتب السؤال هنا... استخدم @اسم للإشارة لمستخدم"
+                  placeholder={t('community.quiz_q_placeholder')}
                   value={quizQuestion} onChange={e => handleTextChange(e.target.value, setQuizQuestion)} />
                 {mentionSuggestions.length > 0 && <MentionDropdown suggestions={mentionSuggestions} onSelect={u => insertMention(u.username || u.name, quizQuestion, setQuizQuestion)} />}
               </div>
               <div className="flex gap-2">
-                <button className={cn('flex-1 py-1.5 rounded-lg text-xs font-bold border-2 transition-all', quizAnswer ? 'border-success-500 bg-success-50 text-success-700' : 'border-surface-200 text-surface-400 hover:border-success-300')} onClick={() => setQuizAnswer(true)}>✓ صحيح</button>
-                <button className={cn('flex-1 py-1.5 rounded-lg text-xs font-bold border-2 transition-all', !quizAnswer ? 'border-danger-500 bg-danger-50 text-danger-700' : 'border-surface-200 text-surface-400 hover:border-danger-300')} onClick={() => setQuizAnswer(false)}>✗ خطأ</button>
+                <button className={cn('flex-1 py-1.5 rounded-lg text-xs font-bold border-2 transition-all', quizAnswer ? 'border-success-500 bg-success-50 text-success-700' : 'border-surface-200 text-surface-400 hover:border-success-300')} onClick={() => setQuizAnswer(true)}>{t('community.correct_quiz')}</button>
+                <button className={cn('flex-1 py-1.5 rounded-lg text-xs font-bold border-2 transition-all', !quizAnswer ? 'border-danger-500 bg-danger-50 text-danger-700' : 'border-surface-200 text-surface-400 hover:border-danger-300')} onClick={() => setQuizAnswer(false)}>{t('community.wrong_quiz')}</button>
               </div>
               <textarea dir="auto" className="w-full border border-surface-200 rounded-xl px-3 py-2 text-sm resize-none focus:outline-none focus:border-surface-300" rows={1}
-                placeholder="شرح أو تعليق اختياري..." value={newPost} onChange={e => setNewPost(e.target.value)} />
+                placeholder={t('community.quiz_optional')} value={newPost} onChange={e => setNewPost(e.target.value)} />
             </div>
           ) : (
             <div className="relative">
               <textarea dir="auto"
                 className="w-full border border-surface-200 rounded-xl px-3 py-2 text-sm resize-none focus:border-primary-400 focus:outline-none"
-                rows={3} placeholder="شارك شيئاً مع المجتمع... استخدم @اسم أو #وسم"
+                rows={3} placeholder={t('community.post_placeholder')}
                 value={newPost} onChange={e => handleTextChange(e.target.value, setNewPost)} />
               {mentionSuggestions.length > 0 && <MentionDropdown suggestions={mentionSuggestions} onSelect={u => insertMention(u.username || u.name, newPost, setNewPost)} />}
               {hashtagSuggestions.length > 0 && <HashtagDropdown suggestions={hashtagSuggestions} onSelect={h => insertHashtag(h.tag, newPost, setNewPost)} />}
@@ -1506,7 +1509,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
           <div className="px-3.5 pb-2">
             <div className="relative rounded-xl overflow-hidden border border-surface-200">
               <img src={postImage} alt="" className="w-full max-h-40 object-cover" />
-              <button className="absolute top-1.5 left-1.5 w-6 h-6 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center" onClick={() => setPostImage('')} title="إزالة الصورة">
+              <button className="absolute top-1.5 left-1.5 w-6 h-6 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center" onClick={() => setPostImage('')} title="Remove image">
                 <Icon name="close" size={12} />
               </button>
             </div>
@@ -1518,7 +1521,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
           {communityAllowImages && !postImage && (
             <label className="flex items-center gap-1 text-xs text-surface-400 hover:text-primary-600 cursor-pointer px-2 py-1 rounded-lg hover:bg-surface-50 transition-colors">
               <Icon name="image" size={15} />
-              <span>صورة</span>
+              <span>{t('community.image')}</span>
               <input type="file" accept="image/*" className="hidden" onChange={e => {
                 const file = e.target.files?.[0];
                 if (!file) return;
@@ -1530,13 +1533,13 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
             </label>
           )}
           {!canPost && (
-            <p className="text-[11px] text-red-500 flex items-center gap-1"><Icon name="block" size={11} /> مقيّد</p>
+            <p className="text-[11px] text-red-500 flex items-center gap-1"><Icon name="block" size={11} /> {t('community.restricted')}</p>
           )}
           <div className="flex-1" />
           <Button size="sm" onClick={handlePost} loading={posting}
             disabled={!canPost || (postType === 'quiz' ? !quizQuestion.trim() : !newPost.trim())}
             className={cn('!text-xs !px-4', postType === 'quiz' ? '!bg-purple-500 hover:!bg-purple-600' : '')}>
-            نشر
+            {t('community.publish')}
           </Button>
         </div>
       </div>
@@ -1546,7 +1549,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
         <div className="text-center py-16 bg-white rounded-2xl border border-surface-100">
           <Icon name={activeTab === 'following' ? 'people' : 'forum'} size={48} className="text-surface-300 mx-auto mb-4" />
           <p className="text-surface-500">
-            {activeTab === 'following' ? 'لا توجد منشورات من الأشخاص الذين تتابعهم' : 'لا توجد منشورات بعد. كن أول من يشارك!'}
+            {activeTab === 'following' ? t('community.no_following_posts') : t('community.no_posts')}
           </p>
         </div>
       ) : (
@@ -1560,13 +1563,13 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setConfirmDelete(null)}>
           <div className="bg-white rounded-2xl p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
             <Icon name="warning" size={40} className="text-warning-500 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-surface-900 text-center mb-2">تأكيد الحذف</h3>
+            <h3 className="text-lg font-bold text-surface-900 text-center mb-2">{t('community.delete_title')}</h3>
             <p className="text-sm text-surface-500 text-center mb-6">
-              {confirmDelete.type === 'post' ? 'هل أنت متأكد من حذف هذا المنشور؟' : confirmDelete.type === 'reply' ? 'هل أنت متأكد من حذف هذا الرد؟' : 'هل أنت متأكد من حذف هذا التعليق؟'}
+              {confirmDelete.type === 'post' ? t('community.delete_post_confirm') : confirmDelete.type === 'reply' ? t('community.delete_reply_confirm') : t('community.delete_comment_confirm')}
             </p>
             <div className="flex gap-3">
-              <Button fullWidth variant="ghost" onClick={() => setConfirmDelete(null)}>إلغاء</Button>
-              <Button fullWidth variant="danger" onClick={handleDeleteItem}>حذف</Button>
+              <Button fullWidth variant="ghost" onClick={() => setConfirmDelete(null)}>{t('common.cancel')}</Button>
+              <Button fullWidth variant="danger" onClick={handleDeleteItem}>{t('community.delete_btn')}</Button>
             </div>
           </div>
         </div>
@@ -1577,16 +1580,16 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
         <div className="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center p-4" onClick={() => setConfirmClearBookmarks(false)}>
           <div className="bg-white rounded-2xl p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
             <Icon name="warning" size={40} className="text-warning-500 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-surface-900 text-center mb-2">مسح المحفوظات</h3>
-            <p className="text-sm text-surface-500 text-center mb-6">هل أنت متأكد من مسح جميع المنشورات المحفوظة؟ لا يمكن التراجع عن هذا الإجراء.</p>
+            <h3 className="text-lg font-bold text-surface-900 text-center mb-2">{t('community.clear_bookmarks_title')}</h3>
+            <p className="text-sm text-surface-500 text-center mb-6">{t('community.clear_bookmarks_desc')}</p>
             <div className="flex gap-3">
-              <Button fullWidth variant="ghost" onClick={() => setConfirmClearBookmarks(false)}>إلغاء</Button>
+              <Button fullWidth variant="ghost" onClick={() => setConfirmClearBookmarks(false)}>{t('common.cancel')}</Button>
               <Button fullWidth variant="danger" onClick={() => {
                 setSavedPosts([]);
                 if (user) localStorage.setItem(`savedPosts_${user.id}`, '[]');
                 setConfirmClearBookmarks(false);
                 setShowBookmarks(false);
-              }}>مسح الكل</Button>
+              }}>{t('community.clear_all')}</Button>
             </div>
           </div>
         </div>
@@ -1598,12 +1601,12 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
           <div className="bg-white rounded-2xl p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-2 mb-4">
               <Icon name="flag" size={22} className="text-warning-500" />
-              <h3 className="text-lg font-bold text-surface-900">إبلاغ</h3>
+              <h3 className="text-lg font-bold text-surface-900">{t('community.report_title')}</h3>
             </div>
-            <textarea className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none mb-4" rows={3} placeholder="سبب البلاغ..." value={reportReason} onChange={e => setReportReason(e.target.value)} />
+            <textarea className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none mb-4" rows={3} placeholder={t('community.report_placeholder')} value={reportReason} onChange={e => setReportReason(e.target.value)} />
             <div className="flex gap-3">
-              <Button fullWidth variant="ghost" onClick={() => setReportModal(null)}>إلغاء</Button>
-              <Button fullWidth variant="danger" onClick={handleReport} disabled={!reportReason.trim()}>إرسال البلاغ</Button>
+              <Button fullWidth variant="ghost" onClick={() => setReportModal(null)}>{t('common.cancel')}</Button>
+              <Button fullWidth variant="danger" onClick={handleReport} disabled={!reportReason.trim()}>{t('community.send_report')}</Button>
             </div>
           </div>
         </div>
@@ -1646,7 +1649,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                   className={cn('px-5 py-2 rounded-xl text-sm font-bold transition-all shadow-sm', following.includes(viewUserId!)
                     ? 'bg-surface-100 text-surface-600 hover:bg-surface-200 border border-surface-200'
                     : 'bg-primary-500 text-white hover:bg-primary-600 shadow-primary-200')}>
-                  {following.includes(viewUserId!) ? 'يتم المتابعة' : 'متابعة'}
+                  {following.includes(viewUserId!) ? t('community.following_btn') : t('community.follow_btn')}
                 </button>
               </div>
             </div>
@@ -1665,7 +1668,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                   {viewUserData.joinedAt && (
                     <p className="text-xs text-surface-400 mt-1 flex items-center gap-1">
                       <Icon name="calendar_month" size={12} />
-                      انضم {new Date(viewUserData.joinedAt).toLocaleDateString('ar', { month: 'long', year: 'numeric' })}
+                      {t('community.joined')} {new Date(viewUserData.joinedAt).toLocaleDateString(uiLang === 'it' ? 'it' : 'ar', { month: 'long', year: 'numeric' })}
                     </p>
                   )}
                 </div>
@@ -1674,10 +1677,10 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
               {/* Social Stats */}
               <div className="grid grid-cols-4 gap-2 mt-4">
                 {[
-                  { label: 'منشور', value: viewUserData.postsCount, icon: 'article', color: 'text-primary-600', bg: 'bg-primary-50', stat: null as null },
-                  { label: 'سؤال', value: posts.filter(p => p.userId === viewUserId && p.type === 'quiz').length, icon: 'quiz', color: 'text-purple-600', bg: 'bg-purple-50', stat: null as null },
-                  { label: 'متابِع', value: viewUserData.followersCount, icon: 'group', color: 'text-green-600', bg: 'bg-green-50', stat: 'followers' as 'followers' | 'following' | null },
-                  { label: 'يتابِع', value: viewUserData.followingCount, icon: 'person_add', color: 'text-blue-600', bg: 'bg-blue-50', stat: 'following' as 'followers' | 'following' | null },
+                  { label: t('community.posts_stat'), value: viewUserData.postsCount, icon: 'article', color: 'text-primary-600', bg: 'bg-primary-50', stat: null as null },
+                  { label: t('community.questions_stat'), value: posts.filter(p => p.userId === viewUserId && p.type === 'quiz').length, icon: 'quiz', color: 'text-purple-600', bg: 'bg-purple-50', stat: null as null },
+                  { label: t('community.followers_stat'), value: viewUserData.followersCount, icon: 'group', color: 'text-green-600', bg: 'bg-green-50', stat: 'followers' as 'followers' | 'following' | null },
+                  { label: t('community.following_stat'), value: viewUserData.followingCount, icon: 'person_add', color: 'text-blue-600', bg: 'bg-blue-50', stat: 'following' as 'followers' | 'following' | null },
                 ].map((s) => (
                   <div key={s.label}
                     className={cn('rounded-xl p-2.5 text-center transition-all', s.bg, s.stat ? 'cursor-pointer hover:ring-2 hover:ring-inset hover:ring-current/20 active:scale-95' : '')}
@@ -1694,27 +1697,27 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
               {viewUserData.hideStats ? (
                 <div className="bg-surface-50 rounded-xl px-3 py-2 mt-3 border border-surface-100 flex items-center gap-2">
                   <Icon name="lock" size={14} className="text-surface-300" />
-                  <p className="text-xs text-surface-400">أخفى هذا المستخدم إحصائيات تعلمه</p>
+                  <p className="text-xs text-surface-400">{t('community.hidden_stats')}</p>
                 </div>
               ) : (viewUserData.totalQuizzes || 0) > 0 ? (
                 <div className="mt-3 bg-gradient-to-br from-primary-50 to-purple-50 rounded-xl p-3 border border-primary-100">
                   <div className="flex items-center gap-2 mb-2">
                     <Icon name="school" size={13} className="text-primary-500" />
-                    <p className="text-[11px] font-bold text-surface-700">إحصائيات التعلم</p>
-                    <span className="mr-auto text-[10px] bg-primary-100 text-primary-600 px-1.5 py-0.5 rounded-full font-semibold">المستوى {viewUserData.level || 1}</span>
+                    <p className="text-[11px] font-bold text-surface-700">{t('community.learning_stats')}</p>
+                    <span className="mr-auto text-[10px] bg-primary-100 text-primary-600 px-1.5 py-0.5 rounded-full font-semibold">{t('community.level_label')} {viewUserData.level || 1}</span>
                   </div>
                   <div className="grid grid-cols-3 gap-1.5">
                     <div className="bg-white/70 rounded-lg p-1.5 text-center">
                       <p className="text-sm font-black text-primary-700">{viewUserData.examReadiness || 0}%</p>
-                      <p className="text-[9px] text-surface-400">جاهزية</p>
+                      <p className="text-[9px] text-surface-400">{t('community.readiness_label')}</p>
                     </div>
                     <div className="bg-white/70 rounded-lg p-1.5 text-center">
                       <p className="text-sm font-black text-success-600">{viewUserData.correctAnswers || 0}</p>
-                      <p className="text-[9px] text-surface-400">صحيح</p>
+                      <p className="text-[9px] text-surface-400">{t('community.correct_label')}</p>
                     </div>
                     <div className="bg-white/70 rounded-lg p-1.5 text-center">
                       <p className="text-sm font-black text-surface-600">{viewUserData.totalQuizzes || 0}</p>
-                      <p className="text-[9px] text-surface-400">اختبار</p>
+                      <p className="text-[9px] text-surface-400">{t('community.quiz_label')}</p>
                     </div>
                   </div>
                 </div>
@@ -1730,14 +1733,14 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                     <Icon name="arrow_back" size={16} className="text-surface-600 rotate-180" />
                   </button>
                   <h4 className="text-sm font-bold text-surface-800">
-                    {viewProfileStatView === 'followers' ? `المتابِعون (${viewProfileFollowers.length})` : `يتابِع (${viewProfileFollowing.length})`}
+                    {viewProfileStatView === 'followers' ? `${t('community.followers_title')} (${viewProfileFollowers.length})` : `${t('community.following_title')} (${viewProfileFollowing.length})`}
                   </h4>
                 </div>
                 <div className="divide-y divide-surface-50">
                   {(viewProfileStatView === 'followers' ? viewProfileFollowers : viewProfileFollowing).length === 0 ? (
                     <div className="py-10 text-center">
                       <Icon name={viewProfileStatView === 'followers' ? 'group' : 'person_add'} size={32} className="text-surface-200 mx-auto mb-2" />
-                      <p className="text-xs text-surface-400">لا يوجد {viewProfileStatView === 'followers' ? 'متابِعون' : 'متابَعون'} بعد</p>
+                      <p className="text-xs text-surface-400">{viewProfileStatView === 'followers' ? t('community.no_followers') : t('community.no_following_user')}</p>
                     </div>
                   ) : (
                     (viewProfileStatView === 'followers' ? viewProfileFollowers : viewProfileFollowing).map(u => (
@@ -1762,7 +1765,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                               following.includes(u.id)
                                 ? 'bg-surface-100 text-surface-600 hover:bg-danger-50 hover:text-danger-600 border border-surface-200'
                                 : 'bg-primary-500 text-white hover:bg-primary-600 shadow-sm')}>
-                            {following.includes(u.id) ? 'يتم المتابعة' : 'متابعة'}
+                            {following.includes(u.id) ? t('community.following_btn') : t('community.follow_btn')}
                           </button>
                         )}
                       </div>
@@ -1775,7 +1778,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
             {/* Tabs + Posts */}
             {!viewProfileStatView && <div className="flex-1 overflow-y-auto border-t border-surface-100">
               <div className="flex border-b border-surface-100 sticky top-0 bg-white z-10">
-                {([['posts', 'منشوراته', 'article'], ['quizzes', 'أسئلته', 'quiz']] as const).map(([tab, label, icon]) => (
+                {([['posts', t('community.posts_tab'), 'article'], ['quizzes', t('community.quizzes_tab'), 'quiz']] as const).map(([tab, label, icon]) => (
                   <button key={tab} onClick={() => setViewProfileTab(tab)}
                     className={cn('flex-1 flex items-center justify-center gap-1.5 py-3 text-xs font-semibold transition-all border-b-2',
                       viewProfileTab === tab ? 'border-primary-500 text-primary-600' : 'border-transparent text-surface-400 hover:text-surface-600')}>
@@ -1796,9 +1799,9 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                     onClick={() => { setViewUserId(null); setViewUserData(null); openPostDetail(p.id); }}>
                     <div className="flex items-center gap-1.5 mb-1">
                       {p.type === 'quiz' && (
-                        <span className="text-[10px] bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded-full font-medium">سؤال</span>
+                        <span className="text-[10px] bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded-full font-medium">{t('community.quiz_badge')}</span>
                       )}
-                      <span className="text-[10px] text-surface-400 mr-auto">{relativeTime(p.createdAt)}</span>
+                      <span className="text-[10px] text-surface-400 mr-auto">{relativeTime(p.createdAt, uiLang)}</span>
                     </div>
                     <p className="text-xs text-surface-700 line-clamp-2 leading-relaxed" dir="auto">
                       {p.type === 'quiz' ? p.quizQuestion : p.content}
@@ -1812,7 +1815,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                 {posts.filter(p => p.userId === viewUserId && (viewProfileTab === 'posts' ? p.type !== 'quiz' : p.type === 'quiz')).length === 0 && (
                   <div className="text-center py-8">
                     <Icon name={viewProfileTab === 'posts' ? 'article' : 'quiz'} size={32} className="text-surface-200 mx-auto mb-2" />
-                    <p className="text-xs text-surface-400">لا توجد {viewProfileTab === 'posts' ? 'منشورات' : 'أسئلة'} بعد</p>
+                    <p className="text-xs text-surface-400">{viewProfileTab === 'posts' ? t('community.no_posts_tab') : t('community.no_quizzes_tab')}</p>
                   </div>
                 )}
               </div>
@@ -1828,7 +1831,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
             <div className="flex items-center justify-between px-5 py-4 border-b border-surface-100">
               <h3 className="font-bold text-surface-900 flex items-center gap-2">
                 <Icon name="favorite" size={18} className="text-red-500" filled />
-                {likersModal.likers.length} إعجاب
+                {likersModal.likers.length} {t('community.likers_title')}
               </h3>
               <button onClick={() => setLikersModal(null)} className="w-8 h-8 rounded-xl hover:bg-surface-100 flex items-center justify-center transition-colors">
                 <Icon name="close" size={18} className="text-surface-500" />
@@ -1836,7 +1839,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
             </div>
             <div className="overflow-y-auto flex-1 p-4 space-y-3">
               {likersModal.likers.length === 0 && (
-                <p className="text-sm text-surface-400 text-center py-4">لا إعجابات بعد</p>
+                <p className="text-sm text-surface-400 text-center py-4">{t('community.no_likers')}</p>
               )}
               {likersModal.likers.map((l, i) => (
                 <div key={i} className="flex items-center gap-3 hover:bg-surface-50 rounded-xl p-2 transition-colors">
@@ -1860,7 +1863,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                         following.includes(l.userId)
                           ? 'bg-surface-100 text-surface-600 hover:bg-danger-50 hover:text-danger-600 border border-surface-200'
                           : 'bg-primary-500 text-white hover:bg-primary-600 shadow-sm')}>
-                      {following.includes(l.userId) ? 'يتم المتابعة' : 'متابعة'}
+                      {following.includes(l.userId) ? t('community.following_btn') : t('community.follow_btn')}
                     </button>
                   )}
                 </div>
@@ -1882,7 +1885,7 @@ function MentionDropdown({ suggestions, onSelect }: {
     <div className="absolute bottom-full left-0 right-0 bg-white border border-surface-200 rounded-xl shadow-2xl z-[200] overflow-hidden mb-1 max-h-52 overflow-y-auto">
       <div className="px-3 py-1.5 bg-surface-50 border-b border-surface-100 flex items-center gap-1.5">
         <Icon name="alternate_email" size={12} className="text-surface-400" />
-        <p className="text-[10px] text-surface-400 font-medium">اختر مستخدماً للإشارة</p>
+        <p className="text-[10px] text-surface-400 font-medium">{t('community.mention_title')}</p>
       </div>
       {suggestions.map(u => (
         <button key={u.id} type="button"
@@ -1901,7 +1904,7 @@ function MentionDropdown({ suggestions, onSelect }: {
             <p className="text-xs font-bold text-surface-900 truncate">{u.name}</p>
             {u.username && <p className="text-[10px] text-primary-500 truncate">@{u.username}</p>}
           </div>
-          <span className="text-[10px] text-surface-300 shrink-0">إشارة</span>
+          <span className="text-[10px] text-surface-300 shrink-0">{t('community.mention_badge')}</span>
         </button>
       ))}
     </div>
@@ -1916,14 +1919,14 @@ function HashtagDropdown({ suggestions, onSelect }: {
   return (
     <div className="absolute bottom-full left-0 right-0 bg-white border border-surface-200 rounded-xl shadow-2xl z-[200] overflow-hidden mb-1 max-h-40 overflow-y-auto">
       <div className="px-3 py-1.5 bg-surface-50 border-b border-surface-100">
-        <p className="text-[10px] text-surface-400 font-medium">وسوم مقترحة</p>
+        <p className="text-[10px] text-surface-400 font-medium">{t('community.hashtag_suggestions')}</p>
       </div>
       {suggestions.map(h => (
         <button key={h.id} type="button"
           className="w-full flex items-center justify-between px-3 py-2 hover:bg-primary-50 text-right transition-colors"
           onMouseDown={e => { e.preventDefault(); onSelect(h); }}>
           <span className="text-xs font-semibold text-primary-600">#{h.tag}</span>
-          <span className="text-[10px] text-surface-400">{h.postCount} منشور</span>
+          <span className="text-[10px] text-surface-400">{h.postCount} {t('community.hashtag_posts')}</span>
         </button>
       ))}
     </div>

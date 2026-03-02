@@ -3,6 +3,7 @@ import { useAuthStore } from '@/store/authStore';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
+import { useTranslation } from '@/i18n';
 import type { Question, Sign, DictionaryEntry } from '@/db/database';
 
 interface Props { onNavigate: (page: string, data?: Record<string, string>) => void; }
@@ -12,6 +13,7 @@ type Phase = 'select' | 'training' | 'result';
 
 export function TrainingPage({ onNavigate }: Props) {
   const { questions, signs, dictEntries, mistakes, loadQuestions, loadSigns, loadDictEntries, loadMistakes, user } = useAuthStore();
+  const { t } = useTranslation();
   const lang = user?.settings.language || 'both';
   const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';
   const falseLabel = lang === 'ar' ? 'خطأ'  : lang === 'it' ? 'Falso' : 'خطأ / Falso';
@@ -110,21 +112,21 @@ export function TrainingPage({ onNavigate }: Props) {
   const isDictEntry = (item: Question | Sign | DictionaryEntry): item is DictionaryEntry => 'termIt' in item;
 
   const trainModes: { id: TrainMode; icon: string; label: string; desc: string; count: number; color: string; gradient: string }[] = [
-    { id: 'questions', icon: 'quiz', label: 'تدريب الأسئلة', desc: 'أسئلة صح وخطأ عشوائية', count: questions.length, color: '#3b82f6', gradient: 'from-blue-500 to-blue-600' },
-    { id: 'signs', icon: 'traffic', label: 'تدريب الإشارات', desc: 'تعرّف على الإشارات المرورية', count: signs.length, color: '#ef4444', gradient: 'from-red-500 to-red-600' },
-    { id: 'dictionary', icon: 'translate', label: 'تدريب المصطلحات', desc: 'تعلّم المصطلحات الإيطالية', count: dictEntries.length, color: '#8b5cf6', gradient: 'from-purple-500 to-purple-600' },
-    { id: 'weak-points', icon: 'psychology', label: 'نقاط الضعف', desc: 'تمرّن على الأسئلة التي أخطأت فيها', count: mistakes.length, color: '#f59e0b', gradient: 'from-amber-500 to-amber-600' },
-    { id: 'timed', icon: 'timer', label: 'تحدي الوقت', desc: 'أجب أسرع ما يمكنك خلال دقيقتين', count: questions.length, color: '#10b981', gradient: 'from-emerald-500 to-emerald-600' },
-    { id: 'marathon', icon: 'directions_run', label: 'ماراثون', desc: '50 سؤال متواصل بدون توقف', count: questions.length, color: '#ec4899', gradient: 'from-pink-500 to-pink-600' },
-    { id: 'daily', icon: 'today', label: 'التحدي اليومي', desc: 'مزيج من أسئلة وإشارات ومصطلحات', count: questions.length + signs.length + dictEntries.length, color: '#06b6d4', gradient: 'from-cyan-500 to-cyan-600' },
-    { id: 'mixed', icon: 'shuffle', label: 'تدريب مختلط', desc: '10 عناصر من كل الأنواع', count: questions.length + signs.length + dictEntries.length, color: '#6366f1', gradient: 'from-indigo-500 to-indigo-600' },
+    { id: 'questions', icon: 'quiz', label: t('training.mode_questions'), desc: t('training.mode_questions_desc'), count: questions.length, color: '#3b82f6', gradient: 'from-blue-500 to-blue-600' },
+    { id: 'signs', icon: 'traffic', label: t('training.mode_signs'), desc: t('training.mode_signs_desc'), count: signs.length, color: '#ef4444', gradient: 'from-red-500 to-red-600' },
+    { id: 'dictionary', icon: 'translate', label: t('training.mode_dictionary'), desc: t('training.mode_dictionary_desc'), count: dictEntries.length, color: '#8b5cf6', gradient: 'from-purple-500 to-purple-600' },
+    { id: 'weak-points', icon: 'psychology', label: t('training.mode_weak'), desc: t('training.mode_weak_desc'), count: mistakes.length, color: '#f59e0b', gradient: 'from-amber-500 to-amber-600' },
+    { id: 'timed', icon: 'timer', label: t('training.mode_timed'), desc: t('training.mode_timed_desc'), count: questions.length, color: '#10b981', gradient: 'from-emerald-500 to-emerald-600' },
+    { id: 'marathon', icon: 'directions_run', label: t('training.mode_marathon'), desc: t('training.mode_marathon_desc'), count: questions.length, color: '#ec4899', gradient: 'from-pink-500 to-pink-600' },
+    { id: 'daily', icon: 'today', label: t('training.mode_daily'), desc: t('training.mode_daily_desc'), count: questions.length + signs.length + dictEntries.length, color: '#06b6d4', gradient: 'from-cyan-500 to-cyan-600' },
+    { id: 'mixed', icon: 'shuffle', label: t('training.mode_mixed'), desc: t('training.mode_mixed_desc'), count: questions.length + signs.length + dictEntries.length, color: '#6366f1', gradient: 'from-indigo-500 to-indigo-600' },
   ];
 
   // SELECT MODE
   if (phase === 'select') return (
     <div>
-      <h1 className="text-2xl font-bold text-surface-900 mb-2">التدريب</h1>
-      <p className="text-surface-500 mb-6 text-sm">اختر نوع التدريب المناسب لك</p>
+      <h1 className="text-2xl font-bold text-surface-900 mb-2">{t('training.title')}</h1>
+      <p className="text-surface-500 mb-6 text-sm">{t('training.desc')}</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {trainModes.map(item => (
           <button key={item.id}
@@ -136,7 +138,7 @@ export function TrainingPage({ onNavigate }: Props) {
             <div className="flex-1 min-w-0">
               <h3 className="font-bold text-surface-900 text-sm group-hover:text-primary-600 transition-colors">{item.label}</h3>
               <p className="text-xs text-surface-400 mt-0.5">{item.desc}</p>
-              <p className="text-[10px] text-primary-500 font-medium mt-1">{item.count} عنصر متاح</p>
+              <p className="text-[10px] text-primary-500 font-medium mt-1">{item.count} {t('training.items_available')}</p>
             </div>
           </button>
         ))}
@@ -153,17 +155,17 @@ export function TrainingPage({ onNavigate }: Props) {
           <div className={cn('w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6', pct >= 70 ? 'bg-success-50' : pct >= 40 ? 'bg-warning-50' : 'bg-danger-50')}>
             <Icon name={pct >= 70 ? 'emoji_events' : pct >= 40 ? 'thumb_up' : 'psychology'} size={40} className={pct >= 70 ? 'text-success-500' : pct >= 40 ? 'text-warning-500' : 'text-danger-500'} filled />
           </div>
-          <h2 className="text-2xl font-bold text-surface-900 mb-2">نتيجة التدريب</h2>
+          <h2 className="text-2xl font-bold text-surface-900 mb-2">{t('training.result_title')}</h2>
           <p className="text-surface-500 text-sm mb-2">{trainModes.find(m => m.id === mode)?.label}</p>
           <p className="text-4xl font-bold text-primary-600 mb-1">{score}/{total}</p>
-          <p className="text-surface-500 mb-2">{pct}% صحيح</p>
-          {mode === 'timed' && <p className="text-sm text-surface-400 mb-4">الوقت: {Math.floor(timedElapsed / 60)}:{(timedElapsed % 60).toString().padStart(2, '0')}</p>}
+          <p className="text-surface-500 mb-2">{pct}% {t('training.result_pct')}</p>
+          {mode === 'timed' && <p className="text-sm text-surface-400 mb-4">{t('training.result_time_label')}: {Math.floor(timedElapsed / 60)}:{(timedElapsed % 60).toString().padStart(2, '0')}</p>}
           <div className="w-full bg-surface-100 rounded-full h-3 mb-8">
             <div className={cn('rounded-full h-3 transition-all', pct >= 70 ? 'bg-success-500' : pct >= 40 ? 'bg-warning-500' : 'bg-danger-500')} style={{ width: `${pct}%` }} />
           </div>
           <div className="space-y-3">
-            <Button fullWidth onClick={() => startTraining(mode)} icon={<Icon name="replay" size={20} />}>إعادة التدريب</Button>
-            <Button fullWidth variant="outline" onClick={() => setPhase('select')}>اختر تدريباً آخر</Button>
+            <Button fullWidth onClick={() => startTraining(mode)} icon={<Icon name="replay" size={20} />}>{t('training.retry')}</Button>
+            <Button fullWidth variant="outline" onClick={() => setPhase('select')}>{t('training.choose_other')}</Button>
           </div>
         </div>
       </div>
@@ -215,8 +217,8 @@ export function TrainingPage({ onNavigate }: Props) {
             </div>
             {!showAnswer ? (
               <div className="text-center">
-                <p className="text-surface-500 mb-4">ما اسم هذه الإشارة؟</p>
-                <Button onClick={() => setShowAnswer(true)}>إظهار الإجابة</Button>
+                <p className="text-surface-500 mb-4">{t('training.sign_question')}</p>
+                <Button onClick={() => setShowAnswer(true)}>{t('training.show_answer')}</Button>
               </div>
             ) : (
               <div className="text-center space-y-3">
@@ -224,8 +226,8 @@ export function TrainingPage({ onNavigate }: Props) {
                 {(lang === 'it' || lang === 'both') && <p className="text-base text-primary-500 font-medium" dir="ltr">{item.nameIt}</p>}
                 {(lang === 'ar' || lang === 'both') && <p className="text-sm text-surface-500">{item.descriptionAr}</p>}
                 <div className="flex gap-2 justify-center pt-2">
-                  <Button variant="secondary" onClick={() => handleNext(false)} className="!bg-danger-50 !text-danger-600">لم أعرف ✗</Button>
-                  <Button onClick={() => handleNext(true)} className="!bg-success-500">عرفتها ✓</Button>
+                  <Button variant="secondary" onClick={() => handleNext(false)} className="!bg-danger-50 !text-danger-600">{t('training.did_not_know')}</Button>
+                  <Button onClick={() => handleNext(true)} className="!bg-success-500">{t('training.knew_it')}</Button>
                 </div>
               </div>
             )}
@@ -237,11 +239,11 @@ export function TrainingPage({ onNavigate }: Props) {
           <div className="p-6">
             <div className="text-center mb-4">
               <p className="text-2xl font-bold text-primary-600" dir="ltr">{item.termIt}</p>
-              <p className="text-xs text-surface-400 mt-2">ما ترجمة هذا المصطلح؟</p>
+              <p className="text-xs text-surface-400 mt-2">{t('training.term_question')}</p>
             </div>
             {!showAnswer ? (
               <div className="text-center">
-                <Button onClick={() => setShowAnswer(true)}>إظهار الترجمة</Button>
+                <Button onClick={() => setShowAnswer(true)}>{t('training.show_translation')}</Button>
               </div>
             ) : (
               <div className="text-center space-y-3">
@@ -249,8 +251,8 @@ export function TrainingPage({ onNavigate }: Props) {
                 {(lang === 'ar' || lang === 'both') && item.definitionAr && <p className="text-sm text-surface-500">{item.definitionAr}</p>}
                 {(lang === 'it' || lang === 'both') && item.definitionIt && <p className="text-xs text-surface-400" dir="ltr">{item.definitionIt}</p>}
                 <div className="flex gap-2 justify-center pt-2">
-                  <Button variant="secondary" onClick={() => handleNext(false)} className="!bg-danger-50 !text-danger-600">لم أعرف ✗</Button>
-                  <Button onClick={() => handleNext(true)} className="!bg-success-500">عرفتها ✓</Button>
+                  <Button variant="secondary" onClick={() => handleNext(false)} className="!bg-danger-50 !text-danger-600">{t('training.did_not_know')}</Button>
+                  <Button onClick={() => handleNext(true)} className="!bg-success-500">{t('training.knew_it')}</Button>
                 </div>
               </div>
             )}
@@ -280,14 +282,14 @@ export function TrainingPage({ onNavigate }: Props) {
           <div className={cn('p-4 rounded-xl border', userAnswer === item.isTrue ? 'bg-success-50 border-success-200' : 'bg-danger-50 border-danger-200')}>
             <p className="font-semibold text-sm flex items-center gap-2">
               <Icon name={userAnswer === item.isTrue ? 'check_circle' : 'cancel'} size={18} className={userAnswer === item.isTrue ? 'text-success-500' : 'text-danger-500'} filled />
-              {userAnswer === item.isTrue ? 'إجابة صحيحة! 🎉' : 'إجابة خاطئة'}
+              {userAnswer === item.isTrue ? t('training.correct_answer') : t('training.wrong_answer')}
             </p>
-            <p className="text-xs text-surface-600 mt-1">الإجابة الصحيحة: {item.isTrue ? trueLabel : falseLabel}</p>
+            <p className="text-xs text-surface-600 mt-1">{t('training.correct_is')} {item.isTrue ? trueLabel : falseLabel}</p>
             {(lang === 'ar' || lang === 'both') && item.explanationAr && <p className="text-xs text-surface-500 mt-2">{item.explanationAr}</p>}
             {(lang === 'it' || lang === 'both') && item.explanationIt && <p className="text-xs text-surface-500 mt-2" dir="ltr">{item.explanationIt}</p>}
           </div>
           <Button fullWidth onClick={() => handleNext(userAnswer === item.isTrue)}>
-            {index < items.length - 1 ? 'التالي' : 'عرض النتيجة'}
+            {index < items.length - 1 ? t('training.next') : t('training.show_result')}
             <Icon name="arrow_back" size={18} className="mr-1" />
           </Button>
         </div>

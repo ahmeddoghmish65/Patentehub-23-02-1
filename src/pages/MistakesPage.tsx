@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
+import { useTranslation } from '@/i18n';
 
 export function MistakesPage() {
   const { mistakes, loadMistakes, practiceMistake, user } = useAuthStore();
+  const { t } = useTranslation();
   const lang = user?.settings.language || 'both';
   const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';
   const falseLabel = lang === 'ar' ? 'خطأ'  : lang === 'it' ? 'Falso' : 'خطأ / Falso';
@@ -36,20 +38,20 @@ export function MistakesPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-surface-900 mb-1">أخطائي</h1>
-          <p className="text-surface-500 text-sm">الأسئلة التي أخطأت فيها — ركز عليها!</p>
+          <h1 className="text-2xl font-bold text-surface-900 mb-1">{t('mistakes.title')}</h1>
+          <p className="text-surface-500 text-sm">{t('mistakes.desc')}</p>
         </div>
         {mistakes.length > 0 && (
           !practiceActive ? (
             <button onClick={startPractice}
               className="flex items-center gap-2 bg-primary-500 text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-primary-600 transition-colors shadow-sm shrink-0">
               <Icon name="fitness_center" size={18} />
-              تدريب على الأخطاء
+              {t('mistakes.practice_btn')}
             </button>
           ) : (
             <button onClick={stopPractice}
               className="flex items-center gap-1.5 text-sm text-surface-500 hover:text-danger-500 font-medium transition-colors shrink-0">
-              <Icon name="close" size={16} /> إنهاء التدريب
+              <Icon name="close" size={16} /> {t('mistakes.end_practice')}
             </button>
           )
         )}
@@ -59,8 +61,8 @@ export function MistakesPage() {
       {mistakes.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-2xl border border-surface-100">
           <Icon name="check_circle" size={48} className="text-success-300 mx-auto mb-4" />
-          <p className="text-surface-500 text-lg mb-2">لا توجد أخطاء!</p>
-          <p className="text-sm text-surface-400">ابدأ بحل الاختبارات وسيتم تتبع أخطائك هنا</p>
+          <p className="text-surface-500 text-lg mb-2">{t('mistakes.no_mistakes')}</p>
+          <p className="text-sm text-surface-400">{t('mistakes.no_mistakes_desc')}</p>
         </div>
 
       /* Practice mode */
@@ -108,17 +110,15 @@ export function MistakesPage() {
                   className={cn('mx-auto mb-2', practiceResult === 'correct' ? 'text-success-500' : 'text-danger-500')} filled />
                 <p className={cn('font-bold text-base mb-1', practiceResult === 'correct' ? 'text-success-700' : 'text-danger-700')}>
                   {practiceResult === 'correct'
-                    ? '🎉 إجابة صحيحة! تم تخفيض عدد الأخطاء'
-                    : `❌ إجابة خاطئة! الصحيح: ${q.correctAnswer ? trueLabel : falseLabel}`}
+                    ? t('mistakes.correct_feedback')
+                    : `${t('mistakes.wrong_feedback')} ${q.correctAnswer ? trueLabel : falseLabel}`}
                 </p>
                 <p className={cn('text-xs mb-4', practiceResult === 'correct' ? 'text-success-600' : 'text-danger-600')}>
-                  {practiceResult === 'correct'
-                    ? `عدد الأخطاء أصبح: ${Math.max(0, q.count - 1)}`
-                    : `عدد الأخطاء أصبح: ${q.count + 1}`}
+                  {`${t('mistakes.error_count_now')} ${practiceResult === 'correct' ? Math.max(0, q.count - 1) : q.count + 1}`}
                 </p>
                 <button onClick={nextQuestion}
                   className="bg-white border border-surface-200 text-surface-700 font-semibold text-sm px-6 py-2 rounded-xl hover:bg-surface-50 transition-colors">
-                  {practiceIdx + 1 < mistakes.length ? 'التالي ←' : 'إنهاء'}
+                  {practiceIdx + 1 < mistakes.length ? t('mistakes.next') : t('mistakes.finish')}
                 </button>
               </div>
             )}
@@ -140,11 +140,11 @@ export function MistakesPage() {
                   <div className="flex items-center gap-4 text-xs flex-wrap">
                     <span className="text-danger-500 flex items-center gap-1">
                       <Icon name="close" size={14} />
-                      إجابتك: {m.userAnswer ? trueLabel : falseLabel}
+                      {t('mistakes.your_answer')} {m.userAnswer ? trueLabel : falseLabel}
                     </span>
                     <span className="text-success-500 flex items-center gap-1">
                       <Icon name="check" size={14} />
-                      الصحيح: {m.correctAnswer ? trueLabel : falseLabel}
+                      {t('mistakes.correct_answer')} {m.correctAnswer ? trueLabel : falseLabel}
                     </span>
                   </div>
                 </div>
