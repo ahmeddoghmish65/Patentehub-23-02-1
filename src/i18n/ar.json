@@ -378,7 +378,14 @@
     "extra": "إضافية",
     "exceeded": "تجاوزت الحد بـ",
     "error_singular": "خطأ",
-    "errors_plural": "أخطاء"
+    "errors_plural": "أخطاء",
+    "submit_exam_btn": "تسليم الامتحان",
+    "confirm_submit_title": "تأكيد التسليم",
+    "confirm_unanswered_prefix": "لم تُجب على",
+    "confirm_unanswered_q": "سؤال",
+    "confirm_unanswered_suffix": "بعد التسليم لا يمكن التراجع.",
+    "confirm_all_answered": "أجبت على جميع الأسئلة. هل أنت متأكد من التسليم؟",
+    "yes_submit": "نعم، سلّم الآن"
   },
   "community": {
     "title": "المجتمع",
@@ -615,5 +622,65 @@
     "badge_level5": "المستوى 5",
     "delete_avatar_title": "حذف الصورة",
     "level_label": "المستوى"
+  },
+  "lessons_page": {
+    "back_to_sections": "العودة للأقسام",
+    "title": "الدروس",
+    "subtitle": "اختر قسماً لبدء الدراسة",
+    "no_sections": "لا توجد أقسام بعد",
+    "no_sections_desc": "سيقوم المسؤول بإضافة المحتوى قريباً",
+    "completed": "مكتمل",
+    "no_lessons": "لا توجد دروس في هذا القسم بعد",
+    "section_quiz_btn": "اختبار القسم كامل",
+    "lesson_label": "درس",
+    "back_to_lessons": "العودة للدروس",
+    "lesson_not_found": "الدرس غير موجود",
+    "go_back": "العودة للدروس",
+    "tab_content": "الشرح",
+    "tab_questions": "الأسئلة",
+    "no_lesson_questions": "لا توجد أسئلة لهذا الدرس بعد",
+    "start_lesson_quiz": "ابدأ اختبار الدرس",
+    "questions_suffix": "أسئلة"
+  },
+  "quiz_page": {
+    "no_questions": "لا توجد أسئلة متاحة",
+    "back": "العودة",
+    "true_false_label": "سؤال صح/خطأ",
+    "passing_score": "حد النجاح",
+    "start": "ابدأ الاختبار",
+    "passed_title": "ممتاز!",
+    "failed_title": "حاول مرة أخرى",
+    "passed_msg": "تم تعليم الدرس كمكتمل",
+    "failed_msg": "تحتاج 70% للنجاح",
+    "correct_count": "صحيح",
+    "wrong_count": "خطأ",
+    "time_label": "الوقت",
+    "retake": "إعادة الاختبار",
+    "back_lessons": "العودة للدروس",
+    "correct_feedback": "✓ إجابة صحيحة!",
+    "wrong_feedback": "✗ إجابة خاطئة",
+    "next_q": "السؤال التالي",
+    "show_result": "عرض النتيجة",
+    "difficulty_easy": "سهل",
+    "difficulty_medium": "متوسط",
+    "difficulty_hard": "صعب",
+    "default_title": "اختبار"
+  },
+  "dictionary_page": {
+    "title": "القاموس",
+    "subtitle": "مصطلحات رخصة القيادة بالعربية والإيطالية",
+    "search_placeholder": "بحث عن مصطلح...",
+    "no_terms": "لا توجد مصطلحات"
+  },
+  "signs_page": {
+    "title": "الإشارات المرورية",
+    "subtitle_prefix": "تعلم إشارات المرور الإيطالية —",
+    "signs_count_label": "إشارة",
+    "search_placeholder": "بحث عن إشارة بالعربية أو الإيطالية...",
+    "all_filter": "الكل",
+    "found_count_prefix": "تم العثور على",
+    "no_results": "لا توجد نتائج",
+    "no_signs": "لا توجد إشارات",
+    "no_signs_desc": "سيتم إضافة الإشارات من لوحة التحكم"
   }
 }

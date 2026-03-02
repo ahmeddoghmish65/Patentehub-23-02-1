@@ -61,7 +61,7 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
             {sectionQuestions.map((q, idx) => (
               <div key={q.id} className="bg-white rounded-xl border border-surface-100 overflow-hidden">
                 <button
-                  className="w-full p-4 text-right flex items-start gap-3 hover:bg-surface-50 transition-colors"
+                  className="w-full p-4 text-start flex items-start gap-3 hover:bg-surface-50 transition-colors"
                   onClick={() => setExpandedQ(expandedQ === q.id ? null : q.id)}
                 >
                   <div className="flex flex-col items-center shrink-0 mt-0.5 gap-0.5">
@@ -148,7 +148,7 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
             return (
               <button
                 key={section.id}
-                className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-purple-200 hover:shadow-md transition-all text-right flex items-center gap-4 group"
+                className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-purple-200 hover:shadow-md transition-all text-start flex items-center gap-4 group"
                 onClick={() => setSelectedSection(section.id)}
               >
                 {/* Section IMAGE instead of icon */}

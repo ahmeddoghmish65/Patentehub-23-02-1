@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
+import { useTranslation } from '@/i18n';
 
 export function DictionaryPage() {
   const { dictSections, dictEntries, loadDictSections, loadDictEntries, user } = useAuthStore();
   const lang = user?.settings.language || 'both';
+  const { t } = useTranslation();
   const [activeSec, setActiveSec] = useState('');
   const [search, setSearch] = useState('');
 
@@ -22,14 +24,14 @@ export function DictionaryPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-surface-900 mb-2">القاموس</h1>
-        <p className="text-surface-500">مصطلحات رخصة القيادة بالعربية والإيطالية</p>
+        <h1 className="text-2xl font-bold text-surface-900 mb-2">{t('dictionary_page.title')}</h1>
+        <p className="text-surface-500">{t('dictionary_page.subtitle')}</p>
       </div>
 
       <div className="bg-white rounded-xl p-4 border border-surface-100 mb-6">
         <div className="relative mb-3">
           <Icon name="search" size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400" />
-          <input className="w-full pr-10 pl-4 py-2.5 rounded-lg border border-surface-200 text-sm" placeholder="بحث عن مصطلح..." value={search} onChange={e => setSearch(e.target.value)} />
+          <input className="w-full pr-10 pl-4 py-2.5 rounded-lg border border-surface-200 text-sm" placeholder={t('dictionary_page.search_placeholder')} value={search} onChange={e => setSearch(e.target.value)} />
         </div>
         <div className="flex gap-2 overflow-x-auto">
           {dictSections.map(s => (
@@ -44,7 +46,7 @@ export function DictionaryPage() {
       {entries.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-2xl border border-surface-100">
           <Icon name="menu_book" size={48} className="text-surface-300 mx-auto mb-4" />
-          <p className="text-surface-500">لا توجد مصطلحات</p>
+          <p className="text-surface-500">{t('dictionary_page.no_terms')}</p>
         </div>
       ) : (
         <div className="space-y-3">

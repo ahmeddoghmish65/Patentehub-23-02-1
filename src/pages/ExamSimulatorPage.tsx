@@ -116,7 +116,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
           <div className="w-11 h-11 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow shrink-0">
             <Icon name="assignment" size={24} className="text-white" filled />
           </div>
-          <div className="text-right">
+          <div className="text-start">
             <h1 className="text-base font-bold text-surface-900">{t('exam.title')}</h1>
             <p className="text-xs text-surface-400">Simulazione Esame Patente B</p>
           </div>
@@ -131,7 +131,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
               { label: t('exam.max_errors_label'), value: `${MAX_ERRORS} ${t('exam.errors_plural')}`, icon: 'close', danger: true },
               { label: t('exam.q_type_label'), value: t('exam.q_type_value'), icon: 'check_circle' },
             ].map(item => (
-              <div key={item.label} className="bg-surface-50 rounded-xl p-3 text-right">
+              <div key={item.label} className="bg-surface-50 rounded-xl p-3 text-start">
                 <p className="text-[10px] text-surface-400 mb-0.5">{item.label}</p>
                 <p className={cn('text-sm font-bold', item.danger ? 'text-danger-600' : 'text-surface-900')}>{item.value}</p>
               </div>
@@ -141,7 +141,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
           {/* Instructions - compact */}
           <div className="bg-amber-50 rounded-xl p-3 flex items-start gap-2 border border-amber-100">
             <Icon name="info" size={16} className="text-amber-500 shrink-0 mt-0.5" filled />
-            <ul className="text-xs text-amber-700 space-y-0.5 text-right">
+            <ul className="text-xs text-amber-700 space-y-0.5 text-start">
               <li>• {t('exam.info1')}</li>
               <li>• {t('exam.errors_detail')} {MAX_ERRORS} {t('exam.errors_allowed')}</li>
             </ul>
@@ -215,7 +215,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
             {/* Error detail bar */}
             <div className={cn('rounded-xl p-4 mb-6 flex items-center justify-center gap-3', passed ? 'bg-success-50 border border-success-100' : 'bg-danger-50 border border-danger-100')}>
               <Icon name={passed ? 'check_circle' : 'error'} size={24} className={passed ? 'text-success-500' : 'text-danger-500'} filled />
-              <div className="text-right">
+              <div className="text-start">
                 <p className={cn('text-sm font-bold', passed ? 'text-success-700' : 'text-danger-700')}>
                   {t('exam.errors_of')} {errors} / {MAX_ERRORS} {t('exam.errors_allowed')}
                 </p>
@@ -486,6 +486,7 @@ function SubmitConfirmButton({ answeredCount, totalCount, onConfirm }: {
   onConfirm: () => void;
 }) {
   const [step, setStep] = useState<0 | 1>(0);
+  const { t } = useTranslation();
   const unanswered = totalCount - answeredCount;
 
   if (step === 0) {
@@ -495,21 +496,21 @@ function SubmitConfirmButton({ answeredCount, totalCount, onConfirm }: {
         className="mx-auto flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold border-2 border-surface-300 text-surface-600 hover:border-surface-400 transition-all bg-white"
       >
         <Icon name="send" size={18} />
-        تسليم الامتحان
+        {t('exam.submit_exam_btn')}
       </button>
     );
   }
 
   return (
-    <div className="bg-warning-50 border border-warning-200 rounded-xl p-4 space-y-3 text-right">
+    <div className="bg-warning-50 border border-warning-200 rounded-xl p-4 space-y-3 text-start">
       <div className="flex items-start gap-2">
         <Icon name="warning" size={20} className="text-warning-500 shrink-0 mt-0.5" filled />
         <div>
-          <p className="text-sm font-bold text-warning-800">تأكيد التسليم</p>
+          <p className="text-sm font-bold text-warning-800">{t('exam.confirm_submit_title')}</p>
           {unanswered > 0 ? (
-            <p className="text-xs text-warning-600 mt-0.5">لم تُجب على <strong>{unanswered} سؤال</strong>. بعد التسليم لا يمكن التراجع.</p>
+            <p className="text-xs text-warning-600 mt-0.5">{t('exam.confirm_unanswered_prefix')} <strong>{unanswered} {t('exam.confirm_unanswered_q')}</strong>. {t('exam.confirm_unanswered_suffix')}</p>
           ) : (
-            <p className="text-xs text-warning-600 mt-0.5">أجبت على جميع الأسئلة. هل أنت متأكد من التسليم؟</p>
+            <p className="text-xs text-warning-600 mt-0.5">{t('exam.confirm_all_answered')}</p>
           )}
         </div>
       </div>
@@ -518,13 +519,13 @@ function SubmitConfirmButton({ answeredCount, totalCount, onConfirm }: {
           onClick={() => setStep(0)}
           className="flex-1 py-2 rounded-lg text-xs font-semibold border border-surface-300 bg-white text-surface-600 hover:bg-surface-50 transition-all"
         >
-          إلغاء
+          {t('common.cancel')}
         </button>
         <button
           onClick={onConfirm}
           className="flex-1 py-2 rounded-lg text-xs font-bold bg-danger-500 text-white hover:bg-danger-600 transition-all"
         >
-          نعم، سلّم الآن
+          {t('exam.yes_submit')}
         </button>
       </div>
     </div>

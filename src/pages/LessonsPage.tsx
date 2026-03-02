@@ -3,6 +3,7 @@ import { useAuthStore } from '@/store/authStore';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
+import { useTranslation } from '@/i18n';
 
 interface Props {
   onNavigate: (page: string, data?: Record<string, string>) => void;
@@ -14,6 +15,7 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
   const completed = user?.progress.completedLessons || [];
   const [selectedSection, setSelectedSection] = useState<string | null>(initialSectionId || null);
   const lang = user?.settings.language || 'both';
+  const { t } = useTranslation();
 
   useEffect(() => { loadSections(); loadLessons(); }, [loadSections, loadLessons]);
 
@@ -33,7 +35,7 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
         {/* Back button + Section header */}
         <button onClick={() => setSelectedSection(null)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-5 transition-colors">
           <Icon name="arrow_forward" size={20} />
-          <span className="text-sm font-medium">العودة للأقسام</span>
+          <span className="text-sm font-medium">{t('lessons_page.back_to_sections')}</span>
         </button>
 
         <div className="bg-white rounded-2xl p-5 border border-surface-100 mb-6">
@@ -56,14 +58,14 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
             <div className="flex-1 bg-surface-100 rounded-full h-2">
               <div className={cn('rounded-full h-2 transition-all', pct === 100 ? 'bg-success-500' : 'bg-primary-500')} style={{ width: `${pct}%` }} />
             </div>
-            <span className="text-xs text-surface-500 font-medium shrink-0">{completedCount}/{sectionLessons.length} مكتمل</span>
+            <span className="text-xs text-surface-500 font-medium shrink-0">{completedCount}/{sectionLessons.length} {t('lessons_page.completed')}</span>
           </div>
         </div>
 
         {sectionLessons.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-2xl border border-surface-100">
             <Icon name="school" size={40} className="text-surface-300 mx-auto mb-3" />
-            <p className="text-surface-500">لا توجد دروس في هذا القسم بعد</p>
+            <p className="text-surface-500">{t('lessons_page.no_lessons')}</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -72,7 +74,7 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
               return (
                 <button
                   key={lesson.id}
-                  className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-primary-200 hover:shadow-sm transition-all text-right flex items-center gap-3 group"
+                  className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-primary-200 hover:shadow-sm transition-all text-start flex items-center gap-3 group"
                   onClick={() => onNavigate('lesson-detail', { lessonId: lesson.id, sectionId: selectedSection })}
                 >
                   <div className={cn(
@@ -94,7 +96,7 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                   </div>
 
                   {isCompleted && (
-                    <span className="text-[10px] bg-success-50 text-success-600 px-2 py-0.5 rounded-full shrink-0 font-medium">مكتمل</span>
+                    <span className="text-[10px] bg-success-50 text-success-600 px-2 py-0.5 rounded-full shrink-0 font-medium">{t('lessons_page.completed')}</span>
                   )}
 
                   <Icon name="chevron_left" size={18} className="text-surface-300 group-hover:text-primary-400 shrink-0" />
@@ -107,7 +109,7 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
               <Button fullWidth variant="outline"
                 onClick={() => onNavigate('quiz', { sectionId: selectedSection })}
                 icon={<Icon name="quiz" size={18} />}>
-                اختبار القسم كامل ({sectionLessons.length > 0 ? `${sectionLessons.length} درس` : ''})
+                {t('lessons_page.section_quiz_btn')} ({sectionLessons.length > 0 ? `${sectionLessons.length} ${t('lessons_page.lesson_label')}` : ''})
               </Button>
             </div>
           </div>
@@ -120,15 +122,15 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-surface-900 mb-1">الدروس</h1>
-        <p className="text-surface-500 text-sm">اختر قسماً لبدء الدراسة</p>
+        <h1 className="text-2xl font-bold text-surface-900 mb-1">{t('lessons_page.title')}</h1>
+        <p className="text-surface-500 text-sm">{t('lessons_page.subtitle')}</p>
       </div>
 
       {activeSections.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-2xl border border-surface-100">
           <Icon name="school" size={48} className="text-surface-300 mx-auto mb-4" />
-          <p className="text-surface-500 mb-2">لا توجد أقسام بعد</p>
-          <p className="text-sm text-surface-400">سيقوم المسؤول بإضافة المحتوى قريباً</p>
+          <p className="text-surface-500 mb-2">{t('lessons_page.no_sections')}</p>
+          <p className="text-sm text-surface-400">{t('lessons_page.no_sections_desc')}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -141,7 +143,7 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
             return (
               <button
                 key={section.id}
-                className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all text-right flex items-center gap-4 group"
+                className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all text-start flex items-center gap-4 group"
                 onClick={() => setSelectedSection(section.id)}
               >
                 {/* Thumbnail on right - bigger */}

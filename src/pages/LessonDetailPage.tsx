@@ -3,6 +3,7 @@ import { useAuthStore } from '@/store/authStore';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
+import { useTranslation } from '@/i18n';
 
 interface Props {
   lessonId: string;
@@ -14,6 +15,7 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
   const [activeTab, setActiveTab] = useState<'content' | 'questions'>('content');
 
   const lang = user?.settings.language || 'both';
+  const { t } = useTranslation();
 
   useEffect(() => { loadLessons(); loadQuestions(lessonId); }, [loadLessons, loadQuestions, lessonId]);
 
@@ -26,8 +28,8 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
   if (!lesson) return (
     <div className="text-center py-20">
       <Icon name="error" size={48} className="text-surface-300 mx-auto mb-4" />
-      <p className="text-surface-500">الدرس غير موجود</p>
-      <Button className="mt-4" onClick={() => onNavigate('lessons')}>العودة للدروس</Button>
+      <p className="text-surface-500">{t('lessons_page.lesson_not_found')}</p>
+      <Button className="mt-4" onClick={() => onNavigate('lessons')}>{t('lessons_page.go_back')}</Button>
     </div>
   );
 
@@ -35,7 +37,7 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
     <div>
       <button onClick={() => onNavigate('lessons', { sectionId: lesson.sectionId })} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-6">
         <Icon name="arrow_forward" size={20} />
-        <span className="text-sm">العودة للدروس</span>
+        <span className="text-sm">{t('lessons_page.back_to_lessons')}</span>
       </button>
 
       <div className="bg-white rounded-2xl p-6 border border-surface-100 mb-6">
@@ -52,7 +54,7 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
               {lang === 'it' ? lesson.titleIt : lesson.titleAr}
             </h1>
             {lang === 'both' && <p className="text-sm text-primary-500" dir="ltr">{lesson.titleIt}</p>}
-            {isCompleted && <span className="inline-flex items-center gap-1 mt-2 text-xs bg-success-50 text-success-600 px-2 py-1 rounded-full"><Icon name="check" size={14} /> مكتمل</span>}
+            {isCompleted && <span className="inline-flex items-center gap-1 mt-2 text-xs bg-success-50 text-success-600 px-2 py-1 rounded-full"><Icon name="check" size={14} /> {t('lessons_page.completed')}</span>}
           </div>
         </div>
 
@@ -61,14 +63,14 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
       {/* Tabs - Modern gradient design */}
       <div className="bg-white rounded-2xl p-1.5 border border-surface-100 mb-6 flex gap-1">
         <button className={cn('flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all', 
-          activeTab === 'content' ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-200' : 'text-surface-500 hover:bg-surface-50')} 
+          activeTab === 'content' ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-200' : 'text-surface-500 hover:bg-surface-50')}
           onClick={() => setActiveTab('content')}>
-          <Icon name="article" size={20} filled={activeTab === 'content'} /> الشرح
+          <Icon name="article" size={20} filled={activeTab === 'content'} /> {t('lessons_page.tab_content')}
         </button>
-        <button className={cn('flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all', 
-          activeTab === 'questions' ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-200' : 'text-surface-500 hover:bg-surface-50')} 
+        <button className={cn('flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all',
+          activeTab === 'questions' ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-200' : 'text-surface-500 hover:bg-surface-50')}
           onClick={() => setActiveTab('questions')}>
-          <Icon name="quiz" size={20} filled={activeTab === 'questions'} /> الأسئلة <span className="bg-white/20 px-1.5 py-0.5 rounded-md text-xs">{lessonQuestions.length}</span>
+          <Icon name="quiz" size={20} filled={activeTab === 'questions'} /> {t('lessons_page.tab_questions')} <span className="bg-white/20 px-1.5 py-0.5 rounded-md text-xs">{lessonQuestions.length}</span>
         </button>
       </div>
 
@@ -92,7 +94,7 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
               <h3 className="text-sm font-semibold text-primary-600 mb-2 flex items-center gap-1.5">
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-orange-100 text-orange-700 text-[10px] font-extrabold leading-none">ع</span>
               </h3>
-              <div className="text-base text-surface-700 leading-relaxed prose-sm" dangerouslySetInnerHTML={{ __html: lesson.contentAr }} />
+              <div className="text-base text-surface-700 leading-relaxed prose-sm" dir="rtl" dangerouslySetInnerHTML={{ __html: lesson.contentAr }} />
             </div>
           )}
         </div>
@@ -101,7 +103,7 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
           {lessonQuestions.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-2xl border border-surface-100">
               <Icon name="quiz" size={40} className="text-surface-300 mx-auto mb-3" />
-              <p className="text-surface-500">لا توجد أسئلة لهذا الدرس بعد</p>
+              <p className="text-surface-500">{t('lessons_page.no_lesson_questions')}</p>
             </div>
           ) : (
             <>
@@ -136,7 +138,7 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
               {/* Quiz button at the bottom */}
               <div className="pt-4">
                 <Button fullWidth size="lg" onClick={() => onNavigate('quiz', { lessonId, sectionId: lesson.sectionId })} icon={<Icon name="play_arrow" size={22} />}>
-                  ابدأ اختبار الدرس ({lessonQuestions.length} أسئلة)
+                  {t('lessons_page.start_lesson_quiz')} ({lessonQuestions.length} {t('lessons_page.questions_suffix')})
                 </Button>
               </div>
             </>

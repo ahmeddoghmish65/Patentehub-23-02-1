@@ -110,7 +110,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       {/* Quick Actions */}
       <div className="grid grid-cols-2 gap-3">
         <button
-          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-blue-200 hover:shadow-md transition-all text-right group"
+          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-blue-200 hover:shadow-md transition-all text-start group"
           onClick={() => onNavigate('lessons')}
         >
           <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-blue-50">
@@ -121,7 +121,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </button>
 
         <button
-          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-purple-200 hover:shadow-md transition-all text-right group"
+          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-purple-200 hover:shadow-md transition-all text-start group"
           onClick={() => onNavigate('questions-browse')}
         >
           <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-purple-50">
@@ -132,7 +132,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </button>
 
         <button
-          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-red-200 hover:shadow-md transition-all text-right group"
+          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-red-200 hover:shadow-md transition-all text-start group"
           onClick={() => onNavigate('signs')}
         >
           <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-red-50">
@@ -143,7 +143,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </button>
 
         <button
-          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-cyan-200 hover:shadow-md transition-all text-right group"
+          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-cyan-200 hover:shadow-md transition-all text-start group"
           onClick={() => onNavigate('dictionary')}
         >
           <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-cyan-50">
@@ -154,7 +154,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </button>
 
         <button
-          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-amber-200 hover:shadow-md transition-all text-right group"
+          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-amber-200 hover:shadow-md transition-all text-start group"
           onClick={() => onNavigate('training')}
         >
           <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-amber-50">
@@ -165,7 +165,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </button>
 
         <button
-          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-green-200 hover:shadow-md transition-all text-right group"
+          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-green-200 hover:shadow-md transition-all text-start group"
           onClick={() => onNavigate('exam-simulator')}
         >
           <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-green-50">
@@ -178,7 +178,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
       {/* أخطائي */}
       <button
-        className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-red-200 hover:shadow-md transition-all text-right flex items-center gap-4 group"
+        className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-red-200 hover:shadow-md transition-all text-start flex items-center gap-4 group"
         onClick={() => onNavigate('mistakes')}
       >
         <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-red-50 shrink-0">

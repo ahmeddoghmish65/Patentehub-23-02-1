@@ -130,7 +130,7 @@ export function TrainingPage({ onNavigate }: Props) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {trainModes.map(item => (
           <button key={item.id}
-            className="bg-white rounded-xl p-4 border border-surface-100 hover:border-primary-200 hover:shadow-lg transition-all text-right group flex items-start gap-4"
+            className="bg-white rounded-xl p-4 border border-surface-100 hover:border-primary-200 hover:shadow-lg transition-all text-start group flex items-start gap-4"
             onClick={() => startTraining(item.id)} disabled={item.count === 0}>
             <div className={cn('w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-gradient-to-br text-white shadow-lg', item.gradient)}>
               <Icon name={item.icon} size={24} filled />

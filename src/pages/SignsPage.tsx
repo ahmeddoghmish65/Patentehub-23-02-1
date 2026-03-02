@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
+import { useTranslation } from '@/i18n';
 
 interface Props { onNavigate: (page: string, data?: Record<string, string>) => void; }
 
 export function SignsPage({ onNavigate }: Props) {
   const { signs, loadSigns, signSections, loadSignSections, user } = useAuthStore();
   const lang = user?.settings.language || 'both';
+  const { t } = useTranslation();
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [selectedSign, setSelectedSign] = useState<string | null>(null);
@@ -43,8 +45,8 @@ export function SignsPage({ onNavigate }: Props) {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-surface-900 mb-1">الإشارات المرورية</h1>
-        <p className="text-surface-500 text-sm">تعلم إشارات المرور الإيطالية — {activeSigns.length} إشارة</p>
+        <h1 className="text-2xl font-bold text-surface-900 mb-1">{t('signs_page.title')}</h1>
+        <p className="text-surface-500 text-sm">{t('signs_page.subtitle_prefix')} {activeSigns.length} {t('signs_page.signs_count_label')}</p>
       </div>
 
       {/* Search & Filter */}
@@ -53,7 +55,7 @@ export function SignsPage({ onNavigate }: Props) {
           <Icon name="search" size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400" />
           <input
             className="w-full pr-10 pl-4 py-2.5 rounded-xl border border-surface-200 text-sm focus:border-primary-500 transition-colors"
-            placeholder="بحث عن إشارة بالعربية أو الإيطالية..."
+            placeholder={t('signs_page.search_placeholder')}
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
@@ -65,7 +67,7 @@ export function SignsPage({ onNavigate }: Props) {
             )}
             onClick={() => setFilter('all')}
           >
-            {lang === 'it' ? 'Tutti' : 'الكل'} ({activeSigns.length})
+            {t('signs_page.all_filter')} ({activeSigns.length})
           </button>
           {activeSections.length > 0 ? activeSections.map(sec => {
             const count = activeSigns.filter(s => s.sectionId === sec.id).length;
@@ -88,20 +90,21 @@ export function SignsPage({ onNavigate }: Props) {
       {/* Results count */}
       {search && (
         <p className="text-sm text-surface-500 mb-4">
-          {filtered.length > 0 ? `تم العثور على ${filtered.length} إشارة` : 'لا توجد نتائج'}
+          {filtered.length > 0 ? `${t('signs_page.found_count_prefix')} ${filtered.length} ${t('signs_page.signs_count_label')}` : t('signs_page.no_results')}
         </p>
       )}
 
       {filtered.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-2xl border border-surface-100">
           <Icon name="traffic" size={48} className="text-surface-300 mx-auto mb-4" />
-          <p className="text-surface-500 mb-2">لا توجد إشارات</p>
-          <p className="text-xs text-surface-400">سيتم إضافة الإشارات من لوحة التحكم</p>
+          <p className="text-surface-500 mb-2">{t('signs_page.no_signs')}</p>
+          <p className="text-xs text-surface-400">{t('signs_page.no_signs_desc')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {filtered.map(sign => {
-            const catInfo = catLabels[sign.category] || { label: sign.category, color: '#64748b', icon: 'label' };
+            const catData = catLabels[sign.category];
+            const catInfo = { label: catData ? (lang === 'it' ? catData.labelIt : catData.labelAr) : sign.category, color: catData?.color || '#64748b', icon: catData?.icon || 'label' };
             return (
               <button
                 key={sign.id}
@@ -160,7 +163,7 @@ export function SignsPage({ onNavigate }: Props) {
               </button>
               <span className="absolute top-4 right-4 text-xs font-semibold px-3 py-1 rounded-full text-white"
                 style={{ backgroundColor: catLabels[selectedSignData.category]?.color || '#64748b' }}>
-                {catLabels[selectedSignData.category]?.label || selectedSignData.category}
+                {(() => { const c = catLabels[selectedSignData.category]; return c ? (lang === 'it' ? c.labelIt : c.labelAr) : selectedSignData.category; })()}
               </span>
             </div>
 

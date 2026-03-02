@@ -37,7 +37,7 @@ export function TopicsPage({ onNavigate }: TopicsPageProps) {
             <button
               key={topic.id}
               className={cn(
-                'bg-white rounded-2xl p-6 border-2 text-right transition-all duration-300 group hover:shadow-lg',
+                'bg-white rounded-2xl p-6 border-2 text-start transition-all duration-300 group hover:shadow-lg',
                 isCompleted ? 'border-success-200 hover:border-success-300' : 'border-surface-100 hover:border-primary-200'
               )}
               onClick={() => onNavigate('quiz', { topicId: topic.id })}

@@ -378,7 +378,14 @@
     "extra": "aggiuntivi",
     "exceeded": "Hai superato il limite di",
     "error_singular": "errore",
-    "errors_plural": "errori"
+    "errors_plural": "errori",
+    "submit_exam_btn": "Invia esame",
+    "confirm_submit_title": "Conferma invio",
+    "confirm_unanswered_prefix": "Non hai risposto a",
+    "confirm_unanswered_q": "domande",
+    "confirm_unanswered_suffix": "Non puoi tornare indietro dopo l'invio.",
+    "confirm_all_answered": "Hai risposto a tutte le domande. Sei sicuro di voler inviare?",
+    "yes_submit": "Sì, invia ora"
   },
   "community": {
     "title": "Comunità",
@@ -615,5 +622,65 @@
     "badge_level5": "Livello 5",
     "delete_avatar_title": "Elimina foto",
     "level_label": "Livello"
+  },
+  "lessons_page": {
+    "back_to_sections": "Torna alle sezioni",
+    "title": "Lezioni",
+    "subtitle": "Scegli una sezione per iniziare",
+    "no_sections": "Nessuna sezione disponibile",
+    "no_sections_desc": "Il contenuto verrà aggiunto presto dall'amministratore",
+    "completed": "Completato",
+    "no_lessons": "Nessuna lezione in questa sezione",
+    "section_quiz_btn": "Quiz completo della sezione",
+    "lesson_label": "lezione",
+    "back_to_lessons": "Torna alle lezioni",
+    "lesson_not_found": "Lezione non trovata",
+    "go_back": "Torna alle lezioni",
+    "tab_content": "Spiegazione",
+    "tab_questions": "Domande",
+    "no_lesson_questions": "Nessuna domanda per questa lezione",
+    "start_lesson_quiz": "Inizia il quiz della lezione",
+    "questions_suffix": "domande"
+  },
+  "quiz_page": {
+    "no_questions": "Nessuna domanda disponibile",
+    "back": "Indietro",
+    "true_false_label": "Domanda Vero/Falso",
+    "passing_score": "Punteggio minimo",
+    "start": "Inizia il quiz",
+    "passed_title": "Eccellente!",
+    "failed_title": "Riprova",
+    "passed_msg": "Lezione segnata come completata",
+    "failed_msg": "Hai bisogno del 70% per superare",
+    "correct_count": "Corretti",
+    "wrong_count": "Sbagliati",
+    "time_label": "Tempo",
+    "retake": "Rifai il quiz",
+    "back_lessons": "Torna alle lezioni",
+    "correct_feedback": "✓ Risposta corretta!",
+    "wrong_feedback": "✗ Risposta sbagliata",
+    "next_q": "Prossima domanda",
+    "show_result": "Mostra risultato",
+    "difficulty_easy": "Facile",
+    "difficulty_medium": "Medio",
+    "difficulty_hard": "Difficile",
+    "default_title": "Quiz"
+  },
+  "dictionary_page": {
+    "title": "Dizionario",
+    "subtitle": "Termini della patente in arabo e italiano",
+    "search_placeholder": "Cerca un termine...",
+    "no_terms": "Nessun termine trovato"
+  },
+  "signs_page": {
+    "title": "Segnali stradali",
+    "subtitle_prefix": "Impara i segnali stradali italiani —",
+    "signs_count_label": "segnali",
+    "search_placeholder": "Cerca un segnale in arabo o italiano...",
+    "all_filter": "Tutti",
+    "found_count_prefix": "Trovati",
+    "no_results": "Nessun risultato",
+    "no_signs": "Nessun segnale trovato",
+    "no_signs_desc": "I segnali verranno aggiunti dal pannello di controllo"
   }
 }
