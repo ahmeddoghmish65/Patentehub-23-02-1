@@ -85,7 +85,7 @@ export function MistakesPage() {
             {/* Question card */}
             <div className="bg-white rounded-2xl border border-surface-100 p-5">
               {(lang === 'ar' || lang === 'both') && (
-                <p className="font-semibold text-surface-800 text-base leading-relaxed mb-2">{q.questionAr}</p>
+                <p className="font-semibold text-surface-800 text-base leading-relaxed mb-2" dir="rtl">{q.questionAr}</p>
               )}
               {(lang === 'it' || lang === 'both') && (
                 <p className="text-sm text-surface-400 leading-relaxed" dir="ltr">{q.questionIt}</p>
@@ -135,7 +135,7 @@ export function MistakesPage() {
                   <span className={cn('text-sm font-black', m.count >= 3 ? 'text-danger-600' : 'text-warning-600')}>×{m.count}</span>
                 </div>
                 <div className="flex-1">
-                  {(lang === 'ar' || lang === 'both') && <p className="font-semibold text-surface-800 text-sm mb-1">{m.questionAr}</p>}
+                  {(lang === 'ar' || lang === 'both') && <p className="font-semibold text-surface-800 text-sm mb-1" dir="rtl">{m.questionAr}</p>}
                   {(lang === 'it' || lang === 'both') && <p className="text-sm text-surface-400 mb-2" dir="ltr">{m.questionIt}</p>}
                   <div className="flex items-center gap-4 text-xs flex-wrap">
                     <span className="text-danger-500 flex items-center gap-1">

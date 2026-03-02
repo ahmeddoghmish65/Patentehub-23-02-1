@@ -124,7 +124,7 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
                     </div>
                     <div>
                       {(lang === 'ar' || lang === 'both') && (
-                        <p className="text-sm font-medium text-surface-800">{q.questionAr}</p>
+                        <p className="text-sm font-medium text-surface-800" dir="rtl">{q.questionAr}</p>
                       )}
                       {(lang === 'it' || lang === 'both') && (
                         <p className={cn("text-sm text-surface-500", lang === 'both' && 'mt-1')} dir="ltr">{q.questionIt}</p>

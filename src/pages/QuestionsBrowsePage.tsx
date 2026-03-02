@@ -83,7 +83,7 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                       <img src={q.image} alt="" className="w-full rounded-lg mb-2 max-h-36 object-contain bg-white" />
                     )}
                     {(lang === 'ar' || lang === 'both') && (
-                      <p className="text-sm font-medium text-surface-800 leading-relaxed">{q.questionAr}</p>
+                      <p className="text-sm font-medium text-surface-800 leading-relaxed" dir="rtl">{q.questionAr}</p>
                     )}
                     {(lang === 'it' || lang === 'both') && (
                       <p className={cn("text-sm text-surface-500 leading-relaxed", lang === 'both' && 'mt-1')} dir="ltr">
@@ -101,7 +101,7 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                         الشرح
                       </p>
                       {(lang === 'ar' || lang === 'both') && (
-                        <p className="text-sm text-surface-700 leading-relaxed">{q.explanationAr}</p>
+                        <p className="text-sm text-surface-700 leading-relaxed" dir="rtl">{q.explanationAr}</p>
                       )}
                       {(lang === 'it' || lang === 'both') && (
                         <p className={cn("text-sm text-surface-500 leading-relaxed", lang === 'both' && 'mt-1')} dir="ltr">

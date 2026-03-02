@@ -57,11 +57,11 @@ export function TopicsPage({ onNavigate }: TopicsPageProps) {
                 )}
               </div>
 
-              <h3 className="text-lg font-bold text-surface-900 mb-1 group-hover:text-primary-600 transition-colors">
+              <h3 className="text-lg font-bold text-surface-900 mb-1 group-hover:text-primary-600 transition-colors" dir="rtl">
                 {topic.nameAr}
               </h3>
-              <p className="text-sm text-primary-500 font-medium mb-2">{topic.nameIt}</p>
-              <p className="text-xs text-surface-400 mb-4 line-clamp-2">{topic.descriptionAr}</p>
+              <p className="text-sm text-primary-500 font-medium mb-2" dir="ltr">{topic.nameIt}</p>
+              <p className="text-xs text-surface-400 mb-4 line-clamp-2" dir="rtl">{topic.descriptionAr}</p>
 
               <div className="flex items-center justify-between">
                 <span className="text-xs text-surface-400 flex items-center gap-1">

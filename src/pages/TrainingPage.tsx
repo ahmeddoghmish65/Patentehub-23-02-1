@@ -204,7 +204,7 @@ export function TrainingPage({ onNavigate }: Props) {
         {isQuestion(item) && (
           <div className="p-6">
             {item.image && <img src={item.image} alt="" className="w-full rounded-xl mb-4 max-h-40 object-contain bg-surface-50" />}
-            {(lang === 'ar' || lang === 'both') && <h2 className="text-base font-bold text-surface-900 mb-1">{item.questionAr}</h2>}
+            {(lang === 'ar' || lang === 'both') && <h2 className="text-base font-bold text-surface-900 mb-1" dir="rtl">{item.questionAr}</h2>}
             {(lang === 'it' || lang === 'both') && <p className="text-base text-surface-500" dir="ltr">{item.questionIt}</p>}
           </div>
         )}
@@ -222,9 +222,9 @@ export function TrainingPage({ onNavigate }: Props) {
               </div>
             ) : (
               <div className="text-center space-y-3">
-                {(lang === 'ar' || lang === 'both') && <h3 className="text-lg font-bold text-surface-900">{item.nameAr}</h3>}
+                {(lang === 'ar' || lang === 'both') && <h3 className="text-lg font-bold text-surface-900" dir="rtl">{item.nameAr}</h3>}
                 {(lang === 'it' || lang === 'both') && <p className="text-base text-primary-500 font-medium" dir="ltr">{item.nameIt}</p>}
-                {(lang === 'ar' || lang === 'both') && <p className="text-sm text-surface-500">{item.descriptionAr}</p>}
+                {(lang === 'ar' || lang === 'both') && <p className="text-sm text-surface-500" dir="rtl">{item.descriptionAr}</p>}
                 <div className="flex gap-2 justify-center pt-2">
                   <Button variant="secondary" onClick={() => handleNext(false)} className="!bg-danger-50 !text-danger-600">{t('training.did_not_know')}</Button>
                   <Button onClick={() => handleNext(true)} className="!bg-success-500">{t('training.knew_it')}</Button>
@@ -247,8 +247,8 @@ export function TrainingPage({ onNavigate }: Props) {
               </div>
             ) : (
               <div className="text-center space-y-3">
-                {(lang === 'ar' || lang === 'both') && <h3 className="text-lg font-bold text-surface-900">{item.termAr}</h3>}
-                {(lang === 'ar' || lang === 'both') && item.definitionAr && <p className="text-sm text-surface-500">{item.definitionAr}</p>}
+                {(lang === 'ar' || lang === 'both') && <h3 className="text-lg font-bold text-surface-900" dir="rtl">{item.termAr}</h3>}
+                {(lang === 'ar' || lang === 'both') && item.definitionAr && <p className="text-sm text-surface-500" dir="rtl">{item.definitionAr}</p>}
                 {(lang === 'it' || lang === 'both') && item.definitionIt && <p className="text-xs text-surface-400" dir="ltr">{item.definitionIt}</p>}
                 <div className="flex gap-2 justify-center pt-2">
                   <Button variant="secondary" onClick={() => handleNext(false)} className="!bg-danger-50 !text-danger-600">{t('training.did_not_know')}</Button>
@@ -285,7 +285,7 @@ export function TrainingPage({ onNavigate }: Props) {
               {userAnswer === item.isTrue ? t('training.correct_answer') : t('training.wrong_answer')}
             </p>
             <p className="text-xs text-surface-600 mt-1">{t('training.correct_is')} {item.isTrue ? trueLabel : falseLabel}</p>
-            {(lang === 'ar' || lang === 'both') && item.explanationAr && <p className="text-xs text-surface-500 mt-2">{item.explanationAr}</p>}
+            {(lang === 'ar' || lang === 'both') && item.explanationAr && <p className="text-xs text-surface-500 mt-2" dir="rtl">{item.explanationAr}</p>}
             {(lang === 'it' || lang === 'both') && item.explanationIt && <p className="text-xs text-surface-500 mt-2" dir="ltr">{item.explanationIt}</p>}
           </div>
           <Button fullWidth onClick={() => handleNext(userAnswer === item.isTrue)}>

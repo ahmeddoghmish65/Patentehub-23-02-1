@@ -128,10 +128,10 @@ export function SignsPage({ onNavigate }: Props) {
                 {/* Info */}
                 <div className="p-3 border-t border-surface-50">
                   {(lang === 'ar' || lang === 'both') && (
-                    <h3 className="font-bold text-surface-900 text-sm mb-0.5 group-hover:text-primary-600 transition-colors line-clamp-1">{sign.nameAr}</h3>
+                    <h3 className="font-bold text-surface-900 text-sm mb-0.5 group-hover:text-primary-600 transition-colors line-clamp-1" dir="rtl">{sign.nameAr}</h3>
                   )}
                   {(lang === 'it' || lang === 'both') && (
-                    <p className="text-sm text-primary-500 line-clamp-1">{sign.nameIt}</p>
+                    <p className="text-sm text-primary-500 line-clamp-1" dir="ltr">{sign.nameIt}</p>
                   )}
                 </div>
               </button>
@@ -167,10 +167,10 @@ export function SignsPage({ onNavigate }: Props) {
             {/* Details */}
             <div className="p-6">
               {(lang === 'ar' || lang === 'both') && (
-                <h2 className="text-xl font-bold text-surface-900 mb-1">{selectedSignData.nameAr}</h2>
+                <h2 className="text-xl font-bold text-surface-900 mb-1" dir="rtl">{selectedSignData.nameAr}</h2>
               )}
               {(lang === 'it' || lang === 'both') && (
-                <p className="text-xl text-primary-500 font-medium mb-4">{selectedSignData.nameIt}</p>
+                <p className="text-xl text-primary-500 font-medium mb-4" dir="ltr">{selectedSignData.nameIt}</p>
               )}
 
               <div className="bg-surface-50 rounded-xl p-4 space-y-3">
@@ -181,7 +181,7 @@ export function SignsPage({ onNavigate }: Props) {
                   </div>
                 )}
                 {(lang === 'ar' || lang === 'both') && (
-                  <div>
+                  <div dir="rtl">
                     <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-orange-100 text-orange-700 text-[10px] font-extrabold leading-none mb-1">ع</span>
                     <p className="text-sm text-surface-700 leading-relaxed">{selectedSignData.descriptionAr}</p>
                   </div>

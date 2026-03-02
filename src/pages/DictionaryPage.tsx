@@ -54,7 +54,7 @@ export function DictionaryPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2 flex-wrap">
                     {(lang === 'ar' || lang === 'both') && (
-                      <span className="text-lg font-bold text-surface-900">{entry.termAr}</span>
+                      <span className="text-lg font-bold text-surface-900" dir="rtl">{entry.termAr}</span>
                     )}
                     {lang === 'both' && <span className="text-surface-300">—</span>}
                     {(lang === 'it' || lang === 'both') && (
@@ -62,7 +62,7 @@ export function DictionaryPage() {
                     )}
                   </div>
                   {(lang === 'ar' || lang === 'both') && (
-                    <p className="text-sm text-surface-500 mb-1">{entry.definitionAr}</p>
+                    <p className="text-sm text-surface-500 mb-1" dir="rtl">{entry.definitionAr}</p>
                   )}
                   {(lang === 'it' || lang === 'both') && (
                     <p className="text-sm text-surface-400" dir="ltr">{entry.definitionIt}</p>
