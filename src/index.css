@@ -43,7 +43,7 @@
   font-family: var(--font-family-cairo);
 }
 
-html[dir="ltr"] * {
+html[dir="ltr"] *:not(.material-symbols-rounded) {
   font-family: var(--font-family-inter);
 }
 
