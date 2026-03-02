@@ -19,19 +19,21 @@ import { ContactPage } from '@/pages/ContactPage';
 import { PrivacyPolicyPage } from '@/pages/PrivacyPolicyPage';
 import { TermsOfServicePage } from '@/pages/TermsOfServicePage';
 import { CookieConsentBanner } from '@/components/CookieConsentBanner';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { getConsentLevel, saveLastPage, type ConsentLevel } from '@/utils/cookieManager';
+import { useTranslation } from '@/i18n';
 
 type Page = 'landing' | 'login' | 'register' | 'reset-password' | 'dashboard' | 'lessons' | 'lesson-detail' | 'quiz' | 'signs' | 'dictionary' | 'training' | 'community' | 'profile' | 'admin' | 'mistakes' | 'exam-simulator' | 'questions-browse' | 'contact' | 'privacy-policy' | 'terms-of-service';
 
 export function App() {
   const { user, isLoading, checkAuth, recordPageVisit } = useAuthStore();
+  const { t, dir } = useTranslation();
   const [currentPage, setCurrentPage] = useState<Page>('landing');
   const [pageData, setPageData] = useState<Record<string, string>>({});
 
   // ── Cookie consent ──────────────────────────────────────────────────────
-  // Lazily read from cookie so we don't trigger a re-render on first mount.
   const [consentLevel, setConsentLevel] = useState<ConsentLevel | null>(
     () => getConsentLevel(),
   );
@@ -54,9 +56,7 @@ export function App() {
     setCurrentPage(page as Page);
     if (data) setPageData(prev => ({ ...prev, ...data }));
     window.scrollTo({ top: 0, behavior: 'instant' });
-    // Record analytics page visit
     recordPageVisit(page).catch(() => {});
-    // Persist last page to cookie (no-op unless user consented to all cookies)
     saveLastPage(page);
   }, [recordPageVisit]);
 
@@ -70,7 +70,7 @@ export function App() {
           <h1 className="text-xl font-bold text-surface-900 mb-2">Patente Hub</h1>
           <div className="flex items-center justify-center gap-2 text-surface-400">
             <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
-            <span className="text-sm">جاري التحميل...</span>
+            <span className="text-sm">{t('common.loading')}</span>
           </div>
         </div>
       </div>
@@ -105,31 +105,30 @@ export function App() {
 
   // Bottom navigation items (mobile)
   const bottomNavItems = [
-    { id: 'dashboard', icon: 'home', label: 'الرئيسية' },
-    { id: 'lessons', icon: 'school', label: 'الدروس' },
-    { id: 'training', icon: 'fitness_center', label: 'التدريب' },
-    { id: 'community', icon: 'forum', label: 'المجتمع' },
-    { id: 'profile', icon: 'person', label: 'حسابي' },
+    { id: 'dashboard', icon: 'home', label: t('nav.home') },
+    { id: 'lessons', icon: 'school', label: t('nav.lessons') },
+    { id: 'training', icon: 'fitness_center', label: t('nav.training') },
+    { id: 'community', icon: 'forum', label: t('nav.community') },
+    { id: 'profile', icon: 'person', label: t('nav.profile') },
   ];
 
   // Desktop sidebar items
   const sideNavItems = [
-    { id: 'dashboard', icon: 'home', label: 'الرئيسية' },
-    { id: 'lessons', icon: 'school', label: 'الدروس' },
-    { id: 'signs', icon: 'traffic', label: 'الإشارات' },
-    { id: 'dictionary', icon: 'menu_book', label: 'القاموس' },
-    { id: 'training', icon: 'fitness_center', label: 'التدريب' },
-    { id: 'community', icon: 'forum', label: 'المجتمع' },
-    { id: 'profile', icon: 'person', label: 'حسابي' },
-    ...(isAdminUser ? [{ id: 'admin', icon: 'admin_panel_settings', label: 'لوحة التحكم' }] : []),
+    { id: 'dashboard', icon: 'home', label: t('nav.home') },
+    { id: 'lessons', icon: 'school', label: t('nav.lessons') },
+    { id: 'signs', icon: 'traffic', label: t('nav.signs') },
+    { id: 'dictionary', icon: 'menu_book', label: t('nav.dictionary') },
+    { id: 'training', icon: 'fitness_center', label: t('nav.training') },
+    { id: 'community', icon: 'forum', label: t('nav.community') },
+    { id: 'profile', icon: 'person', label: t('nav.profile') },
+    ...(isAdminUser ? [{ id: 'admin', icon: 'admin_panel_settings', label: t('nav.admin') }] : []),
   ];
 
-  // Profile completion gate - after first activity, lock content until profile complete
+  // Profile completion gate
   const needsProfileComplete = user && !user.profileComplete && user.progress.totalQuizzes >= 1;
   const isContentPage = ['lessons', 'lesson-detail', 'quiz', 'signs', 'dictionary', 'training', 'exam-simulator', 'questions-browse'].includes(currentPage);
-  
+
   const renderPage = () => {
-    // If needs profile completion and trying to access content pages
     if (needsProfileComplete && isContentPage) {
       return (
         <div className="max-w-md mx-auto text-center py-12">
@@ -137,23 +136,23 @@ export function App() {
             <div className="w-20 h-20 mx-auto bg-warning-50 rounded-2xl flex items-center justify-center mb-6">
               <Icon name="person_add" size={40} className="text-warning-500" filled />
             </div>
-            <h2 className="text-xl font-bold text-surface-900 mb-3">أكمل بياناتك الشخصية</h2>
+            <h2 className="text-xl font-bold text-surface-900 mb-3">{t('profile_gate.title')}</h2>
             <p className="text-surface-500 text-sm mb-6 leading-relaxed">
-              لمتابعة استخدام الدروس والاختبارات والتدريب، يرجى إكمال بياناتك الشخصية أولاً.
+              {t('profile_gate.desc')}
             </p>
             <div className="space-y-3">
               <button className="w-full bg-primary-500 text-white rounded-xl py-3 font-semibold hover:bg-primary-600 transition-colors" onClick={() => navigate('profile')}>
-                الذهاب لصفحة حسابي
+                {t('profile_gate.go_to_profile')}
               </button>
               <button className="w-full text-surface-500 text-sm hover:text-surface-700" onClick={() => navigate('dashboard')}>
-                العودة للرئيسية
+                {t('profile_gate.back_home')}
               </button>
             </div>
           </div>
         </div>
       );
     }
-    
+
     switch (currentPage) {
       case 'dashboard': return <Dashboard onNavigate={navigate} />;
       case 'lessons': return <LessonsPage onNavigate={navigate} initialSectionId={pageData.sectionId} />;
@@ -175,10 +174,19 @@ export function App() {
     }
   };
 
+  // Direction-aware sidebar positioning
+  // In RTL (Arabic): sidebar on the right, main content has margin-right
+  // In LTR (Italian): sidebar on the left, main content has margin-left
+  const sidebarPositionClass = dir === 'rtl'
+    ? 'top-0 right-0 border-l'
+    : 'top-0 left-0 border-r';
+  const mainMarginClass = dir === 'rtl' ? 'lg:mr-72' : 'lg:ml-72';
+  const navButtonAlign = dir === 'rtl' ? 'text-right' : 'text-left';
+
   return (
     <div className="min-h-screen bg-surface-50">
       {/* Desktop Sidebar — hidden on mobile */}
-      <aside className="hidden lg:flex fixed top-0 right-0 z-50 h-full w-72 bg-white border-l border-surface-100 flex-col">
+      <aside className={cn('hidden lg:flex fixed z-50 h-full w-72 bg-white flex-col', sidebarPositionClass)}>
         <div className="p-6 border-b border-surface-100">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-200">
@@ -186,7 +194,7 @@ export function App() {
             </div>
             <div>
               <h1 className="text-lg font-bold text-surface-900">Patente Hub</h1>
-              <p className="text-xs text-surface-400">رخصة القيادة الإيطالية</p>
+              <p className="text-xs text-surface-400">{t('nav.subtitle')}</p>
             </div>
           </div>
         </div>
@@ -202,7 +210,7 @@ export function App() {
             )}
             <div className="min-w-0">
               <p className="text-sm font-semibold text-surface-800 truncate">{user.name}</p>
-              <p className="text-xs text-surface-400">المستوى {user.progress.level}</p>
+              <p className="text-xs text-surface-400">{t('nav.level')} {user.progress.level}</p>
             </div>
           </div>
         </div>
@@ -212,7 +220,8 @@ export function App() {
             <button
               key={item.id}
               className={cn(
-                'w-full flex items-center gap-3 px-4 py-3 rounded-xl text-right transition-all',
+                'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all',
+                navButtonAlign,
                 currentPage === item.id ? 'bg-primary-50 text-primary-700 font-semibold' : 'text-surface-500 hover:bg-surface-50'
               )}
               onClick={() => navigate(item.id)}
@@ -223,26 +232,30 @@ export function App() {
           ))}
         </nav>
 
-        <div className="p-4">
+        <div className="p-4 space-y-3">
           <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-100">
             <div className="flex items-center gap-2 mb-2">
               <Icon name="local_fire_department" size={20} className="text-orange-500" filled />
-              <span className="text-sm font-semibold text-orange-700">سلسلة الأيام</span>
+              <span className="text-sm font-semibold text-orange-700">{t('nav.streak')}</span>
             </div>
             <p className="text-3xl font-bold text-orange-600">{user.progress.currentStreak}</p>
-            <p className="text-xs text-orange-400 mt-1">جاهزية الامتحان: {user.progress.examReadiness}%</p>
+            <p className="text-xs text-orange-400 mt-1">{t('nav.exam_readiness')}: {user.progress.examReadiness}%</p>
+          </div>
+          {/* Language Switcher */}
+          <div className="flex items-center justify-center">
+            <LanguageSwitcher variant="full" />
           </div>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="lg:mr-72 pb-20 lg:pb-0">
+      <main className={cn('pb-20 lg:pb-0', mainMarginClass)}>
         <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
           {renderPage()}
         </div>
       </main>
 
-      {/* Mobile Bottom Nav — no hamburger menu, no sidebar on mobile */}
+      {/* Mobile Bottom Nav */}
       <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-surface-100 pb-safe">
         <div className="flex items-center justify-around h-16">
           {bottomNavItems.map(item => (
@@ -254,7 +267,6 @@ export function App() {
         </div>
       </nav>
 
-      {/* Cookie consent banner — shown once per browser until user decides */}
       {showConsentBanner && <CookieConsentBanner onConsent={handleConsent} />}
     </div>
   );

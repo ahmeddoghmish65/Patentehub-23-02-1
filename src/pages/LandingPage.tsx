@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { cn } from '@/utils/cn';
+import { useTranslation } from '@/i18n';
 
 interface LandingPageProps {
   onNavigate: (page: string) => void;
 }
 
 export function LandingPage({ onNavigate }: LandingPageProps) {
+  const { t, dir } = useTranslation();
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -16,14 +19,14 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   const features = [
-    { icon: 'translate', title: 'ثنائي اللغة', desc: 'كل سؤال وشرح بالعربية والإيطالية معاً', bg: 'from-blue-500 to-blue-600' },
-    { icon: 'quiz', title: 'اختبارات حقيقية', desc: 'أسئلة صح/خطأ مطابقة لنمط الامتحان', bg: 'from-violet-500 to-violet-600' },
-    { icon: 'school', title: 'دروس منظمة', desc: 'محتوى مقسم لأقسام ودروس مرتبة', bg: 'from-green-500 to-green-600' },
-    { icon: 'traffic', title: 'إشارات مرورية', desc: 'مكتبة شاملة لجميع الإشارات مع شرح', bg: 'from-red-500 to-red-600' },
-    { icon: 'menu_book', title: 'قاموس مروري', desc: 'كل مصطلح إيطالي مترجم بالعربية', bg: 'from-amber-500 to-amber-600' },
-    { icon: 'forum', title: 'مجتمع تعليمي', desc: 'تواصل مع آلاف العرب في إيطاليا', bg: 'from-cyan-500 to-cyan-600' },
-    { icon: 'trending_up', title: 'تتبع ذكي', desc: 'إحصائيات دقيقة لتقدمك ونسبة جاهزيتك', bg: 'from-pink-500 to-pink-600' },
-    { icon: 'fitness_center', title: 'تدريب يومي', desc: 'سلسلة أيام وتحديات لتحفيزك', bg: 'from-orange-500 to-orange-600' },
+    { icon: 'translate', title: t('landing.f1_title'), desc: t('landing.f1_desc'), bg: 'from-blue-500 to-blue-600' },
+    { icon: 'quiz', title: t('landing.f2_title'), desc: t('landing.f2_desc'), bg: 'from-violet-500 to-violet-600' },
+    { icon: 'school', title: t('landing.f3_title'), desc: t('landing.f3_desc'), bg: 'from-green-500 to-green-600' },
+    { icon: 'traffic', title: t('landing.f4_title'), desc: t('landing.f4_desc'), bg: 'from-red-500 to-red-600' },
+    { icon: 'menu_book', title: t('landing.f5_title'), desc: t('landing.f5_desc'), bg: 'from-amber-500 to-amber-600' },
+    { icon: 'forum', title: t('landing.f6_title'), desc: t('landing.f6_desc'), bg: 'from-cyan-500 to-cyan-600' },
+    { icon: 'trending_up', title: t('landing.f7_title'), desc: t('landing.f7_desc'), bg: 'from-pink-500 to-pink-600' },
+    { icon: 'fitness_center', title: t('landing.f8_title'), desc: t('landing.f8_desc'), bg: 'from-orange-500 to-orange-600' },
   ];
 
   useEffect(() => {
@@ -50,40 +53,53 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
   }, []);
 
   useEffect(() => {
-    const t = setInterval(() => setActiveFeature(p => (p + 1) % features.length), 3200);
-    return () => clearInterval(t);
+    const interval = setInterval(() => setActiveFeature(p => (p + 1) % features.length), 3200);
+    return () => clearInterval(interval);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const isVisible = (id: string) => visibleSections.has(id);
 
   const testimonials = [
-    { name: 'أحمد محمد', text: 'نجحت من أول مرة! الشرح بالعربية سهّل عليّ فهم القوانين الإيطالية.', rating: 5, city: 'Milano', role: 'طالب جامعي', initials: 'أم' },
-    { name: 'فاطمة علي', text: 'كنت خائفة من الامتحان، لكن أسئلة التدريب كانت مشابهة جداً للامتحان الحقيقي.', rating: 5, city: 'Roma', role: 'ربة منزل', initials: 'فع' },
-    { name: 'يوسف حسن', text: 'نظام تتبع الأخطاء رائع. بعد أسبوعين من التدريب اليومي نجحت بسهولة!', rating: 5, city: 'Torino', role: 'عامل', initials: 'يح' },
-    { name: 'سارة خالد', text: 'قسم الإشارات المرورية مع الصور رائع. والقاموس ساعدني أفهم المصطلحات الصعبة.', rating: 5, city: 'Napoli', role: 'موظفة', initials: 'سخ' },
-    { name: 'محمد رضا', text: 'درست 3 أسابيع فقط ونجحت. شكراً Patente Hub! أفضل تطبيق للعرب.', rating: 5, city: 'Bologna', role: 'مهندس', initials: 'مر' },
-    { name: 'نور الهدى', text: 'المجتمع فيه ناس مساعدة جداً. كنت أسأل وأحصل إجابة بسرعة.', rating: 5, city: 'Firenze', role: 'طالبة', initials: 'نه' },
+    { name: 'أحمد محمد', text: t('landing.t1_text'), rating: 5, city: 'Milano', role: t('landing.t1_role'), initials: 'أم' },
+    { name: 'فاطمة علي', text: t('landing.t2_text'), rating: 5, city: 'Roma', role: t('landing.t2_role'), initials: 'فع' },
+    { name: 'يوسف حسن', text: t('landing.t3_text'), rating: 5, city: 'Torino', role: t('landing.t3_role'), initials: 'يح' },
+    { name: 'سارة خالد', text: t('landing.t4_text'), rating: 5, city: 'Napoli', role: t('landing.t4_role'), initials: 'سخ' },
+    { name: 'محمد رضا', text: t('landing.t5_text'), rating: 5, city: 'Bologna', role: t('landing.t5_role'), initials: 'مر' },
+    { name: 'نور الهدى', text: t('landing.t6_text'), rating: 5, city: 'Firenze', role: t('landing.t6_role'), initials: 'نه' },
   ];
 
   const faqs = [
-    { q: 'هل التطبيق مجاني؟', a: 'نعم، التطبيق مجاني بالكامل. جميع الدروس والأسئلة والإشارات والقاموس متاحة بدون أي رسوم.' },
-    { q: 'هل الأسئلة مشابهة للامتحان الحقيقي؟', a: 'نعم، الأسئلة بنمط صح/خطأ (Vero/Falso) وهو نفس نمط الامتحان الرسمي في إيطاليا.' },
-    { q: 'ما هو نوع الرخصة المدعوم؟', a: 'التطبيق يغطي جميع مواضيع رخصة الفئة B (Patente B) وهي الأكثر شيوعاً.' },
-    { q: 'هل يمكنني الدراسة بالعربية فقط؟', a: 'نعم، يمكنك الدراسة بالعربية أو الإيطالية أو كلاهما. لكننا ننصح بكلا اللغتين لأن الامتحان بالإيطالية.' },
-    { q: 'كم يوماً أحتاج للاستعداد؟', a: 'معظم المستخدمين ينجحون بعد 2-4 أسابيع من الدراسة اليومية. نظام التتبع يساعدك تعرف متى تكون جاهزاً.' },
-    { q: 'هل يوجد تطبيق للجوال؟', a: 'التطبيق مصمم ليعمل بشكل مثالي على متصفح الجوال. يمكنك إضافته للشاشة الرئيسية واستخدامه كتطبيق.' },
+    { q: t('landing.faq1_q'), a: t('landing.faq1_a') },
+    { q: t('landing.faq2_q'), a: t('landing.faq2_a') },
+    { q: t('landing.faq3_q'), a: t('landing.faq3_a') },
+    { q: t('landing.faq4_q'), a: t('landing.faq4_a') },
+    { q: t('landing.faq5_q'), a: t('landing.faq5_a') },
+    { q: t('landing.faq6_q'), a: t('landing.faq6_a') },
   ];
 
   const stats = [
-    { value: '+5,000', label: 'مستخدم نشط', icon: 'group', colorfrom: 'from-blue-500', colorto: 'to-blue-600', textcolor: 'text-blue-600' },
-    { value: '92%', label: 'نسبة النجاح', icon: 'verified', colorfrom: 'from-green-500', colorto: 'to-green-600', textcolor: 'text-green-600' },
-    { value: '+10,000', label: 'اختبار مكتمل', icon: 'quiz', colorfrom: 'from-violet-500', colorto: 'to-violet-600', textcolor: 'text-violet-600' },
-    { value: '4.9★', label: 'تقييم المستخدمين', icon: 'star', colorfrom: 'from-amber-500', colorto: 'to-amber-600', textcolor: 'text-amber-600' },
+    { value: '+5,000', label: t('landing.stat1_label'), icon: 'group', colorfrom: 'from-blue-500', colorto: 'to-blue-600', textcolor: 'text-blue-600' },
+    { value: '92%', label: t('landing.stat2_label'), icon: 'verified', colorfrom: 'from-green-500', colorto: 'to-green-600', textcolor: 'text-green-600' },
+    { value: '+10,000', label: t('landing.stat3_label'), icon: 'quiz', colorfrom: 'from-violet-500', colorto: 'to-violet-600', textcolor: 'text-violet-600' },
+    { value: '4.9★', label: t('landing.stat4_label'), icon: 'star', colorfrom: 'from-amber-500', colorto: 'to-amber-600', textcolor: 'text-amber-600' },
+  ];
+
+  const navLinks = [
+    { href: '#features', label: t('landing.nav_features') },
+    { href: '#how', label: t('landing.nav_how') },
+    { href: '#testimonials', label: t('landing.nav_testimonials') },
+    { href: '#faq', label: t('landing.nav_faq') },
+  ];
+
+  const steps = [
+    { step: '01', icon: 'person_add', title: t('landing.step1_title'), titleIt: t('landing.step1_title_it'), desc: t('landing.step1_desc'), color: 'from-blue-500 to-blue-600' },
+    { step: '02', icon: 'menu_book', title: t('landing.step2_title'), titleIt: t('landing.step2_title_it'), desc: t('landing.step2_desc'), color: 'from-violet-500 to-violet-600' },
+    { step: '03', icon: 'workspace_premium', title: t('landing.step3_title'), titleIt: t('landing.step3_title_it'), desc: t('landing.step3_desc'), color: 'from-green-500 to-green-600' },
   ];
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden" dir="rtl">
+    <div className="min-h-screen bg-white overflow-x-hidden" dir={dir}>
 
       {/* ═══ NAVBAR ═══ */}
       <nav className={cn(
@@ -106,12 +122,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             </div>
 
             <div className="hidden md:flex items-center gap-1">
-              {[
-                { href: '#features', label: 'المميزات' },
-                { href: '#how', label: 'كيف يعمل' },
-                { href: '#testimonials', label: 'آراء المستخدمين' },
-                { href: '#faq', label: 'الأسئلة الشائعة' },
-              ].map(l => (
+              {navLinks.map(l => (
                 <a key={l.href} href={l.href}
                   className={cn('px-4 py-2 rounded-xl text-sm font-medium transition-all',
                     'text-surface-600 hover:text-primary-600 hover:bg-primary-50')}>
@@ -121,20 +132,22 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             </div>
 
             <div className="hidden md:flex items-center gap-2">
+              <LanguageSwitcher />
               <button onClick={() => onNavigate('login')}
                 className={cn('px-4 py-2 rounded-xl text-sm font-semibold transition-all',
                   'text-surface-600 hover:bg-surface-100')}>
-                تسجيل الدخول
+                {t('landing.login')}
               </button>
               <Button size="sm" onClick={() => onNavigate('register')} icon={<Icon name="rocket_launch" size={15} />}>
-                ابدأ مجاناً
+                {t('landing.register_free')}
               </Button>
             </div>
 
             <div className="flex items-center gap-2 md:hidden">
+              <LanguageSwitcher />
               <button onClick={() => onNavigate('login')}
                 className="text-sm font-semibold text-primary-700 border border-primary-200 px-3 py-1.5 rounded-xl hover:bg-primary-50 transition-colors bg-white/80">
-                دخول
+                {t('landing.login_short')}
               </button>
               <button className={cn('p-2 rounded-xl transition-colors hover:bg-surface-100')}
                 onClick={() => setMobileMenu(!mobileMenu)}>
@@ -147,20 +160,15 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
         {mobileMenu && (
           <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-surface-100 shadow-xl">
             <div className="px-4 py-4 space-y-1">
-              {[
-                { href: '#features', label: 'المميزات' },
-                { href: '#how', label: 'كيف يعمل' },
-                { href: '#testimonials', label: 'آراء المستخدمين' },
-                { href: '#faq', label: 'الأسئلة الشائعة' },
-              ].map(l => (
+              {navLinks.map(l => (
                 <a key={l.href} href={l.href} onClick={() => setMobileMenu(false)}
                   className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-surface-700 font-medium hover:bg-surface-50 transition-colors">
                   {l.label}
                 </a>
               ))}
               <div className="pt-3 space-y-2 border-t border-surface-100">
-                <Button fullWidth variant="outline" onClick={() => onNavigate('login')}>تسجيل الدخول</Button>
-                <Button fullWidth onClick={() => onNavigate('register')}>ابدأ مجاناً</Button>
+                <Button fullWidth variant="outline" onClick={() => onNavigate('login')}>{t('landing.login')}</Button>
+                <Button fullWidth onClick={() => onNavigate('register')}>{t('landing.register_free')}</Button>
               </div>
             </div>
           </div>
@@ -169,14 +177,12 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
 
       {/* ═══ HERO ═══ */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
-        {/* Light background */}
         <div className="absolute inset-0 bg-gradient-to-br from-white via-primary-50/70 to-blue-50/80" />
         <div className="absolute inset-0 opacity-60"
           style={{ backgroundImage: 'radial-gradient(ellipse 80% 55% at 60% 0%, rgba(59,130,246,0.12), transparent)' }} />
         <div className="absolute inset-0 opacity-[0.04]"
           style={{ backgroundImage: 'linear-gradient(rgba(59,130,246,0.6) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.6) 1px,transparent 1px)', backgroundSize: '64px 64px' }} />
 
-        {/* Light blobs */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-300/20 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-1/3 right-1/4 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }} />
         <div className="absolute top-2/3 left-1/2 w-56 h-56 bg-indigo-200/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '3s' }} />
@@ -185,43 +191,41 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
 
             {/* Content */}
-            <div className="text-center lg:text-right order-2 lg:order-1">
+            <div className={cn('text-center order-2 lg:order-1', dir === 'rtl' ? 'lg:text-right' : 'lg:text-left')}>
               <div className="inline-flex items-center gap-2.5 bg-primary-50 border border-primary-200/70 text-primary-700 px-5 py-2.5 rounded-full text-sm font-medium mb-8 animate-fade-in-up shadow-sm">
-              <Icon name="auto_awesome" size={18} filled className="text-primary-500" />
-              <span> التطبيق مدعومًا بالذكاء الاصطناعي</span>
-            </div>
-
-
+                <Icon name="auto_awesome" size={18} filled className="text-primary-500" />
+                <span>{t('landing.hero_badge')}</span>
+              </div>
 
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-surface-900 leading-[1.05] mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-                احصل على<br />
+                {t('landing.hero_title_1')}<br />
                 <span className="bg-gradient-to-l from-primary-600 via-blue-500 to-indigo-600 bg-clip-text text-transparent">
-                  رخصة القيادة
+                  {t('landing.hero_title_2')}
                 </span><br />
-                <span className="text-surface-500">الإيطالية</span>
+                <span className="text-surface-500">{t('landing.hero_title_3')}</span>
               </h1>
 
               <p className="text-lg text-surface-500 mb-10 leading-relaxed max-w-lg mx-auto lg:mx-0 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                تعلّم بالعربية والإيطالية معاً. دروس شاملة، أسئلة حقيقية، إشارات مرورية، وتتبع ذكي لتقدمك.
+                {t('landing.hero_desc')}
               </p>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+              <div className={cn('flex flex-col sm:flex-row items-center gap-4 animate-fade-in-up', dir === 'rtl' ? 'justify-center lg:justify-start' : 'justify-center lg:justify-start')} style={{ animationDelay: '0.3s' }}>
                 <button onClick={() => onNavigate('register')}
                   className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-9 py-4 bg-gradient-to-l from-primary-600 to-primary-500 text-white font-bold text-base rounded-2xl shadow-xl shadow-primary-500/30 hover:shadow-primary-500/50 transition-all duration-300 hover:-translate-y-1 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-l from-primary-500 to-primary-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <Icon name="rocket_launch" size={20} className="relative shrink-0" />
-                  <span className="relative">ابدأ التعلم مجاناً</span>
+                  <span className="relative">{t('landing.cta_start')}</span>
                 </button>
                 <button onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-9 py-4 border-2 border-primary-200 text-primary-700 font-semibold text-base rounded-2xl hover:bg-primary-50 hover:border-primary-300 transition-all duration-300">
                   <Icon name="play_circle" size={20} />
-                  اكتشف المزيد
+                  {t('landing.cta_discover')}
                 </button>
               </div>
 
               {/* Mini badges */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mt-10 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-                {['مجاني 100%', 'يدعم العربية', 'محدّث 2026', '92% نجاح'].map((b, i) => (
+              <div className={cn('flex flex-wrap items-center gap-3 mt-10 animate-fade-in-up', dir === 'rtl' ? 'justify-center lg:justify-start' : 'justify-center lg:justify-start')} style={{ animationDelay: '0.4s' }}>
+                {[t('landing.badge_free'), t('landing.badge_arabic'), t('landing.badge_updated'), t('landing.badge_success')].map((b, i) => (
                   <span key={i} className="inline-flex items-center gap-1.5 bg-white border border-surface-200 text-surface-600 text-xs px-3 py-1.5 rounded-full shadow-sm">
                     <Icon name="check_circle" size={12} className="text-green-500" filled />
                     {b}
@@ -233,19 +237,15 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             {/* Interactive feature wheel */}
             <div className="order-1 lg:order-2 hidden lg:flex items-center justify-center">
               <div className="relative w-[420px] h-[420px]">
-                {/* Glow */}
                 <div className="absolute inset-1/4 bg-primary-400/15 rounded-full blur-3xl" />
-                {/* Ring */}
                 <div className="absolute inset-8 rounded-full border border-primary-200/40" />
                 <div className="absolute inset-16 rounded-full border border-primary-200/60" />
-                {/* Center */}
                 <div className="absolute inset-[30%] bg-white backdrop-blur-2xl rounded-3xl border border-primary-100 flex flex-col items-center justify-center p-4 shadow-xl shadow-primary-500/10">
                   <div className={cn('w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-br mb-3 shadow-lg transition-all duration-500', features[activeFeature].bg)}>
                     <Icon name={features[activeFeature].icon} size={28} className="text-white" filled />
                   </div>
                   <p className="text-surface-800 font-bold text-sm text-center leading-tight">{features[activeFeature].title}</p>
                 </div>
-                {/* Orbit buttons */}
                 {features.map((f, i) => {
                   const angle = (i / features.length) * 360 - 90;
                   const rad = (angle * Math.PI) / 180;
@@ -297,10 +297,10 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
           <div className={cn('text-center mb-16 transition-all duration-700', isVisible('features') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
             <span className="inline-flex items-center gap-2 bg-primary-50 text-primary-700 border border-primary-100 px-5 py-2 rounded-full text-sm font-semibold mb-5">
               <Icon name="stars" size={16} filled />
-              لماذا Patente Hub؟
+              {t('landing.features_tag')}
             </span>
-            <h2 className="text-4xl sm:text-5xl font-black text-surface-900 mt-2">كل ما تحتاجه في مكان واحد</h2>
-            <p className="text-surface-500 mt-4 max-w-2xl mx-auto text-lg">أدوات متكاملة صُممت خصيصاً للعرب في إيطاليا</p>
+            <h2 className="text-4xl sm:text-5xl font-black text-surface-900 mt-2">{t('landing.features_title')}</h2>
+            <p className="text-surface-500 mt-4 max-w-2xl mx-auto text-lg">{t('landing.features_desc')}</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -312,7 +312,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                 )}
                 style={{ transitionDelay: `${i * 55}ms` }}>
                 <div className={cn('absolute inset-0 opacity-0 group-hover:opacity-[0.04] transition-opacity bg-gradient-to-br', f.bg)} />
-                <div className={cn('w-13 h-13 w-12 h-12 rounded-2xl flex items-center justify-center mb-5 bg-gradient-to-br shadow-md transition-transform group-hover:scale-110 duration-300', f.bg)}>
+                <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center mb-5 bg-gradient-to-br shadow-md transition-transform group-hover:scale-110 duration-300', f.bg)}>
                   <Icon name={f.icon} size={24} className="text-white" filled />
                 </div>
                 <h3 className="text-base font-bold text-surface-900 mb-2 group-hover:text-primary-600 transition-colors">{f.title}</h3>
@@ -329,18 +329,14 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
           <div className={cn('text-center mb-16 transition-all duration-700', isVisible('how') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
             <span className="inline-flex items-center gap-2 bg-green-50 text-green-700 border border-green-100 px-5 py-2 rounded-full text-sm font-semibold mb-5">
               <Icon name="route" size={16} filled />
-              كيف تبدأ؟
+              {t('landing.how_tag')}
             </span>
-            <h2 className="text-4xl sm:text-5xl font-black text-surface-900 mt-2">ثلاث خطوات فقط</h2>
-            <p className="text-surface-500 mt-4 max-w-xl mx-auto text-lg">ابدأ رحلتك نحو رخصة القيادة الإيطالية اليوم</p>
+            <h2 className="text-4xl sm:text-5xl font-black text-surface-900 mt-2">{t('landing.how_title')}</h2>
+            <p className="text-surface-500 mt-4 max-w-xl mx-auto text-lg">{t('landing.how_desc')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {[
-              { step: '01', icon: 'person_add', title: 'سجّل مجاناً', titleIt: 'Registrati gratis', desc: 'أنشئ حساباً في ثوانٍ — بريد إلكتروني وكلمة مرور فقط', color: 'from-blue-500 to-blue-600' },
-              { step: '02', icon: 'menu_book', title: 'ادرس الدروس', titleIt: 'Studia le lezioni', desc: 'اختر القسم وابدأ بالدروس ثم حل أسئلة صح/خطأ مع الشرح', color: 'from-violet-500 to-violet-600' },
-              { step: '03', icon: 'workspace_premium', title: 'انجح في الامتحان!', titleIt: 'Supera l\'esame!', desc: 'تدرّب يومياً وتابع جاهزيتك حتى تصل 100%', color: 'from-green-500 to-green-600' },
-            ].map((s, i) => (
+            {steps.map((s, i) => (
               <div key={i}
                 className={cn('flex flex-col items-center text-center transition-all duration-700', isVisible('how') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}
                 style={{ transitionDelay: `${i * 180}ms` }}>
@@ -353,7 +349,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                   </div>
                 </div>
                 <h3 className="text-xl font-bold text-surface-900 mb-1">{s.title}</h3>
-                <p className="text-xs text-primary-500 font-medium mb-3">{s.titleIt}</p>
+                {dir === 'rtl' && <p className="text-xs text-primary-500 font-medium mb-3">{s.titleIt}</p>}
                 <p className="text-surface-500 leading-relaxed text-sm">{s.desc}</p>
               </div>
             ))}
@@ -367,10 +363,10 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
           <div className={cn('text-center mb-16 transition-all duration-700', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
             <span className="inline-flex items-center gap-2 bg-violet-50 text-violet-700 border border-violet-100 px-5 py-2 rounded-full text-sm font-semibold mb-5">
               <Icon name="phone_iphone" size={16} filled />
-              داخل التطبيق
+              {t('landing.preview_tag')}
             </span>
-            <h2 className="text-4xl sm:text-5xl font-black text-surface-900 mt-2">تصميم حديث وسهل الاستخدام</h2>
-            <p className="text-surface-500 mt-4 max-w-xl mx-auto">واجهة عربية مريحة مع دعم كامل للإيطالية</p>
+            <h2 className="text-4xl sm:text-5xl font-black text-surface-900 mt-2">{t('landing.preview_title')}</h2>
+            <p className="text-surface-500 mt-4 max-w-xl mx-auto">{t('landing.preview_desc')}</p>
           </div>
 
           <div className={cn('grid grid-cols-1 md:grid-cols-3 gap-6 transition-all duration-1000', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12')}>
@@ -382,23 +378,23 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                     <Icon name="quiz" className="text-red-500" size={22} filled />
                   </div>
                   <div>
-                    <h3 className="font-bold text-surface-900 text-sm">اختبار يومي</h3>
-                    <p className="text-xs text-surface-400">سؤال ١ من ٤٠</p>
+                    <h3 className="font-bold text-surface-900 text-sm">{t('landing.preview_quiz_title')}</h3>
+                    <p className="text-xs text-surface-400">{t('landing.preview_quiz_q')}</p>
                   </div>
-                  <span className="mr-auto bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-lg">85%</span>
+                  <span className="ms-auto bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-lg">85%</span>
                 </div>
                 <div className="bg-surface-50 rounded-2xl p-4 mb-4 border border-surface-100">
-                  <p className="text-sm font-semibold text-surface-800 leading-relaxed">إشارات الخطر لها شكل مثلث بحافة حمراء</p>
+                  <p className="text-sm font-semibold text-surface-800 leading-relaxed">{t('landing.preview_quiz_question')}</p>
                   <p className="text-xs text-surface-400 mt-1.5" dir="ltr">I segnali di pericolo sono triangolari</p>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3.5 rounded-xl border-2 border-green-400 bg-green-50 text-center">
                     <Icon name="check_circle" size={24} className="text-green-500 mx-auto mb-1" filled />
-                    <span className="text-xs font-bold text-green-600">صحيح ✓</span>
+                    <span className="text-xs font-bold text-green-600">{t('landing.preview_quiz_correct')}</span>
                   </div>
                   <div className="p-3.5 rounded-xl border-2 border-surface-200 text-center opacity-50">
                     <Icon name="cancel" size={24} className="text-surface-300 mx-auto mb-1" />
-                    <span className="text-xs font-bold text-surface-400">خطأ</span>
+                    <span className="text-xs font-bold text-surface-400">{t('landing.preview_quiz_wrong')}</span>
                   </div>
                 </div>
               </div>
@@ -408,8 +404,8 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             <div className="rounded-3xl p-[2px] bg-gradient-to-br from-green-400 to-primary-600 shadow-2xl group hover:-translate-y-2 transition-all duration-500">
               <div className="bg-white rounded-[22px] p-6 h-full">
                 <div className="flex items-center justify-between mb-5">
-                  <h3 className="font-bold text-surface-900">تقدمك</h3>
-                  <span className="text-xs bg-green-50 text-green-600 border border-green-200 px-2.5 py-1 rounded-lg font-semibold">جاهز ✓</span>
+                  <h3 className="font-bold text-surface-900">{t('landing.preview_progress_title')}</h3>
+                  <span className="text-xs bg-green-50 text-green-600 border border-green-200 px-2.5 py-1 rounded-lg font-semibold">{t('landing.preview_progress_ready')}</span>
                 </div>
                 <div className="flex items-center justify-center mb-5">
                   <div className="relative w-32 h-32">
@@ -427,15 +423,15 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                       <span className="text-3xl font-black text-surface-900">78%</span>
-                      <span className="text-[10px] text-surface-400">جاهزية</span>
+                      <span className="text-[10px] text-surface-400">{t('landing.preview_progress_readiness')}</span>
                     </div>
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    { val: '12', lbl: 'اختبار', bg: 'bg-blue-50', tc: 'text-blue-600' },
-                    { val: '7', lbl: 'أيام', bg: 'bg-orange-50', tc: 'text-orange-600' },
-                    { val: '94%', lbl: 'دقة', bg: 'bg-green-50', tc: 'text-green-600' },
+                    { val: '12', lbl: t('landing.preview_progress_quizzes'), bg: 'bg-blue-50', tc: 'text-blue-600' },
+                    { val: '7', lbl: t('landing.preview_progress_days'), bg: 'bg-orange-50', tc: 'text-orange-600' },
+                    { val: '94%', lbl: t('landing.preview_progress_accuracy'), bg: 'bg-green-50', tc: 'text-green-600' },
                   ].map((x, j) => (
                     <div key={j} className={cn('rounded-xl p-2.5 text-center', x.bg)}>
                       <p className={cn('text-lg font-bold', x.tc)}>{x.val}</p>
@@ -449,13 +445,13 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             {/* Sections Card */}
             <div className="rounded-3xl p-[2px] bg-gradient-to-br from-amber-400 to-orange-500 shadow-2xl group hover:-translate-y-2 transition-all duration-500">
               <div className="bg-white rounded-[22px] p-6 h-full">
-                <h3 className="font-bold text-surface-900 mb-5">الأقسام الدراسية</h3>
+                <h3 className="font-bold text-surface-900 mb-5">{t('landing.preview_sections_title')}</h3>
                 <div className="space-y-3">
                   {[
-                    { icon: 'warning', name: 'إشارات الخطر', pct: 85, color: '#ef4444' },
-                    { icon: 'block', name: 'إشارات المنع', pct: 62, color: '#dc2626' },
-                    { icon: 'speed', name: 'حدود السرعة', pct: 48, color: '#8b5cf6' },
-                    { icon: 'directions', name: 'قواعد المرور', pct: 31, color: '#3b82f6' },
+                    { icon: 'warning', name: t('landing.preview_s1'), pct: 85, color: '#ef4444' },
+                    { icon: 'block', name: t('landing.preview_s2'), pct: 62, color: '#dc2626' },
+                    { icon: 'speed', name: t('landing.preview_s3'), pct: 48, color: '#8b5cf6' },
+                    { icon: 'directions', name: t('landing.preview_s4'), pct: 31, color: '#3b82f6' },
                   ].map((s, j) => (
                     <div key={j} className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: s.color + '18' }}>
@@ -489,14 +485,14 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
           <div className={cn('text-center mb-16 transition-all duration-700', isVisible('testimonials') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
             <span className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white border border-white/20 px-5 py-2 rounded-full text-sm font-semibold mb-5">
               <Icon name="favorite" size={16} filled className="text-red-400" />
-              آراء المستخدمين
+              {t('landing.testimonials_tag')}
             </span>
-            <h2 className="text-4xl sm:text-5xl font-black text-white mt-2">نجحوا بفضل Patente Hub</h2>
-            <p className="text-white/45 mt-4 max-w-xl mx-auto text-lg">قصص نجاح حقيقية من مستخدمين عرب في إيطاليا</p>
+            <h2 className="text-4xl sm:text-5xl font-black text-white mt-2">{t('landing.testimonials_title')}</h2>
+            <p className="text-white/45 mt-4 max-w-xl mx-auto text-lg">{t('landing.testimonials_desc')}</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {testimonials.map((t, i) => (
+            {testimonials.map((item, i) => (
               <div key={i}
                 className={cn(
                   'relative bg-white/6 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/10 hover:border-white/18 transition-all duration-500 hover:-translate-y-1',
@@ -505,18 +501,18 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                 style={{ transitionDelay: `${i * 80}ms` }}>
                 <div className="text-6xl text-white/8 font-black leading-none mb-2 select-none">"</div>
                 <div className="flex gap-1 mb-3">
-                  {Array.from({ length: t.rating }).map((_, j) => (
+                  {Array.from({ length: item.rating }).map((_, j) => (
                     <Icon key={j} name="star" size={14} className="text-amber-400" filled />
                   ))}
                 </div>
-                <p className="text-white/75 text-sm leading-relaxed mb-5">{t.text}</p>
+                <p className="text-white/75 text-sm leading-relaxed mb-5">{item.text}</p>
                 <div className="flex items-center gap-3 pt-4 border-t border-white/10">
                   <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-violet-500 rounded-full flex items-center justify-center shrink-0">
-                    <span className="font-bold text-white text-sm">{t.initials}</span>
+                    <span className="font-bold text-white text-sm">{item.initials}</span>
                   </div>
                   <div>
-                    <p className="text-white font-semibold text-sm">{t.name}</p>
-                    <p className="text-white/35 text-xs">{t.role} — {t.city}</p>
+                    <p className="text-white font-semibold text-sm">{item.name}</p>
+                    <p className="text-white/35 text-xs">{item.role} — {item.city}</p>
                   </div>
                 </div>
               </div>
@@ -531,10 +527,10 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
           <div className={cn('text-center mb-16 transition-all duration-700', isVisible('faq') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
             <span className="inline-flex items-center gap-2 bg-orange-50 text-orange-700 border border-orange-100 px-5 py-2 rounded-full text-sm font-semibold mb-5">
               <Icon name="help" size={16} filled />
-              الأسئلة الشائعة
+              {t('landing.faq_tag')}
             </span>
-            <h2 className="text-4xl sm:text-5xl font-black text-surface-900 mt-2">لديك سؤال؟</h2>
-            <p className="text-surface-400 mt-3">إليك الإجابات على الأسئلة الأكثر شيوعاً</p>
+            <h2 className="text-4xl sm:text-5xl font-black text-surface-900 mt-2">{t('landing.faq_title')}</h2>
+            <p className="text-surface-400 mt-3">{t('landing.faq_desc')}</p>
           </div>
 
           <div className="space-y-3">
@@ -547,16 +543,16 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                 )}
                 style={{ transitionDelay: `${i * 55}ms` }}>
                 <button
-                  className="w-full flex items-center justify-between p-5 sm:p-6 text-right gap-3"
+                  className={cn('w-full flex items-center justify-between p-5 sm:p-6 gap-3', dir === 'rtl' ? 'text-right' : 'text-left')}
                   onClick={() => setFaqOpen(faqOpen === i ? null : i)}>
-                  <span className="font-bold text-surface-800 text-sm sm:text-base text-right flex-1">{faq.q}</span>
+                  <span className={cn('font-bold text-surface-800 text-sm sm:text-base flex-1', dir === 'rtl' ? 'text-right' : 'text-left')}>{faq.q}</span>
                   <div className={cn('w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300',
                     faqOpen === i ? 'bg-primary-500 rotate-45' : 'bg-surface-100')}>
                     <Icon name="add" size={18} className={faqOpen === i ? 'text-white' : 'text-surface-400'} />
                   </div>
                 </button>
                 <div className={cn('overflow-hidden transition-all duration-300', faqOpen === i ? 'max-h-60' : 'max-h-0')}>
-                  <p className="px-5 sm:px-6 pb-5 sm:pb-6 text-surface-500 leading-relaxed text-sm border-t border-surface-100 pt-4">
+                  <p className={cn('px-5 sm:px-6 pb-5 sm:pb-6 text-surface-500 leading-relaxed text-sm border-t border-surface-100 pt-4', dir === 'rtl' ? 'text-right' : 'text-left')}>
                     {faq.a}
                   </p>
                 </div>
@@ -579,24 +575,24 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             <Icon name="directions_car" size={40} className="text-white" filled />
           </div>
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
-            جاهز لبدء رحلتك؟
+            {t('landing.cta_title')}
           </h2>
           <p className="text-white/65 text-lg mb-10 max-w-xl mx-auto leading-relaxed">
-            انضم لآلاف العرب الذين نجحوا في امتحان الباتينتي. سجّل مجاناً وابدأ فوراً!
+            {t('landing.cta_desc')}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button onClick={() => onNavigate('register')}
               className="group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-10 py-4 bg-white text-primary-700 font-bold text-lg rounded-2xl shadow-2xl hover:shadow-white/20 transition-all duration-300 hover:-translate-y-1">
               <Icon name="rocket_launch" size={22} />
-              سجّل مجاناً الآن
+              {t('landing.cta_register')}
             </button>
             <button onClick={() => onNavigate('login')}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-10 py-4 border-2 border-white/30 text-white font-bold text-lg rounded-2xl hover:bg-white/10 hover:border-white/50 transition-all duration-300">
-              لديك حساب؟ سجّل دخول
+              {t('landing.cta_login')}
             </button>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-4 mt-10">
-            {['مجاني 100%', 'بالعربية والإيطالية', 'أسئلة حقيقية', 'إشارات مرورية'].map((b, i) => (
+            {[t('landing.cta_badge1'), t('landing.cta_badge2'), t('landing.cta_badge3'), t('landing.cta_badge4')].map((b, i) => (
               <span key={i} className="inline-flex items-center gap-1.5 bg-white/10 border border-white/15 text-white/70 text-sm px-4 py-2 rounded-full">
                 <Icon name="check_circle" size={14} className="text-green-400" filled />
                 {b}
@@ -618,45 +614,45 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                 <span className="text-white font-black text-xl">Patente Hub</span>
               </div>
               <p className="text-slate-500 text-sm leading-relaxed">
-                التطبيق الأول والأفضل لمساعدة العرب في إيطاليا على اجتياز امتحان رخصة القيادة.
+                {t('landing.footer_tagline')}
               </p>
             </div>
 
             <div className="flex flex-wrap gap-12 text-sm">
               <div>
-                <p className="text-slate-400 font-semibold mb-4 text-xs uppercase tracking-widest">التطبيق</p>
+                <p className="text-slate-400 font-semibold mb-4 text-xs uppercase tracking-widest">{t('landing.footer_app')}</p>
                 <div className="space-y-3">
-                  <a href="#features" className="block text-slate-500 hover:text-white transition-colors">المميزات</a>
-                  <a href="#testimonials" className="block text-slate-500 hover:text-white transition-colors">آراء المستخدمين</a>
-                  <a href="#faq" className="block text-slate-500 hover:text-white transition-colors">الأسئلة الشائعة</a>
+                  <a href="#features" className="block text-slate-500 hover:text-white transition-colors">{t('landing.footer_features')}</a>
+                  <a href="#testimonials" className="block text-slate-500 hover:text-white transition-colors">{t('landing.footer_testimonials')}</a>
+                  <a href="#faq" className="block text-slate-500 hover:text-white transition-colors">{t('landing.footer_faq')}</a>
                 </div>
               </div>
               <div>
-                <p className="text-slate-400 font-semibold mb-4 text-xs uppercase tracking-widest">الحساب</p>
+                <p className="text-slate-400 font-semibold mb-4 text-xs uppercase tracking-widest">{t('landing.footer_account')}</p>
                 <div className="space-y-3">
-                  <button onClick={() => onNavigate('register')} className="block text-slate-500 hover:text-white transition-colors text-right w-full">إنشاء حساب</button>
-                  <button onClick={() => onNavigate('login')} className="block text-slate-500 hover:text-white transition-colors text-right w-full">تسجيل الدخول</button>
+                  <button onClick={() => onNavigate('register')} className={cn('block text-slate-500 hover:text-white transition-colors w-full', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('landing.footer_register')}</button>
+                  <button onClick={() => onNavigate('login')} className={cn('block text-slate-500 hover:text-white transition-colors w-full', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('landing.footer_login')}</button>
                 </div>
               </div>
               <div>
-                <p className="text-slate-400 font-semibold mb-4 text-xs uppercase tracking-widest">قانوني</p>
+                <p className="text-slate-400 font-semibold mb-4 text-xs uppercase tracking-widest">{t('landing.footer_legal')}</p>
                 <div className="space-y-3">
-                  <button onClick={() => onNavigate('privacy-policy')} className="block text-slate-500 hover:text-white transition-colors text-right w-full">سياسة الخصوصية</button>
-                  <button onClick={() => onNavigate('terms-of-service')} className="block text-slate-500 hover:text-white transition-colors text-right w-full">شروط الاستخدام</button>
-                  <button onClick={() => onNavigate('contact')} className="block text-slate-500 hover:text-white transition-colors text-right w-full">تواصل معنا</button>
+                  <button onClick={() => onNavigate('privacy-policy')} className={cn('block text-slate-500 hover:text-white transition-colors w-full', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('landing.footer_privacy')}</button>
+                  <button onClick={() => onNavigate('terms-of-service')} className={cn('block text-slate-500 hover:text-white transition-colors w-full', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('landing.footer_terms')}</button>
+                  <button onClick={() => onNavigate('contact')} className={cn('block text-slate-500 hover:text-white transition-colors w-full', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('landing.footer_contact')}</button>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-slate-600 text-xs">© {new Date().getFullYear()} Patente Hub. جميع الحقوق محفوظة.</p>
+            <p className="text-slate-600 text-xs">© {new Date().getFullYear()} Patente Hub. {t('landing.footer_rights')}</p>
             <div className="flex items-center gap-5 text-xs text-slate-600">
-              <button onClick={() => onNavigate('privacy-policy')} className="hover:text-slate-400 transition-colors">الخصوصية</button>
+              <button onClick={() => onNavigate('privacy-policy')} className="hover:text-slate-400 transition-colors">{t('landing.footer_privacy_short')}</button>
               <span className="text-slate-800">·</span>
-              <button onClick={() => onNavigate('terms-of-service')} className="hover:text-slate-400 transition-colors">الشروط</button>
+              <button onClick={() => onNavigate('terms-of-service')} className="hover:text-slate-400 transition-colors">{t('landing.footer_terms_short')}</button>
               <span className="text-slate-800">·</span>
-              <button onClick={() => onNavigate('contact')} className="hover:text-slate-400 transition-colors">الاتصال</button>
+              <button onClick={() => onNavigate('contact')} className="hover:text-slate-400 transition-colors">{t('landing.footer_contact_short')}</button>
             </div>
           </div>
         </div>
