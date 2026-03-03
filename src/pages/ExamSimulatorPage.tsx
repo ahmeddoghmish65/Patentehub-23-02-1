@@ -275,8 +275,10 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
                     correct ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600'
                   )}>{i + 1}</span>
                   <div className="flex-1">
-                    {(lang === 'ar' || lang === 'both') && <p className="text-sm font-medium text-surface-800 mb-1" dir="rtl">{q.questionAr}</p>}
-                    {(lang === 'it' || lang === 'both') && <p className="text-sm text-surface-500 mb-2" dir="ltr">{q.questionIt}</p>}
+                    {lang === 'ar' && <p className="text-sm font-medium text-surface-800 mb-1" dir="rtl">{q.questionAr}</p>}
+                    {lang === 'it' && <p className="text-sm font-medium text-surface-800 mb-1" dir="ltr">{q.questionIt}</p>}
+                    {lang === 'both' && <p className="text-sm font-medium text-surface-800 mb-1" dir="ltr">{q.questionIt}</p>}
+                    {lang === 'both' && <p className="text-sm text-surface-500 mb-2" dir="rtl">{q.questionAr}</p>}
                     <div className="flex items-center gap-4 text-xs">
                       <span className={cn('px-2 py-0.5 rounded-full', userAns === undefined ? 'bg-surface-100 text-surface-500' : correct ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600')}>
                         {t('exam.your_answer')} {userAns === undefined ? t('exam.not_answered') : userAns ? trueLabel : falseLabel}
@@ -285,11 +287,17 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
                         {t('exam.correct')} {q.isTrue ? trueLabel : falseLabel}
                       </span>
                     </div>
-                    {(lang === 'ar' || lang === 'both') && q.explanationAr && (
+                    {lang === 'ar' && q.explanationAr && (
                       <p className="text-xs text-surface-500 mt-2 bg-surface-50 rounded-lg p-2" dir="rtl">{q.explanationAr}</p>
                     )}
-                    {(lang === 'it' || lang === 'both') && q.explanationIt && (
-                      <p className="text-xs text-surface-500 mt-1 bg-blue-50 rounded-lg p-2" dir="ltr">{q.explanationIt}</p>
+                    {lang === 'it' && q.explanationIt && (
+                      <p className="text-xs text-surface-500 mt-2 bg-blue-50 rounded-lg p-2" dir="ltr">{q.explanationIt}</p>
+                    )}
+                    {lang === 'both' && q.explanationIt && (
+                      <p className="text-xs text-surface-500 mt-2 bg-blue-50 rounded-lg p-2" dir="ltr">{q.explanationIt}</p>
+                    )}
+                    {lang === 'both' && q.explanationAr && (
+                      <p className="text-xs text-surface-500 mt-1 bg-surface-50 rounded-lg p-2" dir="rtl">{q.explanationAr}</p>
                     )}
                   </div>
                 </div>
@@ -419,8 +427,10 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
         {/* Question content */}
         <div className="p-5 sm:p-6">
           {q.image && <img src={q.image} alt="" className="w-full rounded-xl mb-4 max-h-48 object-contain bg-surface-50" />}
-          {(lang === 'ar' || lang === 'both') && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="rtl">{q.questionAr}</h2>}
-          {(lang === 'it' || lang === 'both') && <p className="text-base text-surface-600 leading-relaxed" dir="ltr">{q.questionIt}</p>}
+          {lang === 'ar' && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="rtl">{q.questionAr}</h2>}
+          {lang === 'it' && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="ltr">{q.questionIt}</h2>}
+          {lang === 'both' && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="ltr">{q.questionIt}</h2>}
+          {lang === 'both' && <p className="text-base text-surface-600 leading-relaxed" dir="rtl">{q.questionAr}</p>}
         </div>
 
         {/* VERO / FALSO */}

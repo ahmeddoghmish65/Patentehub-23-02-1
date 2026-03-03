@@ -94,10 +94,10 @@ export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
         <div className="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: (section?.color || '#3b82f6') + '15' }}>
           <Icon name={section?.icon || 'quiz'} size={40} style={{ color: section?.color || '#3b82f6' }} filled />
         </div>
-        <h1 className="text-2xl font-bold text-surface-900 mb-2" dir={lang === 'it' ? 'ltr' : 'rtl'}>
-          {lang === 'it' ? (section?.nameIt || t('quiz_page.default_title')) : (section?.nameAr || t('quiz_page.default_title'))}
-        </h1>
-        {lang === 'both' && <p className="text-primary-500 mb-6" dir="ltr">{section?.nameIt}</p>}
+        {lang === 'ar' && <h1 className="text-2xl font-bold text-surface-900 mb-2" dir="rtl">{section?.nameAr || t('quiz_page.default_title')}</h1>}
+        {lang === 'it' && <h1 className="text-2xl font-bold text-surface-900 mb-2" dir="ltr">{section?.nameIt || t('quiz_page.default_title')}</h1>}
+        {lang === 'both' && <h1 className="text-2xl font-bold text-surface-900 mb-2" dir="ltr">{section?.nameIt || t('quiz_page.default_title')}</h1>}
+        {lang === 'both' && <p className="text-primary-500 mb-6" dir="rtl">{section?.nameAr}</p>}
         <div className="grid grid-cols-2 gap-4 mb-8">
           <div className="bg-surface-50 rounded-xl p-4">
             <p className="text-xl font-bold text-surface-900">{quizQuestions.length}</p>
@@ -170,8 +170,10 @@ export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
           {q.difficulty === 'easy' ? t('quiz_page.difficulty_easy') : q.difficulty === 'medium' ? t('quiz_page.difficulty_medium') : t('quiz_page.difficulty_hard')}
         </span>
         {q.image && <img src={q.image} alt="" className="w-full rounded-xl mb-4 max-h-48 object-contain" />}
-        {(lang === 'ar' || lang === 'both') && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="rtl">{q.questionAr}</h2>}
-        {(lang === 'it' || lang === 'both') && <p className="text-base text-surface-600" dir="ltr">{q.questionIt}</p>}
+        {lang === 'ar' && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="rtl">{q.questionAr}</h2>}
+        {lang === 'it' && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="ltr">{q.questionIt}</h2>}
+        {lang === 'both' && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="ltr">{q.questionIt}</h2>}
+        {lang === 'both' && <p className="text-base text-surface-600" dir="rtl">{q.questionAr}</p>}
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-6">
@@ -204,8 +206,10 @@ export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
             <Icon name={selectedAnswer === q.isTrue ? 'lightbulb' : 'info'} size={22} className={selectedAnswer === q.isTrue ? 'text-success-500' : 'text-blue-500'} filled />
             <div>
               <p className="font-semibold text-sm text-surface-800 mb-1">{selectedAnswer === q.isTrue ? t('quiz_page.correct_feedback') : t('quiz_page.wrong_feedback')}</p>
-              {(lang === 'ar' || lang === 'both') && q.explanationAr && <p className="text-sm text-surface-600" dir="rtl">{q.explanationAr}</p>}
-              {(lang === 'it' || lang === 'both') && q.explanationIt && <p className="text-sm text-surface-500 mt-1" dir="ltr">{q.explanationIt}</p>}
+              {lang === 'ar' && q.explanationAr && <p className="text-sm text-surface-600" dir="rtl">{q.explanationAr}</p>}
+              {lang === 'it' && q.explanationIt && <p className="text-sm text-surface-600" dir="ltr">{q.explanationIt}</p>}
+              {lang === 'both' && q.explanationIt && <p className="text-sm text-surface-600" dir="ltr">{q.explanationIt}</p>}
+              {lang === 'both' && q.explanationAr && <p className="text-sm text-surface-500 mt-1" dir="rtl">{q.explanationAr}</p>}
             </div>
           </div>
         </div>

@@ -204,8 +204,10 @@ export function TrainingPage({ onNavigate }: Props) {
         {isQuestion(item) && (
           <div className="p-6">
             {item.image && <img src={item.image} alt="" className="w-full rounded-xl mb-4 max-h-40 object-contain bg-surface-50" />}
-            {(lang === 'ar' || lang === 'both') && <h2 className="text-base font-bold text-surface-900 mb-1" dir="rtl">{item.questionAr}</h2>}
-            {(lang === 'it' || lang === 'both') && <p className="text-base text-surface-500" dir="ltr">{item.questionIt}</p>}
+            {lang === 'ar' && <h2 className="text-base font-bold text-surface-900 mb-1" dir="rtl">{item.questionAr}</h2>}
+            {lang === 'it' && <h2 className="text-base font-bold text-surface-900 mb-1" dir="ltr">{item.questionIt}</h2>}
+            {lang === 'both' && <h2 className="text-base font-bold text-surface-900 mb-1" dir="ltr">{item.questionIt}</h2>}
+            {lang === 'both' && <p className="text-base text-surface-500" dir="rtl">{item.questionAr}</p>}
           </div>
         )}
 
@@ -222,8 +224,10 @@ export function TrainingPage({ onNavigate }: Props) {
               </div>
             ) : (
               <div className="text-center space-y-3">
-                {(lang === 'ar' || lang === 'both') && <h3 className="text-lg font-bold text-surface-900" dir="rtl">{item.nameAr}</h3>}
-                {(lang === 'it' || lang === 'both') && <p className="text-base text-primary-500 font-medium" dir="ltr">{item.nameIt}</p>}
+                {lang === 'ar' && <h3 className="text-lg font-bold text-surface-900" dir="rtl">{item.nameAr}</h3>}
+                {lang === 'it' && <h3 className="text-lg font-bold text-surface-900" dir="ltr">{item.nameIt}</h3>}
+                {lang === 'both' && <h3 className="text-lg font-bold text-surface-900" dir="ltr">{item.nameIt}</h3>}
+                {lang === 'both' && <p className="text-base text-primary-500 font-medium" dir="rtl">{item.nameAr}</p>}
                 {(lang === 'ar' || lang === 'both') && <p className="text-sm text-surface-500" dir="rtl">{item.descriptionAr}</p>}
                 <div className="flex gap-2 justify-center pt-2">
                   <Button variant="secondary" onClick={() => handleNext(false)} className="!bg-danger-50 !text-danger-600">{t('training.did_not_know')}</Button>

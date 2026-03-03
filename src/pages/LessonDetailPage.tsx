@@ -125,11 +125,17 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
                       </span>
                     </div>
                     <div>
-                      {(lang === 'ar' || lang === 'both') && (
+                      {lang === 'ar' && (
                         <p className="text-sm font-medium text-surface-800" dir="rtl">{q.questionAr}</p>
                       )}
-                      {(lang === 'it' || lang === 'both') && (
-                        <p className={cn("text-sm text-surface-500", lang === 'both' && 'mt-1')} dir="ltr">{q.questionIt}</p>
+                      {lang === 'it' && (
+                        <p className="text-sm font-medium text-surface-800" dir="ltr">{q.questionIt}</p>
+                      )}
+                      {lang === 'both' && (
+                        <p className="text-sm font-medium text-surface-800" dir="ltr">{q.questionIt}</p>
+                      )}
+                      {lang === 'both' && (
+                        <p className="text-sm text-surface-500 mt-1" dir="rtl">{q.questionAr}</p>
                       )}
                     </div>
                   </div>

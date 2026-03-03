@@ -44,10 +44,10 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
               )}
             </div>
             <div>
-              <h1 className="text-xl font-bold text-surface-900" dir={lang === 'it' ? 'ltr' : 'rtl'}>
-                {lang === 'it' ? (section?.nameIt || section?.nameAr || '') : (section?.nameAr || '')}
-              </h1>
-              {lang === 'both' && <p className="text-sm text-surface-400" dir="ltr">{section?.nameIt}</p>}
+              {lang === 'ar' && <h1 className="text-xl font-bold text-surface-900" dir="rtl">{section?.nameAr || ''}</h1>}
+              {lang === 'it' && <h1 className="text-xl font-bold text-surface-900" dir="ltr">{section?.nameIt || section?.nameAr || ''}</h1>}
+              {lang === 'both' && <h1 className="text-xl font-bold text-surface-900" dir="ltr">{section?.nameIt || ''}</h1>}
+              {lang === 'both' && <p className="text-sm text-surface-400" dir="rtl">{section?.nameAr}</p>}
               <p className="text-sm text-surface-500">{sectionQuestions.length} {t('questions_page.questions_count')}</p>
             </div>
           </div>
@@ -84,13 +84,17 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                     {q.image && (
                       <img src={q.image} alt="" className="w-full rounded-lg mb-2 max-h-36 object-contain bg-white" />
                     )}
-                    {(lang === 'ar' || lang === 'both') && (
+                    {lang === 'ar' && (
                       <p className="text-sm font-medium text-surface-800 leading-relaxed" dir="rtl">{q.questionAr}</p>
                     )}
-                    {(lang === 'it' || lang === 'both') && (
-                      <p className={cn("text-sm text-surface-500 leading-relaxed", lang === 'both' && 'mt-1')} dir="ltr">
-                        {q.questionIt}
-                      </p>
+                    {lang === 'it' && (
+                      <p className="text-sm font-medium text-surface-800 leading-relaxed" dir="ltr">{q.questionIt}</p>
+                    )}
+                    {lang === 'both' && (
+                      <p className="text-sm font-medium text-surface-800 leading-relaxed" dir="ltr">{q.questionIt}</p>
+                    )}
+                    {lang === 'both' && (
+                      <p className="text-sm text-surface-500 leading-relaxed mt-1" dir="rtl">{q.questionAr}</p>
                     )}
                   </div>
                 </button>
@@ -102,13 +106,17 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                         <Icon name="lightbulb" size={14} filled />
                         {t('questions_page.explanation')}
                       </p>
-                      {(lang === 'ar' || lang === 'both') && (
+                      {lang === 'ar' && (
                         <p className="text-sm text-surface-700 leading-relaxed" dir="rtl">{q.explanationAr}</p>
                       )}
-                      {(lang === 'it' || lang === 'both') && (
-                        <p className={cn("text-sm text-surface-500 leading-relaxed", lang === 'both' && 'mt-1')} dir="ltr">
-                          {q.explanationIt}
-                        </p>
+                      {lang === 'it' && (
+                        <p className="text-sm text-surface-700 leading-relaxed" dir="ltr">{q.explanationIt}</p>
+                      )}
+                      {lang === 'both' && (
+                        <p className="text-sm text-surface-700 leading-relaxed" dir="ltr">{q.explanationIt}</p>
+                      )}
+                      {lang === 'both' && (
+                        <p className="text-sm text-surface-500 leading-relaxed mt-1" dir="rtl">{q.explanationAr}</p>
                       )}
                     </div>
                     <div className="flex items-center gap-3 mt-2 text-xs text-surface-400">
@@ -162,9 +170,10 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  {lang !== 'it' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors" dir="rtl">{section.nameAr}</h3>}
+                  {lang === 'ar' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors" dir="rtl">{section.nameAr}</h3>}
                   {lang === 'it' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors" dir="ltr">{section.nameIt}</h3>}
-                  {lang === 'both' && <p className="text-xs text-surface-400 mt-0.5" dir="ltr">{section.nameIt}</p>}
+                  {lang === 'both' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors" dir="ltr">{section.nameIt}</h3>}
+                  {lang === 'both' && <p className="text-xs text-surface-400 mt-0.5" dir="rtl">{section.nameAr}</p>}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full font-medium">
