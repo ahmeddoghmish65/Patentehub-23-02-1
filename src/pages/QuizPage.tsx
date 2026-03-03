@@ -153,7 +153,7 @@ export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6" dir="ltr">
         <button onClick={() => onNavigate('lessons')} className="text-surface-400 hover:text-surface-600"><Icon name="close" size={24} /></button>
         <div className="flex items-center gap-3">
           <span className="text-sm text-surface-500 flex items-center gap-1"><Icon name="timer" size={18} />{fmt(elapsed)}</span>

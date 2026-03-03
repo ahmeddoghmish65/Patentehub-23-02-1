@@ -136,7 +136,7 @@ export function MistakesPage() {
         <div className="space-y-3">
           {mistakes.map(m => (
             <div key={m.id} className="bg-white rounded-xl p-5 border border-surface-100">
-              <div className="flex items-start gap-3">
+              <div className="flex items-start gap-3" dir="ltr">
                 <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center shrink-0', m.count >= 3 ? 'bg-danger-50' : 'bg-warning-50')}>
                   <span className={cn('text-sm font-black', m.count >= 3 ? 'text-danger-600' : 'text-warning-600')}>×{m.count}</span>
                 </div>

@@ -50,10 +50,10 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
             )}
           </div>
           <div className="flex-1">
-            <h1 className="text-xl font-bold text-surface-900" dir={lang === 'it' ? 'ltr' : 'rtl'}>
-              {lang === 'it' ? lesson.titleIt : lesson.titleAr}
-            </h1>
-            {lang === 'both' && <p className="text-sm text-primary-500" dir="ltr">{lesson.titleIt}</p>}
+            {lang === 'ar' && <h1 className="text-xl font-bold text-surface-900" dir="rtl">{lesson.titleAr}</h1>}
+            {lang === 'it' && <h1 className="text-xl font-bold text-surface-900" dir="ltr">{lesson.titleIt}</h1>}
+            {lang === 'both' && <h1 className="text-xl font-bold text-surface-900" dir="ltr">{lesson.titleIt}</h1>}
+            {lang === 'both' && <p className="text-sm text-primary-500" dir="rtl">{lesson.titleAr}</p>}
             {isCompleted && <span className="inline-flex items-center gap-1 mt-2 text-xs bg-success-50 text-success-600 px-2 py-1 rounded-full"><Icon name="check" size={14} /> {t('lessons_page.completed')}</span>}
           </div>
         </div>
@@ -109,7 +109,7 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
             <>
               {lessonQuestions.map((q, i) => (
                 <div key={q.id} className="bg-white rounded-xl p-4 border border-surface-100">
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3" dir="ltr">
                     <div className="flex flex-col items-center shrink-0 gap-0.5">
                       <span className={cn(
                         'w-8 h-8 rounded-lg flex items-center justify-center text-sm font-black',

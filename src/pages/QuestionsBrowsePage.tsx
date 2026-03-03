@@ -64,6 +64,7 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
               <div key={q.id} className="bg-white rounded-xl border border-surface-100 overflow-hidden">
                 <button
                   className="w-full p-4 text-start flex items-start gap-3 hover:bg-surface-50 transition-colors"
+                  dir="ltr"
                   onClick={() => setExpandedQ(expandedQ === q.id ? null : q.id)}
                 >
                   <div className="flex flex-col items-center shrink-0 mt-0.5 gap-0.5">
