@@ -194,7 +194,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           {mistakes.length > 0 && (
             <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{mistakes.length}</span>
           )}
-          <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-red-400" />
+          <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-red-400 ltr:rotate-180" />
         </div>
       </button>
 
