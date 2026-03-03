@@ -90,9 +90,11 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                     ) : (
                       <span className="text-sm font-bold text-surface-500">{idx + 1}</span>
                     )}
-                    {/* Completed badge — top-left corner of thumbnail */}
-                    {isCompleted && (
-                      <span className="absolute top-1 left-1 bg-success-500/70 text-white text-[8px] font-bold px-1 py-0.5 rounded leading-none">✓</span>
+                    {/* Completed badge — top-left corner of thumbnail (only when image exists) */}
+                    {isCompleted && lesson.image && (
+                      <span className="absolute top-1 left-1 w-5 h-5 bg-success-50 rounded-lg flex items-center justify-center shadow-sm">
+                        <Icon name="check" size={13} className="text-success-500" />
+                      </span>
                     )}
                   </div>
 
@@ -160,7 +162,9 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                   )}
                   {/* Completed badge — top-left corner of thumbnail */}
                   {pct === 100 && (
-                    <span className="absolute top-1 left-1 bg-success-500/70 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md leading-none">✓</span>
+                    <span className="absolute top-1 left-1 w-6 h-6 bg-success-50 rounded-lg flex items-center justify-center shadow-sm">
+                      <Icon name="check" size={15} className="text-success-500" />
+                    </span>
                   )}
                 </div>
 
