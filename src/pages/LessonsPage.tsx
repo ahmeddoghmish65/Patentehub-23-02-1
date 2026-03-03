@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
@@ -13,11 +13,24 @@ interface Props {
 export function LessonsPage({ onNavigate, initialSectionId }: Props) {
   const { sections, lessons, loadSections, loadLessons, user } = useAuthStore();
   const completed = user?.progress.completedLessons || [];
+  const [newlyCompleted, setNewlyCompleted] = useState<Set<string>>(new Set());
+  const prevCompleted = useRef<string[]>([]);
   const [selectedSection, setSelectedSection] = useState<string | null>(initialSectionId || null);
   const lang = user?.settings.language || 'both';
   const { t } = useTranslation();
 
   useEffect(() => { loadSections(); loadLessons(); }, [loadSections, loadLessons]);
+
+  useEffect(() => {
+    const fresh = completed.filter(id => !prevCompleted.current.includes(id));
+    if (fresh.length > 0) {
+      setNewlyCompleted(prev => new Set([...prev, ...fresh]));
+      const t = setTimeout(() => setNewlyCompleted(new Set()), 600);
+      prevCompleted.current = completed;
+      return () => clearTimeout(t);
+    }
+    prevCompleted.current = completed;
+  }, [completed]);
 
   // Only show active items to regular users
   const activeSections = sections.filter(s => !s.status || s.status === 'active');
@@ -89,7 +102,10 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                       <span className="text-sm font-bold text-surface-500">{idx + 1}</span>
                     )}
                     {isCompleted && (
-                      <div className="absolute bottom-0.5 end-0.5 w-5 h-5 bg-success-500 rounded-full flex items-center justify-center">
+                      <div className={cn(
+                        'absolute bottom-0.5 end-0.5 w-5 h-5 bg-success-500 rounded-full flex items-center justify-center',
+                        newlyCompleted.has(lesson.id) ? 'animate-check-pop' : ''
+                      )}>
                         <Icon name="check" size={12} className="text-white" />
                       </div>
                     )}
