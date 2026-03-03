@@ -77,8 +77,8 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                 <button
                   key={lesson.id}
                   className={cn(
-                    'w-full bg-white rounded-xl p-4 border hover:shadow-sm transition-all text-start flex items-center gap-3 group',
-                    isCompleted ? 'border-success-200 hover:border-success-300' : 'border-surface-100 hover:border-primary-200'
+                    'w-full rounded-xl p-4 border hover:shadow-sm transition-all text-start flex items-center gap-3 group',
+                    isCompleted ? 'bg-[#F0FDF4] border-success-200 hover:border-success-300' : 'bg-white border-surface-100 hover:border-primary-200'
                   )}
                   onClick={() => onNavigate('lesson-detail', { lessonId: lesson.id, sectionId: selectedSection })}
                 >
