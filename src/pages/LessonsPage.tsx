@@ -78,7 +78,7 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                   key={lesson.id}
                   className={cn(
                     'w-full rounded-xl p-4 border hover:shadow-sm transition-all text-start flex items-center gap-3 group',
-                    isCompleted ? 'bg-white border-success-200 hover:border-success-300' : 'bg-white border-surface-100 hover:border-primary-200'
+                    'bg-white border-surface-100 hover:border-primary-200'
                   )}
                   onClick={() => onNavigate('lesson-detail', { lessonId: lesson.id, sectionId: selectedSection })}
                 >
@@ -87,6 +87,11 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                       <img src={lesson.image} alt="" className="w-full h-full object-cover rounded-xl" />
                     ) : (
                       <span className="text-sm font-bold text-surface-500">{idx + 1}</span>
+                    )}
+                    {isCompleted && (
+                      <div className="absolute bottom-0.5 end-0.5 w-5 h-5 bg-success-500 rounded-full flex items-center justify-center">
+                        <Icon name="check" size={12} className="text-white" />
+                      </div>
                     )}
                   </div>
 
