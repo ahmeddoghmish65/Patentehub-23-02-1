@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
+import { useTranslation } from '@/i18n';
 import {
   setCookie,
   clearActivityCookies,
@@ -16,24 +17,21 @@ interface CookieConsentBannerProps {
 
 export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
   const [showDetails, setShowDetails] = useState(false);
+  const { uiLang } = useTranslation();
+  const isIt = uiLang === 'it';
 
   const handleConsent = (level: ConsentLevel) => {
-    // Persist the consent decision itself (always allowed — it's essential metadata)
     setCookie(COOKIE_NAMES.CONSENT, level, {
       days: COOKIE_EXPIRY.CONSENT,
       sameSite: 'Lax',
     });
-
-    // If user chose "essential only" wipe any non-essential cookies that may
-    // already exist from a previous session where they had consented.
     if (level === 'essential') {
       clearActivityCookies();
     }
-
     onConsent(level);
   };
 
-  const cookieGroups = [
+  const cookieGroupsAr = [
     {
       title: 'أساسية (مطلوبة دائماً)',
       icon: 'lock',
@@ -59,11 +57,39 @@ export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
     },
   ];
 
+  const cookieGroupsIt = [
+    {
+      title: 'Essenziali (sempre necessari)',
+      icon: 'lock',
+      colorClass: 'text-success-600',
+      bgClass: 'bg-success-50 border-success-100',
+      items: [
+        { name: 'ph_auth', desc: 'Mantenimento della sessione di accesso (30 giorni)' },
+        { name: 'ph_lang', desc: 'Ricorda la preferenza della lingua (1 anno)' },
+        { name: 'ph_theme', desc: 'Ricorda il tema scelto (1 anno)' },
+        { name: 'ph_consent', desc: 'Salva la decisione di consenso (1 anno)' },
+      ],
+    },
+    {
+      title: 'Facoltativi (solo con il tuo consenso)',
+      icon: 'tune',
+      colorClass: 'text-primary-600',
+      bgClass: 'bg-primary-50 border-primary-100',
+      items: [
+        { name: 'ph_last_page', desc: 'Ultima pagina visitata — per continuare da dove hai lasciato (7 giorni)' },
+        { name: 'ph_last_quiz', desc: 'Ultimo quiz completato (7 giorni)' },
+        { name: 'ph_last_lesson', desc: 'Ultima lezione aperta (7 giorni)' },
+      ],
+    },
+  ];
+
+  const cookieGroups = isIt ? cookieGroupsIt : cookieGroupsAr;
+
   return (
     <div
       className="fixed bottom-0 inset-x-0 z-[9999] p-3 sm:p-4 lg:p-6"
       role="dialog"
-      aria-label="إشعار ملفات الارتباط"
+      aria-label={isIt ? 'Informativa sui cookie' : 'إشعار ملفات الارتباط'}
       aria-live="polite"
     >
       <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl border border-surface-200 overflow-hidden animate-fade-in-up">
@@ -75,14 +101,13 @@ export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
 
           <div className="flex-1 min-w-0">
             <h2 className="font-bold text-surface-900 text-sm sm:text-base mb-1">
-              نستخدم ملفات الارتباط (Cookies)
+              {isIt ? 'Utilizziamo i cookie' : 'نستخدم ملفات الارتباط (Cookies)'}
             </h2>
             <p className="text-xs sm:text-sm text-surface-500 leading-relaxed">
-              نحتاج إلى ملفات ارتباط أساسية لحفظ جلسة الدخول وتفضيلاتك.
-              بموافقتك، نحفظ نشاطك الأخير لتستمر من حيث توقفت.
-              يمكنك قراءة{' '}
-              <span className="text-primary-600 font-medium">سياسة الخصوصية</span>
-              {' '}للمزيد.
+              {isIt
+                ? <>Utilizziamo cookie essenziali per salvare la sessione e le preferenze. Con il tuo consenso, salviamo la tua attività recente per continuare da dove hai lasciato. Puoi leggere la nostra{' '}<span className="text-primary-600 font-medium">Informativa sulla privacy</span>{' '}per maggiori dettagli.</>
+                : <>نحتاج إلى ملفات ارتباط أساسية لحفظ جلسة الدخول وتفضيلاتك. بموافقتك، نحفظ نشاطك الأخير لتستمر من حيث توقفت. يمكنك قراءة{' '}<span className="text-primary-600 font-medium">سياسة الخصوصية</span>{' '}للمزيد.</>
+              }
             </p>
           </div>
         </div>
@@ -92,15 +117,10 @@ export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
           <div className="px-5 pb-4">
             <div className="grid sm:grid-cols-2 gap-3">
               {cookieGroups.map((group, gi) => (
-                <div
-                  key={gi}
-                  className={`rounded-xl p-3 border ${group.bgClass}`}
-                >
+                <div key={gi} className={`rounded-xl p-3 border ${group.bgClass}`}>
                   <div className="flex items-center gap-2 mb-2.5">
                     <Icon name={group.icon} size={15} className={group.colorClass} />
-                    <p className={`text-xs font-bold ${group.colorClass}`}>
-                      {group.title}
-                    </p>
+                    <p className={`text-xs font-bold ${group.colorClass}`}>{group.title}</p>
                   </div>
                   <ul className="space-y-2">
                     {group.items.map((item, ii) => (
@@ -124,7 +144,9 @@ export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
             className="text-xs text-primary-600 hover:text-primary-700 flex items-center gap-1 sm:mr-auto self-start sm:self-auto transition-colors"
           >
             <Icon name={showDetails ? 'expand_less' : 'info'} size={15} />
-            {showDetails ? 'إخفاء التفاصيل' : 'عرض التفاصيل'}
+            {isIt
+              ? (showDetails ? 'Nascondi dettagli' : 'Mostra dettagli')
+              : (showDetails ? 'إخفاء التفاصيل' : 'عرض التفاصيل')}
           </button>
 
           <div className="flex gap-2.5 w-full sm:w-auto">
@@ -132,7 +154,7 @@ export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
               onClick={() => handleConsent('essential')}
               className="flex-1 sm:flex-none text-xs font-semibold px-4 py-2.5 rounded-xl border-2 border-surface-300 text-surface-600 hover:border-surface-400 hover:bg-white transition-all"
             >
-              الضروري فقط
+              {isIt ? 'Solo essenziali' : 'الضروري فقط'}
             </button>
             <Button
               onClick={() => handleConsent('all')}
@@ -140,7 +162,7 @@ export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
               className="flex-1 sm:flex-none !text-xs !py-2.5 !px-4"
               icon={<Icon name="check_circle" size={15} />}
             >
-              قبول الجميع
+              {isIt ? 'Accetta tutti' : 'قبول الجميع'}
             </Button>
           </div>
         </div>

@@ -3,6 +3,7 @@ import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { cn } from '@/utils/cn';
+import { useTranslation } from '@/i18n';
 
 interface ContactPageProps {
   onNavigate: (page: string) => void;
@@ -23,6 +24,9 @@ interface FormErrors {
 }
 
 export function ContactPage({ onNavigate }: ContactPageProps) {
+  const { uiLang } = useTranslation();
+  const isIt = uiLang === 'it';
+
   const [formData, setFormData] = useState<FormData>({ name: '', email: '', subject: '', message: '' });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -31,12 +35,12 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'الاسم مطلوب';
-    if (!formData.email.trim()) newErrors.email = 'البريد الإلكتروني مطلوب';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'بريد إلكتروني غير صالح';
-    if (!formData.subject.trim()) newErrors.subject = 'الموضوع مطلوب';
-    if (!formData.message.trim()) newErrors.message = 'الرسالة مطلوبة';
-    else if (formData.message.trim().length < 20) newErrors.message = 'الرسالة يجب أن تكون 20 حرفاً على الأقل';
+    if (!formData.name.trim()) newErrors.name = isIt ? 'Il nome è obbligatorio' : 'الاسم مطلوب';
+    if (!formData.email.trim()) newErrors.email = isIt ? "L'email è obbligatoria" : 'البريد الإلكتروني مطلوب';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = isIt ? 'Email non valida' : 'بريد إلكتروني غير صالح';
+    if (!formData.subject.trim()) newErrors.subject = isIt ? "L'oggetto è obbligatorio" : 'الموضوع مطلوب';
+    if (!formData.message.trim()) newErrors.message = isIt ? 'Il messaggio è obbligatorio' : 'الرسالة مطلوبة';
+    else if (formData.message.trim().length < 20) newErrors.message = isIt ? 'Il messaggio deve essere di almeno 20 caratteri' : 'الرسالة يجب أن تكون 20 حرفاً على الأقل';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -52,7 +56,7 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
       await new Promise(resolve => setTimeout(resolve, 1200));
       setSubmitted(true);
     } catch {
-      setSubmitError('حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مجدداً.');
+      setSubmitError(isIt ? "Si è verificato un errore durante l'invio. Riprova." : 'حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مجدداً.');
     } finally {
       setIsLoading(false);
     }
@@ -79,9 +83,9 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
             className="flex items-center gap-1.5 text-surface-500 hover:text-primary-600 transition-colors"
           >
             <Icon name="arrow_forward" size={20} className="ltr:rotate-180" />
-            <span className="text-sm font-medium">رجوع</span>
+            <span className="text-sm font-medium">{isIt ? 'Indietro' : 'رجوع'}</span>
           </button>
-          <h1 className="text-base font-bold text-surface-900">تواصل معنا</h1>
+          <h1 className="text-base font-bold text-surface-900">{isIt ? 'Contattaci' : 'تواصل معنا'}</h1>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center shadow-sm">
               <Icon name="directions_car" size={16} className="text-white" filled />
@@ -102,32 +106,39 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
                 <div className="w-20 h-20 mx-auto bg-success-50 rounded-full flex items-center justify-center mb-6">
                   <Icon name="check_circle" size={48} className="text-success-500" filled />
                 </div>
-                <h2 className="text-xl font-bold text-surface-900 mb-2">تم الإرسال بنجاح!</h2>
+                <h2 className="text-xl font-bold text-surface-900 mb-2">
+                  {isIt ? 'Messaggio inviato!' : 'تم الإرسال بنجاح!'}
+                </h2>
                 <p className="text-surface-500 text-sm mb-6 leading-relaxed">
-                  شكراً لتواصلك معنا. سنراجع رسالتك ونرد عليك في أقرب وقت ممكن،
-                  <br />
-                  عادةً خلال 24–48 ساعة.
+                  {isIt
+                    ? <>Grazie per averci contattato. Esamineremo il tuo messaggio e ti risponderemo al più presto,<br />di solito entro 24–48 ore.</>
+                    : <>شكراً لتواصلك معنا. سنراجع رسالتك ونرد عليك في أقرب وقت ممكن،<br />عادةً خلال 24–48 ساعة.</>
+                  }
                 </p>
                 <Button variant="outline" onClick={handleReset} icon={<Icon name="edit" size={18} />}>
-                  إرسال رسالة أخرى
+                  {isIt ? 'Invia un altro messaggio' : 'إرسال رسالة أخرى'}
                 </Button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-                <h2 className="text-lg font-bold text-surface-900 mb-1">أرسل رسالتك</h2>
-                <p className="text-sm text-surface-400 -mt-2">الحقول المشار إليها بـ (*) إلزامية</p>
+                <h2 className="text-lg font-bold text-surface-900 mb-1">
+                  {isIt ? 'Invia il tuo messaggio' : 'أرسل رسالتك'}
+                </h2>
+                <p className="text-sm text-surface-400 -mt-2">
+                  {isIt ? 'I campi contrassegnati con (*) sono obbligatori' : 'الحقول المشار إليها بـ (*) إلزامية'}
+                </p>
 
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Input
-                    label="الاسم الكامل *"
-                    placeholder="أدخل اسمك الكامل"
+                    label={isIt ? 'Nome completo *' : 'الاسم الكامل *'}
+                    placeholder={isIt ? 'Inserisci il tuo nome' : 'أدخل اسمك الكامل'}
                     icon="person"
                     value={formData.name}
                     onChange={e => handleChange('name', e.target.value)}
                     error={errors.name}
                   />
                   <Input
-                    label="البريد الإلكتروني *"
+                    label={isIt ? 'Email *' : 'البريد الإلكتروني *'}
                     type="email"
                     placeholder="example@email.com"
                     icon="email"
@@ -140,8 +151,8 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
                 </div>
 
                 <Input
-                  label="الموضوع *"
-                  placeholder="موضوع رسالتك"
+                  label={isIt ? 'Oggetto *' : 'الموضوع *'}
+                  placeholder={isIt ? 'Oggetto del tuo messaggio' : 'موضوع رسالتك'}
                   icon="subject"
                   value={formData.subject}
                   onChange={e => handleChange('subject', e.target.value)}
@@ -149,10 +160,12 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
                 />
 
                 <div className="w-full">
-                  <label className="block text-sm font-medium text-surface-700 mb-1.5">الرسالة *</label>
+                  <label className="block text-sm font-medium text-surface-700 mb-1.5">
+                    {isIt ? 'Messaggio *' : 'الرسالة *'}
+                  </label>
                   <textarea
                     rows={5}
-                    placeholder="اكتب رسالتك هنا... (20 حرف على الأقل)"
+                    placeholder={isIt ? 'Scrivi il tuo messaggio qui... (min. 20 caratteri)' : 'اكتب رسالتك هنا... (20 حرف على الأقل)'}
                     value={formData.message}
                     onChange={e => handleChange('message', e.target.value)}
                     className={cn(
@@ -188,7 +201,7 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
                   loading={isLoading}
                   icon={<Icon name="send" size={20} />}
                 >
-                  إرسال الرسالة
+                  {isIt ? 'Invia il messaggio' : 'إرسال الرسالة'}
                 </Button>
               </form>
             )}
@@ -201,7 +214,7 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
           <div className="bg-white rounded-2xl p-5 border border-surface-100 shadow-sm">
             <h3 className="font-bold text-surface-900 mb-4 flex items-center gap-2">
               <Icon name="contact_support" size={20} className="text-primary-500" filled />
-              معلومات التواصل
+              {isIt ? 'Informazioni di contatto' : 'معلومات التواصل'}
             </h3>
             <div className="space-y-4">
               <a
@@ -212,7 +225,7 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
                   <Icon name="email" size={20} className="text-primary-600" />
                 </div>
                 <div>
-                  <p className="text-xs text-surface-400 mb-0.5">البريد الإلكتروني</p>
+                  <p className="text-xs text-surface-400 mb-0.5">{isIt ? 'Email' : 'البريد الإلكتروني'}</p>
                   <p className="text-sm font-medium text-surface-800 group-hover:text-primary-600 transition-colors" dir="ltr">
                     support@patentehub.com
                   </p>
@@ -229,7 +242,7 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
                   <Icon name="chat" size={20} className="text-success-600" />
                 </div>
                 <div>
-                  <p className="text-xs text-surface-400 mb-0.5">واتساب</p>
+                  <p className="text-xs text-surface-400 mb-0.5">WhatsApp</p>
                   <p className="text-sm font-medium text-surface-800 group-hover:text-success-600 transition-colors" dir="ltr">
                     +39 300 000 0000
                   </p>
@@ -241,8 +254,8 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
                   <Icon name="location_on" size={20} className="text-surface-400" />
                 </div>
                 <div>
-                  <p className="text-xs text-surface-400 mb-0.5">الموقع</p>
-                  <p className="text-sm font-medium text-surface-700">إيطاليا</p>
+                  <p className="text-xs text-surface-400 mb-0.5">{isIt ? 'Posizione' : 'الموقع'}</p>
+                  <p className="text-sm font-medium text-surface-700">Italia</p>
                 </div>
               </div>
             </div>
@@ -252,12 +265,14 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
           <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-2xl p-5 border border-primary-100">
             <div className="flex items-center gap-2 mb-3">
               <Icon name="schedule" size={20} className="text-primary-600" filled />
-              <h3 className="font-bold text-primary-900 text-sm">ساعات الدعم</h3>
+              <h3 className="font-bold text-primary-900 text-sm">
+                {isIt ? 'Orari di supporto' : 'ساعات الدعم'}
+              </h3>
             </div>
             <div className="space-y-1">
-              <p className="text-sm text-primary-700">الأحد – الخميس</p>
-              <p className="text-sm font-bold text-primary-800">9:00 ص – 6:00 م</p>
-              <p className="text-xs text-primary-500 mt-1">توقيت وسط أوروبا (CET)</p>
+              <p className="text-sm text-primary-700">{isIt ? 'Lunedì – Venerdì' : 'الأحد – الخميس'}</p>
+              <p className="text-sm font-bold text-primary-800">9:00 – 18:00</p>
+              <p className="text-xs text-primary-500 mt-1">{isIt ? 'Ora Europa Centrale (CET)' : 'توقيت وسط أوروبا (CET)'}</p>
             </div>
           </div>
 
@@ -265,7 +280,7 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
           <div className="bg-white rounded-2xl p-5 border border-surface-100 shadow-sm">
             <h3 className="font-bold text-surface-900 mb-3 flex items-center gap-2">
               <Icon name="link" size={20} className="text-surface-400" />
-              روابط مفيدة
+              {isIt ? 'Link utili' : 'روابط مفيدة'}
             </h3>
             <div className="space-y-2">
               <button
@@ -273,21 +288,21 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
                 className="w-full flex items-center gap-2 text-sm text-surface-600 hover:text-primary-600 hover:bg-primary-50 px-3 py-2 rounded-xl transition-all text-right"
               >
                 <Icon name="privacy_tip" size={16} className="text-surface-400" />
-                سياسة الخصوصية
+                {isIt ? 'Privacy Policy' : 'سياسة الخصوصية'}
               </button>
               <button
                 onClick={() => onNavigate('terms-of-service')}
                 className="w-full flex items-center gap-2 text-sm text-surface-600 hover:text-primary-600 hover:bg-primary-50 px-3 py-2 rounded-xl transition-all text-right"
               >
                 <Icon name="gavel" size={16} className="text-surface-400" />
-                شروط الاستخدام
+                {isIt ? 'Termini di utilizzo' : 'شروط الاستخدام'}
               </button>
               <button
                 onClick={() => onNavigate('landing')}
                 className="w-full flex items-center gap-2 text-sm text-surface-600 hover:text-primary-600 hover:bg-primary-50 px-3 py-2 rounded-xl transition-all text-right"
               >
                 <Icon name="help_outline" size={16} className="text-surface-400" />
-                الأسئلة الشائعة
+                {isIt ? 'FAQ' : 'الأسئلة الشائعة'}
               </button>
             </div>
           </div>

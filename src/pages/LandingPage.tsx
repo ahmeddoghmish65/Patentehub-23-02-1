@@ -10,7 +10,7 @@ interface LandingPageProps {
 }
 
 export function LandingPage({ onNavigate }: LandingPageProps) {
-  const { t, dir } = useTranslation();
+  const { t, dir, uiLang } = useTranslation();
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -225,7 +225,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
 
               {/* Mini badges */}
               <div className={cn('flex flex-wrap items-center gap-3 mt-10 animate-fade-in-up', dir === 'rtl' ? 'justify-center lg:justify-start' : 'justify-center lg:justify-start')} style={{ animationDelay: '0.4s' }}>
-                {[t('landing.badge_free'), t('landing.badge_arabic'), t('landing.badge_updated'), t('landing.badge_success')].map((b, i) => (
+                {[t('landing.badge_free'), ...(uiLang !== 'it' ? [t('landing.badge_arabic')] : []), t('landing.badge_updated'), t('landing.badge_success')].map((b, i) => (
                   <span key={i} className="inline-flex items-center gap-1.5 bg-white border border-surface-200 text-surface-600 text-xs px-3 py-1.5 rounded-full shadow-sm">
                     <Icon name="check_circle" size={12} className="text-green-500" filled />
                     {b}
