@@ -36,7 +36,7 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
   return (
     <div>
       <button onClick={() => onNavigate('lessons', { sectionId: lesson.sectionId })} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-6">
-        <Icon name="arrow_forward" size={20} />
+        <Icon name="arrow_forward" size={20} className="ltr:rotate-180" />
         <span className="text-sm">{t('lessons_page.back_to_lessons')}</span>
       </button>
 
