@@ -694,5 +694,21 @@
     "incomplete": "غير مكتمل",
     "questions_suffix": "سؤال",
     "start_btn": "ابدأ الاختبار"
+  },
+  "questions_page": {
+    "title": "الأسئلة",
+    "subtitle": "اختر قسماً لعرض أسئلته",
+    "available": "سؤال متاح",
+    "no_sections": "لا توجد أقسام بعد",
+    "back": "العودة للأقسام",
+    "questions_count": "سؤال",
+    "no_questions": "لا توجد أسئلة في هذا القسم بعد",
+    "explanation": "الشرح",
+    "difficulty_easy": "سهل",
+    "difficulty_medium": "متوسط",
+    "difficulty_hard": "صعب",
+    "answer_label": "الإجابة:",
+    "answer_true": "صحيح",
+    "answer_false": "خطأ"
   }
 }

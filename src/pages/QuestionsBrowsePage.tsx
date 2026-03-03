@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
+import { useTranslation } from '@/i18n';
 
 interface Props {
   onNavigate: (page: string, data?: Record<string, string>) => void;
@@ -10,6 +11,7 @@ interface Props {
 export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
   void _onNavigate;
   const { sections, questions, loadSections, loadQuestions, user } = useAuthStore();
+  const { t } = useTranslation();
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const [expandedQ, setExpandedQ] = useState<string | null>(null);
 
@@ -28,12 +30,11 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
       <div>
         <button onClick={() => setSelectedSection(null)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-5 transition-colors">
           <Icon name="arrow_forward" size={20} className="ltr:rotate-180" />
-          <span className="text-sm font-medium">العودة للأقسام</span>
+          <span className="text-sm font-medium">{t('questions_page.back')}</span>
         </button>
 
         <div className="bg-white rounded-2xl p-5 border border-surface-100 mb-6">
           <div className="flex items-center gap-3">
-            {/* Section image instead of icon */}
             <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 overflow-hidden"
               style={{ backgroundColor: (section?.color || '#8b5cf6') + '15' }}>
               {section?.image ? (
@@ -43,10 +44,11 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
               )}
             </div>
             <div>
-              <h1 className="text-xl font-bold text-surface-900">
-                {lang === 'it' ? (section?.nameIt || section?.nameAr || 'Domande') : (section?.nameAr || 'أسئلة')}
+              <h1 className="text-xl font-bold text-surface-900" dir={lang === 'it' ? 'ltr' : 'rtl'}>
+                {lang === 'it' ? (section?.nameIt || section?.nameAr || '') : (section?.nameAr || '')}
               </h1>
-              <p className="text-sm text-surface-500">{sectionQuestions.length} سؤال</p>
+              {lang === 'both' && <p className="text-sm text-surface-400" dir="ltr">{section?.nameIt}</p>}
+              <p className="text-sm text-surface-500">{sectionQuestions.length} {t('questions_page.questions_count')}</p>
             </div>
           </div>
         </div>
@@ -54,7 +56,7 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
         {sectionQuestions.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-2xl border border-surface-100">
             <Icon name="quiz" size={40} className="text-surface-300 mx-auto mb-3" />
-            <p className="text-surface-500">لا توجد أسئلة في هذا القسم بعد</p>
+            <p className="text-surface-500">{t('questions_page.no_questions')}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -98,7 +100,7 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                     <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
                       <p className="text-xs font-semibold text-blue-600 mb-1 flex items-center gap-1">
                         <Icon name="lightbulb" size={14} filled />
-                        الشرح
+                        {t('questions_page.explanation')}
                       </p>
                       {(lang === 'ar' || lang === 'both') && (
                         <p className="text-sm text-surface-700 leading-relaxed" dir="rtl">{q.explanationAr}</p>
@@ -112,11 +114,11 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                     <div className="flex items-center gap-3 mt-2 text-xs text-surface-400">
                       <span className="flex items-center gap-1">
                         <Icon name="signal_cellular_alt" size={12} />
-                        {q.difficulty === 'easy' ? 'سهل' : q.difficulty === 'medium' ? 'متوسط' : 'صعب'}
+                        {q.difficulty === 'easy' ? t('questions_page.difficulty_easy') : q.difficulty === 'medium' ? t('questions_page.difficulty_medium') : t('questions_page.difficulty_hard')}
                       </span>
                       <span className="flex items-center gap-1">
                         <Icon name={q.isTrue ? 'check_circle' : 'cancel'} size={12} />
-                        الإجابة: {q.isTrue ? 'صحيح (Vero)' : 'خطأ (Falso)'}
+                        {t('questions_page.answer_label')} {q.isTrue ? t('questions_page.answer_true') : t('questions_page.answer_false')}
                       </span>
                     </div>
                   </div>
@@ -132,14 +134,14 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-surface-900 mb-1">الأسئلة</h1>
-        <p className="text-surface-500 text-sm">اختر قسماً لعرض أسئلته — {questions.length} سؤال متاح</p>
+        <h1 className="text-2xl font-bold text-surface-900 mb-1">{t('questions_page.title')}</h1>
+        <p className="text-surface-500 text-sm">{t('questions_page.subtitle')} — {questions.length} {t('questions_page.available')}</p>
       </div>
 
       {sections.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-2xl border border-surface-100">
           <Icon name="quiz" size={48} className="text-surface-300 mx-auto mb-4" />
-          <p className="text-surface-500">لا توجد أقسام بعد</p>
+          <p className="text-surface-500">{t('questions_page.no_sections')}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -151,7 +153,6 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                 className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-purple-200 hover:shadow-md transition-all text-start flex items-center gap-4 group"
                 onClick={() => setSelectedSection(section.id)}
               >
-                {/* Section IMAGE instead of icon */}
                 <div className="w-20 h-20 rounded-xl flex items-center justify-center shrink-0 overflow-hidden"
                   style={{ backgroundColor: section.color + '12' }}>
                   {section.image ? (
@@ -161,15 +162,15 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  {lang !== 'it' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors">{section.nameAr}</h3>}
-                  {lang === 'it' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors">{section.nameIt}</h3>}
-                  {lang === 'both' && <p className="text-xs text-surface-400 mt-0.5">{section.nameIt}</p>}
+                  {lang !== 'it' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors" dir="rtl">{section.nameAr}</h3>}
+                  {lang === 'it' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors" dir="ltr">{section.nameIt}</h3>}
+                  {lang === 'both' && <p className="text-xs text-surface-400 mt-0.5" dir="ltr">{section.nameIt}</p>}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full font-medium">
-                    {sectionQs.length} سؤال
+                    {sectionQs.length} {t('questions_page.questions_count')}
                   </span>
-                  <Icon name="chevron_left" size={18} className="text-surface-300 group-hover:text-purple-400" />
+                  <Icon name="chevron_left" size={18} className="text-surface-300 group-hover:text-purple-400 ltr:rotate-180" />
                 </div>
               </button>
             );

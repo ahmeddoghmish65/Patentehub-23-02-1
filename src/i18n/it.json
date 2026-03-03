@@ -694,5 +694,21 @@
     "incomplete": "Non completato",
     "questions_suffix": "domande",
     "start_btn": "Inizia il quiz"
+  },
+  "questions_page": {
+    "title": "Domande",
+    "subtitle": "Scegli una sezione per vedere le sue domande",
+    "available": "domande disponibili",
+    "no_sections": "Nessuna sezione ancora",
+    "back": "Torna alle sezioni",
+    "questions_count": "domande",
+    "no_questions": "Nessuna domanda in questa sezione ancora",
+    "explanation": "Spiegazione",
+    "difficulty_easy": "Facile",
+    "difficulty_medium": "Medio",
+    "difficulty_hard": "Difficile",
+    "answer_label": "Risposta:",
+    "answer_true": "Vero",
+    "answer_false": "Falso"
   }
 }
