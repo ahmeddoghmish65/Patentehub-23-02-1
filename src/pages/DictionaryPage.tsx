@@ -55,19 +55,25 @@ export function DictionaryPage() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    {(lang === 'ar' || lang === 'both') && (
+                    {lang === 'ar' && (
                       <span className="text-lg font-bold text-surface-900" dir="rtl">{entry.termAr}</span>
                     )}
-                    {lang === 'both' && <span className="text-surface-300">—</span>}
-                    {(lang === 'it' || lang === 'both') && (
-                      <span className="text-lg font-bold text-primary-600" dir="ltr">{entry.termIt}</span>
+                    {lang !== 'ar' && (
+                      <>
+                        <span className="text-lg font-bold text-primary-600" dir="ltr">{entry.termIt}</span>
+                        <span className="text-surface-300">—</span>
+                        <span className="text-lg font-bold text-surface-900" dir="rtl">{entry.termAr}</span>
+                      </>
                     )}
                   </div>
-                  {(lang === 'ar' || lang === 'both') && (
-                    <p className="text-sm text-surface-500 mb-1" dir="rtl">{entry.definitionAr}</p>
+                  {lang === 'ar' && (
+                    <p className="text-sm text-surface-500" dir="rtl">{entry.definitionAr}</p>
                   )}
                   {(lang === 'it' || lang === 'both') && (
-                    <p className="text-sm text-surface-400" dir="ltr">{entry.definitionIt}</p>
+                    <p className="text-sm text-surface-400 mb-1" dir="ltr">{entry.definitionIt}</p>
+                  )}
+                  {lang === 'both' && (
+                    <p className="text-sm text-surface-500" dir="rtl">{entry.definitionAr}</p>
                   )}
                 </div>
                 <div className="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center shrink-0">

@@ -130,11 +130,14 @@ export function SignsPage({ onNavigate }: Props) {
 
                 {/* Info */}
                 <div className="p-3 border-t border-surface-50">
-                  {(lang === 'ar' || lang === 'both') && (
+                  {lang === 'ar' && (
                     <h3 className="font-bold text-surface-900 text-sm mb-0.5 group-hover:text-primary-600 transition-colors line-clamp-1" dir="rtl">{sign.nameAr}</h3>
                   )}
-                  {(lang === 'it' || lang === 'both') && (
-                    <p className="text-sm text-primary-500 line-clamp-1" dir="ltr">{sign.nameIt}</p>
+                  {lang !== 'ar' && (
+                    <h3 className="font-bold text-surface-900 text-sm mb-0.5 group-hover:text-primary-600 transition-colors line-clamp-1" dir="ltr">{sign.nameIt}</h3>
+                  )}
+                  {lang === 'both' && (
+                    <p className="text-xs text-surface-500 line-clamp-1" dir="rtl">{sign.nameAr}</p>
                   )}
                 </div>
               </button>
@@ -169,11 +172,17 @@ export function SignsPage({ onNavigate }: Props) {
 
             {/* Details */}
             <div className="p-6">
-              {(lang === 'ar' || lang === 'both') && (
-                <h2 className="text-xl font-bold text-surface-900 mb-1" dir="rtl">{selectedSignData.nameAr}</h2>
+              {lang === 'ar' && (
+                <h2 className="text-xl font-bold text-surface-900 mb-4" dir="rtl">{selectedSignData.nameAr}</h2>
               )}
-              {(lang === 'it' || lang === 'both') && (
-                <p className="text-xl text-primary-500 font-medium mb-4" dir="ltr">{selectedSignData.nameIt}</p>
+              {lang === 'it' && (
+                <h2 className="text-xl font-bold text-surface-900 mb-4" dir="ltr">{selectedSignData.nameIt}</h2>
+              )}
+              {lang === 'both' && (
+                <>
+                  <h2 className="text-xl font-bold text-surface-900 mb-1" dir="ltr">{selectedSignData.nameIt}</h2>
+                  <p className="text-lg text-primary-500 font-medium mb-4" dir="rtl">{selectedSignData.nameAr}</p>
+                </>
               )}
 
               <div className="bg-surface-50 rounded-xl p-4 space-y-3">

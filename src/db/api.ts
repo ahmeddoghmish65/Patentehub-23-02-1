@@ -1006,10 +1006,10 @@ export async function apiSaveQuizResult(token: string, result: Omit<QuizResult, 
   }
 
   // Badges
-  if (user.progress.totalQuizzes >= 10 && !user.progress.badges.includes('quiz_master')) user.progress.badges.push('quiz_master');
+  if (user.progress.totalQuizzes >= 20 && !user.progress.badges.includes('quiz_master')) user.progress.badges.push('quiz_master');
   if (result.score === 100 && !user.progress.badges.includes('perfect_score')) user.progress.badges.push('perfect_score');
   if (user.progress.currentStreak >= 7 && !user.progress.badges.includes('week_streak')) user.progress.badges.push('week_streak');
-  if (user.progress.level >= 5 && !user.progress.badges.includes('level_5')) user.progress.badges.push('level_5');
+  if (user.progress.level >= 15 && !user.progress.badges.includes('level_5')) user.progress.badges.push('level_5');
 
   // Exam readiness - comprehensive calculation
   const allResults = await db.getAllFromIndex('quizResults', 'userId', user.id);
