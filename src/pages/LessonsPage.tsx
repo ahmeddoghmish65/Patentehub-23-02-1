@@ -39,7 +39,7 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
         </button>
 
         <div className="bg-white rounded-2xl p-5 border border-surface-100 mb-6">
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-4 mb-4" dir="ltr">
             <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 overflow-hidden"
               style={{ backgroundColor: (section?.color || '#3b82f6') + '12' }}>
               {section?.image ? (
@@ -161,7 +161,7 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
+                  <div className="flex items-center gap-2 mb-0.5" dir="ltr">
                     {lang === 'ar' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-primary-600 transition-colors" dir="rtl">{section.nameAr}</h3>}
                     {lang === 'it' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-primary-600 transition-colors" dir="ltr">{section.nameIt}</h3>}
                     {lang === 'both' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-primary-600 transition-colors" dir="ltr">{section.nameIt}</h3>}
