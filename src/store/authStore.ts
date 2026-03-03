@@ -110,6 +110,10 @@ interface AppState {
   archiveQuestion: (id: string, archive: boolean) => Promise<boolean>;
   restoreQuestion: (id: string) => Promise<boolean>;
   permanentDeleteQuestion: (id: string) => Promise<boolean>;
+  bulkDeleteQuestions: (ids: string[]) => Promise<boolean>;
+  bulkPermanentDeleteQuestions: (ids: string[]) => Promise<boolean>;
+  bulkArchiveQuestions: (ids: string[], archive: boolean) => Promise<boolean>;
+  bulkRestoreQuestions: (ids: string[]) => Promise<boolean>;
   createSign: (data: Omit<Sign, 'id' | 'createdAt'>) => Promise<boolean>;
   updateSign: (id: string, data: Partial<Sign>) => Promise<boolean>;
   deleteSign: (id: string) => Promise<boolean>;
@@ -357,6 +361,10 @@ export const useAuthStore = create<AppState>((set, get) => ({
   archiveQuestion: async (id, archive) => { const { token } = get(); if (!token) return false; const r = await api.apiArchiveQuestion(token, id, archive); if (r.success) await get().loadQuestions(); return r.success; },
   restoreQuestion: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiRestoreQuestion(token, id); if (r.success) await get().loadQuestions(); return r.success; },
   permanentDeleteQuestion: async (id) => { const { token } = get(); if (!token) return false; const r = await api.apiPermanentDeleteQuestion(token, id); if (r.success) await get().loadQuestions(); return r.success; },
+  bulkDeleteQuestions: async (ids) => { const { token } = get(); if (!token) return false; const r = await api.apiBulkDeleteQuestions(token, ids); if (r.success) await get().loadQuestions(); return r.success; },
+  bulkPermanentDeleteQuestions: async (ids) => { const { token } = get(); if (!token) return false; const r = await api.apiBulkPermanentDeleteQuestions(token, ids); if (r.success) await get().loadQuestions(); return r.success; },
+  bulkArchiveQuestions: async (ids, archive) => { const { token } = get(); if (!token) return false; const r = await api.apiBulkArchiveQuestions(token, ids, archive); if (r.success) await get().loadQuestions(); return r.success; },
+  bulkRestoreQuestions: async (ids) => { const { token } = get(); if (!token) return false; const r = await api.apiBulkRestoreQuestions(token, ids); if (r.success) await get().loadQuestions(); return r.success; },
 
   createSign: async (data) => { const { token } = get(); if (!token) return false; const r = await api.apiCreateSign(token, data); if (r.success) await get().loadSigns(); return r.success; },
   updateSign: async (id, data) => { const { token } = get(); if (!token) return false; const r = await api.apiUpdateSign(token, id, data); if (r.success) await get().loadSigns(); return r.success; },

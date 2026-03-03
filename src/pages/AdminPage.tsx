@@ -400,7 +400,16 @@ export function AdminPage() {
             onClick={() => handleImageUpload(field, type === 'image-square' ? 1024 : undefined)}>
             <Icon name="upload" size={16} /> رفع صورة {type === 'image-square' ? '(1024×1024)' : ''}
           </button>
-          {form[field] ? <img src={form[field] as string} alt="" className={cn('mt-2 rounded-lg object-cover', type === 'image-square' ? 'w-24 h-24' : 'w-20 h-20')} /> : null}
+          {form[field] ? (
+            <div className="mt-2 flex items-start gap-2">
+              <img src={form[field] as string} alt="" className={cn('rounded-lg object-cover', type === 'image-square' ? 'w-24 h-24' : 'w-20 h-20')} />
+              <button type="button" title="حذف الصورة"
+                onClick={() => setForm(prev => ({ ...prev, [field]: '' }))}
+                className="p-1.5 text-danger-500 hover:bg-danger-50 rounded-lg border border-danger-200 transition-colors">
+                <Icon name="delete" size={16} />
+              </button>
+            </div>
+          ) : null}
         </div>
       ) : (
         <input type={type} className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as string) || ''} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))} />
@@ -788,10 +797,10 @@ export function AdminPage() {
             onArchive={(id) => store.archiveQuestion(id, true)}
             onUnarchive={(id) => store.archiveQuestion(id, false)}
             onRestore={(id) => store.restoreQuestion(id)}
-            onBulkDelete={async (ids) => { for (const id of ids) await store.deleteQuestion(id); setSelectedIds(new Set()); }}
-            onBulkPermanentDelete={async (ids) => { for (const id of ids) await store.permanentDeleteQuestion(id); setSelectedIds(new Set()); }}
-            onBulkArchive={async (ids) => { for (const id of ids) await store.archiveQuestion(id, true); setSelectedIds(new Set()); }}
-            onBulkRestore={async (ids) => { for (const id of ids) await store.restoreQuestion(id); setSelectedIds(new Set()); }}
+            onBulkDelete={async (ids) => { await store.bulkDeleteQuestions(ids); setSelectedIds(new Set()); }}
+            onBulkPermanentDelete={async (ids) => { await store.bulkPermanentDeleteQuestions(ids); setSelectedIds(new Set()); }}
+            onBulkArchive={async (ids) => { await store.bulkArchiveQuestions(ids, true); setSelectedIds(new Set()); }}
+            onBulkRestore={async (ids) => { await store.bulkRestoreQuestions(ids); setSelectedIds(new Set()); }}
             onExport={() => handleExport('questions')} onImport={() => handleImport('questions')}
           />
       )}
@@ -2362,10 +2371,10 @@ export function AdminPage() {
           <div className="bg-white rounded-2xl p-6 w-full max-w-lg my-8 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-bold text-surface-900 mb-4">{modal.data?.id ? 'تعديل' : 'إضافة'}</h3>
             {modal.type === 'section' && (<>
-              {renderInput('الاسم بالعربية', 'nameAr')}
-              {renderInput('الاسم بالإيطالية', 'nameIt')}
-              {renderInput('الوصف بالعربية', 'descriptionAr', 'textarea')}
-              {renderInput('الوصف بالإيطالية', 'descriptionIt', 'textarea')}
+              {renderInput('الاسم بالإيطالية / Nome (IT)', 'nameIt')}
+              {renderInput('الاسم بالعربية / Nome (AR)', 'nameAr')}
+              {renderInput('الوصف بالإيطالية / Descrizione (IT)', 'descriptionIt', 'textarea')}
+              {renderInput('الوصف بالعربية / Descrizione (AR)', 'descriptionAr', 'textarea')}
               {renderInput('الأيقونة', 'icon')}
               {renderInput('اللون', 'color', 'color')}
               {renderInput('صورة', 'image', 'image')}
@@ -2373,21 +2382,21 @@ export function AdminPage() {
             </>)}
             {modal.type === 'lesson' && (<>
               {renderInput('القسم', 'sectionId', 'select-section')}
-              {renderInput('العنوان بالعربية', 'titleAr')}
-              {renderInput('العنوان بالإيطالية', 'titleIt')}
-              {renderInput('المحتوى بالعربية', 'contentAr', 'richtext')}
-              {renderInput('المحتوى بالإيطالية', 'contentIt', 'richtext')}
+              {renderInput('العنوان بالإيطالية / Titolo (IT)', 'titleIt')}
+              {renderInput('العنوان بالعربية / Titolo (AR)', 'titleAr')}
+              {renderInput('المحتوى بالإيطالية / Contenuto (IT)', 'contentIt', 'richtext')}
+              {renderInput('المحتوى بالعربية / Contenuto (AR)', 'contentAr', 'richtext')}
               {renderInput('صورة', 'image', 'image')}
               {renderInput('الترتيب', 'order', 'number')}
             </>)}
             {modal.type === 'question' && (<>
               {renderInput('القسم', 'sectionId', 'select-section')}
               {renderInput('الدرس', 'lessonId', 'select-lesson')}
-              {renderInput('السؤال بالعربية', 'questionAr', 'textarea')}
-              {renderInput('السؤال بالإيطالية', 'questionIt', 'textarea')}
+              {renderInput('السؤال بالإيطالية / Domanda (IT)', 'questionIt', 'textarea')}
+              {renderInput('السؤال بالعربية / Domanda (AR)', 'questionAr', 'textarea')}
               {renderInput('الإجابة الصحيحة', 'isTrue', 'boolean')}
-              {renderInput('الشرح بالعربية', 'explanationAr', 'textarea')}
-              {renderInput('الشرح بالإيطالية', 'explanationIt', 'textarea')}
+              {renderInput('الشرح بالإيطالية / Spiegazione (IT)', 'explanationIt', 'textarea')}
+              {renderInput('الشرح بالعربية / Spiegazione (AR)', 'explanationAr', 'textarea')}
               {renderInput('الصعوبة', 'difficulty', 'select-difficulty')}
               {renderInput('صورة', 'image', 'image')}
               {renderInput('الترتيب', 'order', 'number')}

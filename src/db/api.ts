@@ -467,6 +467,57 @@ export async function apiPermanentDeleteQuestion(token: string, id: string): Pro
   return ok(null);
 }
 
+// ============ BULK QUESTIONS API (single transaction) ============
+export async function apiBulkDeleteQuestions(token: string, ids: string[]): Promise<ApiRes> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const tx = db.transaction('questions', 'readwrite');
+  const now = new Date().toISOString();
+  for (const id of ids) {
+    const q = await tx.store.get(id);
+    if (q) { q.status = 'deleted'; q.deletedAt = now; await tx.store.put(q); }
+  }
+  await tx.done;
+  await logAdmin(token, 'حذف مجموعة أسئلة', `${ids.length} سؤال`);
+  return ok(null);
+}
+
+export async function apiBulkPermanentDeleteQuestions(token: string, ids: string[]): Promise<ApiRes> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const tx = db.transaction('questions', 'readwrite');
+  for (const id of ids) { await tx.store.delete(id); }
+  await tx.done;
+  await logAdmin(token, 'حذف نهائي مجموعة أسئلة', `${ids.length} سؤال`);
+  return ok(null);
+}
+
+export async function apiBulkArchiveQuestions(token: string, ids: string[], archive: boolean): Promise<ApiRes> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const tx = db.transaction('questions', 'readwrite');
+  for (const id of ids) {
+    const q = await tx.store.get(id);
+    if (q) { q.status = archive ? 'archived' : 'active'; if (!archive) q.deletedAt = undefined; await tx.store.put(q); }
+  }
+  await tx.done;
+  await logAdmin(token, archive ? 'أرشفة مجموعة أسئلة' : 'استعادة أرشيف أسئلة', `${ids.length} سؤال`);
+  return ok(null);
+}
+
+export async function apiBulkRestoreQuestions(token: string, ids: string[]): Promise<ApiRes> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const tx = db.transaction('questions', 'readwrite');
+  for (const id of ids) {
+    const q = await tx.store.get(id);
+    if (q) { q.status = 'active'; q.deletedAt = undefined; await tx.store.put(q); }
+  }
+  await tx.done;
+  await logAdmin(token, 'استعادة مجموعة أسئلة', `${ids.length} سؤال`);
+  return ok(null);
+}
+
 // ============ SIGNS API ============
 export async function apiGetSigns(category?: string): Promise<ApiRes<Sign[]>> {
   const db = await getDB();
