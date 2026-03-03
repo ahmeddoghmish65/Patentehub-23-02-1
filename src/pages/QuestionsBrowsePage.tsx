@@ -162,13 +162,17 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                 className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-purple-200 hover:shadow-md transition-all text-start flex items-center gap-4 group"
                 onClick={() => setSelectedSection(section.id)}
               >
-                <div className="w-20 h-20 rounded-xl flex items-center justify-center shrink-0 overflow-hidden"
+                <div className="w-20 h-20 rounded-xl flex items-center justify-center shrink-0 overflow-hidden relative"
                   style={{ backgroundColor: section.color + '12' }}>
                   {section.image ? (
                     <img src={section.image} alt={section.nameAr} className="w-full h-full object-cover rounded-xl" />
                   ) : (
                     <Icon name={section.icon || 'quiz'} size={32} style={{ color: section.color }} filled />
                   )}
+                  {/* Count badge — top-left corner of thumbnail */}
+                  <span className="absolute top-1 left-1 bg-white/75 text-purple-600 text-[9px] font-bold px-1.5 py-0.5 rounded-md leading-none">
+                    {sectionQs.length}
+                  </span>
                 </div>
                 <div className="flex-1 min-w-0">
                   {lang === 'ar' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors" dir="rtl">{section.nameAr}</h3>}
@@ -177,9 +181,6 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
                   {lang === 'both' && <p className="text-xs text-surface-400 mt-0.5" dir="rtl">{section.nameAr}</p>}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full font-medium">
-                    {sectionQs.length} {t('questions_page.questions_count')}
-                  </span>
                   <Icon name="chevron_left" size={18} className="text-surface-300 group-hover:text-purple-400 ltr:rotate-180" />
                 </div>
               </button>
