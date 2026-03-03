@@ -49,8 +49,10 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              {(lang === 'ar' || lang === 'both') && <h1 className="text-xl font-bold text-surface-900" dir="rtl">{section?.nameAr}</h1>}
-              {(lang === 'it' || lang === 'both') && <p className={lang === 'it' ? 'text-xl font-bold text-surface-900' : 'text-sm text-primary-500'} dir="ltr">{section?.nameIt}</p>}
+              {lang === 'ar' && <h1 className="text-xl font-bold text-surface-900" dir="rtl">{section?.nameAr}</h1>}
+              {lang === 'it' && <h1 className="text-xl font-bold text-surface-900" dir="ltr">{section?.nameIt}</h1>}
+              {lang === 'both' && <h1 className="text-xl font-bold text-surface-900" dir="ltr">{section?.nameIt}</h1>}
+              {lang === 'both' && <p className="text-sm text-primary-500" dir="rtl">{section?.nameAr}</p>}
             </div>
           </div>
           {/* Progress */}
@@ -91,8 +93,10 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    {(lang === 'ar' || lang === 'both') && <h4 className="text-sm font-semibold text-surface-800 group-hover:text-primary-600 transition-colors" dir="rtl">{lesson.titleAr}</h4>}
-                    {(lang === 'it' || lang === 'both') && <p className={lang === 'it' ? 'text-sm font-semibold text-surface-800 group-hover:text-primary-600 transition-colors' : 'text-xs text-surface-400 truncate mt-0.5'} dir="ltr">{lesson.titleIt}</p>}
+                    {lang === 'ar' && <h4 className="text-sm font-semibold text-surface-800 group-hover:text-primary-600 transition-colors" dir="rtl">{lesson.titleAr}</h4>}
+                    {lang === 'it' && <h4 className="text-sm font-semibold text-surface-800 group-hover:text-primary-600 transition-colors" dir="ltr">{lesson.titleIt}</h4>}
+                    {lang === 'both' && <h4 className="text-sm font-semibold text-surface-800 group-hover:text-primary-600 transition-colors" dir="ltr">{lesson.titleIt}</h4>}
+                    {lang === 'both' && <p className="text-xs text-surface-400 truncate mt-0.5" dir="rtl">{lesson.titleAr}</p>}
                   </div>
 
                   {isCompleted && (
@@ -158,11 +162,12 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    {lang !== 'it' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-primary-600 transition-colors" dir="rtl">{section.nameAr}</h3>}
+                    {lang === 'ar' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-primary-600 transition-colors" dir="rtl">{section.nameAr}</h3>}
                     {lang === 'it' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-primary-600 transition-colors" dir="ltr">{section.nameIt}</h3>}
+                    {lang === 'both' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-primary-600 transition-colors" dir="ltr">{section.nameIt}</h3>}
                     {pct === 100 && <Icon name="check_circle" size={16} className="text-success-500" filled />}
                   </div>
-                  {lang === 'both' && <p className="text-xs text-surface-400 mb-2" dir="ltr">{section.nameIt}</p>}
+                  {lang === 'both' && <p className="text-xs text-surface-400 mb-2" dir="rtl">{section.nameAr}</p>}
                   <div className="flex items-center gap-3">
                     <div className="flex-1 bg-surface-100 rounded-full h-1.5 max-w-[180px]">
                       <div className={cn('rounded-full h-1.5 transition-all', pct === 100 ? 'bg-success-500' : 'bg-primary-500')} style={{ width: `${pct}%` }} />
