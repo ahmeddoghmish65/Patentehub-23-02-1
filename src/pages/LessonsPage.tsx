@@ -76,25 +76,17 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
               return (
                 <button
                   key={lesson.id}
-                  className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-primary-200 hover:shadow-sm transition-all text-start flex items-center gap-3 group"
+                  className={cn(
+                    'w-full bg-white rounded-xl p-4 border hover:shadow-sm transition-all text-start flex items-center gap-3 group',
+                    isCompleted ? 'border-success-200 hover:border-success-300' : 'border-surface-100 hover:border-primary-200'
+                  )}
                   onClick={() => onNavigate('lesson-detail', { lessonId: lesson.id, sectionId: selectedSection })}
                 >
-                  <div className={cn(
-                    'w-14 h-14 rounded-xl flex items-center justify-center shrink-0 overflow-hidden relative',
-                    isCompleted ? 'bg-success-50' : 'bg-surface-100'
-                  )}>
+                  <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 overflow-hidden relative bg-surface-100">
                     {lesson.image ? (
                       <img src={lesson.image} alt="" className="w-full h-full object-cover rounded-xl" />
-                    ) : isCompleted ? (
-                      <Icon name="check" size={22} className="text-success-500" />
                     ) : (
                       <span className="text-sm font-bold text-surface-500">{idx + 1}</span>
-                    )}
-                    {/* Completed badge — top-left corner of thumbnail (only when image exists) */}
-                    {isCompleted && lesson.image && (
-                      <span className="absolute top-1 left-1 w-5 h-5 bg-success-500 rounded-lg flex items-center justify-center shadow-sm">
-                        <Icon name="check" size={13} className="text-white" />
-                      </span>
                     )}
                   </div>
 

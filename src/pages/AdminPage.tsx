@@ -2402,24 +2402,24 @@ export function AdminPage() {
               {renderInput('الترتيب', 'order', 'number')}
             </>)}
             {modal.type === 'sign' && (<>
-              {renderInput('الاسم بالعربية', 'nameAr')}
               {renderInput('الاسم بالإيطالية', 'nameIt')}
-              {renderInput('الوصف بالعربية', 'descriptionAr', 'textarea')}
+              {renderInput('الاسم بالعربية', 'nameAr')}
               {renderInput('الوصف بالإيطالية', 'descriptionIt', 'textarea')}
+              {renderInput('الوصف بالعربية', 'descriptionAr', 'textarea')}
               {renderInput('القسم', 'sectionId', 'select-sign-section')}
               {renderInput('التصنيف', 'category')}
               {renderInput('صورة', 'image', 'image-square')}
               {renderInput('الترتيب', 'order', 'number')}
             </>)}
             {modal.type === 'signSection' && (<>
-              {renderInput('الاسم بالعربية', 'nameAr')}
               {renderInput('الاسم بالإيطالية', 'nameIt')}
+              {renderInput('الاسم بالعربية', 'nameAr')}
               {renderInput('الأيقونة', 'icon')}
               {renderInput('الترتيب', 'order', 'number')}
             </>)}
             {modal.type === 'dictSection' && (<>
-              {renderInput('الاسم بالعربية', 'nameAr')}
               {renderInput('الاسم بالإيطالية', 'nameIt')}
+              {renderInput('الاسم بالعربية', 'nameAr')}
               {renderInput('الأيقونة', 'icon')}
               {renderInput('الترتيب', 'order', 'number')}
             </>)}
