@@ -63,6 +63,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
   const [profilePhoneError, setProfilePhoneError] = useState('');
   
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
+  const [showTranslation, setShowTranslation] = useState(false);
   const [profileForm, setProfileForm] = useState({
     birthDate: '', country: 'Italia', province: '', gender: '',
     phoneCode: '+39', phone: '', italianLevel: '',
@@ -853,45 +854,6 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
         </div>
       </div>
 
-      {/* UI Language */}
-      <div className="bg-white rounded-xl p-5 border border-surface-100">
-        <h2 className="font-bold text-surface-900 mb-2 flex items-center gap-2"><Icon name="language" size={20} className="text-primary-500" /> {t('profile.ui_language_label')}</h2>
-        <p className="text-xs text-surface-400 mb-4">{t('profile.ui_language_desc')}</p>
-        <div className="grid grid-cols-2 gap-2">
-          {(['ar', 'it'] as const).map(lang => (
-            <button key={lang} className={cn('flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all', uiLang === lang ? 'border-primary-500 bg-primary-50' : 'border-surface-100 hover:border-surface-200')} onClick={() => setUiLang(lang)}>
-              {lang === 'ar' && <span className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center text-lg font-bold text-orange-600">ع</span>}
-              {lang === 'it' && <span className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600" dir="ltr">IT</span>}
-              <span className={cn('text-xs font-medium text-center', uiLang === lang ? 'text-primary-700' : 'text-surface-600')}>{t(`profile.ui_lang_${lang}`)}</span>
-              {uiLang === lang && <Icon name="check_circle" size={16} className="text-primary-500" filled />}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Language */}
-      <div className="bg-white rounded-xl p-5 border border-surface-100">
-        <h2 className="font-bold text-surface-900 mb-2 flex items-center gap-2"><Icon name="translate" size={20} className="text-primary-500" /> {t('profile.content_language')}</h2>
-        <p className="text-xs text-surface-400 mb-4">{t('profile.content_language_desc')}</p>
-        <div className="grid grid-cols-3 gap-2">
-          {languageOptions.map(opt => (
-            <button key={opt.value} className={cn('flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all', settings.language === opt.value ? 'border-primary-500 bg-primary-50' : 'border-surface-100 hover:border-surface-200')} onClick={() => updateSettings({ language: opt.value })}>
-              {opt.value === 'ar' && (
-                <span className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center text-lg font-bold text-orange-600">ع</span>
-              )}
-              {opt.value === 'it' && (
-                <span className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600" dir="ltr">IT</span>
-              )}
-              {opt.value === 'both' && (
-                <Icon name="translate" size={24} className={settings.language === opt.value ? 'text-primary-600' : 'text-surface-500'} />
-              )}
-              <span className={cn('text-xs font-medium text-center leading-tight', settings.language === opt.value ? 'text-primary-700' : 'text-surface-600')}>{opt.label}</span>
-              {settings.language === opt.value && <Icon name="check_circle" size={16} className="text-primary-500" filled />}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Account Management */}
       <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
         <div className="px-5 py-4 border-b border-surface-100">
@@ -906,6 +868,18 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
           <div className="flex-1 text-right">
             <p className="text-sm font-semibold text-surface-800">{t('profile.edit_account_btn')}</p>
             <p className="text-xs text-surface-400">{t('profile.edit_account_desc')}</p>
+          </div>
+          <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors" />
+        </button>
+
+        {/* Translation */}
+        <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-surface-50 transition-colors border-b border-surface-50 group" onClick={() => setShowTranslation(true)}>
+          <div className="w-9 h-9 bg-primary-50 rounded-xl flex items-center justify-center group-hover:bg-primary-100 transition-colors shrink-0">
+            <Icon name="language" size={18} className="text-primary-500" />
+          </div>
+          <div className="flex-1 text-right">
+            <p className="text-sm font-semibold text-surface-800">{t('profile.translation_btn')}</p>
+            <p className="text-xs text-surface-400">{t('profile.translation_btn_desc')}</p>
           </div>
           <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors" />
         </button>
@@ -947,6 +921,62 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
           </button>
         </div>
       </div>
+
+      {/* Translation Modal */}
+      {showTranslation && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-4" onClick={() => setShowTranslation(false)}>
+          <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-surface-100">
+              <h3 className="font-bold text-surface-900 flex items-center gap-2">
+                <Icon name="language" size={18} className="text-primary-500" />
+                {t('profile.translation_btn')}
+              </h3>
+              <button className="p-1.5 rounded-lg hover:bg-surface-100 transition-colors" onClick={() => setShowTranslation(false)}>
+                <Icon name="close" size={18} className="text-surface-400" />
+              </button>
+            </div>
+            <div className="p-4 space-y-5">
+              {/* UI Language */}
+              <div>
+                <p className="text-sm font-semibold text-surface-800 mb-1 flex items-center gap-2">
+                  <Icon name="language" size={15} className="text-primary-500" />
+                  {t('profile.ui_language_label')}
+                </p>
+                <p className="text-xs text-surface-400 mb-3">{t('profile.ui_language_desc')}</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {(['ar', 'it'] as const).map(l => (
+                    <button key={l} className={cn('flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all', uiLang === l ? 'border-primary-500 bg-primary-50' : 'border-surface-100 hover:border-surface-200')} onClick={() => setUiLang(l)}>
+                      {l === 'ar' && <span className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center text-lg font-bold text-orange-600">ع</span>}
+                      {l === 'it' && <span className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600" dir="ltr">IT</span>}
+                      <span className={cn('text-xs font-medium text-center', uiLang === l ? 'text-primary-700' : 'text-surface-600')}>{t(`profile.ui_lang_${l}`)}</span>
+                      {uiLang === l && <Icon name="check_circle" size={16} className="text-primary-500" filled />}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {/* Content Language */}
+              <div>
+                <p className="text-sm font-semibold text-surface-800 mb-1 flex items-center gap-2">
+                  <Icon name="translate" size={15} className="text-primary-500" />
+                  {t('profile.content_language')}
+                </p>
+                <p className="text-xs text-surface-400 mb-3">{t('profile.content_language_desc')}</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {languageOptions.map(opt => (
+                    <button key={opt.value} className={cn('flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all', settings.language === opt.value ? 'border-primary-500 bg-primary-50' : 'border-surface-100 hover:border-surface-200')} onClick={() => updateSettings({ language: opt.value })}>
+                      {opt.value === 'ar' && <span className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center text-lg font-bold text-orange-600">ع</span>}
+                      {opt.value === 'it' && <span className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600" dir="ltr">IT</span>}
+                      {opt.value === 'both' && <Icon name="translate" size={24} className={settings.language === opt.value ? 'text-primary-600' : 'text-surface-500'} />}
+                      <span className={cn('text-xs font-medium text-center leading-tight', settings.language === opt.value ? 'text-primary-700' : 'text-surface-600')}>{opt.label}</span>
+                      {settings.language === opt.value && <Icon name="check_circle" size={16} className="text-primary-500" filled />}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Profile Completion Modal */}
       {showCompleteProfile && (

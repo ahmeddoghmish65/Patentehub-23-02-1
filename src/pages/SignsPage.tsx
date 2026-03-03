@@ -9,7 +9,7 @@ interface Props { onNavigate: (page: string, data?: Record<string, string>) => v
 export function SignsPage({ onNavigate }: Props) {
   const { signs, loadSigns, signSections, loadSignSections, user } = useAuthStore();
   const lang = user?.settings.language || 'both';
-  const { t } = useTranslation();
+  const { t, uiLang } = useTranslation();
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [selectedSign, setSelectedSign] = useState<string | null>(null);
@@ -80,7 +80,7 @@ export function SignsPage({ onNavigate }: Props) {
                 onClick={() => setFilter(sec.id)}
               >
                 <Icon name={sec.icon || 'label'} size={14} />
-                {lang === 'it' ? sec.nameIt : sec.nameAr} ({count})
+                {(lang === 'it' || uiLang === 'it') ? sec.nameIt : sec.nameAr} ({count})
               </button>
             );
           }) : null}

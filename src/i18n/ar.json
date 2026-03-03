@@ -579,6 +579,8 @@
     "account_management": "إدارة الحساب",
     "edit_account_btn": "تعديل بيانات الحساب",
     "edit_account_desc": "الاسم، الصورة، البريد، كلمة المرور، الخصوصية...",
+    "translation_btn": "الترجمة",
+    "translation_btn_desc": "لغة واجهة التطبيق ولغة المحتوى",
     "admin_panel": "لوحة التحكم",
     "admin_desc": "إدارة المحتوى والمستخدمين",
     "join_date": "تاريخ التسجيل",

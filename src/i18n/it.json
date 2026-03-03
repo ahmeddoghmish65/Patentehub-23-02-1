@@ -579,6 +579,8 @@
     "account_management": "Gestione account",
     "edit_account_btn": "Modifica dati account",
     "edit_account_desc": "Nome, foto, email, password, privacy...",
+    "translation_btn": "Traduzione",
+    "translation_btn_desc": "Lingua interfaccia e lingua contenuto",
     "admin_panel": "Pannello admin",
     "admin_desc": "Gestione contenuto e utenti",
     "join_date": "Data di registrazione",
