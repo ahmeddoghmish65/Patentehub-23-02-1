@@ -80,7 +80,7 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                   onClick={() => onNavigate('lesson-detail', { lessonId: lesson.id, sectionId: selectedSection })}
                 >
                   <div className={cn(
-                    'w-14 h-14 rounded-xl flex items-center justify-center shrink-0 overflow-hidden',
+                    'w-14 h-14 rounded-xl flex items-center justify-center shrink-0 overflow-hidden relative',
                     isCompleted ? 'bg-success-50' : 'bg-surface-100'
                   )}>
                     {lesson.image ? (
@@ -90,6 +90,10 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                     ) : (
                       <span className="text-sm font-bold text-surface-500">{idx + 1}</span>
                     )}
+                    {/* Completed badge — top-left corner of thumbnail */}
+                    {isCompleted && (
+                      <span className="absolute top-1 left-1 bg-success-500/70 text-white text-[8px] font-bold px-1 py-0.5 rounded leading-none">✓</span>
+                    )}
                   </div>
 
                   <div className="flex-1 min-w-0">
@@ -98,10 +102,6 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                     {lang === 'both' && <h4 className="text-sm font-semibold text-surface-800 group-hover:text-primary-600 transition-colors" dir="ltr">{lesson.titleIt}</h4>}
                     {lang === 'both' && <p className="text-xs text-surface-400 truncate mt-0.5" dir="rtl">{lesson.titleAr}</p>}
                   </div>
-
-                  {isCompleted && (
-                    <span className="text-[10px] bg-success-50 text-success-600 px-2 py-0.5 rounded-full shrink-0 font-medium">{t('lessons_page.completed')}</span>
-                  )}
 
                   <Icon name="chevron_left" size={18} className="text-surface-300 group-hover:text-primary-400 shrink-0 ltr:rotate-180" />
                 </button>
@@ -151,12 +151,16 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                 onClick={() => setSelectedSection(section.id)}
               >
                 {/* Thumbnail on right - bigger */}
-                <div className="w-20 h-20 rounded-xl flex items-center justify-center shrink-0 overflow-hidden"
+                <div className="w-20 h-20 rounded-xl flex items-center justify-center shrink-0 overflow-hidden relative"
                   style={{ backgroundColor: section.color + '12' }}>
                   {section.image ? (
                     <img src={section.image} alt={section.nameAr} className="w-full h-full object-cover rounded-xl" />
                   ) : (
                     <Icon name={section.icon || 'school'} size={36} style={{ color: section.color }} filled />
+                  )}
+                  {/* Completed badge — top-left corner of thumbnail */}
+                  {pct === 100 && (
+                    <span className="absolute top-1 left-1 bg-success-500/70 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md leading-none">✓</span>
                   )}
                 </div>
 
@@ -165,7 +169,6 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                     {lang === 'ar' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-primary-600 transition-colors" dir="rtl">{section.nameAr}</h3>}
                     {lang === 'it' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-primary-600 transition-colors" dir="ltr">{section.nameIt}</h3>}
                     {lang === 'both' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-primary-600 transition-colors" dir="ltr">{section.nameIt}</h3>}
-                    {pct === 100 && <Icon name="check_circle" size={16} className="text-success-500" filled />}
                   </div>
                   {lang === 'both' && <p className="text-xs text-surface-400 mb-2" dir="rtl">{section.nameAr}</p>}
                   <div className="flex items-center gap-3">
