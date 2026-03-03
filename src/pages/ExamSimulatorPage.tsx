@@ -458,7 +458,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
             onClick={prevQuestion}
             disabled={currentIndex === 0}
           >
-            <Icon name="chevron_right" size={18} /> {t('exam.prev')}
+            <Icon name="chevron_right" size={18} className="ltr:rotate-180" /> {t('exam.prev')}
           </button>
           <span className="text-xs text-surface-400 font-medium tabular-nums">
             {currentIndex + 1} / {examQuestions.length}
@@ -470,7 +470,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
             onClick={nextQuestion}
             disabled={currentIndex >= examQuestions.length - 1}
           >
-            {t('exam.next')} <Icon name="chevron_left" size={18} />
+            {t('exam.next')} <Icon name="chevron_left" size={18} className="ltr:rotate-180" />
           </button>
         </div>
       </div>
