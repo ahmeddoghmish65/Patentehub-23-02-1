@@ -42,8 +42,7 @@ const COUNTRY_CODES = [
 ];
 
 export function ProfilePage({ onNavigate }: ProfilePageProps) {
-  const { t, uiLang } = useTranslation();
-  void uiLang;
+  const { t, uiLang, setUiLang } = useTranslation();
   const { user, logout, updateSettings, updateProfile, posts, loadPosts } = useAuthStore();
 
   const [showEditPage, setShowEditPage] = useState(false);
@@ -305,7 +304,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
           <div className="bg-white rounded-2xl border border-surface-100 px-4 py-3 flex items-center gap-3 shadow-sm">
             <button onClick={() => setShowEditPage(false)}
               className="w-9 h-9 rounded-xl bg-surface-100 hover:bg-surface-200 flex items-center justify-center transition-colors shrink-0">
-              <Icon name="arrow_forward" size={20} className="text-surface-600" />
+              <Icon name="arrow_forward" size={20} className="text-surface-600 ltr:rotate-180" />
             </button>
             <h2 className="text-base font-bold text-surface-900 flex-1">{t('profile.edit_title')}</h2>
             {saveMsg && (
@@ -851,6 +850,22 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* UI Language */}
+      <div className="bg-white rounded-xl p-5 border border-surface-100">
+        <h2 className="font-bold text-surface-900 mb-2 flex items-center gap-2"><Icon name="language" size={20} className="text-primary-500" /> {t('profile.ui_language_label')}</h2>
+        <p className="text-xs text-surface-400 mb-4">{t('profile.ui_language_desc')}</p>
+        <div className="grid grid-cols-2 gap-2">
+          {(['ar', 'it'] as const).map(lang => (
+            <button key={lang} className={cn('flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all', uiLang === lang ? 'border-primary-500 bg-primary-50' : 'border-surface-100 hover:border-surface-200')} onClick={() => setUiLang(lang)}>
+              {lang === 'ar' && <span className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center text-lg font-bold text-orange-600">ع</span>}
+              {lang === 'it' && <span className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600" dir="ltr">IT</span>}
+              <span className={cn('text-xs font-medium text-center', uiLang === lang ? 'text-primary-700' : 'text-surface-600')}>{t(`profile.ui_lang_${lang}`)}</span>
+              {uiLang === lang && <Icon name="check_circle" size={16} className="text-primary-500" filled />}
+            </button>
+          ))}
         </div>
       </div>
 

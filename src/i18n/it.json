@@ -621,7 +621,11 @@
     "badge_week_streak": "Settimana consecutiva",
     "badge_level5": "Livello 5",
     "delete_avatar_title": "Elimina foto",
-    "level_label": "Livello"
+    "level_label": "Livello",
+    "ui_language_label": "Lingua interfaccia",
+    "ui_language_desc": "Lingua dei menu e dei pulsanti dell'app",
+    "ui_lang_ar": "Arabo",
+    "ui_lang_it": "Italiano"
   },
   "lessons_page": {
     "back_to_sections": "Torna alle sezioni",
@@ -682,5 +686,13 @@
     "no_results": "Nessun risultato",
     "no_signs": "Nessun segnale trovato",
     "no_signs_desc": "I segnali verranno aggiunti dal pannello di controllo"
+  },
+  "topics_page": {
+    "title": "Argomenti di studio",
+    "subtitle": "Scegli un argomento e inizia a esercitarti con le domande",
+    "completed": "Completato",
+    "incomplete": "Non completato",
+    "questions_suffix": "domande",
+    "start_btn": "Inizia il quiz"
   }
 }

@@ -90,11 +90,11 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
           {lang === 'both' && <hr className="border-surface-100" />}
 
           {(lang === 'ar' || lang === 'both') && (
-            <div>
+            <div dir="rtl">
               <h3 className="text-sm font-semibold text-primary-600 mb-2 flex items-center gap-1.5">
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-orange-100 text-orange-700 text-[10px] font-extrabold leading-none">ع</span>
               </h3>
-              <div className="text-base text-surface-700 leading-relaxed prose-sm" dir="rtl" dangerouslySetInnerHTML={{ __html: lesson.contentAr }} />
+              <div className="text-base text-surface-700 leading-relaxed prose-sm" dangerouslySetInnerHTML={{ __html: lesson.contentAr }} />
             </div>
           )}
         </div>

@@ -621,7 +621,11 @@
     "badge_week_streak": "أسبوع متواصل",
     "badge_level5": "المستوى 5",
     "delete_avatar_title": "حذف الصورة",
-    "level_label": "المستوى"
+    "level_label": "المستوى",
+    "ui_language_label": "لغة واجهة التطبيق",
+    "ui_language_desc": "لغة عرض القوائم والأزرار في التطبيق",
+    "ui_lang_ar": "العربية",
+    "ui_lang_it": "الإيطالية"
   },
   "lessons_page": {
     "back_to_sections": "العودة للأقسام",
@@ -682,5 +686,13 @@
     "no_results": "لا توجد نتائج",
     "no_signs": "لا توجد إشارات",
     "no_signs_desc": "سيتم إضافة الإشارات من لوحة التحكم"
+  },
+  "topics_page": {
+    "title": "المواضيع الدراسية",
+    "subtitle": "اختر موضوعاً وابدأ بالتدرب على الأسئلة",
+    "completed": "مكتمل",
+    "incomplete": "غير مكتمل",
+    "questions_suffix": "سؤال",
+    "start_btn": "ابدأ الاختبار"
   }
 }

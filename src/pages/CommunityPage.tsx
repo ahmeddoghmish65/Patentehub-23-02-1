@@ -1086,7 +1086,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
     return (
       <div className="max-w-2xl mx-auto">
         <button onClick={() => { setDetailPostId(null); setDetailComments([]); }} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-4">
-          <Icon name="arrow_forward" size={20} /><span className="text-sm">{t('community.back')}</span>
+          <Icon name="arrow_forward" size={20} className="ltr:rotate-180" /><span className="text-sm">{t('community.back')}</span>
         </button>
         {renderPost(post, true)}
       </div>
@@ -1150,7 +1150,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
               )}
             </button>
             {showBookmarks && (
-              <div className="absolute left-0 top-12 bg-white rounded-2xl shadow-2xl border border-surface-100 z-50 overflow-hidden" style={{ width: 320 }}>
+              <div className="absolute end-0 top-12 bg-white rounded-2xl shadow-2xl border border-surface-100 z-50 overflow-hidden" style={{ width: 320 }}>
                 <div className="flex items-center justify-between p-4 border-b border-surface-100 bg-surface-50">
                   <div className="flex items-center gap-2">
                     <Icon name="bookmark" size={18} className="text-primary-500" filled />
@@ -1228,7 +1228,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
               <Icon name="trending_up" size={22} className={showTrending ? 'text-primary-600' : 'text-surface-600'} filled={showTrending} />
             </button>
             {showTrending && (
-              <div className="absolute left-0 top-12 bg-white rounded-2xl shadow-2xl border border-surface-100 z-50 overflow-hidden" style={{ width: 300 }}>
+              <div className="absolute end-0 top-12 bg-white rounded-2xl shadow-2xl border border-surface-100 z-50 overflow-hidden" style={{ width: 300 }}>
                 <div className="flex items-center gap-2 p-4 border-b border-surface-100 bg-surface-50">
                   <Icon name="trending_up" size={18} className="text-primary-500" filled />
                   <h3 className="font-bold text-surface-900">{t('community.trending_title')}</h3>
@@ -1275,7 +1275,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
             )}
           </button>
           {showNotifs && (
-            <div className="absolute left-0 top-12 w-84 bg-white rounded-2xl shadow-2xl border border-surface-100 z-50 overflow-hidden" style={{ width: 320 }}>
+            <div className="absolute end-0 top-12 w-84 bg-white rounded-2xl shadow-2xl border border-surface-100 z-50 overflow-hidden" style={{ width: 320 }}>
               <div className="flex items-center justify-between p-4 border-b border-surface-100 bg-surface-50">
                 <div className="flex items-center gap-2">
                   <Icon name="notifications" size={18} className="text-primary-500" filled />

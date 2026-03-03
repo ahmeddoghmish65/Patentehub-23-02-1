@@ -108,7 +108,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
   if (phase === 'intro') return (
     <div className="max-w-md mx-auto">
       <button onClick={() => onNavigate('dashboard')} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-4">
-        <Icon name="arrow_forward" size={18} /><span className="text-sm">{t('exam.back')}</span>
+        <Icon name="arrow_forward" size={18} className="ltr:rotate-180" /><span className="text-sm">{t('exam.back')}</span>
       </button>
       <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden">
         {/* Header */}
@@ -250,7 +250,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
     return (
       <div className="max-w-2xl mx-auto">
         <button onClick={() => setPhase('result')} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-4">
-          <Icon name="arrow_forward" size={20} /><span className="text-sm">{t('exam.back_result')}</span>
+          <Icon name="arrow_forward" size={20} className="ltr:rotate-180" /><span className="text-sm">{t('exam.back_result')}</span>
         </button>
         
         {/* Error summary at top */}

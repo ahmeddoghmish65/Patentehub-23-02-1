@@ -2,6 +2,7 @@ import { useAuthStore } from '@/store/authStore';
 import { topics, getQuestionsForTopic } from '@/data/questions';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
+import { useTranslation } from '@/i18n';
 
 interface TopicsPageProps {
   onNavigate: (page: string, data?: Record<string, string>) => void;
@@ -9,21 +10,22 @@ interface TopicsPageProps {
 
 export function TopicsPage({ onNavigate }: TopicsPageProps) {
   const { user } = useAuthStore();
+  const { t } = useTranslation();
   const completedTopics = user?.progress.completedTopics || [];
 
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-surface-900 mb-2">المواضيع الدراسية</h1>
-        <p className="text-surface-500">اختر موضوعاً وابدأ بالتدرب على الأسئلة</p>
+        <h1 className="text-2xl font-bold text-surface-900 mb-2">{t('topics_page.title')}</h1>
+        <p className="text-surface-500">{t('topics_page.subtitle')}</p>
         <div className="mt-4 flex items-center gap-4">
           <div className="flex items-center gap-2 text-sm text-surface-500">
             <div className="w-3 h-3 rounded-full bg-success-500" />
-            مكتمل ({completedTopics.length})
+            {t('topics_page.completed')} ({completedTopics.length})
           </div>
           <div className="flex items-center gap-2 text-sm text-surface-500">
             <div className="w-3 h-3 rounded-full bg-surface-300" />
-            غير مكتمل ({topics.length - completedTopics.length})
+            {t('topics_page.incomplete')} ({topics.length - completedTopics.length})
           </div>
         </div>
       </div>
@@ -66,11 +68,11 @@ export function TopicsPage({ onNavigate }: TopicsPageProps) {
               <div className="flex items-center justify-between">
                 <span className="text-xs text-surface-400 flex items-center gap-1">
                   <Icon name="quiz" size={14} />
-                  {questionCount} سؤال
+                  {questionCount} {t('topics_page.questions_suffix')}
                 </span>
                 <span className="text-xs text-primary-500 font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
-                  ابدأ الاختبار
-                  <Icon name="arrow_back" size={14} />
+                  {t('topics_page.start_btn')}
+                  <Icon name="arrow_back" size={14} className="ltr:rotate-180" />
                 </span>
               </div>
             </button>

@@ -39,7 +39,7 @@ export function PrivacyPolicyPage({ onNavigate }: PrivacyPolicyPageProps) {
             onClick={() => onNavigate('landing')}
             className="flex items-center gap-1.5 text-surface-500 hover:text-primary-600 transition-colors"
           >
-            <Icon name="arrow_forward" size={20} />
+            <Icon name="arrow_forward" size={20} className="ltr:rotate-180" />
             <span className="text-sm font-medium">رجوع</span>
           </button>
           <h1 className="text-base font-bold text-surface-900">سياسة الخصوصية</h1>

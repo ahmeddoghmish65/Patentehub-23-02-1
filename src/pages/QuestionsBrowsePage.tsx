@@ -27,7 +27,7 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
     return (
       <div>
         <button onClick={() => setSelectedSection(null)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-5 transition-colors">
-          <Icon name="arrow_forward" size={20} />
+          <Icon name="arrow_forward" size={20} className="ltr:rotate-180" />
           <span className="text-sm font-medium">العودة للأقسام</span>
         </button>
 
