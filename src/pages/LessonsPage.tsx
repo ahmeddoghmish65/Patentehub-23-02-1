@@ -34,7 +34,7 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
       <div>
         {/* Back button + Section header */}
         <button onClick={() => setSelectedSection(null)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-5 transition-colors">
-          <Icon name="arrow_forward" size={20} />
+          <Icon name="arrow_forward" size={20} className="ltr:rotate-180" />
           <span className="text-sm font-medium">{t('lessons_page.back_to_sections')}</span>
         </button>
 
@@ -99,7 +99,7 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                     <span className="text-[10px] bg-success-50 text-success-600 px-2 py-0.5 rounded-full shrink-0 font-medium">{t('lessons_page.completed')}</span>
                   )}
 
-                  <Icon name="chevron_left" size={18} className="text-surface-300 group-hover:text-primary-400 shrink-0" />
+                  <Icon name="chevron_left" size={18} className="text-surface-300 group-hover:text-primary-400 shrink-0 ltr:rotate-180" />
                 </button>
               );
             })}
@@ -171,7 +171,7 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                   </div>
                 </div>
 
-                <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-400 shrink-0" />
+                <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-400 shrink-0 ltr:rotate-180" />
               </button>
             );
           })}
