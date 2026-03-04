@@ -381,29 +381,26 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             </div>
 
             {/* ── F3: Lessons ───────────────────────────────────────────── */}
-            <div className="col-span-1 rounded-3xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 p-5 flex flex-col shadow-sm hover:shadow-2xl hover:shadow-green-100/60 transition-all duration-500"
+            <div className="col-span-1 rounded-3xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100/70 p-5 flex flex-col shadow-sm hover:shadow-2xl hover:shadow-emerald-100/50 transition-all duration-500"
               style={{ transitionDelay: '120ms' }}>
-              <div className="flex items-start justify-between mb-3 shrink-0">
-                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/25">
-                  <Icon name="school" size={20} className="text-white" filled />
-                </div>
-                <span className="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded-lg">40 {uiLang === 'ar' ? 'درس' : 'lezioni'}</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-400/20 mb-4 shrink-0">
+                <Icon name="school" size={20} className="text-white" filled />
               </div>
               <h3 className="text-sm font-bold text-surface-900 mb-1">{t('landing.f3_title')}</h3>
               <p className="text-[11px] text-surface-400 leading-snug mb-3">{t('landing.f3_desc')}</p>
-              <div className="mt-auto space-y-2.5">
+              <div className="mt-auto space-y-2">
                 {([
-                  { lbl: 'Segnali', pct: 85, done: 17, total: 20 },
-                  { lbl: 'Precedenza', pct: 62, done: 10, total: 16 },
-                  { lbl: 'Velocità', pct: 48, done: 4, total: 8 },
+                  { lbl: 'Segnali', pct: 85 },
+                  { lbl: 'Precedenza', pct: 62 },
+                  { lbl: 'Velocità', pct: 48 },
                 ] as const).map((item, i) => (
                   <div key={i}>
-                    <div className="flex justify-between mb-1.5">
-                      <span className="text-[11px] font-semibold text-surface-600" dir="ltr">{item.lbl}</span>
-                      <span className="text-[10px] font-bold text-green-600 bg-green-100 px-1.5 py-0.5 rounded-md">{item.done}/{item.total}</span>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-[10px] text-surface-500" dir="ltr">{item.lbl}</span>
+                      <span className="text-[10px] font-bold text-teal-600">{item.pct}%</span>
                     </div>
-                    <div className="h-2 bg-white rounded-full overflow-hidden border border-green-100 shadow-inner">
-                      <div className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full transition-all duration-700" style={{ width: `${item.pct}%` }} />
+                    <div className="h-1.5 bg-white rounded-full overflow-hidden border border-emerald-100">
+                      <div className="h-full bg-gradient-to-r from-emerald-300 to-teal-400 rounded-full" style={{ width: `${item.pct}%` }} />
                     </div>
                   </div>
                 ))}
@@ -411,28 +408,24 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             </div>
 
             {/* ── F4: Traffic Signs ─────────────────────────────────────── */}
-            <div className="col-span-1 rounded-3xl bg-gradient-to-br from-red-50 to-orange-50 border border-red-100 p-5 flex flex-col shadow-sm hover:shadow-2xl hover:shadow-red-100/60 transition-all duration-500"
+            <div className="col-span-1 rounded-3xl bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100/70 p-5 flex flex-col shadow-sm hover:shadow-2xl hover:shadow-orange-100/50 transition-all duration-500"
               style={{ transitionDelay: '180ms' }}>
-              <div className="flex items-start justify-between mb-3 shrink-0">
-                <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-lg shadow-red-500/25">
-                  <Icon name="traffic" size={20} className="text-white" filled />
-                </div>
-                <span className="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-1 rounded-lg">+200 {uiLang === 'ar' ? 'إشارة' : 'segnali'}</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-400 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-400/20 mb-4 shrink-0">
+                <Icon name="traffic" size={20} className="text-white" filled />
               </div>
               <h3 className="text-sm font-bold text-surface-900 mb-1">{t('landing.f4_title')}</h3>
               <p className="text-[11px] text-surface-400 leading-snug mb-3">{t('landing.f4_desc')}</p>
               <div className="mt-auto grid grid-cols-3 gap-2">
                 {([
-                  { icon: 'warning', color: '#f59e0b', bg: '#fef3c7', border: '#fcd34d', label: uiLang === 'ar' ? 'خطر' : 'Pericolo' },
-                  { icon: 'block', color: '#ef4444', bg: '#fee2e2', border: '#fca5a5', label: uiLang === 'ar' ? 'منع' : 'Divieto' },
-                  { icon: 'speed', color: '#8b5cf6', bg: '#ede9fe', border: '#c4b5fd', label: uiLang === 'ar' ? 'سرعة' : 'Velocità' },
-                  { icon: 'directions', color: '#3b82f6', bg: '#dbeafe', border: '#93c5fd', label: uiLang === 'ar' ? 'اتجاه' : 'Obbligo' },
-                  { icon: 'stop_circle', color: '#dc2626', bg: '#fecaca', border: '#f87171', label: 'Stop' },
-                  { icon: 'turn_right', color: '#059669', bg: '#d1fae5', border: '#6ee7b7', label: uiLang === 'ar' ? 'يمين' : 'Svolta' },
+                  { icon: 'warning', color: '#d97706', bg: '#fef9ec' },
+                  { icon: 'block', color: '#dc2626', bg: '#fef2f2' },
+                  { icon: 'speed', color: '#7c3aed', bg: '#f5f3ff' },
+                  { icon: 'directions', color: '#2563eb', bg: '#eff6ff' },
+                  { icon: 'stop_circle', color: '#b91c1c', bg: '#fde8e8' },
+                  { icon: 'turn_right', color: '#047857', bg: '#f0fdf4' },
                 ] as const).map((s, i) => (
-                  <div key={i} className="flex flex-col items-center gap-1 rounded-xl p-2 border" style={{ backgroundColor: s.bg, borderColor: s.border }}>
-                    <Icon name={s.icon} size={20} style={{ color: s.color }} filled />
-                    <span className="text-[9px] font-semibold leading-none text-center" style={{ color: s.color }}>{s.label}</span>
+                  <div key={i} className="aspect-square rounded-xl flex items-center justify-center" style={{ backgroundColor: s.bg }}>
+                    <Icon name={s.icon} size={15} style={{ color: s.color }} filled />
                   </div>
                 ))}
               </div>
@@ -510,33 +503,24 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
 
             {/* ── F7: Progress Tracking — wide (2 col × 1 row) ─────────── */}
             {/* Placed last in DOM, explicitly positioned on desktop */}
-            <div className="col-span-2 lg:col-start-2 lg:row-start-3 rounded-3xl bg-gradient-to-br from-pink-50 to-rose-50 border border-pink-100 p-6 flex items-center gap-5 shadow-sm hover:shadow-2xl hover:shadow-pink-100/60 transition-all duration-500"
+            <div className="col-span-2 lg:col-start-2 lg:row-start-3 rounded-3xl bg-gradient-to-br from-violet-50 to-indigo-50 border border-violet-100/70 p-6 flex items-center gap-5 shadow-sm hover:shadow-2xl hover:shadow-violet-100/50 transition-all duration-500"
               style={{ transitionDelay: '360ms' }}>
               <div className="shrink-0">
-                <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center shadow-lg shadow-pink-500/25 mb-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-violet-400 to-indigo-500 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-400/20 mb-3">
                   <Icon name="trending_up" size={20} className="text-white" filled />
                 </div>
                 <h3 className="text-sm font-bold text-surface-900 mb-1">{t('landing.f7_title')}</h3>
                 <p className="text-[11px] text-surface-400 max-w-[108px] leading-snug">{t('landing.f7_desc')}</p>
-                <div className="mt-3 flex items-center gap-1.5 bg-pink-100 text-pink-700 px-2.5 py-1.5 rounded-xl">
-                  <Icon name="arrow_upward" size={13} className="text-pink-600" />
-                  <span className="text-[11px] font-black text-pink-700">↑ 28%</span>
-                </div>
               </div>
               {/* Weekly bar chart */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-semibold text-surface-500">{uiLang === 'ar' ? 'هذا الأسبوع' : 'Questa settimana'}</span>
-                  <span className="text-[10px] text-surface-400">7 {uiLang === 'ar' ? 'أيام' : 'giorni'}</span>
-                </div>
-                <div className="flex items-end gap-1.5 h-[64px] mb-2">
+                <div className="flex items-end gap-1.5 h-[72px] mb-1.5">
                   {[35, 52, 44, 68, 58, 78, 72].map((h, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
-                      <div
-                        className="w-full rounded-t-lg bg-gradient-to-t from-pink-500 to-rose-300 shadow-sm"
-                        style={{ height: `${h}%`, opacity: 0.6 + i * 0.06 }}
-                      />
-                    </div>
+                    <div
+                      key={i}
+                      className="flex-1 rounded-t-lg bg-gradient-to-t from-violet-400 to-indigo-300"
+                      style={{ height: `${h}%`, opacity: 0.75 + i * 0.04 }}
+                    />
                   ))}
                 </div>
                 <div className="flex">
@@ -544,20 +528,12 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                     ? ['ج', 'خ', 'ع', 'ث', 'ث', 'إ', 'أ']
                     : ['L', 'M', 'M', 'G', 'V', 'S', 'D']
                   ).map((d, i) => (
-                    <span key={i} className="flex-1 text-center text-[10px] font-semibold text-surface-400">{d}</span>
+                    <span key={i} className="flex-1 text-center text-[9px] text-surface-400">{d}</span>
                   ))}
                 </div>
-                <div className="grid grid-cols-3 gap-2 mt-3">
-                  {[
-                    { val: '24', lbl: uiLang === 'ar' ? 'جلسة' : 'sessioni', color: 'text-pink-600', bg: 'bg-pink-50 border-pink-200' },
-                    { val: '89%', lbl: uiLang === 'ar' ? 'دقة' : 'precisione', color: 'text-rose-600', bg: 'bg-rose-50 border-rose-200' },
-                    { val: '5h', lbl: uiLang === 'ar' ? 'وقت' : 'tempo', color: 'text-surface-700', bg: 'bg-white border-surface-200' },
-                  ].map((s, i) => (
-                    <div key={i} className={cn('rounded-xl p-2 text-center border', s.bg)}>
-                      <p className={cn('text-sm font-black', s.color)}>{s.val}</p>
-                      <p className="text-[9px] text-surface-400">{s.lbl}</p>
-                    </div>
-                  ))}
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-[10px] text-surface-400">{uiLang === 'ar' ? 'هذا الأسبوع' : 'Questa settimana'}</span>
+                  <span className="text-[10px] font-bold text-violet-600">↑ 28%</span>
                 </div>
               </div>
             </div>
