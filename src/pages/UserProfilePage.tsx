@@ -162,7 +162,7 @@ export function UserProfilePage({ userId, onNavigate }: Props) {
       <div className="sticky top-0 z-10 bg-white/90 backdrop-blur-sm border-b border-surface-100 flex items-center gap-3 px-4 py-3">
         <button onClick={() => onNavigate('community')}
           className="w-9 h-9 rounded-xl hover:bg-surface-100 flex items-center justify-center transition-colors">
-          <Icon name="arrow_back" size={20} className="text-surface-700" />
+          <Icon name="arrow_back" size={20} className={cn('text-surface-700', uiLang === 'ar' ? 'rotate-180' : '')} />
         </button>
         <div className="flex-1 min-w-0">
           <h1 className="font-bold text-surface-900 text-base truncate">{userData.name}</h1>
