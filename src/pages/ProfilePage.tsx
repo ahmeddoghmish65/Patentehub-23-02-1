@@ -7,6 +7,10 @@ import { verifyPassword, hashPassword, getDB } from '@/db/database';
 import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
 import { useTranslation } from '@/i18n';
 
+function getTextDir(text: string): 'rtl' | 'ltr' {
+  return /[\u0600-\u06FF]/.test(text) ? 'rtl' : 'ltr';
+}
+
 interface ProfilePageProps {
   onNavigate: (page: string, data?: Record<string, string>) => void;
 }
@@ -637,7 +641,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                       {myPosts.map(p => (
                         <div key={p.id} className="p-4 cursor-pointer hover:bg-surface-50 transition-colors"
                           onClick={() => { setActiveStatView(null); onNavigate('community', { openPostId: p.id }); }}>
-                          <p className="text-sm text-surface-800 line-clamp-3">{p.content}</p>
+                          <p dir={getTextDir(p.content)} className="text-sm text-surface-800 line-clamp-3">{p.content}</p>
                           <div className="flex items-center gap-3 mt-2">
                             <span className="text-[10px] text-surface-400 flex items-center gap-0.5"><Icon name="favorite" size={11} /> {p.likesCount}</span>
                             <span className="text-[10px] text-surface-400 flex items-center gap-0.5"><Icon name="chat_bubble" size={11} /> {p.commentsCount}</span>
@@ -658,7 +662,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
                         <div key={p.id} className="p-4 cursor-pointer hover:bg-surface-50 transition-colors"
                           onClick={() => { setActiveStatView(null); onNavigate('community', { openPostId: p.id }); }}>
                           <span className="text-[10px] bg-purple-50 text-purple-600 px-1.5 rounded-full mb-1 inline-block">{t('community.quiz_badge')}</span>
-                          <p className="text-sm text-surface-800 line-clamp-3">{p.content || p.quizQuestion}</p>
+                          <p dir={getTextDir(p.content || p.quizQuestion)} className="text-sm text-surface-800 line-clamp-3">{p.content || p.quizQuestion}</p>
                           <div className="flex items-center gap-3 mt-2">
                             <span className="text-[10px] text-surface-400 flex items-center gap-0.5"><Icon name="chat_bubble" size={11} /> {p.commentsCount}</span>
                             <span className="text-[10px] text-surface-400 mr-auto">{new Date(p.createdAt).toLocaleDateString('ar')}</span>
