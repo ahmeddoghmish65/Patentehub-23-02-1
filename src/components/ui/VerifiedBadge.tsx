@@ -10,6 +10,9 @@ export function VerifiedBadge({ size = 'sm', className, tooltip = false }: Verif
   const dims: Record<string, number> = { xs: 14, sm: 18, md: 24, lg: 32 };
   const px = dims[size] ?? 18;
 
+  // 10-bump smooth scalloped badge using quadratic bezier curves.
+  // Peaks (r=11) connected via control points pulled inward (r=8.5),
+  // creating soft rounded dips between bumps — no sharp corners.
   const badge = (
     <svg
       width={px}
@@ -21,14 +24,22 @@ export function VerifiedBadge({ size = 'sm', className, tooltip = false }: Verif
       aria-label="حساب موثق"
       role="img"
     >
-      {/* Scalloped rosette badge shape — same as the image */}
       <path
-        d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82 1.89 3.2L12 21.04l3.4 1.47 1.89-3.2 3.61-.82-.34-3.69Z"
+        d="M12 1
+           Q14.63 3.91 18.47 3.1
+           Q18.88 7    22.46 8.6
+           Q20.5  12   22.46 15.4
+           Q18.88 17   18.47 20.9
+           Q14.63 20.09 12  23
+           Q9.37  20.09 5.53 20.9
+           Q5.12  17    1.54 15.4
+           Q3.5   12    1.54 8.6
+           Q5.12  7     5.53 3.1
+           Q9.37  3.91  12   1Z"
         fill="#3b82f6"
       />
-      {/* White checkmark */}
       <path
-        d="M7.5 12.5l3 3 6-6"
+        d="M7.5 12.5L10.5 15.5L16.5 9"
         stroke="white"
         strokeWidth="2.2"
         strokeLinecap="round"
