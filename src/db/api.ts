@@ -740,7 +740,12 @@ export async function apiUpdateDictEntry(token: string, id: string, data: Partia
 // ============ COMMUNITY API ============
 export type PostSortMode = 'hot' | 'new' | 'viral';
 
-export async function apiGetPosts(sortMode: PostSortMode = 'hot', hashtag?: string): Promise<ApiRes<Post[]>> {
+/** Detect whether a post's content is Arabic or Italian/other. */
+function detectPostLang(content: string): 'ar' | 'it' {
+  return /[\u0600-\u06FF]/.test(content) ? 'ar' : 'it';
+}
+
+export async function apiGetPosts(sortMode: PostSortMode = 'hot', hashtag?: string, userLang?: 'ar' | 'it' | 'both'): Promise<ApiRes<Post[]>> {
   const db = await getDB();
   let all = await db.getAll('posts');
 
@@ -783,6 +788,17 @@ export async function apiGetPosts(sortMode: PostSortMode = 'hot', hashtag?: stri
     case 'new':   sorted = sortPostsByNew(all); break;
     case 'hot':
     default:      sorted = sortPostsByHot(all); break;
+  }
+
+  // Language-priority boost: stable partition that lifts posts matching the
+  // UI language to the top, while keeping pinned posts absolutely first and
+  // preserving relative order within each group (no scoring is modified).
+  if (userLang === 'ar' || userLang === 'it') {
+    const pinned    = sorted.filter(p => p.pinned);
+    const nonPinned = sorted.filter(p => !p.pinned);
+    const match     = nonPinned.filter(p => detectPostLang(p.content) === userLang);
+    const other     = nonPinned.filter(p => detectPostLang(p.content) !== userLang);
+    sorted = [...pinned, ...match, ...other];
   }
 
   return ok(sorted);
