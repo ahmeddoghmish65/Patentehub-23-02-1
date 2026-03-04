@@ -91,7 +91,7 @@ function relativeTime(iso: string, uiLang?: string): string {
   return new Date(iso).toLocaleDateString(isIt ? 'it' : 'ar');
 }
 
-export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
+export function CommunityPage({ openPostId, onNavigate }: { openPostId?: string; onNavigate?: (page: string, data?: Record<string, string>) => void } = {}) {
   const { t, uiLang } = useTranslation();
   const { posts, loadPosts, createPost, updatePost, deletePost, toggleLike, checkLike, getComments, createComment, deleteComment, createReport, user, communityNotifs, loadCommunityNotifs, markNotifRead, markAllNotifsRead } = useAuthStore();
   const [newPost, setNewPost] = useState('');
@@ -560,68 +560,10 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
     localStorage.setItem(`savedPosts_${user.id}`, JSON.stringify(newSaved));
   };
 
-  const openUserProfile = useCallback(async (userId: string) => {
+  const openUserProfile = useCallback((userId: string) => {
     if (userId === user?.id) return;
-    const db = await getDB();
-    const u = await db.get('users', userId);
-    if (u) {
-      const allUsers = await db.getAll('users');
-      const realFollowers = allUsers.filter(x => {
-        try {
-          const f = localStorage.getItem(`following_${x.id}`);
-          if (f) { const arr = JSON.parse(f); return Array.isArray(arr) && arr.includes(userId); }
-        } catch { /* */ }
-        return false;
-      }).length;
-      const userFollowing = (() => {
-        try {
-          const f = localStorage.getItem(`following_${userId}`);
-          if (f) { const arr = JSON.parse(f); return Array.isArray(arr) ? arr.length : 0; }
-        } catch { /* */ }
-        return 0;
-      })();
-      // Build followers list
-      const followersList = allUsers.filter(x => {
-        try {
-          const f = localStorage.getItem(`following_${x.id}`);
-          if (f) { const arr = JSON.parse(f); return Array.isArray(arr) && arr.includes(userId); }
-        } catch { /* */ }
-        return false;
-      }).map(x => ({ id: x.id, name: x.name, avatar: x.avatar || '' }));
-      // Build following list
-      const followingIds: string[] = (() => {
-        try {
-          const f = localStorage.getItem(`following_${userId}`);
-          if (f) { const arr = JSON.parse(f); return Array.isArray(arr) ? arr : []; }
-        } catch { /* */ }
-        return [];
-      })();
-      const followingList = allUsers.filter(x => followingIds.includes(x.id)).map(x => ({ id: x.id, name: x.name, avatar: x.avatar || '' }));
-
-      setViewProfileFollowers(followersList);
-      setViewProfileFollowing(followingList);
-      setViewProfileStatView(null);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const prog = (u as any).progress || {};
-      setViewUserData({
-        name: u.name, username: u.username || '', avatar: u.avatar || '', bio: u.bio || '',
-        verified: u.verified || false,
-        postsCount: posts.filter(p => p.userId === userId && p.type !== 'quiz').length,
-        followersCount: followersList.length,
-        followingCount: followingList.length,
-        hideStats: u.privacyHideStats || false,
-        joinedAt: u.createdAt || undefined,
-        examReadiness: prog.examReadiness || 0,
-        totalQuizzes: prog.totalQuizzes || 0,
-        correctAnswers: prog.correctAnswers || 0,
-        wrongAnswers: prog.wrongAnswers || 0,
-        level: prog.level || 1,
-        xp: prog.xp || 0,
-      });
-      setViewUserId(userId);
-      setViewProfileTab('posts');
-    }
-  }, [user, posts]);
+    onNavigate?.('userProfile', { userId });
+  }, [user, onNavigate]);
 
   const openPostDetail = async (postId: string) => {
     const c = await getComments(postId);
@@ -1616,8 +1558,8 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
         </div>
       )}
 
-      {/* User Profile Modal */}
-      {viewUserId && viewUserData && (
+      {/* User Profile Modal — removed, now navigates to UserProfilePage */}
+      {false && viewUserId && viewUserData && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => { setViewUserId(null); setViewUserData(null); }}>
           <div className="bg-white rounded-3xl w-full max-w-sm max-h-[88vh] overflow-hidden flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
 

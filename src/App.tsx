@@ -18,6 +18,7 @@ import { QuestionsBrowsePage } from '@/pages/QuestionsBrowsePage';
 import { ContactPage } from '@/pages/ContactPage';
 import { PrivacyPolicyPage } from '@/pages/PrivacyPolicyPage';
 import { TermsOfServicePage } from '@/pages/TermsOfServicePage';
+import { UserProfilePage } from '@/pages/UserProfilePage';
 import { CookieConsentBanner } from '@/components/CookieConsentBanner';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Icon } from '@/components/ui/Icon';
@@ -161,7 +162,8 @@ export function App() {
       case 'signs': return <SignsPage onNavigate={navigate} />;
       case 'dictionary': return <DictionaryPage />;
       case 'training': return <TrainingPage onNavigate={navigate} />;
-      case 'community': return <CommunityPage openPostId={pageData.openPostId} />;
+      case 'community': return <CommunityPage openPostId={pageData.openPostId} onNavigate={navigate} />;
+      case 'userProfile': return pageData.userId ? <UserProfilePage userId={pageData.userId} onNavigate={navigate} /> : <Dashboard onNavigate={navigate} />;
       case 'profile': return <ProfilePage onNavigate={navigate} />;
       case 'admin': return isAdminUser ? <AdminPage /> : <Dashboard onNavigate={navigate} />;
       case 'mistakes': return <MistakesPage />;
