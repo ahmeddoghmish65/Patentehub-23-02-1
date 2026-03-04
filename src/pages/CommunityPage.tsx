@@ -23,6 +23,10 @@ function getReplyContent(c: Comment): string {
   if (c.parentId) return c.content;
   return c.content.replace(/^REPLY_TO:[^:]+:/, '');
 }
+/** Detect text direction: RTL for Arabic content, LTR otherwise. */
+function getTextDir(text: string): 'rtl' | 'ltr' {
+  return /[\u0600-\u06FF]/.test(text) ? 'rtl' : 'ltr';
+}
 
 // Parse @mentions from text and highlight them in blue — click opens profile
 function renderWithMentions(text: string, onMentionClick?: (username: string) => void) {
@@ -717,7 +721,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
     const isExpanded = expandedTexts[post.id];
 
     const renderText = (t: string) => (
-      <p dir="auto" className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap mb-3">
+      <p dir={getTextDir(text)} className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap mb-3">
         {renderWithMentionsAndHashtags(t, handleMentionClick, handleHashtagClick)}
       </p>
     );
@@ -727,7 +731,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
     if (isExpanded) {
       return (
         <div className="mb-3">
-          <p dir="auto" className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap">
+          <p dir={getTextDir(text)} className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap">
             {renderWithMentionsAndHashtags(text, handleMentionClick, handleHashtagClick)}
           </p>
           <button className="text-primary-500 text-xs font-medium mt-1 hover:text-primary-700" onClick={() => toggleExpandText(post.id)}>
@@ -740,7 +744,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
     const truncated = text.length > 180 ? text.slice(0, 180) + '...' : text.split('\n').slice(0, 3).join('\n') + '...';
     return (
       <div className="mb-3">
-        <p dir="auto" className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap">
+        <p dir={getTextDir(text)} className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap">
           {renderWithMentionsAndHashtags(truncated, handleMentionClick, handleHashtagClick)}
         </p>
         <button className="text-primary-500 text-xs font-medium mt-1 hover:text-primary-700" onClick={() => toggleExpandText(post.id)}>
@@ -765,7 +769,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
               <UserName userId={c.userId} name={c.userName} className="text-xs text-surface-800" onClick={() => openUserProfile(c.userId)} />
               <span className="text-[10px] text-surface-400">{relativeTime(c.createdAt, uiLang)}</span>
             </div>
-            <p dir="auto" className="text-sm text-surface-600 mt-0.5">{renderWithMentionsAndHashtags(c.content, handleMentionClick, handleHashtagClick)}</p>
+            <p dir={getTextDir(c.content)} className="text-sm text-surface-600 mt-0.5">{renderWithMentionsAndHashtags(c.content, handleMentionClick, handleHashtagClick)}</p>
             <div className="flex items-center gap-3 mt-1.5">
               <button className={cn('flex items-center gap-0.5 text-[11px]', commentLikes[c.id] ? 'text-red-500' : 'text-surface-400 hover:text-red-400')}
                 onClick={() => toggleCommentLike(c.id)}>
@@ -804,7 +808,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                     <span className="text-[10px] text-primary-500">{c.userName}</span>
                     <span className="text-[10px] text-surface-400 mr-auto">{relativeTime(r.createdAt, uiLang)}</span>
                   </div>
-                  <p dir="auto" className="text-sm text-surface-600 mt-0.5">{renderWithMentionsAndHashtags(getReplyContent(r), handleMentionClick, handleHashtagClick)}</p>
+                  <p dir={getTextDir(getReplyContent(r))} className="text-sm text-surface-600 mt-0.5">{renderWithMentionsAndHashtags(getReplyContent(r), handleMentionClick, handleHashtagClick)}</p>
                   <div className="flex items-center gap-3 mt-1.5">
                     <button className={cn('flex items-center gap-0.5 text-[11px]', commentLikes[r.id] ? 'text-red-500' : 'text-surface-400 hover:text-red-400')}
                       onClick={() => toggleCommentLike(r.id)}>
@@ -958,7 +962,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
 
           {isQuiz && post.quizQuestion && (
             <div className="bg-purple-50 rounded-xl p-4 border border-purple-100 mt-2">
-              <p dir="auto" className="text-sm font-semibold text-purple-900 mb-3">{post.quizQuestion}</p>
+              <p dir={getTextDir(post.quizQuestion)} className="text-sm font-semibold text-purple-900 mb-3">{post.quizQuestion}</p>
               {hasVoted ? (
                 <div className="space-y-2">
                   <div className={cn('flex items-center justify-between p-2.5 rounded-lg border', post.quizAnswer === true ? 'bg-success-50 border-success-200' : quizSelected[post.id] === true ? 'bg-danger-50 border-danger-200' : 'bg-white border-surface-200')}>
@@ -1803,7 +1807,7 @@ export function CommunityPage({ openPostId }: { openPostId?: string } = {}) {
                       )}
                       <span className="text-[10px] text-surface-400 mr-auto">{relativeTime(p.createdAt, uiLang)}</span>
                     </div>
-                    <p className="text-xs text-surface-700 line-clamp-2 leading-relaxed" dir="auto">
+                    <p className="text-xs text-surface-700 line-clamp-2 leading-relaxed" dir={getTextDir(p.type === 'quiz' ? p.quizQuestion : p.content)}>
                       {p.type === 'quiz' ? p.quizQuestion : p.content}
                     </p>
                     <div className="flex items-center gap-3 mt-2">
