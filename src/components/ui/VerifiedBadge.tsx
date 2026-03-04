@@ -21,24 +21,16 @@ export function VerifiedBadge({ size = 'sm', className, tooltip = false }: Verif
       aria-label="حساب موثق"
       role="img"
     >
-      <defs>
-        <linearGradient id="vbg2" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#3b82f6" />
-          <stop offset="100%" stopColor="#1d4ed8" />
-        </linearGradient>
-      </defs>
-      {/* Seal / badge shape — 12-point star */}
+      {/* Scalloped rosette badge shape — same as the image */}
       <path
-        d="M12 2
-           l2.09 3.26 3.76-1.12-1.12 3.76L20 10l-3.26 2.09 1.12 3.76-3.76-1.12L12 18
-           l-2.09-3.26-3.76 1.12 1.12-3.76L4 10l3.26-2.09-1.12-3.76 3.76 1.12Z"
-        fill="url(#vbg2)"
+        d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82 1.89 3.2L12 21.04l3.4 1.47 1.89-3.2 3.61-.82-.34-3.69Z"
+        fill="#3b82f6"
       />
       {/* White checkmark */}
       <path
-        d="M8.5 12l2.5 2.5 4.5-5"
+        d="M7.5 12.5l3 3 6-6"
         stroke="white"
-        strokeWidth="1.8"
+        strokeWidth="2.2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
