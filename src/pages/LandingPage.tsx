@@ -20,6 +20,9 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
   const [visibleCount, setVisibleCount] = useState(3);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const testimonialTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const testimonialDragStartX = useRef(0);
+  const [testimonialDragOffset, setTestimonialDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
 
   const features = [
     { icon: 'translate', title: t('landing.f1_title'), desc: t('landing.f1_desc'), bg: 'from-blue-500 to-blue-600' },
@@ -95,6 +98,22 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
   const maxTestimonialIndex = Math.max(0, testimonials.length - visibleCount);
   const prevTestimonial = () => setTestimonialIndex(i => (i <= 0 ? maxTestimonialIndex : i - 1));
   const nextTestimonial = () => setTestimonialIndex(i => (i >= maxTestimonialIndex ? 0 : i + 1));
+
+  const onDragStart = (clientX: number) => {
+    testimonialDragStartX.current = clientX;
+    setIsDragging(true);
+  };
+  const onDragMove = (clientX: number) => {
+    if (!isDragging) return;
+    setTestimonialDragOffset(clientX - testimonialDragStartX.current);
+  };
+  const onDragEnd = (clientX: number) => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    setTestimonialDragOffset(0);
+    const diff = testimonialDragStartX.current - clientX;
+    if (Math.abs(diff) > 50) { if (diff > 0) nextTestimonial(); else prevTestimonial(); }
+  };
 
   const faqs = [
     { q: t('landing.faq1_q'), a: t('landing.faq1_a') },
@@ -735,65 +754,58 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             <p className="text-white/45 mt-4 max-w-xl mx-auto text-lg">{t('landing.testimonials_desc')}</p>
           </div>
 
-          {/* Carousel track */}
-          <div className="relative">
-            <div className="overflow-hidden">
-              <div
-                className="flex transition-transform duration-500 ease-in-out"
-                style={{
-                  width: `${(testimonials.length / visibleCount) * 100}%`,
-                  transform: `translateX(calc(-${testimonialIndex} / ${testimonials.length} * 100%))`,
-                }}
-              >
-                {testimonials.map((item, i) => (
+          {/* Carousel — swipe/drag navigation */}
+          <div
+            className={cn('overflow-hidden', isDragging ? 'cursor-grabbing' : 'cursor-grab')}
+            dir="ltr"
+            onMouseDown={(e) => onDragStart(e.clientX)}
+            onMouseMove={(e) => onDragMove(e.clientX)}
+            onMouseUp={(e) => onDragEnd(e.clientX)}
+            onMouseLeave={(e) => onDragEnd(e.clientX)}
+            onTouchStart={(e) => onDragStart(e.touches[0].clientX)}
+            onTouchMove={(e) => onDragMove(e.touches[0].clientX)}
+            onTouchEnd={(e) => onDragEnd(e.changedTouches[0].clientX)}
+          >
+            <div
+              className="flex select-none"
+              style={{
+                transform: `translateX(calc(-${testimonialIndex} * 100% / ${visibleCount} + ${testimonialDragOffset}px))`,
+                transition: isDragging ? 'none' : 'transform 0.5s ease-in-out',
+              }}
+            >
+              {testimonials.map((item, i) => (
+                <div
+                  key={i}
+                  className="shrink-0 px-2.5"
+                  style={{ width: `calc(100% / ${visibleCount})` }}
+                >
                   <div
-                    key={i}
-                    className="flex-shrink-0 px-2.5"
-                    style={{ width: `${100 / testimonials.length}%` }}
+                    dir={dir}
+                    className={cn(
+                      'bg-white/6 backdrop-blur-sm rounded-2xl p-6 border border-white/10 h-full flex flex-col transition-opacity duration-700',
+                      isVisible('testimonials') ? 'opacity-100' : 'opacity-0'
+                    )}
                   >
-                    <div className={cn(
-                      'relative bg-white/6 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-500 hover:-translate-y-1 h-full flex flex-col',
-                      isVisible('testimonials') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                    )}>
-                      <div className="text-6xl text-white/8 font-black leading-none mb-2 select-none">"</div>
-                      <div className="flex gap-1 mb-3">
-                        {Array.from({ length: item.rating }).map((_, j) => (
-                          <Icon key={j} name="star" size={14} className="text-amber-400" filled />
-                        ))}
+                    <div className="text-6xl text-white/8 font-black leading-none mb-2 select-none">"</div>
+                    <div className="flex gap-1 mb-3">
+                      {Array.from({ length: item.rating }).map((_, j) => (
+                        <Icon key={j} name="star" size={14} className="text-amber-400" filled />
+                      ))}
+                    </div>
+                    <p className="text-white/75 text-sm leading-relaxed mb-5 flex-1">{item.text}</p>
+                    <div className="flex items-center gap-3 pt-4 border-t border-white/10">
+                      <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-violet-500 rounded-full flex items-center justify-center shrink-0">
+                        <span className="font-bold text-white text-sm">{item.initials}</span>
                       </div>
-                      <p className="text-white/75 text-sm leading-relaxed mb-5 flex-1">{item.text}</p>
-                      <div className="flex items-center gap-3 pt-4 border-t border-white/10">
-                        <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-violet-500 rounded-full flex items-center justify-center shrink-0">
-                          <span className="font-bold text-white text-sm">{item.initials}</span>
-                        </div>
-                        <div>
-                          <p className="text-white font-semibold text-sm">{item.name}</p>
-                          <p className="text-white/35 text-xs">{item.role} — {item.city}</p>
-                        </div>
+                      <div>
+                        <p className="text-white font-semibold text-sm">{item.name}</p>
+                        <p className="text-white/35 text-xs">{item.role} — {item.city}</p>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-
-            {/* Prev button */}
-            <button
-              onClick={prevTestimonial}
-              className="absolute top-1/2 -translate-y-1/2 -left-5 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 flex items-center justify-center transition-all duration-200 text-white hover:scale-110 focus:outline-none"
-              aria-label="Previous"
-            >
-              <Icon name={dir === 'rtl' ? 'chevron_right' : 'chevron_left'} size={20} />
-            </button>
-
-            {/* Next button */}
-            <button
-              onClick={nextTestimonial}
-              className="absolute top-1/2 -translate-y-1/2 -right-5 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 flex items-center justify-center transition-all duration-200 text-white hover:scale-110 focus:outline-none"
-              aria-label="Next"
-            >
-              <Icon name={dir === 'rtl' ? 'chevron_left' : 'chevron_right'} size={20} />
-            </button>
           </div>
 
           {/* Dot indicators */}
