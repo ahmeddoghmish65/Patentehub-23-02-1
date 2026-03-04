@@ -176,9 +176,6 @@ export function UserProfilePage({ userId, onNavigate }: Props) {
         {/* Avatar */}
         <div className="absolute -bottom-12 right-5 border-4 border-white rounded-2xl shadow-lg overflow-hidden">
           {renderAvatar(userData.avatar, userData.name, 'lg')}
-          {userData.verified && (
-            <div className="absolute -bottom-1 -left-1"><VerifiedBadge size="sm" tooltip /></div>
-          )}
         </div>
         {/* Follow / Edit button */}
         {!isOwn && (
@@ -195,7 +192,10 @@ export function UserProfilePage({ userId, onNavigate }: Props) {
 
       {/* Info */}
       <div className="px-5 pt-16 pb-4">
-        <h2 className="text-xl font-black text-surface-900">{userData.name}</h2>
+        <div className="flex items-center gap-1.5">
+          <h2 className="text-xl font-black text-surface-900">{userData.name}</h2>
+          {userData.verified && <VerifiedBadge size="md" tooltip />}
+        </div>
         {userData.username && <p className="text-sm text-primary-500 font-medium">@{userData.username}</p>}
         {userData.bio && <p className="text-sm text-surface-500 mt-2 leading-relaxed">{userData.bio}</p>}
         {userData.joinedAt && (

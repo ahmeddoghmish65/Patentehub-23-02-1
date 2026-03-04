@@ -22,18 +22,23 @@ export function VerifiedBadge({ size = 'sm', className, tooltip = false }: Verif
       role="img"
     >
       <defs>
-        <linearGradient id="vbg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#2563eb" />
-          <stop offset="100%" stopColor="#4f46e5" />
+        <linearGradient id="vbg2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#3b82f6" />
+          <stop offset="100%" stopColor="#1d4ed8" />
         </linearGradient>
       </defs>
-      {/* Circle background — like Facebook */}
-      <circle cx="12" cy="12" r="11" fill="url(#vbg)" />
+      {/* Seal / badge shape — 12-point star */}
+      <path
+        d="M12 2
+           l2.09 3.26 3.76-1.12-1.12 3.76L20 10l-3.26 2.09 1.12 3.76-3.76-1.12L12 18
+           l-2.09-3.26-3.76 1.12 1.12-3.76L4 10l3.26-2.09-1.12-3.76 3.76 1.12Z"
+        fill="url(#vbg2)"
+      />
       {/* White checkmark */}
       <path
-        d="M7 12.5l3.5 3.5 6.5-7"
+        d="M8.5 12l2.5 2.5 4.5-5"
         stroke="white"
-        strokeWidth="2"
+        strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
