@@ -16,7 +16,10 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
   const [scrolled, setScrolled] = useState(false);
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
   const [activeFeature, setActiveFeature] = useState(0);
+  const [testimonialIndex, setTestimonialIndex] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(3);
   const observerRef = useRef<IntersectionObserver | null>(null);
+  const testimonialTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const features = [
     { icon: 'translate', title: t('landing.f1_title'), desc: t('landing.f1_desc'), bg: 'from-blue-500 to-blue-600' },
@@ -58,6 +61,26 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const update = () => {
+      if (window.innerWidth < 640) setVisibleCount(1);
+      else if (window.innerWidth < 1024) setVisibleCount(2);
+      else setVisibleCount(3);
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  useEffect(() => {
+    const maxIdx = testimonials.length - visibleCount;
+    testimonialTimerRef.current = setInterval(() => {
+      setTestimonialIndex(i => (i >= maxIdx ? 0 : i + 1));
+    }, 4000);
+    return () => { if (testimonialTimerRef.current) clearInterval(testimonialTimerRef.current); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visibleCount]);
+
   const isVisible = (id: string) => visibleSections.has(id);
 
   const testimonials = [
@@ -68,6 +91,10 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
     { name: 'محمد رضا', text: t('landing.t5_text'), rating: 5, city: 'Bologna', role: t('landing.t5_role'), initials: 'مر' },
     { name: 'نور الهدى', text: t('landing.t6_text'), rating: 5, city: 'Firenze', role: t('landing.t6_role'), initials: 'نه' },
   ];
+
+  const maxTestimonialIndex = Math.max(0, testimonials.length - visibleCount);
+  const prevTestimonial = () => setTestimonialIndex(i => (i <= 0 ? maxTestimonialIndex : i - 1));
+  const nextTestimonial = () => setTestimonialIndex(i => (i >= maxTestimonialIndex ? 0 : i + 1));
 
   const faqs = [
     { q: t('landing.faq1_q'), a: t('landing.faq1_a') },
@@ -708,31 +735,79 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             <p className="text-white/45 mt-4 max-w-xl mx-auto text-lg">{t('landing.testimonials_desc')}</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {testimonials.map((item, i) => (
-              <div key={i}
-                className={cn(
-                  'relative bg-white/6 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/10 hover:border-white/18 transition-all duration-500 hover:-translate-y-1',
-                  isVisible('testimonials') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                )}
-                style={{ transitionDelay: `${i * 80}ms` }}>
-                <div className="text-6xl text-white/8 font-black leading-none mb-2 select-none">"</div>
-                <div className="flex gap-1 mb-3">
-                  {Array.from({ length: item.rating }).map((_, j) => (
-                    <Icon key={j} name="star" size={14} className="text-amber-400" filled />
-                  ))}
-                </div>
-                <p className="text-white/75 text-sm leading-relaxed mb-5">{item.text}</p>
-                <div className="flex items-center gap-3 pt-4 border-t border-white/10">
-                  <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-violet-500 rounded-full flex items-center justify-center shrink-0">
-                    <span className="font-bold text-white text-sm">{item.initials}</span>
+          {/* Carousel track */}
+          <div className="relative">
+            <div className="overflow-hidden">
+              <div
+                className="flex transition-transform duration-500 ease-in-out"
+                style={{
+                  width: `${(testimonials.length / visibleCount) * 100}%`,
+                  transform: `translateX(calc(-${testimonialIndex} / ${testimonials.length} * 100%))`,
+                }}
+              >
+                {testimonials.map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex-shrink-0 px-2.5"
+                    style={{ width: `${100 / testimonials.length}%` }}
+                  >
+                    <div className={cn(
+                      'relative bg-white/6 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-500 hover:-translate-y-1 h-full flex flex-col',
+                      isVisible('testimonials') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                    )}>
+                      <div className="text-6xl text-white/8 font-black leading-none mb-2 select-none">"</div>
+                      <div className="flex gap-1 mb-3">
+                        {Array.from({ length: item.rating }).map((_, j) => (
+                          <Icon key={j} name="star" size={14} className="text-amber-400" filled />
+                        ))}
+                      </div>
+                      <p className="text-white/75 text-sm leading-relaxed mb-5 flex-1">{item.text}</p>
+                      <div className="flex items-center gap-3 pt-4 border-t border-white/10">
+                        <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-violet-500 rounded-full flex items-center justify-center shrink-0">
+                          <span className="font-bold text-white text-sm">{item.initials}</span>
+                        </div>
+                        <div>
+                          <p className="text-white font-semibold text-sm">{item.name}</p>
+                          <p className="text-white/35 text-xs">{item.role} — {item.city}</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-white font-semibold text-sm">{item.name}</p>
-                    <p className="text-white/35 text-xs">{item.role} — {item.city}</p>
-                  </div>
-                </div>
+                ))}
               </div>
+            </div>
+
+            {/* Prev button */}
+            <button
+              onClick={prevTestimonial}
+              className="absolute top-1/2 -translate-y-1/2 -left-5 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 flex items-center justify-center transition-all duration-200 text-white hover:scale-110 focus:outline-none"
+              aria-label="Previous"
+            >
+              <Icon name={dir === 'rtl' ? 'chevron_right' : 'chevron_left'} size={20} />
+            </button>
+
+            {/* Next button */}
+            <button
+              onClick={nextTestimonial}
+              className="absolute top-1/2 -translate-y-1/2 -right-5 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 border border-white/20 flex items-center justify-center transition-all duration-200 text-white hover:scale-110 focus:outline-none"
+              aria-label="Next"
+            >
+              <Icon name={dir === 'rtl' ? 'chevron_left' : 'chevron_right'} size={20} />
+            </button>
+          </div>
+
+          {/* Dot indicators */}
+          <div className="flex justify-center gap-2 mt-8">
+            {Array.from({ length: maxTestimonialIndex + 1 }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setTestimonialIndex(i)}
+                className={cn(
+                  'h-2 rounded-full transition-all duration-300 focus:outline-none',
+                  testimonialIndex === i ? 'w-8 bg-white' : 'w-2 bg-white/30 hover:bg-white/55'
+                )}
+                aria-label={`Slide ${i + 1}`}
+              />
             ))}
           </div>
         </div>
