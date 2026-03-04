@@ -34,13 +34,28 @@ function getNestedValue(obj: NestedDict, key: string): string {
   return typeof current === 'string' ? current : key;
 }
 
+/** Scans navigator.languages (then navigator.language) for the first supported lang. */
+function detectBrowserLang(): UiLang | null {
+  const langs: readonly string[] =
+    navigator.languages?.length ? navigator.languages : [navigator.language];
+  for (const lang of langs) {
+    if (!lang) continue;
+    const prefix = lang.split('-')[0].toLowerCase();
+    if (prefix === 'it') return 'it';
+    if (prefix === 'ar') return 'ar';
+  }
+  return null;
+}
+
 function getInitialLang(): UiLang {
+  // Priority 1: manual selection saved by the user
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored === 'it' || stored === 'ar') return stored;
-  // Browser language auto-detection
-  const browserLang = navigator.language?.split('-')[0];
-  if (browserLang === 'it') return 'it';
-  return 'ar'; // default
+  // Priority 2: browser preferred language
+  const browserLang = detectBrowserLang();
+  if (browserLang) return browserLang;
+  // Priority 3: application default
+  return 'ar';
 }
 
 function applyDocumentLang(lang: UiLang) {

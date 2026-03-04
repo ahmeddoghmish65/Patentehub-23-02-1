@@ -15,12 +15,8 @@ if (savedTheme) {
   applyTheme(savedTheme);
 }
 
-// Apply saved UI language direction before first render to prevent layout flash
-const savedUiLang = localStorage.getItem('ph_ui_lang');
-if (savedUiLang === 'it') {
-  document.documentElement.setAttribute('dir', 'ltr');
-  document.documentElement.setAttribute('lang', 'it');
-}
+// Language direction is applied by the inline script in index.html (runs
+// synchronously before any paint), so no additional DOM writes are needed here.
 // ─────────────────────────────────────────────────────────────────────────
 
 createRoot(document.getElementById("root")!).render(

@@ -1,7 +1,36 @@
 <!doctype html>
-<html lang="it" dir="ltr">
+<html lang="ar" dir="rtl">
   <head>
     <meta charset="UTF-8" />
+    <!--
+      Language detection: runs synchronously before any render to prevent flickering.
+      Priority: 1) localStorage  2) browser language  3) default (ar)
+    -->
+    <script>
+      (function () {
+        var STORAGE_KEY = 'ph_ui_lang';
+        var stored = localStorage.getItem(STORAGE_KEY);
+        var lang;
+
+        if (stored === 'it' || stored === 'ar') {
+          lang = stored;
+        } else {
+          var langs = (navigator.languages && navigator.languages.length)
+            ? Array.from(navigator.languages)
+            : [navigator.language];
+          for (var i = 0; i < langs.length; i++) {
+            if (!langs[i]) continue;
+            var prefix = langs[i].split('-')[0].toLowerCase();
+            if (prefix === 'it') { lang = 'it'; break; }
+            if (prefix === 'ar') { lang = 'ar'; break; }
+          }
+          if (!lang) lang = 'ar';
+        }
+
+        document.documentElement.setAttribute('lang', lang);
+        document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Primary Meta Tags (bilingual IT + AR) -->
