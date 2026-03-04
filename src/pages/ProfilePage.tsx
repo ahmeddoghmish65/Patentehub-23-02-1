@@ -873,7 +873,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
             <p className="text-sm font-semibold text-surface-800">{t('profile.edit_account_btn')}</p>
             <p className="text-xs text-surface-400">{t('profile.edit_account_desc')}</p>
           </div>
-          <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors" />
+          <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors ltr:rotate-180" />
         </button>
 
         {/* Translation */}
@@ -885,7 +885,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
             <p className="text-sm font-semibold text-surface-800">{t('profile.translation_btn')}</p>
             <p className="text-xs text-surface-400">{t('profile.translation_btn_desc')}</p>
           </div>
-          <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors" />
+          <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors ltr:rotate-180" />
         </button>
 
         {/* Admin Panel */}
@@ -898,7 +898,7 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
               <p className="text-sm font-semibold text-surface-800">{t('profile.admin_panel')}</p>
               <p className="text-xs text-surface-400">{t('profile.admin_desc')}</p>
             </div>
-            <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors" />
+            <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors ltr:rotate-180" />
           </button>
         )}
 
