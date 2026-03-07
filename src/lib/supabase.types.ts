@@ -10,6 +10,11 @@ export interface Database {
         Insert: Partial<ProfileRow> & { id: string; email: string };
         Update: Partial<ProfileRow>;
       };
+      contact_messages: {
+        Row: ContactMessageRow;
+        Insert: Omit<ContactMessageRow, 'id' | 'created_at' | 'status'> & { status?: ContactMessageRow['status'] };
+        Update: Partial<ContactMessageRow>;
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -71,6 +76,16 @@ export interface UserProgressJson {
   xp: number;
   badges: string[];
   examReadiness: number;
+}
+
+export interface ContactMessageRow {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  status: 'new' | 'read' | 'replied' | 'archived';
+  created_at: string;
 }
 
 export interface UserSettingsJson {

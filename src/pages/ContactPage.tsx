@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
+import { supabase } from '@/lib/supabase';
 
 interface FormData {
   name: string;
@@ -50,9 +51,13 @@ export function ContactPage() {
     if (!validate()) return;
     setIsLoading(true);
     try {
-      // Ready to connect to backend API:
-      // await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
-      await new Promise(resolve => setTimeout(resolve, 1200));
+      const { error } = await supabase.from('contact_messages').insert({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        subject: formData.subject.trim(),
+        message: formData.message.trim(),
+      });
+      if (error) throw error;
       setSubmitted(true);
     } catch {
       setSubmitError(isIt ? "Si è verificato un errore durante l'invio. Riprova." : 'حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مجدداً.');

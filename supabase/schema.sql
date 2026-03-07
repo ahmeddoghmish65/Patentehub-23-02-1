@@ -162,7 +162,44 @@ BEGIN
 END;
 $$;
 
--- ── 6. Trigger: update last_login on each sign-in ────────────
+-- ── 6. Contact messages table ────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.contact_messages (
+  id         UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  name       TEXT        NOT NULL,
+  email      TEXT        NOT NULL,
+  subject    TEXT        NOT NULL,
+  message    TEXT        NOT NULL,
+  status     TEXT        NOT NULL DEFAULT 'new'
+                         CHECK (status IN ('new', 'read', 'replied', 'archived')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS contact_messages_email_idx  ON public.contact_messages (email);
+CREATE INDEX IF NOT EXISTS contact_messages_status_idx ON public.contact_messages (status);
+
+-- Anyone (including anonymous visitors) can insert; only admins can read
+ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "contact_insert" ON public.contact_messages
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "admin_contact_select" ON public.contact_messages
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles p
+      WHERE p.id = auth.uid() AND p.role IN ('admin', 'manager')
+    )
+  );
+
+CREATE POLICY "admin_contact_update" ON public.contact_messages
+  FOR UPDATE USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles p
+      WHERE p.id = auth.uid() AND p.role IN ('admin', 'manager')
+    )
+  );
+
+-- ── 7. Trigger: update last_login on each sign-in ────────────
 -- (Called from frontend via RPC or handled by onAuthStateChange)
 CREATE OR REPLACE FUNCTION public.update_last_login(user_id UUID)
 RETURNS VOID
