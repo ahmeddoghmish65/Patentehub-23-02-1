@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <!--
+      Language detection: runs synchronously before any render to prevent flickering.
+      Priority: 1) localStorage  2) browser language  3) default (ar)
+    -->
+    <script>
+      (function () {
+        var STORAGE_KEY = 'ph_ui_lang';
+        var stored = localStorage.getItem(STORAGE_KEY);
+        var lang;
+
+        if (stored === 'it' || stored === 'ar') {
+          lang = stored;
+        } else {
+          var langs = (navigator.languages && navigator.languages.length)
+            ? Array.from(navigator.languages)
+            : [navigator.language];
+          for (var i = 0; i < langs.length; i++) {
+            if (!langs[i]) continue;
+            var prefix = langs[i].split('-')[0].toLowerCase();
+            if (prefix === 'it') { lang = 'it'; break; }
+            if (prefix === 'ar') { lang = 'ar'; break; }
+          }
+          if (!lang) lang = 'ar';
+        }
+
+        document.documentElement.setAttribute('lang', lang);
+        document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary Meta Tags (bilingual IT + AR) -->
+    <title>Patente Hub – Quiz Patente B Gratis | تطبيق تعليم رخصة القيادة الإيطالية</title>
+    <meta name="title" content="Patente Hub – Quiz Patente B Gratis | تطبيق تعليم رخصة القيادة الإيطالية" />
+    <meta name="description" content="Patente Hub: quiz patente B gratuiti, segnali stradali, lezioni e simulazioni d'esame. Per italiani e arabi in Italia. تطبيق ذكي لتعليم رخصة القيادة الإيطالية بالعربية والإيطالية — تعلم، تدرب، واجتز الاختبار." />
+    <meta name="keywords" content="quiz patente, patente B, quiz patente B, simulazione esame patente, patente italiana, segnali stradali, codice della strada, scuola guida, rinnovo patente, esame teoria, patente gratis, app patente, patente hub, رخصة قيادة إيطالية, اختبار رخصة, تعليم القيادة, quiz patente arabi, patente arabi in italia, تطبيق رخصة القيادة, patente arabo italiano, arabi in italia patente" />
+    <meta name="author" content="Patente Hub" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#6366f1" />
+    <link rel="canonical" href="https://patentehub.com/" />
+
+    <!-- Language alternates -->
+    <link rel="alternate" hreflang="it" href="https://patentehub.com/" />
+    <link rel="alternate" hreflang="ar" href="https://patentehub.com/" />
+    <link rel="alternate" hreflang="x-default" href="https://patentehub.com/" />
+
+    <!-- Open Graph / Facebook (Italian primary) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://patentehub.com/" />
+    <meta property="og:title" content="Patente Hub – Quiz Patente B Gratis | تعليم رخصة القيادة الإيطالية" />
+    <meta property="og:description" content="Quiz patente B gratuiti, segnali stradali e simulazioni esame. Per italiani e arabi in Italia. تطبيق لتعليم رخصة القيادة الإيطالية بالعربية والإيطالية." />
+    <meta property="og:image" content="https://patentehub.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Patente Hub – Quiz Patente B" />
+    <meta property="og:locale" content="it_IT" />
+    <meta property="og:locale:alternate" content="ar_AR" />
+    <meta property="og:site_name" content="Patente Hub" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://patentehub.com/" />
+    <meta name="twitter:title" content="Patente Hub – Quiz Patente B Gratis | تعليم رخصة القيادة" />
+    <meta name="twitter:description" content="Quiz patente B, segnali stradali e simulazioni esame gratis. تطبيق لتعلم رخصة القيادة الإيطالية بالعربية والإيطالية." />
+    <meta name="twitter:image" content="https://patentehub.com/og-image.png" />
+    <meta name="twitter:site" content="@patentehub" />
+
+    <!-- JSON-LD Structured Data – bilingual WebApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Patente Hub",
+      "url": "https://patentehub.com",
+      "description": "App gratuita per prepararsi all'esame della patente B in Italia. Quiz, segnali stradali, simulazioni e lezioni in italiano e arabo.",
+      "applicationCategory": "EducationApplication",
+      "operatingSystem": "Web",
+      "browserRequirements": "Requires JavaScript",
+      "inLanguage": ["it", "ar"],
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      "audience": [
+        {
+          "@type": "Audience",
+          "audienceType": "Candidati alla patente B in Italia"
+        },
+        {
+          "@type": "Audience",
+          "audienceType": "العرب في إيطاليا المتقدمون لاختبار رخصة القيادة"
+        }
+      ],
+      "featureList": [
+        "Quiz patente B gratuiti",
+        "Segnali stradali con spiegazioni",
+        "Simulazione esame patente",
+        "Lezioni codice della strada",
+        "Dizionario termini stradali",
+        "اختبارات رخصة القيادة",
+        "شرح إشارات المرور",
+        "محاكاة الاختبار"
+      ],
+      "sameAs": [
+        "https://patentehub.com"
+      ]
+    }
+    </script>
+
+    <!-- FAQ Structured Data (Italian) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Come prepararsi all'esame della patente B?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Patente Hub offre quiz patente B gratuiti, simulazioni d'esame, spiegazione dei segnali stradali e lezioni sul codice della strada. Studia ogni giorno per superare l'esame con facilità."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "È disponibile un'app patente in arabo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sì, Patente Hub è disponibile in italiano e in arabo, pensata anche per gli arabi in Italia che studiano per la patente B."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "كيف أتعلم رخصة القيادة الإيطالية؟",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "تطبيق Patente Hub يوفر اختبارات مجانية لرخصة القيادة الإيطالية، شرح إشارات المرور، محاكاة الاختبار ودروس قانون المرور باللغتين العربية والإيطالية."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  </head>
+  <body class="antialiased">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
