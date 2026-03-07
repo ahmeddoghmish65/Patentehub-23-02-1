@@ -936,9 +936,19 @@ export function CommunityPage({ openPostId, onNavigate }: { openPostId?: string;
                   )}
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  <button className="p-3 rounded-xl border-2 border-success-200 hover:bg-success-50 text-success-700 font-medium text-sm" onClick={() => handleQuizAnswer(post.id, true)}>{t('community.quiz_correct_opt')}</button>
-                  <button className="p-3 rounded-xl border-2 border-danger-200 hover:bg-danger-50 text-danger-700 font-medium text-sm" onClick={() => handleQuizAnswer(post.id, false)}>{t('community.quiz_wrong_opt')}</button>
+                <div className="grid grid-cols-2 gap-3 mt-1">
+                  <button
+                    className="py-4 rounded-2xl border-2 border-surface-900 bg-teal-50 hover:bg-teal-100 text-surface-900 transition-all font-bold text-base text-center"
+                    onClick={() => handleQuizAnswer(post.id, true)}
+                  >
+                    {t('community.correct_quiz')}
+                  </button>
+                  <button
+                    className="py-4 rounded-2xl border-2 border-surface-900 bg-rose-50 hover:bg-rose-100 text-surface-900 transition-all font-bold text-base text-center"
+                    onClick={() => handleQuizAnswer(post.id, false)}
+                  >
+                    {t('community.wrong_quiz')}
+                  </button>
                 </div>
               )}
             </div>
