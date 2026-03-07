@@ -1,0 +1,2783 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { useAuthStore, useDataStore, useAdminStore } from '@/store';
+import { Icon } from '@/components/ui/Icon';
+import { Button } from '@/components/ui/Button';
+import { cn } from '@/utils/cn';
+import type { Comment, Report } from '@/db/database';
+import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
+import { useTranslation, type UiLang } from '@/i18n';
+
+type Tab = 'overview' | 'sections' | 'lessons' | 'questions' | 'signs' | 'dictionary' | 'users' | 'posts' | 'comments' | 'reports' | 'logs' | 'analytics' | 'languages';
+type ContentView = 'active' | 'archived' | 'deleted' | 'banned';
+
+export function AdminPage() {
+  const store = { ...useAuthStore(), ...useDataStore(), ...useAdminStore() };
+  const [tab, setTab] = useState<Tab>('overview');
+  const [contentView, setContentView] = useState<ContentView>('active');
+  // Analytics - page visit stats
+  const [visitStats, setVisitStats] = useState<{
+    totalVisits: number; last7DaysVisits: number; last30DaysVisits: number;
+    sessions7: number; sessions30: number;
+    dailyBreakdown: Record<string, number>; pageBreakdown: Record<string, number>;
+  } | null>(null);
+  useEffect(() => {
+    if (tab === 'analytics') {
+      store.getPageVisitStats().then(s => setVisitStats(s as typeof visitStats));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab]);
+  const [modal, setModal] = useState<{ type: string; data?: Record<string, unknown> } | null>(null);
+  const [form, setForm] = useState<Record<string, unknown>>({});
+  const savedRangeRef = useRef<Range | null>(null);
+  const [search, setSearch] = useState('');
+  const [logTypeFilter, setLogTypeFilter] = useState('');
+  const [logPage, setLogPage] = useState(1);
+  const [logDeleteFrom, setLogDeleteFrom] = useState('');
+  const [logDeleteTo, setLogDeleteTo] = useState('');
+  const [showDeleteLogsConfirm, setShowDeleteLogsConfirm] = useState(false);
+  const [filterSectionId, setFilterSectionId] = useState('');
+  const [filterSignCategory, setFilterSignCategory] = useState('');
+  const [filterDictSectionId, setFilterDictSectionId] = useState('');
+  const [confirmDel, setConfirmDel] = useState<{ type: string; id: string } | null>(null);
+  const [allComments, setAllComments] = useState<(Comment & { postContent?: string })[]>([]);
+  const [viewUser, setViewUser] = useState<string | null>(null);
+  const [viewedReport, setViewedReport] = useState<Report | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [userSelectedIds, setUserSelectedIds] = useState<Set<string>>(new Set());
+  const [postSelectedIds, setPostSelectedIds] = useState<Set<string>>(new Set());
+  // Community settings
+  const [communityAllowImages, setCommunityAllowImages] = useState(
+    () => localStorage.getItem('communityAllowImages') === 'true'
+  );
+  const toggleCommunityImages = () => {
+    const next = !communityAllowImages;
+    setCommunityAllowImages(next);
+    localStorage.setItem('communityAllowImages', String(next));
+    // Notify other tabs / CommunityPage open in same session
+    window.dispatchEvent(new Event('storage'));
+  };
+
+  useEffect(() => {
+    store.loadAdminStats();
+    store.loadSections();
+    store.loadLessons();
+    store.loadQuestions();
+    store.loadSigns();
+    store.loadSignSections();
+    store.loadDictSections();
+    store.loadDictEntries();
+    store.loadAdminUsers();
+    store.loadPosts();
+    store.loadAdminReports();
+    store.loadAdminLogs();
+    store.loadDeletedPosts();
+    store.loadDeletedComments();
+    store.loadDeletedUsers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (tab === 'logs') {
+      store.loadAdminLogs();
+    }
+    setSelectedIds(new Set());
+    setUserSelectedIds(new Set());
+    setContentView('active');
+    setFilterSectionId('');
+    setFilterSignCategory('');
+    setFilterDictSectionId('');
+    setLogPage(1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab]);
+
+  // Load all comments when comments or reports tab is selected
+  useEffect(() => {
+    if (tab === 'comments' || tab === 'reports') {
+      loadAllComments();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab, store.posts]);
+
+  const loadAllComments = async () => {
+    const comments: (Comment & { postContent?: string })[] = [];
+    for (const post of store.posts) {
+      const postComments = await store.getComments(post.id);
+      for (const c of postComments) {
+        comments.push({ ...c, postContent: post.content.substring(0, 60) });
+      }
+    }
+    comments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    setAllComments(comments);
+  };
+
+  const handleExport = async (storeName: string) => {
+    const data = await store.exportData(storeName);
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `${storeName}.json`; a.click();
+  };
+
+  const handleImport = (storeName: string) => {
+    const input = document.createElement('input');
+    input.type = 'file'; input.accept = '.json';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      const text = await file.text();
+      const data = JSON.parse(text);
+      const count = await store.importData(storeName, data);
+      alert(`تم استيراد ${count} سجل`);
+      store.loadSections(); store.loadLessons(); store.loadQuestions();
+      store.loadSigns(); store.loadDictSections(); store.loadDictEntries();
+    };
+    input.click();
+  };
+
+  const resizeImageToSquare = (dataUrl: string, size: number): Promise<string> =>
+    new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = size; canvas.height = size;
+        const ctx = canvas.getContext('2d')!;
+        const scale = Math.max(size / img.width, size / img.height);
+        const x = (size - img.width * scale) / 2;
+        const y = (size - img.height * scale) / 2;
+        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+        resolve(canvas.toDataURL('image/jpeg', 0.88));
+      };
+      img.src = dataUrl;
+    });
+
+  const handleImageUpload = (field: string, squareSize?: number) => {
+    const input = document.createElement('input');
+    input.type = 'file'; input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const raw = reader.result as string;
+        const result = squareSize ? await resizeImageToSquare(raw, squareSize) : raw;
+        setForm(prev => ({ ...prev, [field]: result }));
+      };
+      reader.readAsDataURL(file);
+    };
+    input.click();
+  };
+
+  const saveItem = async () => {
+    if (!modal) return;
+    const { type, data } = modal;
+    const isEdit = !!data?.id;
+    let ok = false;
+
+    switch (type) {
+      case 'section': ok = isEdit ? await store.updateSection(data.id as string, form as never) : await store.createSection(form as never); break;
+      case 'lesson': ok = isEdit ? await store.updateLesson(data.id as string, form as never) : await store.createLesson(form as never); break;
+      case 'question': ok = isEdit ? await store.updateQuestion(data.id as string, form as never) : await store.createQuestion(form as never); break;
+      case 'sign': ok = isEdit ? await store.updateSign(data.id as string, form as never) : await store.createSign(form as never); break;
+      case 'signSection': ok = isEdit ? await store.updateSignSection(data.id as string, form as never) : await store.createSignSection(form as never); break;
+      case 'dictSection': ok = isEdit ? await store.updateDictSection(data.id as string, form as never) : await store.createDictSection(form as never); break;
+      case 'dictEntry': ok = isEdit ? await store.updateDictEntry(data.id as string, form as never) : await store.createDictEntry(form as never); break;
+    }
+    if (ok) setModal(null);
+  };
+
+  const handleDelete = async () => {
+    if (!confirmDel) return;
+    const { type, id } = confirmDel;
+    switch (type) {
+      case 'section': await store.deleteSection(id); break;
+      case 'section-permanent': await store.permanentDeleteSection(id); break;
+      case 'lesson': await store.deleteLesson(id); break;
+      case 'lesson-permanent': await store.permanentDeleteLesson(id); break;
+      case 'question': await store.deleteQuestion(id); break;
+      case 'question-permanent': await store.permanentDeleteQuestion(id); break;
+      case 'sign': await store.deleteSign(id); break;
+      case 'sign-permanent': await store.permanentDeleteSign(id); break;
+      case 'signSection': await store.deleteSignSection(id); break;
+      case 'signSection-permanent': await store.permanentDeleteSignSection(id); break;
+      case 'dictSection': await store.deleteDictSection(id); break;
+      case 'dictSection-permanent': await store.permanentDeleteDictSection(id); break;
+      case 'dictEntry': await store.deleteDictEntry(id); break;
+      case 'dictEntry-permanent': await store.permanentDeleteDictEntry(id); break;
+      case 'user': await store.deleteUser(id); break;
+      case 'user-permanent': await store.permanentDeleteUser(id); break;
+      case 'post': await store.adminDeletePost(id); break;
+      case 'post-permanent': await store.permanentDeletePost(id); break;
+      case 'comment': await store.adminDeleteComment(id); await loadAllComments(); break;
+      case 'comment-permanent': await store.permanentDeleteComment(id); break;
+    }
+    setConfirmDel(null);
+  };
+
+  const { t, uiLang, setUiLang } = useTranslation();
+
+  // Language management state (stored in localStorage)
+  const [langDefault, setLangDefault] = useState<UiLang>(
+    () => (localStorage.getItem('ph_admin_default_lang') as UiLang) || 'ar'
+  );
+  const [langEnabled, setLangEnabled] = useState<Record<UiLang, boolean>>(() => {
+    try { return JSON.parse(localStorage.getItem('ph_admin_lang_enabled') || '{"ar":true,"it":true}'); }
+    catch { return { ar: true, it: true }; }
+  });
+
+  const saveAdminLangSettings = (defaultLang: UiLang, enabled: Record<UiLang, boolean>) => {
+    localStorage.setItem('ph_admin_default_lang', defaultLang);
+    localStorage.setItem('ph_admin_lang_enabled', JSON.stringify(enabled));
+  };
+
+  const handleSetDefault = (lang: UiLang) => {
+    setLangDefault(lang);
+    setUiLang(lang);
+    saveAdminLangSettings(lang, langEnabled);
+  };
+
+  const handleToggleLang = (lang: UiLang) => {
+    // Cannot disable Arabic (default fallback)
+    if (lang === 'ar') return;
+    const next = { ...langEnabled, [lang]: !langEnabled[lang] };
+    setLangEnabled(next);
+    saveAdminLangSettings(langDefault, next);
+  };
+
+  const allTabs: { id: Tab; icon: string; label: string; permKey?: string }[] = [
+    { id: 'overview', icon: 'dashboard', label: 'نظرة عامة', permKey: 'overview' },
+    { id: 'sections', icon: 'folder', label: 'الأقسام', permKey: 'sections' },
+    { id: 'lessons', icon: 'school', label: 'الدروس', permKey: 'lessons' },
+    { id: 'questions', icon: 'quiz', label: 'الأسئلة', permKey: 'questions' },
+    { id: 'signs', icon: 'traffic', label: 'الإشارات', permKey: 'signs' },
+    { id: 'dictionary', icon: 'menu_book', label: 'القاموس', permKey: 'dictionary' },
+    { id: 'users', icon: 'group', label: 'المستخدمين', permKey: 'users' },
+    { id: 'posts', icon: 'forum', label: 'المنشورات', permKey: 'posts' },
+    { id: 'comments', icon: 'chat_bubble', label: 'التعليقات', permKey: 'comments' },
+    { id: 'reports', icon: 'flag', label: 'البلاغات', permKey: 'reports' },
+    { id: 'logs', icon: 'history', label: 'السجلات', permKey: 'logs' },
+    { id: 'analytics', icon: 'analytics', label: 'الزيارات', permKey: 'analytics' },
+    { id: 'languages', icon: 'translate', label: 'اللغات' },
+  ];
+
+  // Filter tabs based on role and permissions
+  const userPerms: string[] = (store.user as Record<string, unknown>)?.permissions as string[] || [];
+  const isFullAdmin = store.user?.role === 'admin';
+  const tabs = allTabs.filter(t => {
+    if (isFullAdmin) return true; // admin sees all
+    if (!t.permKey) return true;  // no perm key = always visible
+    return userPerms.includes(t.permKey); // manager sees only permitted tabs
+  });
+
+  // If manager lands on overview but doesn't have overview perm, redirect to first allowed tab
+  useEffect(() => {
+    if (!isFullAdmin && tab === 'overview' && !userPerms.includes('overview')) {
+      const first = allTabs.find(t => !t.permKey || userPerms.includes(t.permKey || ''));
+      if (first) setTab(first.id);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // If manager has NO permissions at all, deny access entirely (after all hooks)
+  if (!isFullAdmin && userPerms.length === 0) {
+    return (
+      <div className="max-w-sm mx-auto text-center py-20">
+        <div className="bg-white rounded-2xl p-8 border border-surface-100 shadow-sm">
+          <div className="w-16 h-16 bg-surface-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Icon name="lock" size={32} className="text-surface-400" />
+          </div>
+          <h2 className="text-lg font-bold text-surface-800 mb-2">لا توجد صلاحيات</h2>
+          <p className="text-sm text-surface-500 leading-relaxed">لم يتم منحك أي صلاحيات إدارية. تواصل مع المسؤول الرئيسي لمنح الصلاحيات.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const renderInput = (label: string, field: string, type = 'text') => (
+    <div className="mb-3">
+      <label className="block text-sm font-medium text-surface-700 mb-1">{label}</label>
+      {type === 'textarea' ? (
+        <textarea className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none" rows={3} value={(form[field] as string) || ''} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))} />
+      ) : type === 'boolean' ? (
+        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={String(form[field] || false)} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value === 'true' }))}>
+          <option value="true">صحيح / Vero</option>
+          <option value="false">خطأ / Falso</option>
+        </select>
+      ) : type === 'select-difficulty' ? (
+        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as string) || 'easy'} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}>
+          <option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">صعب</option>
+        </select>
+      ) : type === 'select-section' ? (
+        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as string) || ''} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}>
+          <option value="">اختر قسم</option>
+          {store.sections.map(s => <option key={s.id} value={s.id}>{s.nameAr}</option>)}
+        </select>
+      ) : type === 'select-lesson' ? (
+        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as string) || ''} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}>
+          <option value="">اختر درس</option>
+          {store.lessons.map(l => <option key={l.id} value={l.id}>{l.titleAr}</option>)}
+        </select>
+      ) : type === 'select-dict-section' ? (
+        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as string) || ''} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}>
+          <option value="">اختر قسم</option>
+          {store.dictSections.map(s => <option key={s.id} value={s.id}>{s.nameAr}</option>)}
+        </select>
+      ) : type === 'select-sign-section' ? (
+        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as string) || ''} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}>
+          <option value="">بدون قسم</option>
+          {store.signSections.filter(s => !s.status || s.status === 'active').map(s => <option key={s.id} value={s.id}>{s.nameAr}</option>)}
+        </select>
+      ) : type === 'richtext' ? (
+        <div className="border border-surface-200 rounded-xl overflow-hidden">
+          <div className="flex items-center gap-1 p-1.5 bg-surface-50 border-b border-surface-200 flex-wrap">
+            {[
+              { cmd: 'bold', icon: 'B', title: 'عريض', style: 'font-bold' },
+              { cmd: 'italic', icon: 'I', title: 'مائل', style: 'italic' },
+              { cmd: 'underline', icon: 'U', title: 'تحت خط', style: 'underline' },
+              { cmd: 'strikeThrough', icon: 'S̶', title: 'فوق خط', style: '' },
+            ].map(b => (
+              <button key={b.cmd} type="button" title={b.title}
+                onMouseDown={e => { e.preventDefault(); document.execCommand(b.cmd); }}
+                className={`px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-white ${b.style}`}>{b.icon}</button>
+            ))}
+            <div className="w-px h-4 bg-surface-200 mx-0.5" />
+            {['H2','H3','H4'].map((h, i) => (
+              <button key={h} type="button" title={h}
+                onMouseDown={e => { e.preventDefault(); document.execCommand('formatBlock', false, ['h2','h3','h4'][i]); }}
+                className="px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-white font-bold">{h}</button>
+            ))}
+            <button type="button" title="نص عادي"
+              onMouseDown={e => { e.preventDefault(); document.execCommand('formatBlock', false, 'p'); }}
+              className="px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-white">P</button>
+            <div className="w-px h-4 bg-surface-200 mx-0.5" />
+            <select title="حجم الخط" className="text-xs border border-surface-200 rounded px-1 py-0.5 bg-white cursor-pointer"
+              onMouseDown={e => { e.stopPropagation(); }}
+              onChange={e => { e.preventDefault(); const sel = window.getSelection(); if (savedRangeRef.current && sel) { sel.removeAllRanges(); sel.addRange(savedRangeRef.current); } document.execCommand('fontSize', false, e.target.value); e.target.value = ''; }}>
+              <option value="">حجم</option>
+              <option value="1">صغير جداً</option>
+              <option value="2">صغير</option>
+              <option value="3">عادي</option>
+              <option value="4">كبير</option>
+              <option value="5">كبير جداً</option>
+              <option value="6">ضخم</option>
+              <option value="7">ضخم جداً</option>
+            </select>
+            <label title="لون النص" className="flex items-center gap-1 cursor-pointer">
+              <span className="text-xs border border-surface-200 rounded px-1.5 py-0.5 bg-white">A</span>
+              <input type="color" className="w-5 h-5 p-0 border-0 rounded cursor-pointer"
+                onMouseDown={() => {
+                  const sel = window.getSelection();
+                  if (sel && sel.rangeCount > 0) savedRangeRef.current = sel.getRangeAt(0).cloneRange();
+                }}
+                onChange={e => {
+                  const sel = window.getSelection();
+                  if (savedRangeRef.current && sel) { sel.removeAllRanges(); sel.addRange(savedRangeRef.current); }
+                  document.execCommand('foreColor', false, e.target.value);
+                }} />
+            </label>
+            <div className="w-px h-4 bg-surface-200 mx-0.5" />
+            <button type="button" title="مسح التنسيق"
+              onMouseDown={e => { e.preventDefault(); document.execCommand('removeFormat'); }}
+              className="px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-white text-surface-400">✕</button>
+          </div>
+          <div
+            className="w-full p-3 text-sm min-h-[100px] focus:outline-none"
+            contentEditable suppressContentEditableWarning
+            dir={field.includes('It') ? 'ltr' : 'rtl'}
+            dangerouslySetInnerHTML={{ __html: (form[field] as string) || '' }}
+            onInput={e => setForm(prev => ({ ...prev, [field]: (e.target as HTMLDivElement).innerHTML }))}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                document.execCommand('insertLineBreak');
+              }
+            }}
+          />
+        </div>
+      ) : type === 'number' ? (
+        <input type="number" className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as number) || 0} onChange={e => setForm(prev => ({ ...prev, [field]: parseInt(e.target.value) || 0 }))} />
+      ) : type === 'image' || type === 'image-square' ? (
+        <div>
+          <button className="px-4 py-2 bg-surface-100 rounded-lg text-sm hover:bg-surface-200 flex items-center gap-1"
+            onClick={() => handleImageUpload(field, type === 'image-square' ? 1024 : undefined)}>
+            <Icon name="upload" size={16} /> رفع صورة {type === 'image-square' ? '(1024×1024)' : ''}
+          </button>
+          {form[field] ? (
+            <div className="mt-2 flex items-start gap-2">
+              <img src={form[field] as string} alt="" className={cn('rounded-lg object-cover', type === 'image-square' ? 'w-24 h-24' : 'w-20 h-20')} />
+              <button type="button" title="حذف الصورة"
+                onClick={() => setForm(prev => ({ ...prev, [field]: '' }))}
+                className="p-1.5 text-danger-500 hover:bg-danger-50 rounded-lg border border-danger-200 transition-colors">
+                <Icon name="delete" size={16} />
+              </button>
+            </div>
+          ) : null}
+        </div>
+      ) : (
+        <input type={type} className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as string) || ''} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))} />
+      )}
+    </div>
+  );
+
+  return (
+    <div>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-surface-900 mb-1">لوحة التحكم</h1>
+        <p className="text-sm text-surface-400">إدارة كاملة للتطبيق والمحتوى والمستخدمين</p>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-2 overflow-x-auto mb-6 pb-2">
+        {tabs.map(t => (
+          <button key={t.id} className={cn('shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all',
+            tab === t.id ? 'bg-primary-500 text-white' : 'bg-white text-surface-600 border border-surface-200 hover:border-primary-200')} onClick={() => setTab(t.id)}>
+            <Icon name={t.icon} size={16} />{t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Overview */}
+      {tab === 'overview' && store.adminStats && (() => {
+        const pendingReports = store.adminReports.filter(r => r.status === 'pending').length;
+        const bannedUsers = store.adminUsers.filter(u => u.isBanned).length;
+        const verifiedUsers = store.adminUsers.filter(u => u.verified).length;
+        const managersCount = store.adminUsers.filter(u => u.role === 'manager').length;
+        const dictTotal = store.dictSections.length;
+        const dictEntriesTotal = store.dictEntries.length;
+        const totalQuizzes = store.adminUsers.reduce((s, u) => s + u.progress.totalQuizzes, 0);
+        const readyForExam = store.adminUsers.filter(u => u.progress.examReadiness >= 70).length;
+        const avgReadiness = store.adminUsers.length > 0
+          ? Math.round(store.adminUsers.reduce((s, u) => s + u.progress.examReadiness, 0) / store.adminUsers.length)
+          : 0;
+
+        // Last 7 days registrations
+        const now = Date.now();
+        const day = 86400000;
+        const last7Reg = Array.from({ length: 7 }, (_, i) => {
+          const d = new Date(now - (6 - i) * day);
+          const key = d.toISOString().slice(0, 10);
+          const dayNames = ['أح', 'اث', 'ثل', 'أر', 'خم', 'جم', 'سب'];
+          return {
+            day: dayNames[d.getDay()],
+            count: store.adminUsers.filter(u => u.createdAt.slice(0, 10) === key).length,
+          };
+        });
+        const maxReg = Math.max(...last7Reg.map(d => d.count), 1);
+
+        return (
+        <div className="space-y-5">
+          {/* Hero gradient banner */}
+          <div className="bg-gradient-to-br from-primary-600 via-primary-700 to-indigo-800 rounded-2xl p-6 text-white relative overflow-hidden">
+            <div className="absolute -top-8 -left-8 w-48 h-48 bg-white/5 rounded-full" />
+            <div className="absolute -bottom-6 -right-6 w-36 h-36 bg-white/5 rounded-full" />
+            <div className="relative">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-12 h-12 bg-white/15 rounded-2xl flex items-center justify-center">
+                  <Icon name="admin_panel_settings" size={26} className="text-white" filled />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold">مرحباً في لوحة التحكم</h2>
+                  <p className="text-primary-200 text-xs">نظرة شاملة على Patente Hub</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                  { label: 'إجمالي المستخدمين', value: store.adminStats.totalUsers, icon: 'group', sub: `${store.adminStats.activeToday} نشط اليوم` },
+                  { label: 'المنشورات', value: store.adminStats.totalPosts, icon: 'forum', sub: 'في المجتمع' },
+                  { label: 'الأسئلة التعليمية', value: store.adminStats.totalQuestions, icon: 'quiz', sub: `${store.adminStats.totalSections} قسم` },
+                  { label: 'البلاغات المعلقة', value: pendingReports, icon: 'flag', sub: pendingReports > 0 ? '⚠️ بانتظار مراجعة' : '✓ لا يوجد' },
+                ].map((s, i) => (
+                  <div key={i} className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/10">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Icon name={s.icon} size={16} className="text-white/70" />
+                      <p className="text-[10px] text-white/70 leading-none">{s.label}</p>
+                    </div>
+                    <p className="text-2xl font-bold">{s.value}</p>
+                    <p className="text-[10px] text-white/50 mt-0.5">{s.sub}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Quick KPIs row */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { label: 'موثّقون', value: verifiedUsers, icon: 'verified', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+              { label: 'مديرون', value: managersCount, icon: 'manage_accounts', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
+              { label: 'محظورون', value: bannedUsers, icon: 'block', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-100' },
+              { label: 'جاهزون للامتحان', value: readyForExam, icon: 'emoji_events', color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
+            ].map((s, i) => (
+              <div key={i} className={cn('bg-white rounded-xl p-4 border flex items-center gap-3', s.border)}>
+                <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center shrink-0', s.bg)}>
+                  <Icon name={s.icon} size={22} className={s.color} filled />
+                </div>
+                <div>
+                  <p className="text-xl font-bold text-surface-900">{s.value}</p>
+                  <p className="text-xs text-surface-500">{s.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Two-column: registrations chart + exam readiness */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Registrations mini chart */}
+            <div className="bg-white rounded-xl border border-surface-100 p-5">
+              <h3 className="font-bold text-surface-900 mb-1 flex items-center gap-2">
+                <Icon name="person_add" size={18} className="text-primary-500" filled />
+                تسجيلات آخر 7 أيام
+              </h3>
+              <p className="text-xs text-surface-400 mb-4">إجمالي جديد: {last7Reg.reduce((s, d) => s + d.count, 0)} مستخدم</p>
+              <div className="flex items-end gap-1.5 h-24">
+                {last7Reg.map((d, i) => {
+                  const colors = ['#6366f1','#8b5cf6','#ec4899','#f59e0b','#22c55e','#06b6d4','#3b82f6'];
+                  const h = Math.max(4, Math.round((d.count / maxReg) * 80));
+                  return (
+                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                      <span className="text-[9px] text-surface-500 font-medium">{d.count > 0 ? d.count : ''}</span>
+                      <div className="w-full rounded-t-lg transition-all" style={{ height: h, backgroundColor: colors[i] + (i === 6 ? 'ff' : '80') }} />
+                      <span className="text-[9px] text-surface-400">{d.day}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Exam readiness distribution */}
+            <div className="bg-white rounded-xl border border-surface-100 p-5">
+              <h3 className="font-bold text-surface-900 mb-1 flex items-center gap-2">
+                <Icon name="school" size={18} className="text-purple-500" filled />
+                توزيع مستوى الجاهزية
+              </h3>
+              <p className="text-xs text-surface-400 mb-4">متوسط الجاهزية: <strong className="text-surface-700">{avgReadiness}%</strong></p>
+              <div className="space-y-2.5">
+                {[
+                  { label: 'جاهز 70%+', count: readyForExam, color: '#22c55e', max: store.adminUsers.length },
+                  { label: 'متقدم 40-69%', count: store.adminUsers.filter(u => u.progress.examReadiness >= 40 && u.progress.examReadiness < 70).length, color: '#f59e0b', max: store.adminUsers.length },
+                  { label: 'مبتدئ 0-39%', count: store.adminUsers.filter(u => u.progress.examReadiness < 40).length, color: '#ef4444', max: store.adminUsers.length },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <span className="text-xs text-surface-600 w-24 shrink-0">{item.label}</span>
+                    <div className="flex-1 bg-surface-100 rounded-full h-2">
+                      <div className="h-2 rounded-full transition-all" style={{ width: `${item.max > 0 ? Math.round(item.count / item.max * 100) : 0}%`, backgroundColor: item.color }} />
+                    </div>
+                    <span className="text-xs font-bold text-surface-700 w-8 text-left">{item.count}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Content Stats Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { label: 'الأقسام', value: store.adminStats.totalSections, icon: 'folder', color: 'text-purple-500', bg: 'bg-purple-50', tab: 'sections' as Tab },
+              { label: 'الدروس', value: store.adminStats.totalLessons, icon: 'school', color: 'text-green-500', bg: 'bg-green-50', tab: 'lessons' as Tab },
+              { label: 'الأسئلة', value: store.adminStats.totalQuestions, icon: 'quiz', color: 'text-orange-500', bg: 'bg-orange-50', tab: 'questions' as Tab },
+              { label: 'الإشارات', value: store.adminStats.totalSigns, icon: 'traffic', color: 'text-red-500', bg: 'bg-red-50', tab: 'signs' as Tab },
+              { label: 'أقسام القاموس', value: dictTotal, icon: 'menu_book', color: 'text-cyan-500', bg: 'bg-cyan-50', tab: 'dictionary' as Tab },
+              { label: 'مصطلحات', value: dictEntriesTotal, icon: 'translate', color: 'text-indigo-500', bg: 'bg-indigo-50', tab: 'dictionary' as Tab },
+              { label: 'إجمالي الاختبارات', value: totalQuizzes, icon: 'history_edu', color: 'text-pink-500', bg: 'bg-pink-50', tab: 'overview' as Tab },
+              { label: 'البلاغات الكلية', value: store.adminStats.totalReports, icon: 'flag', color: 'text-red-500', bg: 'bg-red-50', tab: 'reports' as Tab },
+            ].map((s, i) => {
+              const canAccess = isFullAdmin || !allTabs.find(t => t.id === s.tab)?.permKey || userPerms.includes(allTabs.find(t => t.id === s.tab)?.permKey || '');
+              return (
+                <button key={i}
+                  className={cn('bg-white rounded-xl p-4 border border-surface-100 transition-all text-right',
+                    canAccess ? 'hover:border-primary-200 hover:shadow-md cursor-pointer' : 'opacity-60 cursor-not-allowed')}
+                  onClick={() => canAccess && setTab(s.tab)}>
+                  <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center mb-3', s.bg)}>
+                    <Icon name={s.icon} size={22} className={s.color} filled />
+                  </div>
+                  <p className="text-2xl font-bold text-surface-900">{s.value}</p>
+                  <p className="text-xs text-surface-500">{s.label}</p>
+                  {!canAccess && <p className="text-[10px] text-surface-300 mt-0.5">غير مصرح</p>}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Pending Reports */}
+          {pendingReports > 0 && (
+            <div className="bg-white rounded-xl border border-danger-100 p-5">
+              <h3 className="font-bold text-surface-900 mb-3 flex items-center gap-2">
+                <Icon name="flag" size={20} className="text-danger-500" filled />
+                بلاغات بانتظار المراجعة ({pendingReports})
+              </h3>
+              <div className="space-y-2">
+                {store.adminReports.filter(r => r.status === 'pending').slice(0, 3).map(r => (
+                  <div key={r.id} className="flex items-center justify-between bg-danger-50 rounded-lg p-3">
+                    <div>
+                      <p className="text-sm text-surface-800">{r.reason.substring(0, 60)}...</p>
+                      <p className="text-xs text-surface-400">{r.type === 'post' ? 'منشور' : r.type === 'comment' ? 'تعليق' : 'مستخدم'} — {new Date(r.createdAt).toLocaleDateString('ar')}</p>
+                    </div>
+                    <Button size="sm" onClick={() => setTab('reports')}>مراجعة</Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Recent Users + Recent Logs side by side */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {store.adminUsers.length > 0 && (
+              <div className="bg-white rounded-xl border border-surface-100 p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-bold text-surface-900 flex items-center gap-2">
+                    <Icon name="group" size={18} className="text-blue-500" filled />
+                    آخر المستخدمين
+                  </h3>
+                  <button className="text-xs text-primary-500 font-medium" onClick={() => setTab('users')}>عرض الكل</button>
+                </div>
+                <div className="space-y-2">
+                  {store.adminUsers.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 5).map(u => (
+                    <div key={u.id} className="flex items-center gap-3 py-1.5">
+                      <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center shrink-0">
+                        {u.avatar ? <img src={u.avatar} className="w-8 h-8 rounded-full object-cover" alt="" /> : <span className="text-xs font-bold text-primary-700">{u.name.charAt(0)}</span>}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-surface-800 truncate">{u.name}</p>
+                        <p className="text-[10px] text-surface-400">{new Date(u.createdAt).toLocaleDateString('ar')}</p>
+                      </div>
+                      <span className={cn('text-[9px] px-1.5 py-0.5 rounded-full font-bold',
+                        u.role === 'admin' ? 'bg-purple-100 text-purple-700' :
+                        u.role === 'manager' ? 'bg-amber-100 text-amber-700' :
+                        u.isBanned ? 'bg-danger-50 text-danger-600' : 'bg-success-50 text-success-600')}>
+                        {u.role === 'admin' ? 'أدمن' : u.role === 'manager' ? 'مدير' : u.isBanned ? 'محظور' : 'نشط'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {store.adminLogs.length > 0 && (
+              <div className="bg-white rounded-xl border border-surface-100 p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-bold text-surface-900 flex items-center gap-2">
+                    <Icon name="history" size={18} className="text-surface-400" />
+                    آخر الإجراءات
+                  </h3>
+                  <button className="text-xs text-primary-500 font-medium" onClick={() => setTab('logs')}>عرض الكل</button>
+                </div>
+                <div className="space-y-2">
+                  {store.adminLogs.slice(0, 5).map(l => {
+                    const isCreate = l.action.includes('إنشاء') || l.action.includes('إضافة');
+                    const isDelete = l.action.includes('حذف');
+                    const isExport = l.action.includes('تصدير') || l.action.includes('استيراد');
+                    return (
+                      <div key={l.id} className="flex items-center gap-2 py-1.5">
+                        <div className={cn('w-6 h-6 rounded-lg flex items-center justify-center shrink-0',
+                          isCreate ? 'bg-success-50' : isDelete ? 'bg-danger-50' : isExport ? 'bg-purple-50' : 'bg-surface-100')}>
+                          <Icon name={isCreate ? 'add' : isDelete ? 'delete' : isExport ? 'download' : 'edit'} size={12}
+                            className={isCreate ? 'text-success-500' : isDelete ? 'text-danger-500' : isExport ? 'text-purple-500' : 'text-surface-400'} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-surface-700 truncate">{l.action}: {l.details}</p>
+                          <p className="text-[10px] text-surface-400">{new Date(l.createdAt).toLocaleString('ar')}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        );
+      })()}
+
+      {/* Sections CRUD */}
+      {tab === 'sections' && (
+        <ContentWithTrash
+          title="الأقسام" icon="folder" iconColor="indigo"
+          contentView={contentView}
+          setContentView={setContentView}
+          activeItems={store.sections.filter(s => !s.status || s.status === 'active')}
+          archivedItems={store.sections.filter(s => s.status === 'archived')}
+          deletedItems={store.sections.filter(s => s.status === 'deleted')}
+          search={search}
+          setSearch={setSearch}
+          selectedIds={selectedIds}
+          setSelectedIds={setSelectedIds}
+          columns={[{ key: 'nameAr', label: 'الاسم' }, { key: 'nameIt', label: 'بالإيطالية' }, { key: 'order', label: 'الترتيب' }]}
+          filterFn={(item) => !search || item.nameAr.includes(search) || item.nameIt?.toLowerCase().includes(search.toLowerCase())}
+          onAdd={() => { setForm({ nameAr: '', nameIt: '', descriptionAr: '', descriptionIt: '', icon: 'school', color: '#3b82f6', image: '', order: store.sections.length + 1 }); setModal({ type: 'section' }); }}
+          onEdit={(item) => { setForm(item); setModal({ type: 'section', data: item as Record<string, unknown> }); }}
+          onDelete={(id) => setConfirmDel({ type: 'section', id })}
+          onPermanentDelete={(id) => setConfirmDel({ type: 'section-permanent', id })}
+          onArchive={(id) => store.archiveSection(id, true)}
+          onUnarchive={(id) => store.archiveSection(id, false)}
+          onRestore={(id) => store.restoreSection(id)}
+          onBulkDelete={async (ids) => { for (const id of ids) await store.deleteSection(id); setSelectedIds(new Set()); }}
+          onBulkPermanentDelete={async (ids) => { for (const id of ids) await store.permanentDeleteSection(id); setSelectedIds(new Set()); }}
+          onBulkArchive={async (ids) => { for (const id of ids) await store.archiveSection(id, true); setSelectedIds(new Set()); }}
+          onBulkRestore={async (ids) => { for (const id of ids) await store.restoreSection(id); setSelectedIds(new Set()); }}
+          onExport={() => handleExport('sections')} onImport={() => handleImport('sections')}
+        />
+      )}
+
+      {/* Lessons CRUD */}
+      {tab === 'lessons' && (
+        <ContentWithTrash
+            title="الدروس" icon="school" iconColor="primary"
+            filterSlot={
+              <select value={filterSectionId} onChange={e => setFilterSectionId(e.target.value)}
+                className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
+                <option value="">كل الأقسام</option>
+                {store.sections.map(sec => (
+                  <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.lessons.filter(l => l.sectionId === sec.id).length})</option>
+                ))}
+              </select>
+            }
+
+            contentView={contentView}
+            setContentView={setContentView}
+            activeItems={store.lessons.filter(s => (!s.status || s.status === 'active') && (!filterSectionId || s.sectionId === filterSectionId))}
+            archivedItems={store.lessons.filter(s => s.status === 'archived' && (!filterSectionId || s.sectionId === filterSectionId))}
+            deletedItems={store.lessons.filter(s => s.status === 'deleted' && (!filterSectionId || s.sectionId === filterSectionId))}
+            search={search}
+            setSearch={setSearch}
+            selectedIds={selectedIds}
+            setSelectedIds={setSelectedIds}
+            columns={[
+              { key: 'titleAr', label: 'العنوان' },
+              { key: 'sectionId', label: 'القسم', render: (v) => store.sections.find(s => s.id === v)?.nameAr || String(v) },
+              { key: 'order', label: 'الترتيب' },
+            ]}
+            filterFn={(item) => !search || item.titleAr?.includes(search) || item.titleIt?.toLowerCase().includes(search.toLowerCase())}
+            onAdd={() => { setForm({ sectionId: filterSectionId || '', titleAr: '', titleIt: '', contentAr: '', contentIt: '', image: '', order: store.lessons.length + 1 }); setModal({ type: 'lesson' }); }}
+            onEdit={(item) => { setForm(item); setModal({ type: 'lesson', data: item as Record<string, unknown> }); }}
+            onDelete={(id) => setConfirmDel({ type: 'lesson', id })}
+            onPermanentDelete={(id) => setConfirmDel({ type: 'lesson-permanent', id })}
+            onArchive={(id) => store.archiveLesson(id, true)}
+            onUnarchive={(id) => store.archiveLesson(id, false)}
+            onRestore={(id) => store.restoreLesson(id)}
+            onBulkDelete={async (ids) => { for (const id of ids) await store.deleteLesson(id); setSelectedIds(new Set()); }}
+            onBulkPermanentDelete={async (ids) => { for (const id of ids) await store.permanentDeleteLesson(id); setSelectedIds(new Set()); }}
+            onBulkArchive={async (ids) => { for (const id of ids) await store.archiveLesson(id, true); setSelectedIds(new Set()); }}
+            onBulkRestore={async (ids) => { for (const id of ids) await store.restoreLesson(id); setSelectedIds(new Set()); }}
+            onExport={() => handleExport('lessons')} onImport={() => handleImport('lessons')}
+          />
+      )}
+
+      {/* Questions CRUD */}
+      {tab === 'questions' && (
+        <ContentWithTrash
+            title="الأسئلة" icon="quiz" iconColor="purple"
+            filterSlot={
+              <select value={filterSectionId} onChange={e => setFilterSectionId(e.target.value)}
+                className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
+                <option value="">كل الأقسام</option>
+                {store.sections.map(sec => {
+                  const sectionLessonIds = store.lessons.filter(l => l.sectionId === sec.id).map(l => l.id);
+                  const count = store.questions.filter(q => sectionLessonIds.includes(q.lessonId)).length;
+                  return <option key={sec.id} value={sec.id}>{sec.nameAr} ({count})</option>;
+                })}
+              </select>
+            }
+            contentView={contentView}
+            setContentView={setContentView}
+            activeItems={store.questions.filter(s => (!s.status || s.status === 'active') && (!filterSectionId || store.lessons.find(l => l.id === s.lessonId)?.sectionId === filterSectionId))}
+            archivedItems={store.questions.filter(s => s.status === 'archived' && (!filterSectionId || store.lessons.find(l => l.id === s.lessonId)?.sectionId === filterSectionId))}
+            deletedItems={store.questions.filter(s => s.status === 'deleted' && (!filterSectionId || store.lessons.find(l => l.id === s.lessonId)?.sectionId === filterSectionId))}
+            search={search}
+            setSearch={setSearch}
+            selectedIds={selectedIds}
+            setSelectedIds={setSelectedIds}
+            columns={[
+              { key: 'questionAr', label: 'السؤال', render: (v: unknown) => String(v || '').substring(0, 50) + '...' },
+              { key: 'isTrue', label: 'الإجابة', render: (v) => v ? '✓ صحيح' as string : '✗ خطأ' as string },
+              { key: 'difficulty', label: 'الصعوبة' },
+            ]}
+            filterFn={(item) => !search || item.questionAr?.includes(search) || item.questionIt?.toLowerCase().includes(search.toLowerCase())}
+            onAdd={() => { setForm({ lessonId: '', sectionId: filterSectionId || '', questionAr: '', questionIt: '', isTrue: true, explanationAr: '', explanationIt: '', difficulty: 'easy', image: '', order: store.questions.length + 1 }); setModal({ type: 'question' }); }}
+            onEdit={(item) => { setForm(item); setModal({ type: 'question', data: item as Record<string, unknown> }); }}
+            onDelete={(id) => setConfirmDel({ type: 'question', id })}
+            onPermanentDelete={(id) => setConfirmDel({ type: 'question-permanent', id })}
+            onArchive={(id) => store.archiveQuestion(id, true)}
+            onUnarchive={(id) => store.archiveQuestion(id, false)}
+            onRestore={(id) => store.restoreQuestion(id)}
+            onBulkDelete={async (ids) => { await store.bulkDeleteQuestions(ids); setSelectedIds(new Set()); }}
+            onBulkPermanentDelete={async (ids) => { await store.bulkPermanentDeleteQuestions(ids); setSelectedIds(new Set()); }}
+            onBulkArchive={async (ids) => { await store.bulkArchiveQuestions(ids, true); setSelectedIds(new Set()); }}
+            onBulkRestore={async (ids) => { await store.bulkRestoreQuestions(ids); setSelectedIds(new Set()); }}
+            onExport={() => handleExport('questions')} onImport={() => handleImport('questions')}
+          />
+      )}
+
+      {/* Signs CRUD */}
+      {tab === 'signs' && (
+        <div className="space-y-4">
+          {/* Sign Sections */}
+          <ContentWithTrash
+            title="أقسام الإشارات" icon="traffic" iconColor="orange"
+            contentView={contentView}
+            setContentView={setContentView}
+            activeItems={store.signSections.filter(s => !s.status || s.status === 'active')}
+            archivedItems={store.signSections.filter(s => s.status === 'archived')}
+            deletedItems={store.signSections.filter(s => s.status === 'deleted')}
+            search={search}
+            setSearch={setSearch}
+            selectedIds={selectedIds}
+            setSelectedIds={setSelectedIds}
+            columns={[{ key: 'nameAr', label: 'الاسم' }, { key: 'nameIt', label: 'بالإيطالية' }]}
+            filterFn={(item) => !search || item.nameAr?.includes(search) || item.nameIt?.toLowerCase().includes(search.toLowerCase())}
+            onAdd={() => { setForm({ nameAr: '', nameIt: '', icon: 'traffic', order: store.signSections.length + 1 }); setModal({ type: 'signSection' }); }}
+            onEdit={(item) => { setForm(item); setModal({ type: 'signSection', data: item as Record<string, unknown> }); }}
+            onDelete={(id) => setConfirmDel({ type: 'signSection', id })}
+            onPermanentDelete={(id) => setConfirmDel({ type: 'signSection-permanent', id })}
+            onArchive={(id) => store.archiveSignSection(id, true)}
+            onUnarchive={(id) => store.archiveSignSection(id, false)}
+            onRestore={(id) => store.restoreSignSection(id)}
+            onBulkDelete={async (ids) => { for (const id of ids) await store.deleteSignSection(id); setSelectedIds(new Set()); }}
+            onBulkPermanentDelete={async (ids) => { for (const id of ids) await store.permanentDeleteSignSection(id); setSelectedIds(new Set()); }}
+            onBulkArchive={async (ids) => { for (const id of ids) await store.archiveSignSection(id, true); setSelectedIds(new Set()); }}
+            onBulkRestore={async (ids) => { for (const id of ids) await store.restoreSignSection(id); setSelectedIds(new Set()); }}
+          />
+          {/* Signs list with section filter */}
+          <ContentWithTrash
+              title="الإشارات" icon="traffic" iconColor="red"
+              filterSlot={
+                <select value={filterSignCategory} onChange={e => setFilterSignCategory(e.target.value)}
+                  className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
+                  <option value="">كل الأقسام</option>
+                  {store.signSections.filter(s => !s.status || s.status === 'active').map(sec => (
+                    <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.signs.filter(s => s.sectionId === sec.id).length})</option>
+                  ))}
+                </select>
+              }
+              contentView={contentView}
+              setContentView={setContentView}
+              activeItems={store.signs.filter(s => (!s.status || s.status === 'active') && (!filterSignCategory || s.sectionId === filterSignCategory))}
+              archivedItems={store.signs.filter(s => s.status === 'archived' && (!filterSignCategory || s.sectionId === filterSignCategory))}
+              deletedItems={store.signs.filter(s => s.status === 'deleted' && (!filterSignCategory || s.sectionId === filterSignCategory))}
+              search={search}
+              setSearch={setSearch}
+              selectedIds={selectedIds}
+              setSelectedIds={setSelectedIds}
+              columns={[{ key: 'nameAr', label: 'الاسم' }, { key: 'nameIt', label: 'بالإيطالية' }, { key: 'sectionId', label: 'القسم', render: (v: unknown) => store.signSections.find(s => s.id === v)?.nameAr || '' }]}
+              filterFn={(item) => !search || item.nameAr?.includes(search)}
+              onAdd={() => { setForm({ nameAr: '', nameIt: '', descriptionAr: '', descriptionIt: '', sectionId: filterSignCategory || '', category: 'pericolo', image: '', order: store.signs.length + 1 }); setModal({ type: 'sign' }); }}
+              onEdit={(item) => { setForm(item); setModal({ type: 'sign', data: item as Record<string, unknown> }); }}
+              onDelete={(id) => setConfirmDel({ type: 'sign', id })}
+              onPermanentDelete={(id) => setConfirmDel({ type: 'sign-permanent', id })}
+              onArchive={(id) => store.archiveSign(id, true)}
+              onUnarchive={(id) => store.archiveSign(id, false)}
+              onRestore={(id) => store.restoreSign(id)}
+              onBulkDelete={async (ids) => { for (const id of ids) await store.deleteSign(id); setSelectedIds(new Set()); }}
+              onBulkPermanentDelete={async (ids) => { for (const id of ids) await store.permanentDeleteSign(id); setSelectedIds(new Set()); }}
+              onBulkArchive={async (ids) => { for (const id of ids) await store.archiveSign(id, true); setSelectedIds(new Set()); }}
+              onBulkRestore={async (ids) => { for (const id of ids) await store.restoreSign(id); setSelectedIds(new Set()); }}
+              onExport={() => handleExport('signs')} onImport={() => handleImport('signs')}
+            />
+        </div>
+      )}
+
+      {/* Dictionary */}
+      {tab === 'dictionary' && (
+        <div className="space-y-4">
+          <ContentWithTrash
+            title="أقسام القاموس" icon="menu_book" iconColor="teal"
+            contentView={contentView}
+            setContentView={setContentView}
+            activeItems={store.dictSections.filter(s => !s.status || s.status === 'active')}
+            archivedItems={store.dictSections.filter(s => s.status === 'archived')}
+            deletedItems={store.dictSections.filter(s => s.status === 'deleted')}
+            search={search}
+            setSearch={setSearch}
+            selectedIds={selectedIds}
+            setSelectedIds={setSelectedIds}
+            columns={[{ key: 'nameAr', label: 'الاسم' }, { key: 'nameIt', label: 'بالإيطالية' }]}
+            filterFn={(item) => !search || item.nameAr?.includes(search) || item.nameIt?.toLowerCase().includes(search.toLowerCase())}
+            onAdd={() => { setForm({ nameAr: '', nameIt: '', icon: 'menu_book', order: store.dictSections.length + 1 }); setModal({ type: 'dictSection' }); }}
+            onEdit={(item) => { setForm(item); setModal({ type: 'dictSection', data: item as Record<string, unknown> }); }}
+            onDelete={(id) => setConfirmDel({ type: 'dictSection', id })}
+            onPermanentDelete={(id) => setConfirmDel({ type: 'dictSection-permanent', id })}
+            onArchive={(id) => store.archiveDictSection(id, true)}
+            onUnarchive={(id) => store.archiveDictSection(id, false)}
+            onRestore={(id) => store.restoreDictSection(id)}
+            onBulkDelete={async (ids) => { for (const id of ids) await store.deleteDictSection(id); setSelectedIds(new Set()); }}
+            onBulkPermanentDelete={async (ids) => { for (const id of ids) await store.permanentDeleteDictSection(id); setSelectedIds(new Set()); }}
+            onBulkArchive={async (ids) => { for (const id of ids) await store.archiveDictSection(id, true); setSelectedIds(new Set()); }}
+            onBulkRestore={async (ids) => { for (const id of ids) await store.restoreDictSection(id); setSelectedIds(new Set()); }}
+            onExport={() => handleExport('dictionarySections')} onImport={() => handleImport('dictionarySections')}
+          />
+          <ContentWithTrash
+            title="مصطلحات القاموس" icon="menu_book" iconColor="cyan"
+            filterSlot={
+              <select value={filterDictSectionId} onChange={e => setFilterDictSectionId(e.target.value)}
+                className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
+                <option value="">كل الأقسام</option>
+                {store.dictSections.filter(s => !s.status || s.status === 'active').map(sec => (
+                  <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.dictEntries.filter(e => e.sectionId === sec.id).length})</option>
+                ))}
+              </select>
+            }
+            contentView={contentView}
+            setContentView={setContentView}
+            activeItems={store.dictEntries.filter(s => (!s.status || s.status === 'active') && (!filterDictSectionId || s.sectionId === filterDictSectionId))}
+            archivedItems={store.dictEntries.filter(s => s.status === 'archived' && (!filterDictSectionId || s.sectionId === filterDictSectionId))}
+            deletedItems={store.dictEntries.filter(s => s.status === 'deleted' && (!filterDictSectionId || s.sectionId === filterDictSectionId))}
+            search={search}
+            setSearch={setSearch}
+            selectedIds={selectedIds}
+            setSelectedIds={setSelectedIds}
+            columns={[{ key: 'termAr', label: 'المصطلح' }, { key: 'termIt', label: 'بالإيطالية' }, { key: 'sectionId', label: 'القسم', render: (v: unknown) => store.dictSections.find(s => s.id === v)?.nameAr || '' }]}
+            filterFn={(item) => !search || item.termAr?.includes(search) || item.termIt?.toLowerCase().includes(search.toLowerCase())}
+            onAdd={() => { setForm({ sectionId: '', termIt: '', termAr: '', definitionIt: '', definitionAr: '', order: store.dictEntries.length + 1 }); setModal({ type: 'dictEntry' }); }}
+            onEdit={(item) => { setForm(item); setModal({ type: 'dictEntry', data: item as Record<string, unknown> }); }}
+            onDelete={(id) => setConfirmDel({ type: 'dictEntry', id })}
+            onPermanentDelete={(id) => setConfirmDel({ type: 'dictEntry-permanent', id })}
+            onArchive={(id) => store.archiveDictEntry(id, true)}
+            onUnarchive={(id) => store.archiveDictEntry(id, false)}
+            onRestore={(id) => store.restoreDictEntry(id)}
+            onBulkDelete={async (ids) => { for (const id of ids) await store.deleteDictEntry(id); setSelectedIds(new Set()); }}
+            onBulkPermanentDelete={async (ids) => { for (const id of ids) await store.permanentDeleteDictEntry(id); setSelectedIds(new Set()); }}
+            onBulkArchive={async (ids) => { for (const id of ids) await store.archiveDictEntry(id, true); setSelectedIds(new Set()); }}
+            onBulkRestore={async (ids) => { for (const id of ids) await store.restoreDictEntry(id); setSelectedIds(new Set()); }}
+            onExport={() => handleExport('dictionaryEntries')} onImport={() => handleImport('dictionaryEntries')}
+          />
+        </div>
+      )}
+
+      {/* Users */}
+      {tab === 'users' && (() => {
+        const selectedUser = store.adminUsers.find(u => u.id === viewUser);
+
+        if (selectedUser) {
+          const totalAns = selectedUser.progress.correctAnswers + selectedUser.progress.wrongAnswers;
+          const acc = totalAns > 0 ? Math.round((selectedUser.progress.correctAnswers / totalAns) * 100) : 0;
+          return (
+            <div className="space-y-4">
+              <button onClick={() => setViewUser(null)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600">
+                <Icon name="arrow_forward" size={20} /><span className="text-sm">العودة للمستخدمين</span>
+              </button>
+              <div className="bg-white rounded-xl border border-surface-100 p-6">
+                <div className="flex items-center gap-4 mb-6">
+                  {selectedUser.avatar ? (
+                    <img src={selectedUser.avatar} className="w-16 h-16 rounded-xl object-cover" alt="" />
+                  ) : (
+                    <div className="w-16 h-16 bg-primary-100 rounded-xl flex items-center justify-center">
+                      <span className="text-xl font-bold text-primary-700">{selectedUser.name.charAt(0)}</span>
+                    </div>
+                  )}
+                  <div>
+                    <h2 className="text-xl font-bold text-surface-900">{selectedUser.name}</h2>
+                    <p className="text-sm text-surface-500">{selectedUser.email}</p>
+                    <div className="flex gap-2 mt-1 flex-wrap">
+                      <span className={cn('text-xs px-2 py-0.5 rounded-full', selectedUser.isBanned ? 'bg-danger-50 text-danger-600' : 'bg-success-50 text-success-600')}>
+                        {selectedUser.isBanned ? 'محظور' : 'نشط'}
+                      </span>
+                      <span className={cn('text-xs px-2 py-0.5 rounded-full', selectedUser.role === 'admin' ? 'bg-purple-50 text-purple-600' : selectedUser.role === 'manager' ? 'bg-amber-50 text-amber-600' : 'bg-blue-50 text-blue-600')}>
+                        {selectedUser.role === 'admin' ? 'مسؤول رئيسي' : selectedUser.role === 'manager' ? 'مدير' : 'مستخدم'}
+                      </span>
+                      {selectedUser.verified && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-primary-50 text-primary-600 flex items-center gap-1">
+                          <VerifiedBadge size="xs" /> موثق
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* User Stats */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                  <div className="bg-surface-50 rounded-xl p-3 text-center">
+                    <p className="text-lg font-bold text-surface-900">{selectedUser.progress.level}</p>
+                    <p className="text-[10px] text-surface-400">المستوى</p>
+                  </div>
+                  <div className="bg-surface-50 rounded-xl p-3 text-center">
+                    <p className="text-lg font-bold text-surface-900">{selectedUser.progress.xp}</p>
+                    <p className="text-[10px] text-surface-400">XP</p>
+                  </div>
+                  <div className="bg-surface-50 rounded-xl p-3 text-center">
+                    <p className="text-lg font-bold text-surface-900">{acc}%</p>
+                    <p className="text-[10px] text-surface-400">الدقة</p>
+                  </div>
+                  <div className="bg-surface-50 rounded-xl p-3 text-center">
+                    <p className="text-lg font-bold text-surface-900">{selectedUser.progress.examReadiness}%</p>
+                    <p className="text-[10px] text-surface-400">الجاهزية</p>
+                  </div>
+                </div>
+
+                {/* Manager Permissions */}
+                {selectedUser.role === 'manager' && (
+                  <div className="mb-6 p-4 bg-amber-50 rounded-xl border border-amber-100">
+                    <h3 className="text-sm font-bold text-amber-800 mb-3 flex items-center gap-1">
+                      <Icon name="tune" size={18} /> صلاحيات المدير
+                    </h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { key: 'overview', label: 'نظرة عامة', icon: 'dashboard' },
+                        { key: 'users', label: 'المستخدمين', icon: 'group' },
+                        { key: 'sections', label: 'الأقسام', icon: 'folder' },
+                        { key: 'lessons', label: 'الدروس', icon: 'school' },
+                        { key: 'questions', label: 'الأسئلة', icon: 'quiz' },
+                        { key: 'signs', label: 'الإشارات', icon: 'traffic' },
+                        { key: 'dictionary', label: 'القاموس', icon: 'menu_book' },
+                        { key: 'posts', label: 'المنشورات', icon: 'forum' },
+                        { key: 'comments', label: 'التعليقات', icon: 'chat_bubble' },
+                        { key: 'reports', label: 'البلاغات', icon: 'flag' },
+                        { key: 'logs', label: 'السجلات', icon: 'history' },
+                        { key: 'analytics', label: 'الزيارات', icon: 'analytics' },
+                      ].map(perm => {
+                        const perms: string[] = (selectedUser as Record<string, unknown>).permissions as string[] || [];
+                        const has = perms.includes(perm.key);
+                        return (
+                          <button key={perm.key} className={cn('flex items-center gap-2 p-2 rounded-lg text-xs font-medium transition-all', has ? 'bg-amber-200 text-amber-900' : 'bg-white text-surface-500 border border-surface-200')}
+                            onClick={async () => {
+                              const db = await import('@/db/database').then(m => m.getDB());
+                              const u = await db.get('users', selectedUser.id);
+                              if (u) {
+                                const current: string[] = u.permissions || [];
+                                u.permissions = has ? current.filter((p: string) => p !== perm.key) : [...current, perm.key];
+                                await db.put('users', u);
+                                store.loadAdminUsers();
+                              }
+                            }}>
+                            <Icon name={perm.icon} size={14} />
+                            {perm.label}
+                            {has && <Icon name="check" size={12} className="mr-auto" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Personal Info */}
+                <div className="border-t border-surface-100 pt-4 mt-4">
+                  <h3 className="text-sm font-bold text-surface-900 mb-3 flex items-center gap-1">
+                    <Icon name="person" size={16} className="text-primary-500" /> المعلومات الشخصية
+                  </h3>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="bg-surface-50 rounded-lg p-2.5"><p className="text-[10px] text-surface-400">الاسم الأول</p><p className="font-medium text-surface-800">{selectedUser.firstName || '—'}</p></div>
+                    <div className="bg-surface-50 rounded-lg p-2.5"><p className="text-[10px] text-surface-400">اسم العائلة</p><p className="font-medium text-surface-800">{selectedUser.lastName || '—'}</p></div>
+                    <div className="bg-surface-50 rounded-lg p-2.5"><p className="text-[10px] text-surface-400">اسم المستخدم</p><p className="font-medium text-surface-800">@{selectedUser.username || '—'}</p></div>
+                    <div className="bg-surface-50 rounded-lg p-2.5"><p className="text-[10px] text-surface-400">البريد</p><p className="font-medium text-surface-800 truncate">{selectedUser.email}</p></div>
+                    <div className="bg-surface-50 rounded-lg p-2.5"><p className="text-[10px] text-surface-400">تاريخ الميلاد</p><p className="font-medium text-surface-800">{selectedUser.birthDate || '—'}</p></div>
+                    <div className="bg-surface-50 rounded-lg p-2.5"><p className="text-[10px] text-surface-400">الجنس</p><p className="font-medium text-surface-800">{selectedUser.gender === 'male' ? 'ذكر' : selectedUser.gender === 'female' ? 'أنثى' : '—'}</p></div>
+                    <div className="bg-surface-50 rounded-lg p-2.5"><p className="text-[10px] text-surface-400">الهاتف</p><p className="font-medium text-surface-800" dir="ltr">{selectedUser.phone ? `${selectedUser.phoneCode || ''} ${selectedUser.phone}` : '—'}</p></div>
+                    <div className="bg-surface-50 rounded-lg p-2.5"><p className="text-[10px] text-surface-400">الدولة / المحافظة</p><p className="font-medium text-surface-800">{selectedUser.province ? `${selectedUser.province}, Italia` : '—'}</p></div>
+                    <div className="bg-surface-50 rounded-lg p-2.5"><p className="text-[10px] text-surface-400">مستوى الإيطالية</p><p className="font-medium text-surface-800">{selectedUser.italianLevel === 'weak' ? 'ضعيف' : selectedUser.italianLevel === 'good' ? 'جيد' : selectedUser.italianLevel === 'very_good' ? 'جيد جداً' : selectedUser.italianLevel === 'native' ? 'إيطالي' : '—'}</p></div>
+                    <div className="bg-surface-50 rounded-lg p-2.5"><p className="text-[10px] text-surface-400">إكمال البيانات</p><p className={cn("font-medium", selectedUser.profileComplete ? 'text-success-600' : 'text-warning-600')}>{selectedUser.profileComplete ? '✓ مكتمل' : '⚠ غير مكتمل'}</p></div>
+                  </div>
+                </div>
+
+                {/* Learning Stats */}
+                <div className="border-t border-surface-100 pt-4 mt-4">
+                  <h3 className="text-sm font-bold text-surface-900 mb-3 flex items-center gap-1">
+                    <Icon name="school" size={16} className="text-primary-500" /> إحصائيات التعلم
+                  </h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between py-1 border-b border-surface-50"><span className="text-surface-500">الاختبارات</span><span className="font-medium">{selectedUser.progress.totalQuizzes}</span></div>
+                    <div className="flex justify-between py-1 border-b border-surface-50"><span className="text-surface-500">إجابات صحيحة</span><span className="font-medium text-success-600">{selectedUser.progress.correctAnswers}</span></div>
+                    <div className="flex justify-between py-1 border-b border-surface-50"><span className="text-surface-500">إجابات خاطئة</span><span className="font-medium text-danger-600">{selectedUser.progress.wrongAnswers}</span></div>
+                    <div className="flex justify-between py-1 border-b border-surface-50"><span className="text-surface-500">الدقة</span><span className="font-medium">{acc}%</span></div>
+                    <div className="flex justify-between py-1 border-b border-surface-50"><span className="text-surface-500">الدروس المكتملة</span><span className="font-medium">{selectedUser.progress.completedLessons.length}</span></div>
+                    <div className="flex justify-between py-1 border-b border-surface-50"><span className="text-surface-500">سلسلة الأيام</span><span className="font-medium">{selectedUser.progress.currentStreak} (أفضل: {selectedUser.progress.bestStreak})</span></div>
+                    <div className="flex justify-between py-1 border-b border-surface-50"><span className="text-surface-500">XP</span><span className="font-medium">{selectedUser.progress.xp}</span></div>
+                    <div className="flex justify-between py-1 border-b border-surface-50"><span className="text-surface-500">جاهزية الامتحان</span><span className={cn("font-medium", selectedUser.progress.examReadiness >= 70 ? 'text-success-600' : 'text-warning-600')}>{selectedUser.progress.examReadiness}%</span></div>
+                    <div className="flex justify-between py-1 border-b border-surface-50"><span className="text-surface-500">الشارات</span><span className="font-medium">{selectedUser.progress.badges.join(', ') || 'لا توجد'}</span></div>
+                  </div>
+                </div>
+
+                {/* Account Info */}
+                <div className="border-t border-surface-100 pt-4 mt-4">
+                  <h3 className="text-sm font-bold text-surface-900 mb-3 flex items-center gap-1">
+                    <Icon name="info" size={16} className="text-primary-500" /> معلومات الحساب
+                  </h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between py-1 border-b border-surface-50"><span className="text-surface-500">تاريخ التسجيل</span><span className="font-medium">{new Date(selectedUser.createdAt).toLocaleString('ar')}</span></div>
+                    <div className="flex justify-between py-1 border-b border-surface-50"><span className="text-surface-500">آخر دخول</span><span className="font-medium">{new Date(selectedUser.lastLogin).toLocaleString('ar')}</span></div>
+                    <div className="flex justify-between py-1 border-b border-surface-50"><span className="text-surface-500">آخر دراسة</span><span className="font-medium">{selectedUser.progress.lastStudyDate ? new Date(selectedUser.progress.lastStudyDate).toLocaleString('ar') : 'لم يدرس بعد'}</span></div>
+                    <div className="flex justify-between py-1 border-b border-surface-50"><span className="text-surface-500">لغة العرض</span><span className="font-medium">{selectedUser.settings.language === 'ar' ? 'العربية' : selectedUser.settings.language === 'it' ? 'الإيطالية' : 'كلاهما'}</span></div>
+                    <div className="flex justify-between py-1"><span className="text-surface-500">النبذة</span><span className="font-medium">{selectedUser.bio || '—'}</span></div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex flex-wrap gap-2 mt-6 pt-4 border-t border-surface-100">
+                  {selectedUser.role !== 'admin' && (
+                    <Button size="sm" variant={selectedUser.isBanned ? 'primary' : 'danger'}
+                      onClick={() => { store.banUser(selectedUser.id, !selectedUser.isBanned); }}
+                      icon={<Icon name={selectedUser.isBanned ? 'lock_open' : 'block'} size={16} />}>
+                      {selectedUser.isBanned ? 'إلغاء الحظر الكامل' : 'حظر المستخدم كاملاً'}
+                    </Button>
+                  )}
+                  {selectedUser.email !== 'admin@patente.com' && (
+                    <>
+                      <Button size="sm" variant="secondary"
+                        onClick={async () => {
+                          const db = await import('@/db/database').then(m => m.getDB());
+                          const u = await db.get('users', selectedUser.id);
+                          if (u) {
+                            if (u.role === 'manager') {
+                              u.role = 'user';
+                              u.permissions = [];
+                            } else {
+                              u.role = 'manager';
+                              // Start with NO permissions - admin must grant them manually
+                              u.permissions = [];
+                            }
+                            await db.put('users', u);
+                            store.loadAdminUsers();
+                          }
+                        }}
+                        icon={<Icon name="admin_panel_settings" size={16} />}>
+                        {selectedUser.role === 'manager' ? 'إزالة صلاحيات المدير' : 'تعيين كمدير (بدون صلاحيات)'}
+                      </Button>
+                      <Button size="sm" variant="secondary"
+                        onClick={async () => {
+                          const db = await import('@/db/database').then(m => m.getDB());
+                          const u = await db.get('users', selectedUser.id);
+                          if (u) {
+                            u.verified = !u.verified;
+                            await db.put('users', u);
+                            store.loadAdminUsers();
+                          }
+                        }}
+                        icon={<Icon name={selectedUser.verified ? 'verified' : 'new_releases'} size={16} />}>
+                        {selectedUser.verified ? 'إلغاء التحقق' : 'تحقق من المستخدم ✓'}
+                      </Button>
+                      <Button size="sm" variant="danger"
+                        onClick={() => { setConfirmDel({ type: 'user', id: selectedUser.id }); setViewUser(null); }}
+                        icon={<Icon name="delete" size={16} />}>
+                        حذف الحساب
+                      </Button>
+                    </>
+                  )}
+                </div>
+
+                {/* Community Restrictions */}
+                <div className="mt-5 p-4 bg-orange-50 rounded-xl border border-orange-100">
+                  <h3 className="text-sm font-bold text-orange-800 mb-3 flex items-center gap-1">
+                    <Icon name="shield" size={16} /> قيود المجتمع
+                    <span className="text-[10px] font-normal text-orange-500 mr-1">(تطبق فوراً على الحساب)</span>
+                  </h3>
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {(() => {
+                    const cr = (selectedUser as Record<string, unknown>).communityRestrictions as { canPost?: boolean; canComment?: boolean; canReply?: boolean } || {};
+                    const canPost = cr.canPost !== false;
+                    const canComment = cr.canComment !== false;
+                    const canReply = cr.canReply !== false;
+                    return (
+                      <div className="grid grid-cols-3 gap-2">
+                        {[
+                          { key: 'canPost', label: 'النشر', icon: 'edit_note', allowed: canPost },
+                          { key: 'canComment', label: 'التعليق', icon: 'chat_bubble', allowed: canComment },
+                          { key: 'canReply', label: 'الرد', icon: 'reply', allowed: canReply },
+                        ].map(item => (
+                          <button key={item.key}
+                            className={cn('flex flex-col items-center gap-1 p-2.5 rounded-xl border-2 transition-all text-xs font-semibold',
+                              item.allowed ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700')}
+                            onClick={() => store.setCommunityRestrictions(selectedUser.id, { [item.key]: !item.allowed })}>
+                            <Icon name={item.icon} size={18} />
+                            {item.label}
+                            <span className={cn('text-[10px] font-bold', item.allowed ? 'text-green-600' : 'text-red-600')}>
+                              {item.allowed ? '✓ مسموح' : '✗ محظور'}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        return (
+        <div className="space-y-4">
+        {/* View toggle for Users */}
+        <div className="flex gap-2 flex-wrap">
+          {([
+            { v: 'active',  icon: 'group',       label: `نشط (${store.adminUsers.filter(u => !u.isBanned).length})`,       color: 'bg-primary-500 border-primary-500' },
+            { v: 'banned',  icon: 'block',        label: `محظور (${store.adminUsers.filter(u => u.isBanned).length})`,      color: 'bg-danger-500 border-danger-500' },
+            { v: 'deleted', icon: 'delete',       label: `محذوف (${store.deletedUsers.length})`,                           color: 'bg-danger-500 border-danger-500' },
+          ] as { v: ContentView; icon: string; label: string; color: string }[]).map(({ v, icon, label, color }) => (
+            <button key={v} onClick={() => setContentView(v)}
+              className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border',
+                contentView === v ? `${color} text-white` : 'bg-white text-surface-600 border-surface-200 hover:border-primary-200')}>
+              <Icon name={icon} size={14} />
+              {label}
+            </button>
+          ))}
+        </div>
+        {contentView === 'deleted' ? (
+          <div className="bg-white rounded-xl border border-danger-100 overflow-hidden">
+            <div className="p-4 border-b border-danger-100 bg-danger-50 flex items-center gap-2">
+              <Icon name="delete" size={18} className="text-danger-500" />
+              <h3 className="font-bold text-danger-700">المستخدمين المحذوفين ({store.deletedUsers.length})</h3>
+              <span className="text-xs text-danger-400 mr-1">يمكن استعادتهم أو حذفهم نهائياً</span>
+            </div>
+            {store.deletedUsers.length === 0 ? (
+              <div className="p-8 text-center text-surface-400"><Icon name="delete" size={36} className="mx-auto mb-2 opacity-30" /><p>لا توجد مستخدمين محذوفين</p></div>
+            ) : (
+              <div className="divide-y divide-surface-50 max-h-[500px] overflow-y-auto">
+                {store.deletedUsers.map(u => (
+                  <div key={u.id} className="p-4 flex items-center gap-3 hover:bg-danger-50/50 transition-colors">
+                    {u.avatar ? <img src={u.avatar} className="w-9 h-9 rounded-full object-cover shrink-0" alt="" /> : (
+                      <div className="w-9 h-9 bg-danger-100 rounded-full flex items-center justify-center shrink-0">
+                        <span className="text-sm font-bold text-danger-600">{u.name.charAt(0)}</span>
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-surface-700 truncate">{u.name}</p>
+                      <p className="text-xs text-surface-400 truncate">{u.email}</p>
+                      <p className="text-[10px] text-danger-400">حُذف: {u.deletedAt ? new Date(u.deletedAt).toLocaleDateString('ar') : '—'}</p>
+                    </div>
+                    <div className="flex gap-1.5 shrink-0">
+                      <button title="استعادة" className="p-1.5 rounded-lg bg-success-50 hover:bg-success-100 text-success-600 transition-colors" onClick={() => store.restoreUser(u.id)}>
+                        <Icon name="restore" size={16} />
+                      </button>
+                      <button title="حذف نهائي" className="p-1.5 rounded-lg bg-danger-50 hover:bg-danger-100 text-danger-600 transition-colors" onClick={() => setConfirmDel({ type: 'user-permanent', id: u.id })}>
+                        <Icon name="delete_forever" size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : contentView === 'banned' ? (
+          <div className="bg-white rounded-xl border border-danger-100 overflow-hidden">
+            <div className="p-4 border-b border-danger-100 bg-danger-50 flex items-center gap-2">
+              <Icon name="block" size={18} className="text-danger-500" />
+              <h3 className="font-bold text-danger-700">المستخدمين المحظورين ({store.adminUsers.filter(u => u.isBanned).length})</h3>
+            </div>
+            {store.adminUsers.filter(u => u.isBanned).length === 0 ? (
+              <div className="p-8 text-center text-surface-400"><Icon name="block" size={36} className="mx-auto mb-2 opacity-30" /><p>لا يوجد مستخدمين محظورين</p></div>
+            ) : (
+              <div className="divide-y divide-surface-50">
+                {store.adminUsers.filter(u => u.isBanned).map(u => (
+                  <div key={u.id} className="p-4 flex items-center gap-3 hover:bg-danger-50/40 transition-colors">
+                    {u.avatar ? <img src={u.avatar} className="w-9 h-9 rounded-full object-cover shrink-0" alt="" /> : (
+                      <div className="w-9 h-9 bg-danger-100 rounded-full flex items-center justify-center shrink-0">
+                        <span className="text-sm font-bold text-danger-600">{u.name.charAt(0)}</span>
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-surface-700 truncate">{u.name}</p>
+                      <p className="text-xs text-surface-400 truncate">{u.email}</p>
+                    </div>
+                    <button className="p-1.5 rounded-lg bg-success-50 hover:bg-success-100 text-success-600 transition-colors text-xs font-medium flex items-center gap-1"
+                      onClick={() => store.banUser(u.id, false)}>
+                      <Icon name="lock_open" size={15} />
+                      رفع الحظر
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+        <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+          <div className="p-4 border-b border-surface-100 flex items-center justify-between flex-wrap gap-3">
+            <h2 className="font-bold text-surface-900">المستخدمين النشطين ({store.adminUsers.filter(u => !u.isBanned).length})</h2>
+            <div className="flex items-center gap-2">
+              <input className="border border-surface-200 rounded-lg px-3 py-1.5 text-sm w-48" placeholder="بحث..." value={search} onChange={e => setSearch(e.target.value)} />
+              {userSelectedIds.size > 0 && (
+                <button className="px-3 py-1.5 text-xs font-semibold bg-danger-500 text-white rounded-lg hover:bg-danger-600" onClick={async () => {
+                  if (!confirm(`حذف ${userSelectedIds.size} مستخدم؟`)) return;
+                  for (const id of userSelectedIds) { await store.deleteUser(id); }
+                  setUserSelectedIds(new Set());
+                }}>حذف المحدد ({userSelectedIds.size})</button>
+              )}
+              <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-400" title="تصدير" onClick={() => {
+                const usersToExport = userSelectedIds.size > 0
+                  ? store.adminUsers.filter(u => userSelectedIds.has(u.id))
+                  : store.adminUsers;
+                const rows = usersToExport.map(u => ({
+                  الاسم: u.name, البريد: u.email,
+                  الهاتف: u.phone ? `${u.phoneCode || ''} ${u.phone}` : '',
+                  الدولة: u.country || 'Italia', المحافظة: u.province || '',
+                  الجنس: u.gender === 'male' ? 'ذكر' : u.gender === 'female' ? 'أنثى' : '',
+                  تاريخ_الميلاد: u.birthDate || '', مستوى_الإيطالية: u.italianLevel || '',
+                  الدور: u.role, الحالة: u.isBanned ? 'محظور' : 'نشط',
+                  تاريخ_التسجيل: new Date(u.createdAt).toLocaleDateString('ar'),
+                }));
+                const blob = new Blob([JSON.stringify(rows, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob); const a = document.createElement('a');
+                a.href = url; a.download = 'users_export.json'; a.click();
+              }}><Icon name="download" size={18} /></button>
+            </div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-surface-50"><tr>
+                <th className="p-3 w-8">
+                  <input type="checkbox" className="rounded"
+                    checked={userSelectedIds.size === store.adminUsers.filter(u => !search || u.name.includes(search) || u.email.includes(search)).length && store.adminUsers.length > 0}
+                    onChange={e => {
+                      const filtered = store.adminUsers.filter(u => !search || u.name.includes(search) || u.email.includes(search));
+                      if (e.target.checked) setUserSelectedIds(new Set(filtered.map(u => u.id)));
+                      else setUserSelectedIds(new Set());
+                    }} />
+                </th>
+                <th className="text-right p-3 font-semibold text-surface-600">المستخدم</th>
+                <th className="text-right p-3 font-semibold text-surface-600">البريد</th>
+                <th className="text-right p-3 font-semibold text-surface-600">الدور</th>
+                <th className="text-right p-3 font-semibold text-surface-600">المستوى</th>
+                <th className="text-right p-3 font-semibold text-surface-600">الحالة</th>
+                <th className="text-right p-3 font-semibold text-surface-600 w-28">إجراءات</th>
+              </tr></thead>
+              <tbody>
+                {store.adminUsers.filter(u => !u.isBanned && (!search || u.name.includes(search) || u.email.includes(search))).map(u => (
+                  <tr key={u.id} className={cn('border-t border-surface-50 hover:bg-surface-50 cursor-pointer', userSelectedIds.has(u.id) && 'bg-primary-50')} onClick={() => setViewUser(u.id)}>
+                    <td className="p-3" onClick={e => e.stopPropagation()}>
+                      <input type="checkbox" className="rounded" checked={userSelectedIds.has(u.id)}
+                        onChange={e => { const s = new Set(userSelectedIds); e.target.checked ? s.add(u.id) : s.delete(u.id); setUserSelectedIds(s); }} />
+                    </td>
+                    <td className="p-3">
+                      <div className="flex items-center gap-2">
+                        {u.avatar ? <img src={u.avatar} className="w-7 h-7 rounded-full object-cover" alt="" /> : (
+                          <div className="w-7 h-7 bg-primary-100 rounded-full flex items-center justify-center"><span className="text-xs font-bold text-primary-700">{u.name.charAt(0)}</span></div>
+                        )}
+                        <span className="font-medium">{u.name}</span>
+                      </div>
+                    </td>
+                    <td className="p-3 text-surface-500">{u.email}</td>
+                    <td className="p-3">
+                      <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium',
+                        u.role === 'admin' ? 'bg-purple-50 text-purple-600' :
+                        u.role === 'manager' ? 'bg-amber-50 text-amber-600' :
+                        'bg-surface-100 text-surface-500')}>
+                        {u.role === 'admin' ? 'أدمن' : u.role === 'manager' ? 'مدير' : 'مستخدم'}
+                      </span>
+                    </td>
+                    <td className="p-3">{u.progress.level}</td>
+                    <td className="p-3">
+                      <span className={cn('text-xs px-2 py-0.5 rounded-full', u.isBanned ? 'bg-danger-50 text-danger-600' : 'bg-success-50 text-success-600')}>
+                        {u.isBanned ? 'محظور' : 'نشط'}
+                      </span>
+                    </td>
+                    <td className="p-3" onClick={e => e.stopPropagation()}>
+                      <div className="flex gap-1">
+                        <button className="p-1 rounded hover:bg-surface-100" title="عرض التفاصيل" onClick={() => setViewUser(u.id)}>
+                          <Icon name="visibility" size={16} className="text-primary-500" />
+                        </button>
+                        {u.role !== 'admin' && (
+                          <button className="p-1 rounded hover:bg-surface-100" onClick={() => store.banUser(u.id, !u.isBanned)}>
+                            <Icon name={u.isBanned ? 'lock_open' : 'block'} size={16} className={u.isBanned ? 'text-success-500' : 'text-warning-500'} />
+                          </button>
+                        )}
+                        {u.email !== 'admin@patente.com' && (
+                          <button className="p-1 rounded hover:bg-surface-100" onClick={() => setConfirmDel({ type: 'user', id: u.id })}>
+                            <Icon name="delete" size={16} className="text-danger-500" />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        )} {/* end else active users */}
+        </div>
+        );
+      })()}
+
+      {/* Posts */}
+      {tab === 'posts' && (() => {
+        const filtered = store.posts.filter(p => !search || p.content.includes(search) || p.userName.includes(search));
+        const [selectedPostIds, setSelectedPostIds] = [postSelectedIds, setPostSelectedIds];
+        return (
+        <div className="space-y-4">
+        {/* View toggle for Posts */}
+        <div className="flex gap-2">
+          {(['active', 'deleted'] as const).map(v => (
+            <button key={v} onClick={() => setContentView(v)}
+              className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border',
+                contentView === v ? (v === 'deleted' ? 'bg-danger-500 text-white border-danger-500' : 'bg-primary-500 text-white border-primary-500') : 'bg-white text-surface-600 border-surface-200 hover:border-primary-200')}>
+              <Icon name={v === 'deleted' ? 'delete' : 'forum'} size={14} />
+              {v === 'active' ? `نشط (${store.posts.length})` : `محذوف (${store.deletedPosts.length})`}
+            </button>
+          ))}
+        </div>
+        {contentView === 'deleted' ? (
+          <div className="bg-white rounded-xl border border-danger-100 overflow-hidden">
+            <div className="p-4 border-b border-danger-100 bg-danger-50 flex items-center gap-2">
+              <Icon name="delete" size={18} className="text-danger-500" />
+              <h3 className="font-bold text-danger-700">المنشورات المحذوفة ({store.deletedPosts.length})</h3>
+              <span className="text-xs text-danger-400 mr-1">يمكن استعادتها أو حذفها نهائياً</span>
+            </div>
+            {store.deletedPosts.length === 0 ? (
+              <div className="p-8 text-center text-surface-400"><Icon name="delete" size={36} className="mx-auto mb-2 opacity-30" /><p>لا توجد منشورات محذوفة</p></div>
+            ) : (
+              <div className="divide-y divide-surface-50 max-h-[500px] overflow-y-auto">
+                {store.deletedPosts.map(p => (
+                  <div key={p.id} className="p-4 flex items-start gap-3 hover:bg-danger-50/50 transition-colors">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        {p.userAvatar ? <img src={p.userAvatar} className="w-6 h-6 rounded-full object-cover" alt="" /> :
+                          <div className="w-6 h-6 bg-danger-100 rounded-full flex items-center justify-center shrink-0"><span className="text-[10px] font-bold text-danger-600">{p.userName.charAt(0)}</span></div>}
+                        <span className="text-sm font-semibold text-surface-700">{p.userName}</span>
+                        <span className="text-[10px] text-danger-400 mr-auto">حُذف: {p.deletedAt ? new Date(p.deletedAt).toLocaleDateString('ar') : '—'}</span>
+                      </div>
+                      <p className="text-sm text-surface-500 line-clamp-2">{p.content}</p>
+                    </div>
+                    <div className="flex gap-1.5 shrink-0">
+                      <button title="استعادة" className="p-1.5 rounded-lg bg-success-50 hover:bg-success-100 text-success-600 transition-colors" onClick={() => store.restorePost(p.id)}>
+                        <Icon name="restore" size={16} />
+                      </button>
+                      <button title="حذف نهائي" className="p-1.5 rounded-lg bg-danger-50 hover:bg-danger-100 text-danger-600 transition-colors" onClick={() => setConfirmDel({ type: 'post-permanent', id: p.id })}>
+                        <Icon name="delete_forever" size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+        <>
+        {/* Community settings card */}
+        <div className="bg-white rounded-xl border border-surface-100 p-4">
+          <h3 className="text-sm font-bold text-surface-800 flex items-center gap-2 mb-3">
+            <Icon name="settings" size={16} className="text-primary-500" />
+            إعدادات المجتمع
+          </h3>
+          <div className="flex items-center justify-between p-3 bg-surface-50 rounded-xl border border-surface-200">
+            <div className="flex items-center gap-3">
+              <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center', communityAllowImages ? 'bg-primary-100' : 'bg-surface-200')}>
+                <Icon name="image" size={18} className={communityAllowImages ? 'text-primary-600' : 'text-surface-400'} />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-surface-800">رفع الصور في المنشورات</p>
+                <p className="text-xs text-surface-500">السماح للمستخدمين برفع صور عند إنشاء منشور</p>
+              </div>
+            </div>
+            <button
+              className={cn('relative w-12 h-6 rounded-full transition-colors shrink-0', communityAllowImages ? 'bg-primary-500' : 'bg-surface-300')}
+              onClick={toggleCommunityImages}
+              title={communityAllowImages ? 'إيقاف رفع الصور' : 'تفعيل رفع الصور'}>
+              <span className={cn('absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform', communityAllowImages ? 'translate-x-6 left-0.5' : 'translate-x-0 left-0.5')} />
+            </button>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+          <div className="p-4 border-b border-surface-100">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-bold text-surface-900 flex items-center gap-2">
+                <Icon name="forum" size={20} className="text-primary-500" />
+                المنشورات
+                <span className="text-xs bg-surface-100 text-surface-500 px-2 py-0.5 rounded-full">{filtered.length}/{store.posts.length}</span>
+              </h2>
+              {selectedPostIds.size > 0 && (
+                <button onClick={async () => { if(confirm(`حذف ${selectedPostIds.size} منشور؟`)) { for(const id of selectedPostIds) await store.adminDeletePost(id); setSelectedPostIds(new Set()); }}}
+                  className="flex items-center gap-1.5 text-xs text-danger-600 bg-danger-50 hover:bg-danger-100 px-3 py-1.5 rounded-lg font-medium">
+                  <Icon name="delete" size={14} /> حذف المحدد ({selectedPostIds.size})
+                </button>
+              )}
+            </div>
+            <input className="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm" placeholder="بحث في المنشورات..." value={search} onChange={e => setSearch(e.target.value)} />
+          </div>
+          {filtered.length === 0 ? (
+            <div className="p-8 text-center text-surface-400">لا توجد منشورات</div>
+          ) : (
+            <div className="divide-y divide-surface-50 max-h-[600px] overflow-y-auto">
+              {filtered.map(p => (
+                <div key={p.id} className={cn('p-4 flex items-start gap-3 hover:bg-surface-50 transition-colors', selectedPostIds.has(p.id) && 'bg-primary-50')}>
+                  <input type="checkbox" className="mt-1 rounded" checked={selectedPostIds.has(p.id)}
+                    onChange={e => { const s = new Set(selectedPostIds); e.target.checked ? s.add(p.id) : s.delete(p.id); setSelectedPostIds(s); }} />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      {p.userAvatar ? <img src={p.userAvatar} className="w-7 h-7 rounded-full object-cover" alt="" /> :
+                        <div className="w-7 h-7 bg-primary-100 rounded-full flex items-center justify-center shrink-0"><span className="text-xs font-bold text-primary-700">{p.userName.charAt(0)}</span></div>}
+                      <span className="text-sm font-semibold text-surface-800">{p.userName}</span>
+                      {p.pinned && <span className="text-[10px] bg-amber-50 text-amber-600 px-1.5 rounded-full">مثبت</span>}
+                      {p.type === 'quiz' && <span className="text-[10px] bg-purple-50 text-purple-600 px-1.5 rounded-full">سؤال</span>}
+                      <span className="text-[10px] text-surface-400 mr-auto">{new Date(p.createdAt).toLocaleDateString('ar')}</span>
+                    </div>
+                    <p className="text-sm text-surface-600 line-clamp-2">{p.content}</p>
+                    <div className="flex items-center gap-3 mt-1.5">
+                      <span className="text-[10px] text-surface-400 flex items-center gap-0.5"><Icon name="favorite" size={11} /> {p.likesCount}</span>
+                      <span className="text-[10px] text-surface-400 flex items-center gap-0.5"><Icon name="chat_bubble" size={11} /> {p.commentsCount}</span>
+                    </div>
+                  </div>
+                  <button className="p-1.5 rounded-lg hover:bg-danger-50 text-danger-400 hover:text-danger-600 shrink-0"
+                    onClick={() => setConfirmDel({ type: 'post', id: p.id })}>
+                    <Icon name="delete" size={16} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        </> )} {/* end else active posts */}
+        </div>
+        );
+      })()}
+
+      {/* Comments */}
+      {tab === 'comments' && (
+        <div className="space-y-4">
+        {/* View toggle for Comments */}
+        <div className="flex gap-2">
+          {(['active', 'deleted'] as const).map(v => (
+            <button key={v} onClick={() => setContentView(v)}
+              className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border',
+                contentView === v ? (v === 'deleted' ? 'bg-danger-500 text-white border-danger-500' : 'bg-primary-500 text-white border-primary-500') : 'bg-white text-surface-600 border-surface-200 hover:border-primary-200')}>
+              <Icon name={v === 'deleted' ? 'delete' : 'chat_bubble'} size={14} />
+              {v === 'active' ? `نشط (${allComments.length})` : `محذوف (${store.deletedComments.length})`}
+            </button>
+          ))}
+        </div>
+        {contentView === 'deleted' ? (
+          <div className="bg-white rounded-xl border border-danger-100 overflow-hidden">
+            <div className="p-4 border-b border-danger-100 bg-danger-50 flex items-center gap-2">
+              <Icon name="delete" size={18} className="text-danger-500" />
+              <h3 className="font-bold text-danger-700">التعليقات المحذوفة ({store.deletedComments.length})</h3>
+              <span className="text-xs text-danger-400 mr-1">يمكن استعادتها أو حذفها نهائياً</span>
+            </div>
+            {store.deletedComments.length === 0 ? (
+              <div className="p-8 text-center text-surface-400"><Icon name="delete" size={36} className="mx-auto mb-2 opacity-30" /><p>لا توجد تعليقات محذوفة</p></div>
+            ) : (
+              <div className="divide-y divide-surface-50 max-h-[500px] overflow-y-auto">
+                {store.deletedComments.map(c => (
+                  <div key={c.id} className="p-4 flex items-start gap-3 hover:bg-danger-50/50 transition-colors">
+                    <div className="w-8 h-8 bg-danger-100 rounded-full flex items-center justify-center shrink-0">
+                      <span className="text-xs font-bold text-danger-600">{c.userName.charAt(0)}</span>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-sm font-semibold text-surface-700">{c.userName}</span>
+                        {c.parentId && <span className="text-[10px] bg-blue-50 text-blue-500 px-1.5 rounded-full">رد</span>}
+                        <span className="text-[10px] text-danger-400 mr-auto">حُذف: {c.deletedAt ? new Date(c.deletedAt).toLocaleDateString('ar') : '—'}</span>
+                      </div>
+                      <p className="text-sm text-surface-600">{c.content}</p>
+                      {c.postContent && (
+                        <p className="text-xs text-surface-400 mt-1 flex items-center gap-1 bg-surface-50 rounded-lg px-2 py-1">
+                          <Icon name="reply" size={12} />على: {c.postContent}...
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex gap-1.5 shrink-0">
+                      <button title="استعادة" className="p-1.5 rounded-lg bg-success-50 hover:bg-success-100 text-success-600 transition-colors" onClick={() => store.restoreComment(c.id)}>
+                        <Icon name="restore" size={16} />
+                      </button>
+                      <button title="حذف نهائي" className="p-1.5 rounded-lg bg-danger-50 hover:bg-danger-100 text-danger-600 transition-colors" onClick={() => setConfirmDel({ type: 'comment-permanent', id: c.id })}>
+                        <Icon name="delete_forever" size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+        <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+          <div className="p-4 border-b border-surface-100">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-bold text-surface-900 flex items-center gap-2">
+                <Icon name="chat_bubble" size={20} className="text-primary-500" />
+                التعليقات
+                <span className="text-xs bg-surface-100 text-surface-500 px-2 py-0.5 rounded-full">
+                  {allComments.filter(c => !search || c.content.includes(search) || c.userName.includes(search)).length}/{allComments.length}
+                </span>
+              </h2>
+            </div>
+            <input className="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm" placeholder="بحث في التعليقات..." value={search} onChange={e => setSearch(e.target.value)} />
+          </div>
+          {allComments.length === 0 ? (
+            <div className="p-8 text-center text-surface-400">لا توجد تعليقات</div>
+          ) : (
+            <div className="divide-y divide-surface-50 max-h-[600px] overflow-y-auto">
+              {allComments
+                .filter(c => !search || c.content.includes(search) || c.userName.includes(search))
+                .map(c => (
+                <div key={c.id} className="p-4 hover:bg-surface-50 transition-colors">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 min-w-0 flex-1">
+                      <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center shrink-0">
+                        <span className="text-xs font-bold text-primary-700">{c.userName.charAt(0)}</span>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="text-sm font-semibold text-surface-800">{c.userName}</span>
+                          {c.parentId && <span className="text-[10px] bg-blue-50 text-blue-500 px-1.5 rounded-full">رد</span>}
+                          <span className="text-[10px] text-surface-400 mr-auto">{new Date(c.createdAt).toLocaleDateString('ar')}</span>
+                        </div>
+                        <p className="text-sm text-surface-700">{c.content}</p>
+                        {c.postContent && (
+                          <p className="text-xs text-surface-400 mt-1 flex items-center gap-1 bg-surface-50 rounded-lg px-2 py-1">
+                            <Icon name="reply" size={12} />
+                            على: {c.postContent}...
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <button className="p-1.5 rounded-lg hover:bg-danger-50 text-danger-400 hover:text-danger-600 shrink-0"
+                      onClick={() => setConfirmDel({ type: 'comment', id: c.id })}>
+                      <Icon name="delete" size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        )} {/* end else active comments */}
+        {/* Deleted Comments old placeholder - removed */}
+        {false && (
+          <div className="bg-white rounded-xl border border-danger-100 overflow-hidden">
+            <div className="p-4 border-b border-danger-100 bg-danger-50 flex items-center gap-2">
+              <Icon name="delete" size={18} className="text-danger-500" />
+              <h3 className="font-bold text-danger-700">المحذوفات ({store.deletedComments.length})</h3>
+              <span className="text-xs text-danger-400 mr-1">يمكن استعادتها أو حذفها نهائياً</span>
+            </div>
+            <div className="divide-y divide-surface-50 max-h-[400px] overflow-y-auto">
+              {store.deletedComments.map(c => (
+                <div key={c.id} className="p-4 flex items-start gap-3 bg-danger-50/30 hover:bg-danger-50 transition-colors">
+                  <div className="w-8 h-8 bg-danger-100 rounded-full flex items-center justify-center shrink-0">
+                    <span className="text-xs font-bold text-danger-600">{c.userName.charAt(0)}</span>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="text-sm font-semibold text-surface-700">{c.userName}</span>
+                      {c.parentId && <span className="text-[10px] bg-blue-50 text-blue-500 px-1.5 rounded-full">رد</span>}
+                      <span className="text-[10px] text-danger-400 mr-auto">حُذف: {c.deletedAt ? new Date(c.deletedAt).toLocaleDateString('ar') : '—'}</span>
+                    </div>
+                    <p className="text-sm text-surface-600">{c.content}</p>
+                    {c.postContent && (
+                      <p className="text-xs text-surface-400 mt-1 flex items-center gap-1 bg-surface-50 rounded-lg px-2 py-1">
+                        <Icon name="reply" size={12} />
+                        على: {c.postContent}...
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex gap-1.5 shrink-0">
+                    <button title="استعادة" className="p-1.5 rounded-lg bg-success-50 hover:bg-success-100 text-success-600 transition-colors"
+                      onClick={() => store.restoreComment(c.id)}>
+                      <Icon name="restore" size={16} />
+                    </button>
+                    <button title="حذف نهائي" className="p-1.5 rounded-lg bg-danger-50 hover:bg-danger-100 text-danger-600 transition-colors"
+                      onClick={() => setConfirmDel({ type: 'comment-permanent', id: c.id })}>
+                      <Icon name="delete_forever" size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        </div>
+      )}
+
+      {/* Reports */}
+      {tab === 'reports' && (
+        <>
+        {/* Report detail modal */}
+        {viewedReport && (() => {
+          const r = viewedReport;
+          const reporter = store.adminUsers.find(u => u.id === r.userId);
+          const reportedPost = r.type === 'post' ? store.posts.find(p => p.id === r.targetId) : null;
+          const reportedComment = r.type === 'comment' ? allComments.find(c => c.id === r.targetId) : null;
+          const reportedUser = r.type === 'user' ? store.adminUsers.find(u => u.id === r.targetId) : null;
+          return (
+            <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+              onClick={() => setViewedReport(null)}>
+              <div className="bg-white rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto shadow-2xl"
+                onClick={e => e.stopPropagation()}>
+                {/* Modal header */}
+                <div className="flex items-center justify-between p-5 border-b border-surface-100">
+                  <div className="flex items-center gap-2">
+                    <Icon name="flag" size={20} className="text-warning-500" />
+                    <h3 className="font-bold text-surface-900">تفاصيل البلاغ</h3>
+                  </div>
+                  <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-400"
+                    onClick={() => setViewedReport(null)}>
+                    <Icon name="close" size={18} />
+                  </button>
+                </div>
+
+                <div className="p-5 space-y-4">
+                  {/* Status & type row */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className={cn('text-xs px-2.5 py-1 rounded-full font-semibold',
+                      r.status === 'pending' ? 'bg-warning-50 text-warning-700 border border-warning-200' :
+                      r.status === 'reviewed' ? 'bg-success-50 text-success-700 border border-success-200' :
+                      'bg-surface-100 text-surface-600 border border-surface-200')}>
+                      {r.status === 'pending' ? '⏳ قيد المراجعة' : r.status === 'reviewed' ? '✓ تمت المراجعة' : '✗ مرفوض'}
+                    </span>
+                    <span className={cn('text-xs px-2.5 py-1 rounded-full font-semibold',
+                      r.type === 'post' ? 'bg-blue-50 text-blue-700 border border-blue-200' :
+                      r.type === 'comment' ? 'bg-purple-50 text-purple-700 border border-purple-200' :
+                      'bg-orange-50 text-orange-700 border border-orange-200')}>
+                      {r.type === 'post' ? '📝 منشور' : r.type === 'comment' ? '💬 تعليق' : '👤 مستخدم'}
+                    </span>
+                    <span className="text-xs text-surface-400 mr-auto">{new Date(r.createdAt).toLocaleDateString('ar')}</span>
+                  </div>
+
+                  {/* Reason */}
+                  <div className="bg-warning-50 rounded-xl p-3 border border-warning-100">
+                    <p className="text-[10px] text-warning-600 font-semibold mb-1">سبب البلاغ</p>
+                    <p className="text-sm text-surface-800">"{r.reason}"</p>
+                  </div>
+
+                  {/* Reported content */}
+                  {reportedPost && (
+                    <div>
+                      <p className="text-[10px] font-semibold text-surface-500 mb-2">المنشور المُبلَّغ عنه</p>
+                      <div className="bg-surface-50 rounded-xl p-3 border border-surface-200 space-y-2">
+                        <div className="flex items-center gap-2">
+                          {reportedPost.userAvatar
+                            ? <img src={reportedPost.userAvatar} className="w-7 h-7 rounded-full object-cover" alt="" />
+                            : <div className="w-7 h-7 bg-primary-100 rounded-full flex items-center justify-center shrink-0"><span className="text-[10px] font-bold text-primary-700">{reportedPost.userName.charAt(0)}</span></div>}
+                          <span className="text-sm font-semibold text-surface-800">{reportedPost.userName}</span>
+                          <span className="text-[10px] text-surface-400 mr-auto">{new Date(reportedPost.createdAt).toLocaleDateString('ar')}</span>
+                        </div>
+                        {reportedPost.image && <img src={reportedPost.image} alt="" className="rounded-lg w-full max-h-40 object-cover" />}
+                        <p className="text-sm text-surface-700 leading-relaxed">{reportedPost.content || reportedPost.quizQuestion}</p>
+                        <div className="flex items-center gap-3 text-[10px] text-surface-400 pt-1 border-t border-surface-100">
+                          <span className="flex items-center gap-1"><Icon name="favorite" size={11} /> {reportedPost.likesCount}</span>
+                          <span className="flex items-center gap-1"><Icon name="chat_bubble" size={11} /> {reportedPost.commentsCount}</span>
+                          {reportedPost.shadowBanned && <span className="text-orange-500 font-semibold">⚠ shadow-banned</span>}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {reportedComment && (
+                    <div>
+                      <p className="text-[10px] font-semibold text-surface-500 mb-2">التعليق المُبلَّغ عنه</p>
+                      <div className="bg-surface-50 rounded-xl p-3 border border-surface-200 space-y-2">
+                        <div className="flex items-center gap-2">
+                          {reportedComment.userAvatar
+                            ? <img src={reportedComment.userAvatar} className="w-7 h-7 rounded-full object-cover" alt="" />
+                            : <div className="w-7 h-7 bg-purple-100 rounded-full flex items-center justify-center shrink-0"><span className="text-[10px] font-bold text-purple-700">{reportedComment.userName.charAt(0)}</span></div>}
+                          <span className="text-sm font-semibold text-surface-800">{reportedComment.userName}</span>
+                          <span className="text-[10px] text-surface-400 mr-auto">{new Date(reportedComment.createdAt).toLocaleDateString('ar')}</span>
+                        </div>
+                        <p className="text-sm text-surface-700">{reportedComment.content}</p>
+                        {reportedComment.postContent && (
+                          <p className="text-[10px] text-surface-400 pt-1 border-t border-surface-100">في المنشور: "{reportedComment.postContent}..."</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {reportedUser && (
+                    <div>
+                      <p className="text-[10px] font-semibold text-surface-500 mb-2">المستخدم المُبلَّغ عنه</p>
+                      <div className="bg-surface-50 rounded-xl p-3 border border-surface-200 flex items-center gap-3">
+                        {reportedUser.avatar
+                          ? <img src={reportedUser.avatar} className="w-10 h-10 rounded-full object-cover" alt="" />
+                          : <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center"><span className="text-sm font-bold text-orange-700">{reportedUser.name.charAt(0)}</span></div>}
+                        <div>
+                          <p className="font-semibold text-surface-800">{reportedUser.name}</p>
+                          <p className="text-xs text-surface-500">{reportedUser.email}</p>
+                          {reportedUser.isBanned && <span className="text-[10px] text-danger-600 font-semibold">محظور</span>}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Reporter info */}
+                  <div className="flex items-center gap-2 text-xs text-surface-500 bg-surface-50 rounded-lg p-2.5">
+                    <Icon name="person" size={14} className="text-surface-400" />
+                    <span>البلاغ من:</span>
+                    <span className="font-semibold text-surface-700">{reporter?.name || 'مجهول'}</span>
+                    {reporter?.email && <span className="text-surface-400">({reporter.email})</span>}
+                  </div>
+
+                  {/* Action buttons */}
+                  {r.status === 'pending' && (
+                    <div className="flex gap-2 pt-1">
+                      <Button fullWidth size="sm" onClick={() => { store.updateReport(r.id, 'reviewed'); setViewedReport(null); }}>
+                        <Icon name="check" size={15} /> قبول البلاغ
+                      </Button>
+                      <Button fullWidth size="sm" variant="ghost" onClick={() => { store.updateReport(r.id, 'dismissed'); setViewedReport(null); }}>
+                        رفض البلاغ
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+        <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+          <div className="p-4 border-b border-surface-100">
+            <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+              <h2 className="font-bold text-surface-900 flex items-center gap-2">
+                <Icon name="flag" size={20} className="text-warning-500" />
+                البلاغات
+                <span className="text-xs bg-warning-50 text-warning-600 px-2 py-0.5 rounded-full font-medium">
+                  {store.adminReports.filter(r => r.status === 'pending').length} قيد المراجعة
+                </span>
+              </h2>
+              <div className="flex gap-1.5 flex-wrap">
+                {(['all', 'pending', 'reviewed', 'dismissed'] as const).map(s => (
+                  <button key={s} onClick={() => setSearch(s === 'all' ? '' : s)}
+                    className={cn('text-[11px] px-2.5 py-1 rounded-lg border font-medium',
+                      (s === 'all' && !search) || search === s
+                        ? 'bg-primary-500 text-white border-primary-500'
+                        : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
+                    {s === 'all' ? 'الكل' : s === 'pending' ? 'قيد المراجعة' : s === 'reviewed' ? 'مراجعة' : 'مرفوض'}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="divide-y divide-surface-50 max-h-[600px] overflow-y-auto">
+            {(() => {
+              const filtered = store.adminReports.filter(r => !search || r.status === search);
+              if (filtered.length === 0) return <div className="p-8 text-center text-surface-400">لا توجد بلاغات</div>;
+              return filtered.map(r => {
+                const reporter = store.adminUsers.find(u => u.id === r.userId);
+                const reportedPost = r.type === 'post' ? store.posts.find(p => p.id === r.targetId) : null;
+                const reportedComment = r.type === 'comment' ? allComments.find(c => c.id === r.targetId) : null;
+                const reportedUser = r.type === 'user' ? store.adminUsers.find(u => u.id === r.targetId) : null;
+                const contentPreview = reportedPost
+                  ? (reportedPost.content || reportedPost.quizQuestion || '').substring(0, 100)
+                  : reportedComment
+                    ? reportedComment.content.substring(0, 100)
+                    : reportedUser
+                      ? reportedUser.name
+                      : null;
+                return (
+                  <div key={r.id} className="p-4 hover:bg-surface-50 transition-colors">
+                    <div className="flex items-start gap-3">
+                      {/* Type icon */}
+                      <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0',
+                        r.type === 'post' ? 'bg-blue-50' : r.type === 'comment' ? 'bg-purple-50' : 'bg-orange-50')}>
+                        <Icon name={r.type === 'post' ? 'article' : r.type === 'comment' ? 'chat_bubble' : 'person'}
+                          size={18}
+                          className={r.type === 'post' ? 'text-blue-500' : r.type === 'comment' ? 'text-purple-500' : 'text-orange-500'} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                          <span className={cn('text-[11px] px-2 py-0.5 rounded-full font-semibold',
+                            r.status === 'pending' ? 'bg-warning-50 text-warning-700' :
+                            r.status === 'reviewed' ? 'bg-success-50 text-success-700' : 'bg-surface-100 text-surface-500')}>
+                            {r.status === 'pending' ? '⏳ قيد المراجعة' : r.status === 'reviewed' ? '✓ مراجعة' : '✗ مرفوض'}
+                          </span>
+                          <span className={cn('text-[11px] px-2 py-0.5 rounded-full',
+                            r.type === 'post' ? 'bg-blue-50 text-blue-600' :
+                            r.type === 'comment' ? 'bg-purple-50 text-purple-600' : 'bg-orange-50 text-orange-600')}>
+                            {r.type === 'post' ? 'منشور' : r.type === 'comment' ? 'تعليق' : 'مستخدم'}
+                          </span>
+                          <span className="text-[10px] text-surface-400 mr-auto">{new Date(r.createdAt).toLocaleDateString('ar')}</span>
+                        </div>
+                        {/* Reason */}
+                        <p className="text-sm font-semibold text-surface-800 mb-1.5">"{r.reason}"</p>
+                        {/* Content preview */}
+                        {contentPreview && (
+                          <div className="bg-surface-50 rounded-lg px-3 py-2 text-xs text-surface-600 border border-surface-100 line-clamp-2 mb-2">
+                            {contentPreview}{contentPreview.length >= 100 ? '...' : ''}
+                          </div>
+                        )}
+                        {/* Reporter */}
+                        <div className="flex items-center gap-2 text-[11px] text-surface-400">
+                          <Icon name="person" size={12} />
+                          <span>البلاغ من: <span className="font-medium text-surface-600">{reporter?.name || 'مجهول'}</span></span>
+                          {reportedPost && <span className="text-surface-300">|</span>}
+                          {reportedPost && <span>بواسطة: <span className="font-medium text-surface-600">{reportedPost.userName}</span></span>}
+                        </div>
+                      </div>
+                      {/* View button */}
+                      <button
+                        className="p-2 rounded-xl hover:bg-primary-50 text-surface-400 hover:text-primary-600 transition-colors shrink-0 border border-surface-200 hover:border-primary-200"
+                        onClick={() => setViewedReport(r)}
+                        title="عرض المحتوى الكامل">
+                        <Icon name="open_in_new" size={15} />
+                      </button>
+                    </div>
+
+                    {r.status === 'pending' && (
+                      <div className="flex gap-2 mt-3 mr-12">
+                        <Button size="sm" onClick={() => store.updateReport(r.id, 'reviewed')}>
+                          <Icon name="check" size={14} /> قبول
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => store.updateReport(r.id, 'dismissed')}>
+                          رفض
+                        </Button>
+                        <button
+                          className="flex items-center gap-1 text-[11px] text-primary-600 hover:text-primary-700 font-medium mr-auto"
+                          onClick={() => setViewedReport(r)}>
+                          <Icon name="visibility" size={13} /> عرض المحتوى
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              });
+            })()}
+          </div>
+        </div>
+        </>
+      )}
+
+      {/* Logs - with admin name */}
+      {tab === 'logs' && (
+        <div className="space-y-3">
+          {/* Logs header card — consistent with other tabs */}
+          <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+          <div className="p-3.5 border-b border-surface-100 space-y-2.5">
+            {/* Row 1: icon+title+count | search | export */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-2 mr-auto">
+                <div className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
+                  <Icon name="history" size={15} className="text-slate-500" filled />
+                </div>
+                <span className="font-bold text-surface-900 text-sm">سجلات الإدارة</span>
+                <span className="text-xs text-surface-400 bg-surface-100 px-1.5 py-0.5 rounded-full">
+                  {store.adminLogs.filter(l => {
+                    const adminName = store.adminUsers.find(u => u.id === l.adminId)?.name || '';
+                    const matchSearch = !search || l.action.includes(search) || l.details.includes(search) || adminName.includes(search);
+                    const matchType = !logTypeFilter || logTypeFilter === 'الكل' || l.action.includes(logTypeFilter);
+                    return matchSearch && matchType;
+                  }).length} / {store.adminLogs.length}
+                </span>
+              </div>
+              <input className="border border-surface-200 rounded-lg px-2.5 py-1.5 text-xs w-40 focus:outline-none focus:border-primary-400"
+                placeholder="بحث في السجلات..." value={search} onChange={e => { setSearch(e.target.value); setLogPage(1); }} />
+              <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-400 border border-surface-200"
+                title="تصدير السجلات"
+                onClick={() => {
+                  const exp = store.adminLogs.filter(l => {
+                    const adminName = store.adminUsers.find(u => u.id === l.adminId)?.name || '';
+                    const matchSearch = !search || l.action.includes(search) || l.details.includes(search) || adminName.includes(search);
+                    const matchType = !logTypeFilter || logTypeFilter === 'الكل' || l.action.includes(logTypeFilter);
+                    return matchSearch && matchType;
+                  });
+                  const blob = new Blob([JSON.stringify(exp, null, 2)], { type: 'application/json' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a'); a.href = url;
+                  a.download = `admin-logs-${new Date().toISOString().slice(0, 10)}.json`; a.click();
+                }}>
+                <Icon name="download" size={18} />
+              </button>
+            </div>
+            {/* Row 2: type filter pills */}
+            <div className="flex gap-1.5 flex-wrap">
+              {['الكل', 'إنشاء', 'تعديل', 'حذف', 'حظر', 'تصدير', 'استيراد', 'أرشفة', 'تسجيل', 'كلمة مرور'].map(type => (
+                <button key={type}
+                  className={cn('px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all border',
+                    (logTypeFilter === type || (!logTypeFilter && type === 'الكل'))
+                      ? 'bg-primary-500 text-white border-primary-500'
+                      : 'bg-surface-50 text-surface-500 border-surface-200 hover:border-primary-300'
+                  )}
+                  onClick={() => { setLogTypeFilter(type === 'الكل' ? '' : type); setLogPage(1); }}>
+                  {type}
+                </button>
+              ))}
+            </div>
+            {/* Row 3: delete by date range */}
+            <div className="pt-2 border-t border-surface-100 flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-semibold text-surface-500 flex items-center gap-1"><Icon name="delete_sweep" size={14} className="text-danger-400" /> حذف بالتاريخ:</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-surface-400">من:</span>
+                <input type="date" value={logDeleteFrom} onChange={e => setLogDeleteFrom(e.target.value)}
+                  className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 focus:outline-none focus:border-primary-400" />
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-surface-400">إلى:</span>
+                <input type="date" value={logDeleteTo} onChange={e => setLogDeleteTo(e.target.value)}
+                  className="border border-surface-200 rounded-lg px-2 py-1 text-xs text-surface-700 focus:outline-none focus:border-primary-400" />
+              </div>
+              <button
+                disabled={!logDeleteFrom || !logDeleteTo}
+                onClick={() => setShowDeleteLogsConfirm(true)}
+                className={cn('flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all border', logDeleteFrom && logDeleteTo ? 'bg-danger-500 text-white border-danger-500 hover:bg-danger-600' : 'bg-surface-100 text-surface-400 border-surface-200 cursor-not-allowed')}>
+                <Icon name="delete_sweep" size={13} /> حذف
+              </button>
+            </div>
+          </div>
+          {/* Delete confirmation dialog */}
+          {showDeleteLogsConfirm && (
+            <div className="mx-4 mb-3 p-3 bg-danger-50 border border-danger-200 rounded-xl">
+              <p className="text-sm font-semibold text-danger-700 mb-1">تأكيد الحذف</p>
+              <p className="text-xs text-danger-600 mb-3">سيتم حذف جميع السجلات من <strong>{logDeleteFrom}</strong> إلى <strong>{logDeleteTo}</strong>. هذا الإجراء لا يمكن التراجع عنه.</p>
+              <div className="flex gap-2">
+                <button onClick={() => setShowDeleteLogsConfirm(false)} className="flex-1 py-1.5 rounded-lg text-xs font-medium bg-white border border-surface-200 text-surface-600 hover:bg-surface-50">إلغاء</button>
+                <button onClick={async () => {
+                  const deleted = await store.deleteAdminLogsByDateRange(logDeleteFrom, logDeleteTo);
+                  setShowDeleteLogsConfirm(false);
+                  setLogDeleteFrom(''); setLogDeleteTo('');
+                  alert(`تم حذف ${deleted} سجل بنجاح`);
+                }} className="flex-1 py-1.5 rounded-lg text-xs font-medium bg-danger-500 text-white hover:bg-danger-600">تأكيد الحذف</button>
+              </div>
+            </div>
+          )}
+          <div className="divide-y divide-surface-50 max-h-[600px] overflow-y-auto">
+            {(() => {
+              const filtered = store.adminLogs.filter(l => {
+                const adminName = store.adminUsers.find(u => u.id === l.adminId)?.name || '';
+                const matchSearch = !search || l.action.includes(search) || l.details.includes(search) || adminName.includes(search);
+                const matchType = !logTypeFilter || logTypeFilter === 'الكل' || l.action.includes(logTypeFilter);
+                return matchSearch && matchType;
+              });
+              if (filtered.length === 0) return (
+                <div className="p-12 text-center">
+                  <Icon name="search_off" size={40} className="text-surface-200 mx-auto mb-3" />
+                  <p className="text-surface-400">لا توجد سجلات تطابق البحث</p>
+                </div>
+              );
+              const PAGE_SIZE = 50;
+              const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+              const paginated = filtered.slice((logPage - 1) * PAGE_SIZE, logPage * PAGE_SIZE);
+              const getLogStyle = (action: string) => {
+                if (action.includes('حذف')) return { color: 'text-danger-500', bg: 'bg-danger-50', icon: 'delete' };
+                if (action.includes('إنشاء') || action.includes('إضافة')) return { color: 'text-success-500', bg: 'bg-success-50', icon: 'add_circle' };
+                if (action.includes('تعديل')) return { color: 'text-blue-500', bg: 'bg-blue-50', icon: 'edit' };
+                if (action.includes('حظر')) return { color: 'text-orange-500', bg: 'bg-orange-50', icon: 'block' };
+                if (action.includes('تصدير')) return { color: 'text-purple-500', bg: 'bg-purple-50', icon: 'download' };
+                if (action.includes('استيراد')) return { color: 'text-indigo-500', bg: 'bg-indigo-50', icon: 'upload' };
+                if (action.includes('أرشفة') || action.includes('استعادة')) return { color: 'text-amber-500', bg: 'bg-amber-50', icon: 'archive' };
+                if (action.includes('تسجيل') || action.includes('دخول')) return { color: 'text-green-500', bg: 'bg-green-50', icon: 'login' };
+                if (action.includes('كلمة المرور')) return { color: 'text-cyan-500', bg: 'bg-cyan-50', icon: 'lock_reset' };
+                if (action.includes('تهيئة')) return { color: 'text-cyan-500', bg: 'bg-cyan-50', icon: 'data_object' };
+                return { color: 'text-surface-500', bg: 'bg-surface-100', icon: 'info' };
+              };
+              return (
+                <>
+                  {paginated.map(l => {
+                    const admin = store.adminUsers.find(u => u.id === l.adminId);
+                    const style = getLogStyle(l.action);
+                    return (
+                      <div key={l.id} className="p-3 flex items-start gap-3 hover:bg-surface-50 transition-colors">
+                        <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0', style.bg)}>
+                          <Icon name={style.icon} size={18} className={style.color} filled />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                            <div className="flex items-center gap-1.5">
+                              {admin?.avatar
+                                ? <img src={admin.avatar} className="w-5 h-5 rounded-full object-cover" alt="" />
+                                : <div className="w-5 h-5 bg-primary-100 rounded-full flex items-center justify-center"><span className="text-[9px] font-bold text-primary-700">{(admin?.name || '?').charAt(0)}</span></div>
+                              }
+                              <span className="text-xs font-semibold text-primary-700">{admin?.name || 'نظام'}</span>
+                            </div>
+                            <span className={cn('text-[10px] font-bold px-1.5 py-0.5 rounded-full', style.bg, style.color)}>{l.action}</span>
+                            <span className="text-[10px] text-surface-400 mr-auto">{new Date(l.createdAt).toLocaleString('ar')}</span>
+                          </div>
+                          <p className="text-xs text-surface-600 leading-relaxed">{l.details}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {totalPages > 1 && (
+                    <div className="p-3 flex items-center justify-center gap-2 border-t border-surface-100">
+                      <button disabled={logPage === 1} onClick={() => setLogPage(p => p - 1)}
+                        className={cn('w-8 h-8 rounded-lg flex items-center justify-center text-sm border transition-all', logPage === 1 ? 'text-surface-300 border-surface-100 cursor-not-allowed' : 'text-surface-600 border-surface-200 hover:bg-surface-100')}>
+                        <Icon name="chevron_right" size={18} />
+                      </button>
+                      <span className="text-xs text-surface-500 font-medium">{logPage} / {totalPages}</span>
+                      <span className="text-xs text-surface-400">({filtered.length} سجل)</span>
+                      <button disabled={logPage === totalPages} onClick={() => setLogPage(p => p + 1)}
+                        className={cn('w-8 h-8 rounded-lg flex items-center justify-center text-sm border transition-all', logPage === totalPages ? 'text-surface-300 border-surface-100 cursor-not-allowed' : 'text-surface-600 border-surface-200 hover:bg-surface-100')}>
+                        <Icon name="chevron_left" size={18} />
+                      </button>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+          </div>
+        </div>
+        </div>
+      )}
+
+      {/* Analytics */}
+      {tab === 'analytics' && (() => {
+        const totalUsers = store.adminUsers.length;
+        const activeToday = store.adminStats?.activeToday || 0;
+        const totalPosts = store.posts.length;
+        const totalQuizzes = store.adminUsers.reduce((sum, u) => sum + u.progress.totalQuizzes, 0);
+
+        // Daily chart: last 7 days from real data
+        const now = new Date();
+        const last7 = Array.from({ length: 7 }, (_, i) => {
+          const d = new Date(now);
+          d.setDate(d.getDate() - (6 - i));
+          const key = d.toISOString().slice(0, 10);
+          const dayNames = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+          return { key, day: dayNames[d.getDay()], visits: visitStats?.dailyBreakdown?.[key] || 0 };
+        });
+
+        const avgQuizzes = totalUsers > 0 ? Math.round(totalQuizzes / totalUsers) : 0;
+        const completionRate = totalUsers > 0 ? Math.round(store.adminUsers.filter(u => u.profileComplete).length / totalUsers * 100) : 0;
+
+        // Page breakdown sorted
+        const pageEntries = Object.entries(visitStats?.pageBreakdown || {})
+          .sort((a, b) => b[1] - a[1]).slice(0, 5);
+        const maxPageViews = Math.max(...pageEntries.map(([, v]) => v), 1);
+
+        return (
+          <div className="space-y-6">
+            {/* Overview Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[
+                { label: 'إجمالي الزيارات', value: visitStats?.totalVisits || 0, icon: 'visibility', color: 'text-blue-500', bg: 'bg-blue-50' },
+                { label: 'زيارات آخر 7 أيام', value: visitStats?.last7DaysVisits || 0, icon: 'calendar_today', color: 'text-green-500', bg: 'bg-green-50' },
+                { label: 'جلسات نشطة (7 أيام)', value: visitStats?.sessions7 || 0, icon: 'devices', color: 'text-orange-500', bg: 'bg-orange-50' },
+                { label: 'مستخدمون نشطون اليوم', value: activeToday, icon: 'group', color: 'text-purple-500', bg: 'bg-purple-50' },
+              ].map((stat, i) => (
+                <div key={i} className="bg-white rounded-xl p-4 border border-surface-100">
+                  <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center mb-3', stat.bg)}>
+                    <Icon name={stat.icon} size={22} className={stat.color} filled />
+                  </div>
+                  <p className="text-2xl font-bold text-surface-900">{stat.value}</p>
+                  <p className="text-xs text-surface-500 mt-1">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Weekly Chart - Real Data */}
+            <div className="bg-white rounded-xl border border-surface-100 p-5">
+              <h3 className="font-bold text-surface-900 mb-4 flex items-center gap-2">
+                <Icon name="bar_chart" size={20} className="text-primary-500" filled />
+                الزيارات خلال آخر 7 أيام (بيانات حقيقية)
+              </h3>
+              {!visitStats ? (
+                <div className="py-10 text-center text-surface-400">جاري التحميل...</div>
+              ) : (
+                <div className="relative">
+                  <svg width="100%" height="180" viewBox={`0 0 ${last7.length * 60} 180`} preserveAspectRatio="none">
+                    {last7.map((d, i) => {
+                      const maxV = Math.max(...last7.map(w => w.visits), 1);
+                      const barH = Math.max(4, (d.visits / maxV) * 120);
+                      const isToday = i === 6;
+                      const colors = ['#6366f1','#8b5cf6','#ec4899','#f59e0b','#22c55e','#06b6d4','#3b82f6'];
+                      const x = i * 60 + 8;
+                      const barW = 44;
+                      const y = 130 - barH;
+                      return (
+                        <g key={i}>
+                          <rect x={x} y={y} width={barW} height={barH} rx="6"
+                            fill={isToday ? colors[i % colors.length] : colors[i % colors.length] + '60'}
+                            stroke={isToday ? colors[i % colors.length] : 'transparent'} strokeWidth="2" />
+                          <text x={x + barW / 2} y={y - 6} textAnchor="middle" fontSize="11" fontWeight="bold"
+                            fill={isToday ? colors[i % colors.length] : '#64748b'}>{d.visits}</text>
+                          <text x={x + barW / 2} y="150" textAnchor="middle" fontSize="10"
+                            fill={isToday ? colors[i % colors.length] : '#94a3b8'}
+                            fontWeight={isToday ? 'bold' : 'normal'}>
+                            {d.day.substring(0, 3)}
+                          </text>
+                          {isToday && (
+                            <rect x={x} y="155" width={barW} height="3" rx="1.5" fill={colors[i % colors.length]} />
+                          )}
+                        </g>
+                      );
+                    })}
+                  </svg>
+                </div>
+              )}
+            </div>
+
+            {/* Real Page Breakdown + Learning Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-white rounded-xl border border-surface-100 p-5">
+                <h3 className="font-bold text-surface-900 mb-4 flex items-center gap-2">
+                  <Icon name="web" size={18} className="text-primary-500" />
+                  أكثر الصفحات زيارة (حقيقي)
+                </h3>
+                {pageEntries.length === 0 ? (
+                  <p className="text-sm text-surface-400 text-center py-6">لا توجد بيانات بعد — ابدأ التصفح لتتراكم البيانات</p>
+                ) : (
+                  <div className="space-y-3">
+                    {pageEntries.map(([page, views]) => (
+                      <div key={page} className="flex items-center gap-3">
+                        <span className="text-xs text-surface-600 w-28 truncate">{page}</span>
+                        <div className="flex-1 bg-surface-100 rounded-full h-2">
+                          <div className="bg-primary-500 rounded-full h-2" style={{ width: `${Math.round((views / maxPageViews) * 100)}%` }} />
+                        </div>
+                        <span className="text-xs font-semibold text-surface-700 w-10 text-left">{views}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="bg-white rounded-xl border border-surface-100 p-5">
+                <h3 className="font-bold text-surface-900 mb-4 flex items-center gap-2">
+                  <Icon name="school" size={18} className="text-primary-500" />
+                  إحصائيات التعلم التفصيلية
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-xs font-semibold text-surface-600 mb-2">مستوى المستخدمين</p>
+                    <div className="flex gap-2">
+                      {[
+                        { label: 'مبتدئ (1-3)', count: store.adminUsers.filter(u => u.progress.level <= 3).length, icon: 'star_border' },
+                        { label: 'متوسط (4-7)', count: store.adminUsers.filter(u => u.progress.level >= 4 && u.progress.level <= 7).length, icon: 'star_half' },
+                        { label: 'متقدم (8+)', count: store.adminUsers.filter(u => u.progress.level >= 8).length, icon: 'star' },
+                      ].map(d => (
+                        <div key={d.label} className="flex-1 bg-surface-50 rounded-lg p-2 text-center">
+                          <Icon name={d.icon} size={18} className="text-surface-400 mx-auto mb-1" />
+                          <p className="text-sm font-bold text-surface-900">{d.count}</p>
+                          <p className="text-[10px] text-surface-400">{d.label}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-surface-600 mb-2">جاهزية الامتحان</p>
+                    <div className="space-y-1.5">
+                      {[
+                        { name: 'جاهز (70%+)', count: store.adminUsers.filter(u => u.progress.examReadiness >= 70).length, color: 'bg-success-500' },
+                        { name: 'متقدم (40-69%)', count: store.adminUsers.filter(u => u.progress.examReadiness >= 40 && u.progress.examReadiness < 70).length, color: 'bg-warning-500' },
+                        { name: 'مبتدئ (0-39%)', count: store.adminUsers.filter(u => u.progress.examReadiness < 40).length, color: 'bg-danger-500' },
+                      ].map(b => {
+                        const pct = totalUsers > 0 ? Math.round((b.count / totalUsers) * 100) : 0;
+                        return (
+                        <div key={b.name} className="flex items-center gap-2">
+                          <span className="text-xs text-surface-600 w-28">{b.name}</span>
+                          <div className="flex-1 bg-surface-100 rounded-full h-1.5">
+                            <div className={cn("rounded-full h-1.5", b.color)} style={{ width: `${pct}%` }} />
+                          </div>
+                          <span className="text-[10px] text-surface-500 w-12 text-left">{b.count} ({pct}%)</span>
+                        </div>
+                      );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* User Activity Summary */}
+            <div className="bg-white rounded-xl border border-surface-100 p-5">
+              <h3 className="font-bold text-surface-900 mb-4 flex items-center gap-2">
+                <Icon name="insights" size={18} className="text-primary-500" filled />
+                ملخص نشاط المستخدمين
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="bg-blue-50 rounded-xl p-3 text-center">
+                  <p className="text-xl font-bold text-blue-600">{totalQuizzes}</p>
+                  <p className="text-[10px] text-blue-500">اختبار أُجري</p>
+                </div>
+                <div className="bg-green-50 rounded-xl p-3 text-center">
+                  <p className="text-xl font-bold text-green-600">{store.adminUsers.reduce((s, u) => s + u.progress.completedLessons.length, 0)}</p>
+                  <p className="text-[10px] text-green-500">درس مكتمل</p>
+                </div>
+                <div className="bg-purple-50 rounded-xl p-3 text-center">
+                  <p className="text-xl font-bold text-purple-600">{totalPosts}</p>
+                  <p className="text-[10px] text-purple-500">منشور</p>
+                </div>
+                <div className="bg-orange-50 rounded-xl p-3 text-center">
+                  <p className="text-xl font-bold text-orange-600">{Math.round(store.adminUsers.reduce((s, u) => s + u.progress.examReadiness, 0) / Math.max(1, totalUsers))}%</p>
+                  <p className="text-[10px] text-orange-500">متوسط الجاهزية</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Language Management */}
+      {tab === 'languages' && (
+        <div className="space-y-6">
+          <div className="bg-white rounded-xl border border-surface-100 p-6">
+            <h2 className="text-lg font-bold text-surface-900 mb-1 flex items-center gap-2">
+              <Icon name="translate" size={20} className="text-primary-500" filled />
+              {t('admin.lang_title')}
+            </h2>
+            <p className="text-sm text-surface-400 mb-6">{t('admin.lang_desc')}</p>
+
+            <div className="space-y-4">
+              {/* Arabic */}
+              <div className="flex items-center justify-between p-4 bg-surface-50 rounded-xl border border-surface-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                    <span className="text-lg font-black text-green-700">ع</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-surface-900">{t('admin.lang_ar_name')}</p>
+                    <p className="text-xs text-surface-400">{t('admin.lang_rtl')} · ar</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {langDefault === 'ar' && (
+                    <span className="text-xs bg-primary-50 text-primary-700 border border-primary-200 px-2.5 py-1 rounded-full font-semibold">
+                      {t('admin.lang_current_default')}
+                    </span>
+                  )}
+                  <span className="text-xs bg-green-50 text-green-700 border border-green-200 px-2.5 py-1 rounded-full font-semibold">
+                    {t('admin.lang_enabled')}
+                  </span>
+                  {langDefault !== 'ar' && (
+                    <button
+                      onClick={() => handleSetDefault('ar')}
+                      className="text-xs bg-primary-500 text-white px-3 py-1.5 rounded-lg font-semibold hover:bg-primary-600 transition-colors">
+                      {t('admin.lang_set_default')}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Italian */}
+              <div className="flex items-center justify-between p-4 bg-surface-50 rounded-xl border border-surface-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <span className="text-sm font-black text-blue-700">IT</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-surface-900">{t('admin.lang_it_name')}</p>
+                    <p className="text-xs text-surface-400">{t('admin.lang_ltr')} · it</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {langDefault === 'it' && (
+                    <span className="text-xs bg-primary-50 text-primary-700 border border-primary-200 px-2.5 py-1 rounded-full font-semibold">
+                      {t('admin.lang_current_default')}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => handleToggleLang('it')}
+                    className={cn('text-xs px-2.5 py-1 rounded-full font-semibold border transition-colors',
+                      langEnabled.it
+                        ? 'bg-green-50 text-green-700 border-green-200 hover:bg-red-50 hover:text-red-700 hover:border-red-200'
+                        : 'bg-red-50 text-red-700 border-red-200 hover:bg-green-50 hover:text-green-700 hover:border-green-200'
+                    )}>
+                    {langEnabled.it ? t('admin.lang_enabled') : t('admin.lang_disabled')}
+                  </button>
+                  {langDefault !== 'it' && langEnabled.it && (
+                    <button
+                      onClick={() => handleSetDefault('it')}
+                      className="text-xs bg-primary-500 text-white px-3 py-1.5 rounded-lg font-semibold hover:bg-primary-600 transition-colors">
+                      {t('admin.lang_set_default')}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Current active setting */}
+          <div className="bg-primary-50 border border-primary-100 rounded-xl p-4 flex items-center gap-3">
+            <Icon name="language" size={20} className="text-primary-500" filled />
+            <div>
+              <p className="text-sm font-semibold text-primary-800">{t('admin.lang_active_users')}</p>
+              <p className="text-xs text-primary-600">
+                {uiLang === 'ar' ? t('admin.lang_ar_name') : t('admin.lang_it_name')} ·
+                {uiLang === 'ar' ? ' RTL' : ' LTR'}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal */}
+      {modal && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 overflow-y-auto" onClick={() => setModal(null)}>
+          <div className="bg-white rounded-2xl p-6 w-full max-w-lg my-8 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-surface-900 mb-4">{modal.data?.id ? 'تعديل' : 'إضافة'}</h3>
+            {modal.type === 'section' && (<>
+              {renderInput('الاسم بالإيطالية / Nome (IT)', 'nameIt')}
+              {renderInput('الاسم بالعربية / Nome (AR)', 'nameAr')}
+              {renderInput('الوصف بالإيطالية / Descrizione (IT)', 'descriptionIt', 'textarea')}
+              {renderInput('الوصف بالعربية / Descrizione (AR)', 'descriptionAr', 'textarea')}
+              {renderInput('الأيقونة', 'icon')}
+              {renderInput('اللون', 'color', 'color')}
+              {renderInput('صورة', 'image', 'image')}
+              {renderInput('الترتيب', 'order', 'number')}
+            </>)}
+            {modal.type === 'lesson' && (<>
+              {renderInput('القسم', 'sectionId', 'select-section')}
+              {renderInput('العنوان بالإيطالية / Titolo (IT)', 'titleIt')}
+              {renderInput('العنوان بالعربية / Titolo (AR)', 'titleAr')}
+              {renderInput('المحتوى بالإيطالية / Contenuto (IT)', 'contentIt', 'richtext')}
+              {renderInput('المحتوى بالعربية / Contenuto (AR)', 'contentAr', 'richtext')}
+              {renderInput('صورة', 'image', 'image')}
+              {renderInput('الترتيب', 'order', 'number')}
+            </>)}
+            {modal.type === 'question' && (<>
+              {renderInput('القسم', 'sectionId', 'select-section')}
+              {renderInput('الدرس', 'lessonId', 'select-lesson')}
+              {renderInput('السؤال بالإيطالية / Domanda (IT)', 'questionIt', 'textarea')}
+              {renderInput('السؤال بالعربية / Domanda (AR)', 'questionAr', 'textarea')}
+              {renderInput('الإجابة الصحيحة', 'isTrue', 'boolean')}
+              {renderInput('الشرح بالإيطالية / Spiegazione (IT)', 'explanationIt', 'textarea')}
+              {renderInput('الشرح بالعربية / Spiegazione (AR)', 'explanationAr', 'textarea')}
+              {renderInput('الصعوبة', 'difficulty', 'select-difficulty')}
+              {renderInput('صورة', 'image', 'image')}
+              {renderInput('الترتيب', 'order', 'number')}
+            </>)}
+            {modal.type === 'sign' && (<>
+              {renderInput('الاسم بالإيطالية', 'nameIt')}
+              {renderInput('الاسم بالعربية', 'nameAr')}
+              {renderInput('الوصف بالإيطالية', 'descriptionIt', 'textarea')}
+              {renderInput('الوصف بالعربية', 'descriptionAr', 'textarea')}
+              {renderInput('القسم', 'sectionId', 'select-sign-section')}
+              {renderInput('التصنيف', 'category')}
+              {renderInput('صورة', 'image', 'image-square')}
+              {renderInput('الترتيب', 'order', 'number')}
+            </>)}
+            {modal.type === 'signSection' && (<>
+              {renderInput('الاسم بالإيطالية', 'nameIt')}
+              {renderInput('الاسم بالعربية', 'nameAr')}
+              {renderInput('الأيقونة', 'icon')}
+              {renderInput('الترتيب', 'order', 'number')}
+            </>)}
+            {modal.type === 'dictSection' && (<>
+              {renderInput('الاسم بالإيطالية', 'nameIt')}
+              {renderInput('الاسم بالعربية', 'nameAr')}
+              {renderInput('الأيقونة', 'icon')}
+              {renderInput('الترتيب', 'order', 'number')}
+            </>)}
+            {modal.type === 'dictEntry' && (<>
+              {renderInput('القسم', 'sectionId', 'select-dict-section')}
+              {renderInput('المصطلح بالإيطالية', 'termIt')}
+              {renderInput('المصطلح بالعربية', 'termAr')}
+              {renderInput('التعريف بالإيطالية', 'definitionIt', 'textarea')}
+              {renderInput('التعريف بالعربية', 'definitionAr', 'textarea')}
+              {renderInput('الترتيب', 'order', 'number')}
+            </>)}
+            <div className="flex gap-3 mt-6">
+              <Button fullWidth variant="ghost" onClick={() => setModal(null)}>إلغاء</Button>
+              <Button fullWidth onClick={saveItem}>حفظ</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirm */}
+      {confirmDel && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setConfirmDel(null)}>
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
+            <Icon name="warning" size={40} className="text-danger-500 mx-auto mb-4" />
+            <h3 className="text-lg font-bold text-surface-900 text-center mb-2">
+              {confirmDel.type.includes('permanent') ? 'حذف نهائي' : 'نقل إلى المحذوفات'}
+            </h3>
+            <p className="text-sm text-surface-500 text-center mb-6">
+              {confirmDel.type.includes('permanent')
+                ? 'سيُحذف هذا العنصر نهائياً ولا يمكن استعادته.'
+                : 'سيُنقل إلى قسم المحذوفات ويمكن استعادته خلال 30 يوماً.'}
+            </p>
+            <div className="flex gap-3">
+              <Button fullWidth variant="ghost" onClick={() => setConfirmDel(null)}>إلغاء</Button>
+              <Button fullWidth variant="danger" onClick={handleDelete}>
+                {confirmDel.type.includes('permanent') ? 'حذف نهائي' : 'حذف'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── ContentWithTrash Component ──────────────────────────────────────────────
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyItem = any;
+
+function ContentWithTrash({
+  title, icon, iconColor, contentView, setContentView, activeItems, archivedItems, deletedItems,
+  search, setSearch, columns, filterFn,
+  onAdd, onEdit, onDelete, onPermanentDelete, onArchive, onUnarchive, onRestore,
+  onBulkDelete, onBulkPermanentDelete, onBulkArchive, onBulkRestore,
+  onExport, onImport, selectedIds, setSelectedIds, filterSlot,
+}: {
+  title: string;
+  icon?: string;
+  iconColor?: string;
+  contentView: ContentView;
+  setContentView: (v: ContentView) => void;
+  activeItems: AnyItem[];
+  archivedItems: AnyItem[];
+  deletedItems: AnyItem[];
+  search: string;
+  setSearch: (s: string) => void;
+  columns: { key: string; label: string; render?: (v: AnyItem) => AnyItem }[];
+  filterFn: (item: AnyItem) => boolean;
+  onAdd: () => void;
+  onEdit: (item: AnyItem) => void;
+  onDelete: (id: string) => void;
+  onPermanentDelete: (id: string) => void;
+  onArchive: (id: string) => void;
+  onUnarchive: (id: string) => void;
+  onRestore: (id: string) => void;
+  onBulkDelete: (ids: string[]) => Promise<void>;
+  onBulkPermanentDelete: (ids: string[]) => Promise<void>;
+  onBulkArchive: (ids: string[]) => Promise<void>;
+  onBulkRestore: (ids: string[]) => Promise<void>;
+  onExport: () => void;
+  onImport: () => void;
+  selectedIds: Set<string>;
+  setSelectedIds: (s: Set<string>) => void;
+  filterSlot?: React.ReactNode;
+}) {
+  const items = contentView === 'active' ? activeItems : contentView === 'archived' ? archivedItems : deletedItems;
+  const filtered = items.filter(filterFn);
+  const allSelected = filtered.length > 0 && filtered.every(i => selectedIds.has(i.id));
+
+  // Auto-purge deleted items older than 30 days (client-side check)
+  const daysLeft = (item: AnyItem) => {
+    if (!item.deletedAt) return 30;
+    const diff = Date.now() - new Date(item.deletedAt).getTime();
+    return Math.max(0, 30 - Math.floor(diff / 86400000));
+  };
+
+  return (
+    <div className="space-y-0">
+      <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+        {/* Header: view tabs + toolbar */}
+        <div className="border-b border-surface-100">
+          {/* Row 1: icon+title | view tabs */}
+          <div className="flex items-center gap-0 border-b border-surface-50">
+            {/* Icon + title */}
+            <div className="flex items-center gap-2 px-3.5 py-2.5 shrink-0 border-l border-surface-100">
+              {icon && (
+                <div className={cn('w-6 h-6 rounded-md flex items-center justify-center shrink-0', iconColor ? `bg-${iconColor}-50` : 'bg-surface-100')}>
+                  <Icon name={icon} size={14} className={iconColor ? `text-${iconColor}-500` : 'text-surface-500'} filled />
+                </div>
+              )}
+              <span className="font-bold text-surface-800 text-sm whitespace-nowrap">{title}</span>
+              <span className="text-[10px] text-surface-400 bg-surface-100 px-1.5 py-0.5 rounded-full shrink-0">{filtered.length}</span>
+            </div>
+            {/* View tabs */}
+            <div className="flex flex-1 h-full">
+              {([
+                { id: 'active', label: 'نشط', count: activeItems.length, activeClass: 'border-primary-500 text-primary-600 bg-primary-50/50' },
+                { id: 'archived', label: 'مؤرشف', count: archivedItems.length, activeClass: 'border-amber-500 text-amber-600 bg-amber-50/50' },
+                { id: 'deleted', label: 'محذوف', count: deletedItems.length, activeClass: 'border-danger-500 text-danger-600 bg-danger-50/50' },
+              ] as { id: ContentView; label: string; count: number; activeClass: string }[]).map(v => (
+                <button key={v.id} onClick={() => { setContentView(v.id); setSelectedIds(new Set()); }}
+                  className={cn('flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-semibold border-b-2 transition-all whitespace-nowrap',
+                    contentView === v.id ? v.activeClass : 'border-transparent text-surface-400 hover:text-surface-600 hover:bg-surface-50')}>
+                  {v.label}
+                  {v.count > 0 && (
+                    <span className={cn('rounded-full text-[9px] px-1.5 py-0 font-bold min-w-[16px] text-center',
+                      contentView === v.id ? 'bg-current/10' : 'bg-surface-100 text-surface-500')}>
+                      {v.count}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* Row 2: filter | search | import | export | add | bulk actions */}
+          <div className="flex items-center gap-1.5 px-3 py-2 flex-wrap bg-surface-50/50">
+            {filterSlot}
+            <input className="border border-surface-200 rounded-lg px-2.5 py-1.5 text-xs w-28 focus:outline-none focus:border-primary-400 bg-white" placeholder="بحث..." value={search} onChange={e => setSearch(e.target.value)} />
+            <div className="flex-1" />
+            {contentView === 'active' && (
+              <>
+                <button className="p-1.5 rounded-lg hover:bg-white text-surface-400 border border-surface-200 bg-white" onClick={onImport} title="استيراد"><Icon name="upload" size={15} /></button>
+                <button className="p-1.5 rounded-lg hover:bg-white text-surface-400 border border-surface-200 bg-white" onClick={onExport} title="تصدير"><Icon name="download" size={15} /></button>
+                <Button size="sm" onClick={onAdd} icon={<Icon name="add" size={14} />}>إضافة</Button>
+              </>
+            )}
+            {/* Bulk actions */}
+            {selectedIds.size > 0 && contentView === 'active' && (
+              <>
+                <button className="px-2.5 py-1.5 text-[11px] font-semibold bg-amber-500 text-white rounded-lg hover:bg-amber-600 flex items-center gap-1"
+                  onClick={async () => { if (!confirm(`أرشفة ${selectedIds.size} عناصر؟`)) return; await onBulkArchive(Array.from(selectedIds)); }}>
+                  <Icon name="inventory_2" size={12} /> أرشفة ({selectedIds.size})
+                </button>
+                <button className="px-2.5 py-1.5 text-[11px] font-semibold bg-danger-500 text-white rounded-lg hover:bg-danger-600 flex items-center gap-1"
+                  onClick={async () => { if (!confirm(`حذف ${selectedIds.size} عناصر؟`)) return; await onBulkDelete(Array.from(selectedIds)); }}>
+                  🗑 حذف ({selectedIds.size})
+                </button>
+              </>
+            )}
+            {selectedIds.size > 0 && contentView === 'archived' && (
+              <button className="px-2.5 py-1.5 text-[11px] font-semibold bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-1"
+                onClick={async () => { if (!confirm(`استعادة ${selectedIds.size} عناصر؟`)) return; await onBulkRestore(Array.from(selectedIds)); }}>
+                <Icon name="restore" size={12} /> إعادة نشر ({selectedIds.size})
+              </button>
+            )}
+            {selectedIds.size > 0 && contentView === 'deleted' && (
+              <>
+                <button className="px-2.5 py-1.5 text-[11px] font-semibold bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-1"
+                  onClick={async () => { if (!confirm(`استعادة ${selectedIds.size} عناصر؟`)) return; await onBulkRestore(Array.from(selectedIds)); }}>
+                  <Icon name="restore" size={12} /> استعادة ({selectedIds.size})
+                </button>
+                <button className="px-2.5 py-1.5 text-[11px] font-semibold bg-danger-700 text-white rounded-lg hover:bg-danger-800 flex items-center gap-1"
+                  onClick={async () => { if (!confirm(`حذف نهائي ${selectedIds.size} عناصر؟ لا يمكن التراجع!`)) return; await onBulkPermanentDelete(Array.from(selectedIds)); }}>
+                  🗑 نهائي ({selectedIds.size})
+                </button>
+              </>
+            )}
+            {contentView === 'deleted' && deletedItems.length > 0 && selectedIds.size === 0 && (
+              <span className="text-[10px] text-danger-400">⏱ تُحذف بعد 30 يوماً</span>
+            )}
+          </div>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-surface-50">
+              <tr>
+                <th className="p-3 w-8">
+                  <input type="checkbox" className="rounded" checked={!!allSelected}
+                    onChange={e => {
+                      if (e.target.checked) setSelectedIds(new Set(filtered.map(i => i.id)));
+                      else setSelectedIds(new Set());
+                    }} />
+                </th>
+                {columns.map(c => <th key={c.key} className="text-right p-3 font-semibold text-surface-600">{c.label}</th>)}
+                {contentView === 'deleted' && <th className="text-right p-3 font-semibold text-surface-600">يُحذف بعد</th>}
+                <th className="text-right p-3 font-semibold text-surface-600 w-28">إجراءات</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((item: AnyItem) => (
+                <tr key={String(item.id)} className={cn('border-t border-surface-50 hover:bg-surface-50',
+                  selectedIds.has(item.id) && 'bg-primary-50',
+                  contentView === 'archived' && 'opacity-75',
+                  contentView === 'deleted' && 'opacity-60'
+                )}>
+                  <td className="p-3">
+                    <input type="checkbox" className="rounded" checked={selectedIds.has(item.id)}
+                      onChange={e => {
+                        const s = new Set(selectedIds);
+                        e.target.checked ? s.add(item.id) : s.delete(item.id);
+                        setSelectedIds(s);
+                      }} />
+                  </td>
+                  {columns.map(c => (
+                    <td key={c.key} className="p-3 max-w-xs truncate">{String(c.render ? c.render(item[c.key]) : (item[c.key] ?? ''))}</td>
+                  ))}
+                  {contentView === 'deleted' && (
+                    <td className="p-3">
+                      <span className={cn('text-xs font-semibold px-2 py-0.5 rounded-full',
+                        daysLeft(item) <= 7 ? 'bg-danger-50 text-danger-600' : daysLeft(item) <= 14 ? 'bg-warning-50 text-warning-600' : 'bg-surface-100 text-surface-500')}>
+                        {daysLeft(item)} يوم
+                      </span>
+                    </td>
+                  )}
+                  <td className="p-3">
+                    <div className="flex gap-1">
+                      {contentView === 'active' && (
+                        <>
+                          <button className="p-1 rounded hover:bg-surface-100" title="تعديل" onClick={() => onEdit(item)}><Icon name="edit" size={16} className="text-primary-500" /></button>
+                          <button className="p-1 rounded hover:bg-amber-50" title="أرشفة" onClick={() => onArchive(item.id)}><Icon name="inventory_2" size={16} className="text-amber-500" /></button>
+                          <button className="p-1 rounded hover:bg-danger-50" title="حذف" onClick={() => onDelete(item.id)}><Icon name="delete" size={16} className="text-danger-500" /></button>
+                        </>
+                      )}
+                      {contentView === 'archived' && (
+                        <>
+                          <button className="p-1 rounded hover:bg-green-50" title="إعادة نشر" onClick={() => onUnarchive(item.id)}><Icon name="restore" size={16} className="text-green-600" /></button>
+                          <button className="p-1 rounded hover:bg-danger-50" title="حذف" onClick={() => onDelete(item.id)}><Icon name="delete" size={16} className="text-danger-500" /></button>
+                        </>
+                      )}
+                      {contentView === 'deleted' && (
+                        <>
+                          <button className="p-1 rounded hover:bg-green-50" title="استعادة" onClick={() => onRestore(item.id)}><Icon name="restore" size={16} className="text-green-600" /></button>
+                          <button className="p-1 rounded hover:bg-danger-50" title="حذف نهائي" onClick={() => onPermanentDelete(item.id)}><Icon name="delete_forever" size={16} className="text-danger-700" /></button>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {filtered.length === 0 && (
+            <div className="p-10 text-center">
+              <Icon name={contentView === 'deleted' ? 'delete' : contentView === 'archived' ? 'inventory_2' : 'folder_open'} size={40} className="text-surface-200 mx-auto mb-3" />
+              <p className="text-surface-400 text-sm">
+                {contentView === 'deleted' ? 'لا توجد عناصر محذوفة' : contentView === 'archived' ? 'لا توجد عناصر مؤرشفة' : 'لا توجد بيانات'}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── SimpleCrudTable (for Dictionary - with multi-select and bulk delete) ──────
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function SimpleCrudTable({ title, items, search, setSearch, columns, onAdd, onEdit, onDelete, onExport, onImport, filterFn }: {
+  title: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  items: any[];
+  search: string;
+  setSearch: (s: string) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  columns: { key: string; label: string; render?: (v: any) => any }[];
+  onAdd: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onEdit: (item: any) => void;
+  onDelete: (id: string) => void;
+  onExport: () => void;
+  onImport: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  filterFn: (item: any) => boolean;
+}) {
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const filtered = items.filter(filterFn);
+  const allSelected = filtered.length > 0 && filtered.every(i => selectedIds.has(i.id));
+
+  const toggleAll = () => {
+    if (allSelected) setSelectedIds(new Set());
+    else setSelectedIds(new Set(filtered.map(i => i.id)));
+  };
+
+  const bulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`حذف ${selectedIds.size} عنصر؟`)) return;
+    for (const id of selectedIds) await onDelete(id);
+    setSelectedIds(new Set());
+  };
+
+  return (
+    <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+      <div className="p-4 border-b border-surface-100">
+        <div className="flex items-center gap-2 mb-3">
+          <input className="flex-1 border border-surface-200 rounded-lg px-3 py-1.5 text-sm" placeholder={`بحث في ${title}...`} value={search} onChange={e => setSearch(e.target.value)} />
+          <Button size="sm" onClick={onAdd} icon={<Icon name="add" size={16} />}>إضافة</Button>
+          <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-400 border border-surface-200 shrink-0" onClick={onExport} title="تصدير"><Icon name="download" size={18} /></button>
+          <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-400 border border-surface-200 shrink-0" onClick={onImport} title="استيراد"><Icon name="upload" size={18} /></button>
+        </div>
+        <div className="flex items-center justify-between">
+          <h2 className="font-bold text-surface-900">{title} <span className="text-surface-400 font-normal text-sm">({filtered.length})</span></h2>
+          {selectedIds.size > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-surface-500">{selectedIds.size} محدد</span>
+              <button onClick={bulkDelete} className="flex items-center gap-1 text-xs text-danger-600 bg-danger-50 hover:bg-danger-100 px-2.5 py-1 rounded-lg font-medium transition-all">
+                <Icon name="delete" size={14} /> حذف المحدد
+              </button>
+              <button onClick={() => setSelectedIds(new Set())} className="text-xs text-surface-400 hover:text-surface-600">
+                <Icon name="close" size={14} />
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-surface-50">
+            <tr>
+              <th className="p-3 w-10">
+                <input type="checkbox" className="rounded" checked={allSelected} onChange={toggleAll} />
+              </th>
+              {columns.map(c => <th key={c.key} className="text-right p-3 font-semibold text-surface-600">{c.label}</th>)}
+              <th className="text-right p-3 font-semibold text-surface-600 w-20">إجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {filtered.map((item: any) => (
+              <tr key={String(item.id)} className={cn('border-t border-surface-50 hover:bg-surface-50', selectedIds.has(item.id) && 'bg-primary-50')}>
+                <td className="p-3">
+                  <input type="checkbox" className="rounded" checked={selectedIds.has(item.id)}
+                    onChange={e => { const s = new Set(selectedIds); e.target.checked ? s.add(item.id) : s.delete(item.id); setSelectedIds(s); }} />
+                </td>
+                {columns.map(c => (
+                  <td key={c.key} className="p-3 max-w-xs truncate">{String(c.render ? c.render(item[c.key]) : (item[c.key] ?? ''))}</td>
+                ))}
+                <td className="p-3">
+                  <div className="flex gap-1">
+                    <button className="p-1 rounded hover:bg-surface-100" onClick={() => onEdit(item)}><Icon name="edit" size={16} className="text-primary-500" /></button>
+                    <button className="p-1 rounded hover:bg-danger-50" onClick={() => onDelete(item.id as string)}><Icon name="delete" size={16} className="text-danger-500" /></button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {filtered.length === 0 && <div className="p-8 text-center text-surface-400">لا توجد بيانات</div>}
+      </div>
+    </div>
+  );
+}
