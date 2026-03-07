@@ -7,7 +7,7 @@ import { CookieConsentBanner } from '@/components/CookieConsentBanner';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 import { PROFILE_GATED_PAGES } from '@/constants';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { getConsentLevel, type ConsentLevel } from '@/utils/cookieManager';
 import { ROUTES } from '@/constants';
 
@@ -16,6 +16,11 @@ export function AppLayout() {
   const { dir, t } = useTranslation();
   const { pathname } = useLocation();
   const navigate = useNavigate();
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   // Cookie consent
   const [consentLevel, setConsentLevel] = useState<ConsentLevel | null>(() => getConsentLevel());

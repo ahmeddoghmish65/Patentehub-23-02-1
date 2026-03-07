@@ -35,6 +35,11 @@ function RootLayout() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   // Initialise auth from stored cookie on first mount
   useEffect(() => {
     checkAuth();
