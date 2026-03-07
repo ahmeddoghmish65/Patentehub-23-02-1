@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
@@ -6,14 +7,11 @@ import { useTranslation } from '@/i18n';
 import { getDB } from '@/db/database';
 import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
 import { apiCreateCommunityNotif } from '@/db/api';
+import { ROUTES } from '@/constants';
+import { buildUserProfileUrl } from '@/constants';
 
 function getTextDir(text: string): 'rtl' | 'ltr' {
   return /[\u0600-\u06FF]/.test(text) ? 'rtl' : 'ltr';
-}
-
-interface Props {
-  userId: string;
-  onNavigate: (page: string, data?: Record<string, string>) => void;
 }
 
 interface UserData {
@@ -27,7 +25,9 @@ interface UserData {
 type TabType = 'posts' | 'quizzes';
 type StatView = 'followers' | 'following' | null;
 
-export function UserProfilePage({ userId, onNavigate }: Props) {
+export function UserProfilePage() {
+  const navigate = useNavigate();
+  const { userId = '' } = useParams<{ userId: string }>();
   const { t, uiLang } = useTranslation();
   const { user } = useAuthStore();
   const { posts } = useDataStore();
@@ -134,7 +134,7 @@ export function UserProfilePage({ userId, onNavigate }: Props) {
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
         <Icon name="person_off" size={40} className="text-surface-300" />
         <p className="text-surface-400">{t('community.user_not_found') || 'User not found'}</p>
-        <button onClick={() => onNavigate('community')} className="text-primary-500 text-sm font-semibold">
+        <button onClick={() => navigate(ROUTES.COMMUNITY)} className="text-primary-500 text-sm font-semibold">
           {t('community.back') || 'Back'}
         </button>
       </div>
@@ -161,7 +161,7 @@ export function UserProfilePage({ userId, onNavigate }: Props) {
     <div className="max-w-lg mx-auto pb-20">
       {/* Header with back button */}
       <div className="sticky top-0 z-10 bg-white/90 backdrop-blur-sm border-b border-surface-100 flex items-center gap-3 px-4 py-3">
-        <button onClick={() => onNavigate('community')}
+        <button onClick={() => navigate(ROUTES.COMMUNITY)}
           className="w-9 h-9 rounded-xl hover:bg-surface-100 flex items-center justify-center transition-colors">
           <Icon name="arrow_back" size={20} className={cn('text-surface-700', uiLang === 'ar' ? 'rotate-180' : '')} />
         </button>
@@ -281,7 +281,7 @@ export function UserProfilePage({ userId, onNavigate }: Props) {
                 <div key={u.id} className="flex items-center gap-3 px-4 py-3">
                   <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 cursor-pointer"
                     style={{ background: u.avatar ? undefined : 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}
-                    onClick={() => onNavigate('userProfile', { userId: u.id })}>
+                    onClick={() => navigate(buildUserProfileUrl(u.id))}>
                     {u.avatar ? <img src={u.avatar} className="w-full h-full object-cover" alt="" /> : (
                       <div className="w-full h-full flex items-center justify-center">
                         <span className="text-sm font-bold text-white">{u.name.charAt(0)}</span>
@@ -289,7 +289,7 @@ export function UserProfilePage({ userId, onNavigate }: Props) {
                     )}
                   </div>
                   <span className="flex-1 text-sm font-semibold text-surface-800 truncate cursor-pointer"
-                    onClick={() => onNavigate('userProfile', { userId: u.id })}>
+                    onClick={() => navigate(buildUserProfileUrl(u.id))}>
                     {u.name}
                   </span>
                   {u.id !== user?.id && (
@@ -330,7 +330,7 @@ export function UserProfilePage({ userId, onNavigate }: Props) {
             {userPosts.slice(0, 20).map(p => (
               <div key={p.id}
                 className="bg-surface-50 rounded-xl p-3 cursor-pointer hover:bg-surface-100 transition-colors border border-surface-100"
-                onClick={() => onNavigate('community', { openPostId: p.id })}>
+                onClick={() => navigate(ROUTES.COMMUNITY, { state: { openPostId: p.id } })}>
                 <div className="flex items-center gap-1.5 mb-1">
                   {p.type === 'quiz' && (
                     <span className="text-[10px] bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded-full font-medium">{t('community.quiz_badge')}</span>
