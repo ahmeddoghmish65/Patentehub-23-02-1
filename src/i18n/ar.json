@@ -571,6 +571,8 @@
     "total_quizzes": "إجمالي الاختبارات",
     "current_streak": "السلسلة الحالية",
     "streak_days": "يوم",
+    "best_streak": "أطول سلسلة",
+    "learning_days": "أيام التعلم",
     "xp_points": "النقاط (XP)",
     "completed_lessons_label": "الدروس المكتملة",
     "achievements": "الإنجازات",

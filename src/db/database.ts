@@ -61,6 +61,7 @@ export interface UserProgress {
   currentStreak: number;
   bestStreak: number;
   lastStudyDate: string;
+  totalStudyDays: number;
   level: number;
   xp: number;
   badges: string[];

@@ -146,7 +146,7 @@ export async function apiRegister(email: string, password: string, name: string,
     progress: {
       totalQuizzes: 0, correctAnswers: 0, wrongAnswers: 0,
       completedLessons: [], completedTopics: [],
-      currentStreak: 0, bestStreak: 0, lastStudyDate: '',
+      currentStreak: 0, bestStreak: 0, lastStudyDate: '', totalStudyDays: 0,
       level: 1, xp: 0, badges: ['newcomer'], examReadiness: 0,
     },
     settings: { language: 'both', theme: 'light', notifications: true, soundEffects: true, fontSize: 'medium' },
@@ -1062,8 +1062,10 @@ export async function apiSaveQuizResult(token: string, result: Omit<QuizResult, 
   if (!last || new Date(last).toDateString() !== today) {
     const yd = new Date(Date.now() - 86400000).toDateString();
     if (last && new Date(last).toDateString() === yd) user.progress.currentStreak++;
-    else if (!last) user.progress.currentStreak = 1;
+    else user.progress.currentStreak = 1;
     user.progress.bestStreak = Math.max(user.progress.bestStreak, user.progress.currentStreak);
+    if (!user.progress.totalStudyDays) user.progress.totalStudyDays = 0;
+    user.progress.totalStudyDays++;
   }
   user.progress.lastStudyDate = new Date().toISOString();
 

@@ -826,6 +826,8 @@ export function ProfilePage({ onNavigate }: ProfilePageProps) {
             { label: t('profile.current_streak'), value: `${progress.currentStreak} ${t('profile.streak_days')}`, icon: 'local_fire_department', color: 'text-orange-500', bg: 'bg-orange-50', border: 'border-orange-100' },
             { label: t('profile.xp_points'), value: progress.xp, icon: 'stars', color: 'text-amber-500', bg: 'bg-amber-50', border: 'border-amber-100' },
             { label: t('profile.completed_lessons_label'), value: progress.completedLessons.length, icon: 'school', color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
+            { label: t('profile.best_streak'), value: `${progress.bestStreak} ${t('profile.streak_days')}`, icon: 'emoji_events', color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
+            { label: t('profile.learning_days'), value: progress.totalStudyDays || 0, icon: 'calendar_month', color: 'text-teal-600', bg: 'bg-teal-50', border: 'border-teal-100' },
           ].map((m, i) => (
             <div key={i} className={cn('rounded-xl p-3.5 border flex items-center gap-3', m.bg, m.border)}>
               <div className="w-10 h-10 rounded-xl bg-white/80 flex items-center justify-center shrink-0 shadow-sm">

@@ -269,7 +269,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
             const userAns = answers[i];
             const correct = userAns === q.isTrue;
             return (
-              <div key={q.id} className={cn('bg-white rounded-xl p-4 border-2', correct ? 'border-success-200' : 'border-danger-200')}>
+              <div key={q.id} className={cn('bg-white rounded-xl p-4 border-2', correct ? 'border-success-200' : userAns === undefined ? 'border-surface-300' : 'border-red-300 bg-red-50/30')}>
                 <div className="flex items-start gap-3" dir="ltr">
                   <span className={cn('w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0',
                     correct ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600'

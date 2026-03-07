@@ -58,7 +58,10 @@ export function DictionaryPage() {
                     {lang === 'ar' && (
                       <span className="text-lg font-bold text-surface-900" dir="rtl">{entry.termAr}</span>
                     )}
-                    {lang !== 'ar' && (
+                    {lang === 'it' && (
+                      <span className="text-lg font-bold text-primary-600" dir="ltr">{entry.termIt}</span>
+                    )}
+                    {lang === 'both' && (
                       <>
                         <span className="text-lg font-bold text-primary-600" dir="ltr">{entry.termIt}</span>
                         <span className="text-surface-300">—</span>

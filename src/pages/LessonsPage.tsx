@@ -52,7 +52,7 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
         </button>
 
         <div className="bg-white rounded-2xl p-5 border border-surface-100 mb-6">
-          <div className="flex items-center gap-4 mb-4" dir="ltr">
+          <div className="flex items-center gap-4 mb-4" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
             <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 overflow-hidden"
               style={{ backgroundColor: (section?.color || '#3b82f6') + '12' }}>
               {section?.image ? (
