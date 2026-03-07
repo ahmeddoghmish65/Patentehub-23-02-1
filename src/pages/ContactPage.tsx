@@ -1,13 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/constants';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
-
-interface ContactPageProps {
-  onNavigate: (page: string) => void;
-}
 
 interface FormData {
   name: string;
@@ -23,7 +21,8 @@ interface FormErrors {
   message?: string;
 }
 
-export function ContactPage({ onNavigate }: ContactPageProps) {
+export function ContactPage() {
+  const navigate = useNavigate();
   const { uiLang } = useTranslation();
   const isIt = uiLang === 'it';
 
@@ -79,7 +78,7 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
       <header className="sticky top-0 z-50 bg-white border-b border-surface-100 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
           <button
-            onClick={() => onNavigate('landing')}
+            onClick={() => navigate(ROUTES.LANDING)}
             className="flex items-center gap-1.5 text-surface-500 hover:text-primary-600 transition-colors"
           >
             <Icon name="arrow_forward" size={20} className="ltr:rotate-180" />
@@ -284,21 +283,21 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
             </h3>
             <div className="space-y-2">
               <button
-                onClick={() => onNavigate('privacy-policy')}
+                onClick={() => navigate(ROUTES.PRIVACY_POLICY)}
                 className="w-full flex items-center gap-2 text-sm text-surface-600 hover:text-primary-600 hover:bg-primary-50 px-3 py-2 rounded-xl transition-all text-right"
               >
                 <Icon name="privacy_tip" size={16} className="text-surface-400" />
                 {isIt ? 'Privacy Policy' : 'سياسة الخصوصية'}
               </button>
               <button
-                onClick={() => onNavigate('terms-of-service')}
+                onClick={() => navigate(ROUTES.TERMS_OF_SERVICE)}
                 className="w-full flex items-center gap-2 text-sm text-surface-600 hover:text-primary-600 hover:bg-primary-50 px-3 py-2 rounded-xl transition-all text-right"
               >
                 <Icon name="gavel" size={16} className="text-surface-400" />
                 {isIt ? 'Termini di utilizzo' : 'شروط الاستخدام'}
               </button>
               <button
-                onClick={() => onNavigate('landing')}
+                onClick={() => navigate(ROUTES.LANDING)}
                 className="w-full flex items-center gap-2 text-sm text-surface-600 hover:text-primary-600 hover:bg-primary-50 px-3 py-2 rounded-xl transition-all text-right"
               >
                 <Icon name="help_outline" size={16} className="text-surface-400" />

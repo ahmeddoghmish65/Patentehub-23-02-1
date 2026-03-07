@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';

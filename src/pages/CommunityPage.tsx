@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuthStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
@@ -91,7 +92,10 @@ function relativeTime(iso: string, uiLang?: string): string {
   return new Date(iso).toLocaleDateString(isIt ? 'it' : 'ar');
 }
 
-export function CommunityPage({ openPostId, onNavigate }: { openPostId?: string; onNavigate?: (page: string, data?: Record<string, string>) => void } = {}) {
+export function CommunityPage() {
+  const navigate = useNavigate();
+  const { state } = useLocation();
+  const openPostId = (state as { openPostId?: string } | null)?.openPostId;
   const { t, uiLang } = useTranslation();
   const { posts, loadPosts, createPost, updatePost, deletePost, toggleLike, checkLike, getComments, createComment, deleteComment, createReport, user, communityNotifs, loadCommunityNotifs, markNotifRead, markAllNotifsRead } = useAuthStore();
   const [newPost, setNewPost] = useState('');
@@ -562,8 +566,8 @@ export function CommunityPage({ openPostId, onNavigate }: { openPostId?: string;
 
   const openUserProfile = useCallback((userId: string) => {
     if (userId === user?.id) return;
-    onNavigate?.('userProfile', { userId });
-  }, [user, onNavigate]);
+    navigate(`/profile/${userId}`);
+  }, [user, navigate]);
 
   const openPostDetail = async (postId: string) => {
     const c = await getComments(postId);

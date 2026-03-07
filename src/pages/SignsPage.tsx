@@ -1,19 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 
-interface Props { onNavigate: (page: string, data?: Record<string, string>) => void; }
-
-export function SignsPage({ onNavigate }: Props) {
+export function SignsPage() {
   const { signs, loadSigns, signSections, loadSignSections, user } = useAuthStore();
   const lang = user?.settings.language || 'both';
   const { t, uiLang } = useTranslation();
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [selectedSign, setSelectedSign] = useState<string | null>(null);
-  void onNavigate;
 
   useEffect(() => { loadSigns(); loadSignSections(); }, [loadSigns, loadSignSections]);
 

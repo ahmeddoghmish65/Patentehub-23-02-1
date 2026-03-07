@@ -1,15 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 
-interface Props {
-  onNavigate: (page: string, data?: Record<string, string>) => void;
-}
-
-export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
-  void _onNavigate;
+export function QuestionsBrowsePage() {
   const { sections, questions, loadSections, loadQuestions, user } = useAuthStore();
   const { t } = useTranslation();
   const [selectedSection, setSelectedSection] = useState<string | null>(null);

@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuthStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
+import { ROUTES, buildLessonUrl } from '@/constants';
 
-interface Props {
-  onNavigate: (page: string, data?: Record<string, string>) => void;
-  initialSectionId?: string;
-}
-
-export function LessonsPage({ onNavigate, initialSectionId }: Props) {
+export function LessonsPage() {
+  const navigate = useNavigate();
+  const { state } = useLocation();
+  const initialSectionId = (state as { sectionId?: string } | null)?.sectionId;
   const { sections, lessons, loadSections, loadLessons, user } = useAuthStore();
   const completed = user?.progress.completedLessons || [];
   const [newlyCompleted, setNewlyCompleted] = useState<Set<string>>(new Set());
@@ -93,7 +93,7 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
                     'w-full rounded-xl p-4 border hover:shadow-sm transition-all text-start flex items-center gap-3 group',
                     'bg-white border-surface-100 hover:border-primary-200'
                   )}
-                  onClick={() => onNavigate('lesson-detail', { lessonId: lesson.id, sectionId: selectedSection })}
+                  onClick={() => navigate(buildLessonUrl(lesson.id), { state: { sectionId: selectedSection } })}
                 >
                   <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 overflow-hidden relative bg-surface-100">
                     {lesson.image ? (
@@ -126,7 +126,7 @@ export function LessonsPage({ onNavigate, initialSectionId }: Props) {
             {/* Quiz for whole section */}
             <div className="pt-3">
               <Button fullWidth variant="outline"
-                onClick={() => onNavigate('quiz', { sectionId: selectedSection })}
+                onClick={() => navigate(ROUTES.QUIZ, { state: { sectionId: selectedSection } })}
                 icon={<Icon name="quiz" size={18} />}>
                 {t('lessons_page.section_quiz_btn')} ({sectionLessons.length > 0 ? `${sectionLessons.length} ${t('lessons_page.lesson_label')}` : ''})
               </Button>

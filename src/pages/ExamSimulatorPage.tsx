@@ -1,16 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
+import { ROUTES } from '@/constants';
 import type { Question } from '@/db/database';
 
-interface Props {
-  onNavigate: (page: string) => void;
-}
-
-export function ExamSimulatorPage({ onNavigate }: Props) {
+export function ExamSimulatorPage() {
+  const navigate = useNavigate();
   const { questions, loadQuestions, saveQuizResult, user } = useAuthStore();
   const { t } = useTranslation();
   const lang = user?.settings.language || 'both';
@@ -100,14 +99,14 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
     <div className="text-center py-20">
       <Icon name="assignment" size={48} className="text-surface-300 mx-auto mb-4" />
       <p className="text-surface-500 mb-4">{t('exam.no_questions')}</p>
-      <Button onClick={() => onNavigate('dashboard')}>{t('exam.back')}</Button>
+      <Button onClick={() => navigate(ROUTES.DASHBOARD)}>{t('exam.back')}</Button>
     </div>
   );
 
   // INTRO
   if (phase === 'intro') return (
     <div className="max-w-md mx-auto">
-      <button onClick={() => onNavigate('dashboard')} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-4">
+      <button onClick={() => navigate(ROUTES.DASHBOARD)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-4">
         <Icon name="arrow_forward" size={18} className="ltr:rotate-180" /><span className="text-sm">{t('exam.back')}</span>
       </button>
       <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden">
@@ -232,7 +231,7 @@ export function ExamSimulatorPage({ onNavigate }: Props) {
                 {t('exam.review_btn')}
               </Button>
               <Button fullWidth onClick={start} icon={<Icon name="replay" size={20} />}>{t('exam.restart_btn')}</Button>
-              <Button fullWidth variant="outline" onClick={() => onNavigate('dashboard')}>{t('exam.back_home')}</Button>
+              <Button fullWidth variant="outline" onClick={() => navigate(ROUTES.DASHBOARD)}>{t('exam.back_home')}</Button>
             </div>
           </div>
         </div>

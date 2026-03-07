@@ -1,15 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
+import { ROUTES } from '@/constants';
 
-interface LandingPageProps {
-  onNavigate: (page: string) => void;
-}
-
-export function LandingPage({ onNavigate }: LandingPageProps) {
+export function LandingPage() {
+  const navigate = useNavigate();
   const { t, dir, uiLang } = useTranslation();
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -179,19 +178,19 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
 
             <div className="hidden md:flex items-center gap-2">
               <LanguageSwitcher />
-              <button onClick={() => onNavigate('login')}
+              <button onClick={() => navigate(ROUTES.LOGIN)}
                 className={cn('px-4 py-2 rounded-xl text-sm font-semibold transition-all',
                   'text-surface-600 hover:bg-surface-100')}>
                 {t('landing.login')}
               </button>
-              <Button size="sm" onClick={() => onNavigate('register')} icon={<Icon name="rocket_launch" size={15} />}>
+              <Button size="sm" onClick={() => navigate(ROUTES.REGISTER)} icon={<Icon name="rocket_launch" size={15} />}>
                 {t('landing.register_free')}
               </Button>
             </div>
 
             <div className="flex items-center gap-2 md:hidden">
               <LanguageSwitcher />
-              <button onClick={() => onNavigate('login')}
+              <button onClick={() => navigate(ROUTES.LOGIN)}
                 className="text-sm font-semibold text-primary-700 border border-primary-200 px-3 py-1.5 rounded-xl hover:bg-primary-50 transition-colors bg-white/80">
                 {t('landing.login_short')}
               </button>
@@ -213,8 +212,8 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                 </a>
               ))}
               <div className="pt-3 space-y-2 border-t border-surface-100">
-                <Button fullWidth variant="outline" onClick={() => onNavigate('login')}>{t('landing.login')}</Button>
-                <Button fullWidth onClick={() => onNavigate('register')}>{t('landing.register_free')}</Button>
+                <Button fullWidth variant="outline" onClick={() => navigate(ROUTES.LOGIN)}>{t('landing.login')}</Button>
+                <Button fullWidth onClick={() => navigate(ROUTES.REGISTER)}>{t('landing.register_free')}</Button>
               </div>
             </div>
           </div>
@@ -256,7 +255,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
               </p>
 
               <div className={cn('flex flex-col sm:flex-row items-center gap-4 animate-fade-in-up', dir === 'rtl' ? 'justify-center lg:justify-start' : 'justify-center lg:justify-start')} style={{ animationDelay: '0.3s' }}>
-                <button onClick={() => onNavigate('register')}
+                <button onClick={() => navigate(ROUTES.REGISTER)}
                   className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-9 py-4 bg-gradient-to-l from-primary-600 to-primary-500 text-white font-bold text-base rounded-2xl shadow-xl shadow-primary-500/30 hover:shadow-primary-500/50 transition-all duration-300 hover:-translate-y-1 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-l from-primary-500 to-primary-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <Icon name="rocket_launch" size={20} className="relative shrink-0" />
@@ -885,12 +884,12 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             {t('landing.cta_desc')}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button onClick={() => onNavigate('register')}
+            <button onClick={() => navigate(ROUTES.REGISTER)}
               className="group w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-10 py-4 bg-white text-primary-700 font-bold text-lg rounded-2xl shadow-2xl hover:shadow-white/20 transition-all duration-300 hover:-translate-y-1">
               <Icon name="rocket_launch" size={22} />
               {t('landing.cta_register')}
             </button>
-            <button onClick={() => onNavigate('login')}
+            <button onClick={() => navigate(ROUTES.LOGIN)}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-10 py-4 border-2 border-white/30 text-white font-bold text-lg rounded-2xl hover:bg-white/10 hover:border-white/50 transition-all duration-300">
               {t('landing.cta_login')}
             </button>
@@ -934,16 +933,16 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
               <div>
                 <p className="text-slate-400 font-semibold mb-4 text-xs uppercase tracking-widest">{t('landing.footer_account')}</p>
                 <div className="space-y-3">
-                  <button onClick={() => onNavigate('register')} className={cn('block text-slate-500 hover:text-white transition-colors w-full', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('landing.footer_register')}</button>
-                  <button onClick={() => onNavigate('login')} className={cn('block text-slate-500 hover:text-white transition-colors w-full', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('landing.footer_login')}</button>
+                  <button onClick={() => navigate(ROUTES.REGISTER)} className={cn('block text-slate-500 hover:text-white transition-colors w-full', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('landing.footer_register')}</button>
+                  <button onClick={() => navigate(ROUTES.LOGIN)} className={cn('block text-slate-500 hover:text-white transition-colors w-full', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('landing.footer_login')}</button>
                 </div>
               </div>
               <div>
                 <p className="text-slate-400 font-semibold mb-4 text-xs uppercase tracking-widest">{t('landing.footer_legal')}</p>
                 <div className="space-y-3">
-                  <button onClick={() => onNavigate('privacy-policy')} className={cn('block text-slate-500 hover:text-white transition-colors w-full', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('landing.footer_privacy')}</button>
-                  <button onClick={() => onNavigate('terms-of-service')} className={cn('block text-slate-500 hover:text-white transition-colors w-full', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('landing.footer_terms')}</button>
-                  <button onClick={() => onNavigate('contact')} className={cn('block text-slate-500 hover:text-white transition-colors w-full', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('landing.footer_contact')}</button>
+                  <button onClick={() => navigate(ROUTES.PRIVACY_POLICY)} className={cn('block text-slate-500 hover:text-white transition-colors w-full', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('landing.footer_privacy')}</button>
+                  <button onClick={() => navigate(ROUTES.TERMS_OF_SERVICE)} className={cn('block text-slate-500 hover:text-white transition-colors w-full', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('landing.footer_terms')}</button>
+                  <button onClick={() => navigate(ROUTES.CONTACT)} className={cn('block text-slate-500 hover:text-white transition-colors w-full', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('landing.footer_contact')}</button>
                 </div>
               </div>
             </div>
@@ -952,11 +951,11 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
           <div className="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-slate-600 text-xs">© {new Date().getFullYear()} Patente Hub. {t('landing.footer_rights')}</p>
             <div className="flex items-center gap-5 text-xs text-slate-600">
-              <button onClick={() => onNavigate('privacy-policy')} className="hover:text-slate-400 transition-colors">{t('landing.footer_privacy_short')}</button>
+              <button onClick={() => navigate(ROUTES.PRIVACY_POLICY)} className="hover:text-slate-400 transition-colors">{t('landing.footer_privacy_short')}</button>
               <span className="text-slate-800">·</span>
-              <button onClick={() => onNavigate('terms-of-service')} className="hover:text-slate-400 transition-colors">{t('landing.footer_terms_short')}</button>
+              <button onClick={() => navigate(ROUTES.TERMS_OF_SERVICE)} className="hover:text-slate-400 transition-colors">{t('landing.footer_terms_short')}</button>
               <span className="text-slate-800">·</span>
-              <button onClick={() => onNavigate('contact')} className="hover:text-slate-400 transition-colors">{t('landing.footer_contact_short')}</button>
+              <button onClick={() => navigate(ROUTES.CONTACT)} className="hover:text-slate-400 transition-colors">{t('landing.footer_contact_short')}</button>
             </div>
           </div>
         </div>

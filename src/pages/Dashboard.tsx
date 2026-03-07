@@ -1,14 +1,13 @@
 import { useEffect } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
+import { ROUTES } from '@/constants';
 
-interface DashboardProps {
-  onNavigate: (page: string, data?: Record<string, string>) => void;
-}
-
-export function Dashboard({ onNavigate }: DashboardProps) {
+export function Dashboard() {
+  const navigate = useNavigate();
   const { user, loadSections, loadLessons, loadMistakes, loadQuestions, mistakes, sections, lessons, questions } = useAuthStore();
   const { t } = useTranslation();
 
@@ -111,7 +110,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       <div className="grid grid-cols-2 gap-3">
         <button
           className="bg-white rounded-xl p-4 border border-surface-100 hover:border-blue-200 hover:shadow-md transition-all text-start group"
-          onClick={() => onNavigate('lessons')}
+          onClick={() => navigate(ROUTES.LESSONS)}
         >
           <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-blue-50">
             <Icon name="school" size={24} className="text-blue-500" filled />
@@ -122,7 +121,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
         <button
           className="bg-white rounded-xl p-4 border border-surface-100 hover:border-purple-200 hover:shadow-md transition-all text-start group"
-          onClick={() => onNavigate('questions-browse')}
+          onClick={() => navigate(ROUTES.QUESTIONS_BROWSE)}
         >
           <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-purple-50">
             <Icon name="quiz" size={24} className="text-purple-500" filled />
@@ -133,7 +132,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
         <button
           className="bg-white rounded-xl p-4 border border-surface-100 hover:border-red-200 hover:shadow-md transition-all text-start group"
-          onClick={() => onNavigate('signs')}
+          onClick={() => navigate(ROUTES.SIGNS)}
         >
           <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-red-50">
             <Icon name="traffic" size={24} className="text-red-500" filled />
@@ -144,7 +143,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
         <button
           className="bg-white rounded-xl p-4 border border-surface-100 hover:border-cyan-200 hover:shadow-md transition-all text-start group"
-          onClick={() => onNavigate('dictionary')}
+          onClick={() => navigate(ROUTES.DICTIONARY)}
         >
           <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-cyan-50">
             <Icon name="menu_book" size={24} className="text-cyan-500" filled />
@@ -155,7 +154,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
         <button
           className="bg-white rounded-xl p-4 border border-surface-100 hover:border-amber-200 hover:shadow-md transition-all text-start group"
-          onClick={() => onNavigate('training')}
+          onClick={() => navigate(ROUTES.TRAINING)}
         >
           <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-amber-50">
             <Icon name="fitness_center" size={24} className="text-amber-500" filled />
@@ -166,7 +165,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
         <button
           className="bg-white rounded-xl p-4 border border-surface-100 hover:border-green-200 hover:shadow-md transition-all text-start group"
-          onClick={() => onNavigate('exam-simulator')}
+          onClick={() => navigate(ROUTES.EXAM_SIMULATOR)}
         >
           <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-green-50">
             <Icon name="assignment" size={24} className="text-green-600" filled />
@@ -179,7 +178,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       {/* أخطائي */}
       <button
         className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-red-200 hover:shadow-md transition-all text-start flex items-center gap-4 group"
-        onClick={() => onNavigate('mistakes')}
+        onClick={() => navigate(ROUTES.MISTAKES)}
       >
         <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-red-50 shrink-0">
           <Icon name="error_outline" size={26} className="text-red-500" filled />

@@ -1,4 +1,4 @@
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/store';
 import { topics, getQuestionsForTopic } from '@/data/questions';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';

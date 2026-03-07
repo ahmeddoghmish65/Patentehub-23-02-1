@@ -1,18 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuthStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
+import { ROUTES } from '@/constants';
 import type { Question } from '@/db/database';
 
-interface QuizPageProps {
-  lessonId?: string;
-  sectionId?: string;
-  onNavigate: (page: string, data?: Record<string, string>) => void;
-}
-
-export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
+export function QuizPage() {
+  const navigate = useNavigate();
+  const { state } = useLocation();
+  const lessonId = (state as { lessonId?: string } | null)?.lessonId;
+  const sectionId = (state as { sectionId?: string } | null)?.sectionId;
   const { questions, loadQuestions, saveQuizResult, sections, user } = useAuthStore();
   const lang = user?.settings.language || 'both';
   const { t } = useTranslation();
@@ -81,13 +81,13 @@ export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
     <div className="text-center py-20">
       <Icon name="quiz" size={48} className="text-surface-300 mx-auto mb-4" />
       <p className="text-surface-500 mb-4">{t('quiz_page.no_questions')}</p>
-      <Button onClick={() => onNavigate('lessons')}>{t('quiz_page.back')}</Button>
+      <Button onClick={() => navigate(ROUTES.LESSONS)}>{t('quiz_page.back')}</Button>
     </div>
   );
 
   if (phase === 'intro') return (
     <div className="max-w-lg mx-auto">
-      <button onClick={() => onNavigate('lessons')} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-6">
+      <button onClick={() => navigate(ROUTES.LESSONS)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-6">
         <Icon name="arrow_forward" size={20} /><span className="text-sm">{t('quiz_page.back')}</span>
       </button>
       <div className="bg-white rounded-2xl p-8 border border-surface-100 text-center">
@@ -141,7 +141,7 @@ export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
           </div>
           <div className="space-y-3">
             <Button fullWidth onClick={start} icon={<Icon name="replay" size={20} />}>{t('quiz_page.retake')}</Button>
-            <Button fullWidth variant="outline" onClick={() => onNavigate('lessons')}>{t('quiz_page.back_lessons')}</Button>
+            <Button fullWidth variant="outline" onClick={() => navigate(ROUTES.LESSONS)}>{t('quiz_page.back_lessons')}</Button>
           </div>
         </div>
       </div>
@@ -154,7 +154,7 @@ export function QuizPage({ lessonId, sectionId, onNavigate }: QuizPageProps) {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="flex items-center justify-between mb-6" dir="ltr">
-        <button onClick={() => onNavigate('lessons')} className="text-surface-400 hover:text-surface-600"><Icon name="close" size={24} /></button>
+        <button onClick={() => navigate(ROUTES.LESSONS)} className="text-surface-400 hover:text-surface-600"><Icon name="close" size={24} /></button>
         <div className="flex items-center gap-3">
           <span className="text-sm text-surface-500 flex items-center gap-1"><Icon name="timer" size={18} />{fmt(elapsed)}</span>
           <span className="text-sm font-semibold text-surface-700">{currentIndex + 1}/{quizQuestions.length}</span>

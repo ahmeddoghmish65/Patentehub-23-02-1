@@ -1,23 +1,20 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 import type { Question, Sign, DictionaryEntry } from '@/db/database';
 
-interface Props { onNavigate: (page: string, data?: Record<string, string>) => void; }
-
 type TrainMode = 'questions' | 'signs' | 'dictionary' | 'weak-points' | 'timed' | 'marathon' | 'daily' | 'mixed';
 type Phase = 'select' | 'training' | 'result';
 
-export function TrainingPage({ onNavigate }: Props) {
+export function TrainingPage() {
   const { questions, signs, dictEntries, mistakes, loadQuestions, loadSigns, loadDictEntries, loadMistakes, user } = useAuthStore();
   const { t } = useTranslation();
   const lang = user?.settings.language || 'both';
   const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';
   const falseLabel = lang === 'ar' ? 'خطأ'  : lang === 'it' ? 'Falso' : 'خطأ / Falso';
-  void onNavigate;
   const [mode, setMode] = useState<TrainMode>('questions');
   const [phase, setPhase] = useState<Phase>('select');
   const [index, setIndex] = useState(0);

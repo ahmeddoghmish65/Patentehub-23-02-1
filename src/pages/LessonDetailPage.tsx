@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useAuthStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
+import { ROUTES, buildLessonUrl } from '@/constants';
 
-interface Props {
-  lessonId: string;
-  onNavigate: (page: string, data?: Record<string, string>) => void;
-}
-
-export function LessonDetailPage({ lessonId, onNavigate }: Props) {
+export function LessonDetailPage() {
+  const navigate = useNavigate();
+  const { lessonId = '' } = useParams<{ lessonId: string }>();
+  const { state } = useLocation();
+  const sectionIdFromState = (state as { sectionId?: string } | null)?.sectionId;
   const { lessons, questions, sections, loadLessons, loadQuestions, user } = useAuthStore();
   const [activeTab, setActiveTab] = useState<'content' | 'questions'>('content');
 
@@ -29,13 +30,13 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
     <div className="text-center py-20">
       <Icon name="error" size={48} className="text-surface-300 mx-auto mb-4" />
       <p className="text-surface-500">{t('lessons_page.lesson_not_found')}</p>
-      <Button className="mt-4" onClick={() => onNavigate('lessons')}>{t('lessons_page.go_back')}</Button>
+      <Button className="mt-4" onClick={() => navigate(ROUTES.LESSONS)}>{t('lessons_page.go_back')}</Button>
     </div>
   );
 
   return (
     <div>
-      <button onClick={() => onNavigate('lessons', { sectionId: lesson.sectionId })} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-6">
+      <button onClick={() => navigate(ROUTES.LESSONS, { state: { sectionId: lesson.sectionId } })} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-6">
         <Icon name="arrow_forward" size={20} className="ltr:rotate-180" />
         <span className="text-sm">{t('lessons_page.back_to_lessons')}</span>
       </button>
@@ -143,7 +144,7 @@ export function LessonDetailPage({ lessonId, onNavigate }: Props) {
               ))}
               {/* Quiz button at the bottom */}
               <div className="pt-4">
-                <Button fullWidth size="lg" onClick={() => onNavigate('quiz', { lessonId, sectionId: lesson.sectionId })} icon={<Icon name="play_arrow" size={22} />}>
+                <Button fullWidth size="lg" onClick={() => navigate(ROUTES.QUIZ, { state: { lessonId, sectionId: lesson.sectionId } })} icon={<Icon name="play_arrow" size={22} />}>
                   {t('lessons_page.start_lesson_quiz')} ({lessonQuestions.length} {t('lessons_page.questions_suffix')})
                 </Button>
               </div>

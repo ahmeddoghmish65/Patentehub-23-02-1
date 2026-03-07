@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { useAuthStore } from '@/store/authStore';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/store';
+import { ROUTES } from '@/constants';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
@@ -9,10 +11,6 @@ import { useTranslation } from '@/i18n';
 
 function getTextDir(text: string): 'rtl' | 'ltr' {
   return /[\u0600-\u06FF]/.test(text) ? 'rtl' : 'ltr';
-}
-
-interface ProfilePageProps {
-  onNavigate: (page: string, data?: Record<string, string>) => void;
 }
 
 const ITALIAN_PROVINCES = [
@@ -45,7 +43,8 @@ const COUNTRY_CODES = [
   { code: '+1', country: '🇺🇸 أمريكا' },
 ];
 
-export function ProfilePage({ onNavigate }: ProfilePageProps) {
+export function ProfilePage() {
+  const navigate = useNavigate();
   const { t, uiLang, setUiLang } = useTranslation();
   const { user, logout, updateSettings, updateProfile, posts, loadPosts } = useAuthStore();
 

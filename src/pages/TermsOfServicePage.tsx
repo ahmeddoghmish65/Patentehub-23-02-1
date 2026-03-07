@@ -1,10 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/constants';
 import { Icon } from '@/components/ui/Icon';
 import { useTranslation } from '@/i18n';
-
-interface TermsOfServicePageProps {
-  onNavigate: (page: string) => void;
-}
 
 const sectionsAr = [
   { id: 'acceptance', title: 'قبول الشروط', icon: 'handshake' },
@@ -32,7 +30,8 @@ const sectionsIt = [
   { id: 'contact', title: 'Informazioni di contatto', icon: 'contact_mail' },
 ];
 
-export function TermsOfServicePage({ onNavigate }: TermsOfServicePageProps) {
+export function TermsOfServicePage() {
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('acceptance');
   const { uiLang } = useTranslation();
   const isIt = uiLang === 'it';
@@ -51,7 +50,7 @@ export function TermsOfServicePage({ onNavigate }: TermsOfServicePageProps) {
     <div className="min-h-screen bg-surface-50 animate-fade-in-up">
       <header className="sticky top-0 z-50 bg-white border-b border-surface-100 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
-          <button onClick={() => onNavigate('landing')} className="flex items-center gap-1.5 text-surface-500 hover:text-primary-600 transition-colors">
+          <button onClick={() => navigate(ROUTES.LANDING)} className="flex items-center gap-1.5 text-surface-500 hover:text-primary-600 transition-colors">
             <Icon name="arrow_forward" size={20} className="ltr:rotate-180" />
             <span className="text-sm font-medium">{isIt ? 'Indietro' : 'رجوع'}</span>
           </button>
@@ -101,7 +100,7 @@ export function TermsOfServicePage({ onNavigate }: TermsOfServicePageProps) {
                 ))}
               </nav>
               <div className="mt-4 pt-4 border-t border-surface-100">
-                <button onClick={() => onNavigate('contact')} className="w-full flex items-center justify-center gap-1.5 text-xs bg-surface-800 text-white px-3 py-2 rounded-xl hover:bg-surface-900 transition-colors font-medium">
+                <button onClick={() => navigate(ROUTES.CONTACT)} className="w-full flex items-center justify-center gap-1.5 text-xs bg-surface-800 text-white px-3 py-2 rounded-xl hover:bg-surface-900 transition-colors font-medium">
                   <Icon name="mail" size={14} />
                   {isIt ? 'Contattaci' : 'تواصل معنا'}
                 </button>
@@ -309,7 +308,7 @@ export function TermsOfServicePage({ onNavigate }: TermsOfServicePageProps) {
                       <Icon name="email" size={20} className="text-surface-300" />
                       <div><p className="text-xs text-surface-400">Per questioni legali</p><p className="text-sm font-semibold" dir="ltr">legal@patentehub.com</p></div>
                     </a>
-                    <button onClick={() => onNavigate('contact')} className="w-full flex items-center justify-center gap-2 bg-white text-surface-900 font-semibold rounded-xl px-4 py-3 hover:bg-surface-100 transition-colors text-sm">
+                    <button onClick={() => navigate(ROUTES.CONTACT)} className="w-full flex items-center justify-center gap-2 bg-white text-surface-900 font-semibold rounded-xl px-4 py-3 hover:bg-surface-100 transition-colors text-sm">
                       <Icon name="chat" size={18} className="text-surface-700" />
                       Apri la pagina contatti
                     </button>
@@ -446,7 +445,7 @@ export function TermsOfServicePage({ onNavigate }: TermsOfServicePageProps) {
                       <Icon name="email" size={20} className="text-surface-300" />
                       <div><p className="text-xs text-surface-400">للاستفسارات القانونية</p><p className="text-sm font-semibold" dir="ltr">legal@patentehub.com</p></div>
                     </a>
-                    <button onClick={() => onNavigate('contact')} className="w-full flex items-center justify-center gap-2 bg-white text-surface-900 font-semibold rounded-xl px-4 py-3 hover:bg-surface-100 transition-colors text-sm">
+                    <button onClick={() => navigate(ROUTES.CONTACT)} className="w-full flex items-center justify-center gap-2 bg-white text-surface-900 font-semibold rounded-xl px-4 py-3 hover:bg-surface-100 transition-colors text-sm">
                       <Icon name="chat" size={18} className="text-surface-700" />
                       فتح صفحة التواصل
                     </button>
@@ -456,7 +455,7 @@ export function TermsOfServicePage({ onNavigate }: TermsOfServicePageProps) {
             )}
 
             <div className="flex flex-col sm:flex-row gap-3">
-              <button onClick={() => onNavigate('privacy-policy')} className="flex-1 flex items-center justify-between gap-2 bg-white rounded-2xl px-5 py-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all group">
+              <button onClick={() => navigate(ROUTES.PRIVACY_POLICY)} className="flex-1 flex items-center justify-between gap-2 bg-white rounded-2xl px-5 py-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all group">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-surface-50 rounded-xl flex items-center justify-center group-hover:bg-primary-50 transition-colors"><Icon name="privacy_tip" size={20} className="text-surface-400 group-hover:text-primary-500 transition-colors" /></div>
                   <div className={isIt ? '' : 'text-right'}>
@@ -466,7 +465,7 @@ export function TermsOfServicePage({ onNavigate }: TermsOfServicePageProps) {
                 </div>
                 <Icon name="arrow_back" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors" />
               </button>
-              <button onClick={() => onNavigate('contact')} className="flex-1 flex items-center justify-between gap-2 bg-white rounded-2xl px-5 py-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all group">
+              <button onClick={() => navigate(ROUTES.CONTACT)} className="flex-1 flex items-center justify-between gap-2 bg-white rounded-2xl px-5 py-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all group">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-surface-50 rounded-xl flex items-center justify-center group-hover:bg-primary-50 transition-colors"><Icon name="mail" size={20} className="text-surface-400 group-hover:text-primary-500 transition-colors" /></div>
                   <div className={isIt ? '' : 'text-right'}>
