@@ -126,7 +126,7 @@ function LoginForm({ onSuccess, navigate }: { onSuccess: () => void; navigate: R
 // ─── Register Form ────────────────────────────────────────────────────────────
 
 function RegisterForm({ onSuccess, navigate }: { onSuccess: () => void; navigate: ReturnType<typeof useNavigate> }) {
-  const { register: doRegister, checkUsername, isLoading, clearError } = useAuthStore();
+  const { register: doRegister, checkUsername, isLoading, clearError, confirmationEmailSent } = useAuthStore();
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle');
@@ -160,6 +160,24 @@ function RegisterForm({ onSuccess, navigate }: { onSuccess: () => void; navigate
     const success = await doRegister(values.email, values.password, fullName, values.username || undefined);
     if (success) { toast.success('مرحباً بك في Patente Hub!', 'تم إنشاء حسابك بنجاح'); onSuccess(); }
   };
+
+  if (confirmationEmailSent) {
+    return (
+      <div className="text-center space-y-4">
+        <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
+          <Icon name="mark_email_read" size={36} className="text-green-600" />
+        </div>
+        <h2 className="text-lg font-semibold text-surface-900">تحقق من بريدك الإلكتروني</h2>
+        <p className="text-sm text-surface-500 leading-relaxed">
+          تم إنشاء حسابك بنجاح! أرسلنا رابط التأكيد إلى بريدك الإلكتروني.
+          يرجى فتح البريد والضغط على رابط التفعيل ثم تسجيل الدخول.
+        </p>
+        <Button fullWidth size="lg" onClick={() => { clearError(); navigate(ROUTES.LOGIN); }}>
+          الذهاب إلى تسجيل الدخول
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

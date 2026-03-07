@@ -52,6 +52,8 @@ interface AuthResult<T = void> {
   success: boolean;
   data?: T;
   error?: string;
+  /** True when Supabase requires the user to confirm their email before signing in */
+  pendingEmailConfirmation?: boolean;
 }
 
 // ── Auth API ──────────────────────────────────────────────────────────────────
@@ -82,12 +84,10 @@ export async function supabaseRegister(
   if (error)               return { success: false, error: error.message };
   if (!data.user)          return { success: false, error: 'فشل إنشاء الحساب' };
 
-  // Email confirmation is required — session will be null until user confirms
+  // Email confirmation is required — session will be null until user confirms.
+  // The account IS created; flag it so the UI can show a "check your email" state.
   if (!data.session) {
-    return {
-      success: false,
-      error: 'تم إرسال رابط التأكيد إلى بريدك الإلكتروني. يرجى فتح بريدك والضغط على رابط التفعيل ثم تسجيل الدخول.',
-    };
+    return { success: false, pendingEmailConfirmation: true };
   }
 
   // Fetch the profile created by the DB trigger (with retries for race condition)

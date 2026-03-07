@@ -39,6 +39,8 @@ interface AuthState {
   token: string | null;
   isLoading: boolean;
   error: string | null;
+  /** True after a successful signup when Supabase requires email confirmation */
+  confirmationEmailSent: boolean;
 
   // Actions
   register:       (email: string, password: string, name: string, username?: string) => Promise<boolean>;
@@ -85,19 +87,20 @@ export const useAuthStore = create<AuthState>((set, get) => {
   });
 
   return {
-    user:      null,
-    token:     null,
-    isLoading: true,
-    error:     null,
+    user:                  null,
+    token:                 null,
+    isLoading:             true,
+    error:                 null,
+    confirmationEmailSent: false,
 
     checkUsername: async (username) => supabaseCheckUsername(username),
 
     register: async (email, password, name, username) => {
-      set({ isLoading: true, error: null });
+      set({ isLoading: true, error: null, confirmationEmailSent: false });
       try {
-        const nameParts  = name.split(' ');
-        const firstName  = nameParts[0] ?? '';
-        const lastName   = nameParts.slice(1).join(' ') || '';
+        const nameParts = name.split(' ');
+        const firstName = nameParts[0] ?? '';
+        const lastName  = nameParts.slice(1).join(' ') || '';
 
         const r = await supabaseRegister(email, password, name, { firstName, lastName, username });
 
@@ -105,6 +108,13 @@ export const useAuthStore = create<AuthState>((set, get) => {
           set({ user: r.data.user, token: r.data.accessToken, isLoading: false });
           return true;
         }
+
+        // Account created but Supabase requires email confirmation before sign-in
+        if (r.pendingEmailConfirmation) {
+          set({ isLoading: false, confirmationEmailSent: true });
+          return false;
+        }
+
         set({ error: r.error, isLoading: false });
         return false;
       } catch {
@@ -178,7 +188,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
       }
     },
 
-    clearError: () => set({ error: null }),
+    clearError: () => set({ error: null, confirmationEmailSent: false }),
 
     /**
      * Password reset flow:
