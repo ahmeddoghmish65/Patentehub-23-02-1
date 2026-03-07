@@ -175,10 +175,10 @@ export function PrivacyPolicyPage() {
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="data_object" size={18} className="text-primary-600" filled /></span>
                     Cookie e archiviazione locale
                   </h2>
-                  <p className="text-sm text-surface-600 leading-relaxed mb-4">L'app utilizza <strong>localStorage</strong> e <strong>IndexedDB</strong> per l'archiviazione locale sul tuo dispositivo invece dei cookie tradizionali. Questo approccio ti dà maggiore controllo sui tuoi dati.</p>
+                  <p className="text-sm text-surface-600 leading-relaxed mb-4">L'app utilizza <strong>localStorage</strong> e <strong>IndexedDB</strong> per l'archiviazione locale sul tuo dispositivo invece dei cookie tradizionali. I token JWT di Supabase (autenticazione) sono salvati in localStorage e rinnovati automaticamente.</p>
                   <div className="space-y-3">
                     {[
-                      { icon: 'key', title: 'Sessione di accesso', desc: 'Salva il token di autenticazione per mantenerti connesso', color: 'text-primary-500' },
+                      { icon: 'key', title: 'Token JWT (Supabase)', desc: 'Salva il token di accesso e il refresh token per mantenerti connesso in modo sicuro', color: 'text-primary-500' },
                       { icon: 'sync', title: 'Dati di progresso', desc: 'Sincronizza i progressi e li rende disponibili offline', color: 'text-success-500' },
                       { icon: 'tune', title: 'Impostazioni e preferenze', desc: 'Salva la lingua dei contenuti e le preferenze dell\'interfaccia', color: 'text-warning-500' },
                     ].map((item, i) => (
@@ -201,22 +201,22 @@ export function PrivacyPolicyPage() {
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="storage" size={18} className="text-primary-600" filled /></span>
                     Archiviazione dei dati
                   </h2>
-                  <p className="text-sm text-surface-600 leading-relaxed mb-4">Nella versione attuale, tutti i dati di Patente Hub sono archiviati <strong className="text-surface-900">localmente sul tuo dispositivo</strong> tramite IndexedDB. I tuoi dati non vengono inviati a server esterni.</p>
+                  <p className="text-sm text-surface-600 leading-relaxed mb-4">Patente Hub utilizza un modello di archiviazione ibrido: i dati di autenticazione e il profilo utente sono archiviati in modo sicuro su <strong className="text-surface-900">server Supabase (PostgreSQL, UE)</strong>, mentre i contenuti educativi e i dati della community sono salvati <strong className="text-surface-900">localmente sul tuo dispositivo</strong> tramite IndexedDB.</p>
                   <div className="grid sm:grid-cols-2 gap-3">
-                    <div className="bg-success-50 rounded-xl p-4 border border-success-100">
-                      <Icon name="lock" size={24} className="text-success-600 mb-2" filled />
-                      <h3 className="font-semibold text-success-800 text-sm mb-1">Dati in locale</h3>
-                      <p className="text-xs text-success-700">I tuoi dati rimangono sul dispositivo e non vengono inviati a nessun server</p>
-                    </div>
                     <div className="bg-primary-50 rounded-xl p-4 border border-primary-100">
-                      <Icon name="wifi_off" size={24} className="text-primary-600 mb-2" filled />
-                      <h3 className="font-semibold text-primary-800 text-sm mb-1">Funziona offline</h3>
-                      <p className="text-xs text-primary-700">Tutte le funzionalità sono disponibili senza connessione</p>
+                      <Icon name="cloud_done" size={24} className="text-primary-600 mb-2" filled />
+                      <h3 className="font-semibold text-primary-800 text-sm mb-1">Dati cloud (Supabase)</h3>
+                      <p className="text-xs text-primary-700">Account, profilo, progressi e impostazioni sono archiviati in modo sicuro su server PostgreSQL in Europa</p>
+                    </div>
+                    <div className="bg-success-50 rounded-xl p-4 border border-success-100">
+                      <Icon name="phone_android" size={24} className="text-success-600 mb-2" filled />
+                      <h3 className="font-semibold text-success-800 text-sm mb-1">Dati locali (IndexedDB)</h3>
+                      <p className="text-xs text-success-700">Contenuti educativi, segnali stradali, dizionario e dati della community rimangono sul dispositivo</p>
                     </div>
                     <div className="bg-warning-50 rounded-xl p-4 border border-warning-100 sm:col-span-2">
                       <Icon name="backup" size={24} className="text-warning-600 mb-2" filled />
-                      <h3 className="font-semibold text-warning-800 text-sm mb-1">Backup</h3>
-                      <p className="text-xs text-warning-700">Ti consigliamo di non cancellare i dati del browser per evitare la perdita dei progressi.</p>
+                      <h3 className="font-semibold text-warning-800 text-sm mb-1">Backup automatico</h3>
+                      <p className="text-xs text-warning-700">I progressi e le impostazioni sono automaticamente sincronizzati con il tuo account Supabase e accessibili da qualsiasi dispositivo.</p>
                     </div>
                   </div>
                 </section>
@@ -229,6 +229,7 @@ export function PrivacyPolicyPage() {
                   <p className="text-sm text-surface-600 leading-relaxed mb-4">L'app utilizza i seguenti servizi esterni, ognuno con la propria informativa sulla privacy:</p>
                   <div className="space-y-3">
                     {[
+                      { name: 'Supabase', desc: 'Piattaforma cloud per autenticazione e archiviazione del profilo utente (server in Europa)', icon: 'cloud' },
                       { name: 'Google Fonts', desc: 'Caricamento dei font per l\'interfaccia', icon: 'text_fields' },
                       { name: 'Material Symbols (Google)', desc: 'Libreria di icone per l\'interfaccia', icon: 'interests' },
                     ].map((service, i) => (
@@ -285,9 +286,9 @@ export function PrivacyPolicyPage() {
                   </h2>
                   <ul className="space-y-3">
                     {[
-                      { icon: 'shield', text: 'Archiviazione locale sul dispositivo senza invio a server esterni' },
-                      { icon: 'password', text: 'Cifratura delle password prima dell\'archiviazione' },
-                      { icon: 'token', text: 'Sistema di token di sessione con scadenza temporale' },
+                      { icon: 'shield', text: 'Autenticazione tramite Supabase con JWT sicuri e rinnovo automatico del token' },
+                      { icon: 'password', text: 'Le password non vengono mai archiviate: Supabase gestisce l\'autenticazione in modo sicuro' },
+                      { icon: 'token', text: 'Token di accesso JWT con scadenza breve (1 ora) e refresh token a lungo termine' },
                       { icon: 'visibility_off', text: 'Nessuna visualizzazione di password o dati sensibili nell\'interfaccia' },
                       { icon: 'admin_panel_settings', text: 'Accesso ai dati sensibili limitato in base ai ruoli utente' },
                       { icon: 'gpp_good', text: 'Revisione periodica delle procedure di sicurezza' },
@@ -388,10 +389,10 @@ export function PrivacyPolicyPage() {
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="data_object" size={18} className="text-primary-600" filled /></span>
                     ملفات الارتباط والتخزين المحلي
                   </h2>
-                  <p className="text-sm text-surface-600 leading-relaxed mb-4">يستخدم التطبيق <strong>localStorage</strong> و <strong>IndexedDB</strong> للتخزين المحلي على جهازك بدلاً من ملفات الارتباط التقليدية.</p>
+                  <p className="text-sm text-surface-600 leading-relaxed mb-4">يستخدم التطبيق <strong>localStorage</strong> و <strong>IndexedDB</strong> للتخزين المحلي على جهازك بدلاً من ملفات الارتباط التقليدية. تُحفَظ رموز JWT من Supabase في localStorage وتُجدَّد تلقائياً.</p>
                   <div className="space-y-3">
                     {[
-                      { icon: 'key', title: 'جلسة الدخول', desc: 'حفظ رمز المصادقة لإبقائك مسجلاً', color: 'text-primary-500' },
+                      { icon: 'key', title: 'رمز JWT (Supabase)', desc: 'حفظ رمز الوصول ورمز التحديث للمصادقة الآمنة', color: 'text-primary-500' },
                       { icon: 'sync', title: 'بيانات التقدم', desc: 'مزامنة تقدمك التعليمي وإتاحته بدون اتصال', color: 'text-success-500' },
                       { icon: 'tune', title: 'الإعدادات والتفضيلات', desc: 'حفظ لغة المحتوى وتفضيلات واجهة المستخدم', color: 'text-warning-500' },
                     ].map((item, i) => (
@@ -414,17 +415,22 @@ export function PrivacyPolicyPage() {
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="storage" size={18} className="text-primary-600" filled /></span>
                     تخزين البيانات
                   </h2>
-                  <p className="text-sm text-surface-600 leading-relaxed mb-4">في النسخة الحالية، تُخزَّن جميع بيانات Patente Hub <strong className="text-surface-900">محلياً على جهازك</strong> فقط باستخدام IndexedDB. لا يتم إرسال بياناتك لخوادم خارجية.</p>
+                  <p className="text-sm text-surface-600 leading-relaxed mb-4">يعتمد Patente Hub على نموذج تخزين مزدوج: تُحفَظ بيانات المصادقة والملف الشخصي بأمان على <strong className="text-surface-900">خوادم Supabase (PostgreSQL، أوروبا)</strong>، بينما تُخزَّن المحتويات التعليمية وبيانات المجتمع <strong className="text-surface-900">محلياً على جهازك</strong> عبر IndexedDB.</p>
                   <div className="grid sm:grid-cols-2 gap-3">
-                    <div className="bg-success-50 rounded-xl p-4 border border-success-100">
-                      <Icon name="lock" size={24} className="text-success-600 mb-2" filled />
-                      <h3 className="font-semibold text-success-800 text-sm mb-1">بيانات محفوظة محلياً</h3>
-                      <p className="text-xs text-success-700">تبقى بياناتك على جهازك ولا تُرسَل لأي خادم</p>
-                    </div>
                     <div className="bg-primary-50 rounded-xl p-4 border border-primary-100">
-                      <Icon name="wifi_off" size={24} className="text-primary-600 mb-2" filled />
-                      <h3 className="font-semibold text-primary-800 text-sm mb-1">يعمل بدون إنترنت</h3>
-                      <p className="text-xs text-primary-700">جميع ميزات التطبيق متاحة بدون اتصال</p>
+                      <Icon name="cloud_done" size={24} className="text-primary-600 mb-2" filled />
+                      <h3 className="font-semibold text-primary-800 text-sm mb-1">بيانات سحابية (Supabase)</h3>
+                      <p className="text-xs text-primary-700">الحساب والملف الشخصي والتقدم والإعدادات تُحفَظ بأمان على خوادم PostgreSQL في أوروبا</p>
+                    </div>
+                    <div className="bg-success-50 rounded-xl p-4 border border-success-100">
+                      <Icon name="phone_android" size={24} className="text-success-600 mb-2" filled />
+                      <h3 className="font-semibold text-success-800 text-sm mb-1">بيانات محلية (IndexedDB)</h3>
+                      <p className="text-xs text-success-700">المحتوى التعليمي وإشارات الطرق والقاموس وبيانات المجتمع تبقى على جهازك</p>
+                    </div>
+                    <div className="bg-warning-50 rounded-xl p-4 border border-warning-100 sm:col-span-2">
+                      <Icon name="backup" size={24} className="text-warning-600 mb-2" filled />
+                      <h3 className="font-semibold text-warning-800 text-sm mb-1">نسخ احتياطي تلقائي</h3>
+                      <p className="text-xs text-warning-700">يتم مزامنة تقدمك وإعداداتك تلقائياً مع حسابك على Supabase، ويمكن الوصول إليها من أي جهاز.</p>
                     </div>
                   </div>
                 </section>
@@ -436,6 +442,7 @@ export function PrivacyPolicyPage() {
                   </h2>
                   <div className="space-y-3">
                     {[
+                      { name: 'Supabase', desc: 'منصة سحابية للمصادقة وتخزين ملف المستخدم (خوادم في أوروبا)', icon: 'cloud' },
                       { name: 'Google Fonts', desc: 'لتحميل خطوط واجهة التطبيق', icon: 'text_fields' },
                       { name: 'Material Symbols (Google)', desc: 'مكتبة الأيقونات المستخدمة في واجهة التطبيق', icon: 'interests' },
                     ].map((service, i) => (
@@ -479,9 +486,9 @@ export function PrivacyPolicyPage() {
                   </h2>
                   <ul className="space-y-3">
                     {[
-                      { icon: 'shield', text: 'تخزين البيانات محلياً على جهازك دون إرسالها لخوادم خارجية' },
-                      { icon: 'password', text: 'تشفير كلمات المرور قبل التخزين باستخدام خوارزميات آمنة' },
-                      { icon: 'token', text: 'نظام توكن للجلسات مع صلاحية زمنية محدودة' },
+                      { icon: 'shield', text: 'مصادقة عبر Supabase برموز JWT آمنة وتجديد تلقائي للرمز' },
+                      { icon: 'password', text: 'لا تُخزَّن كلمات المرور أبداً — تُدار المصادقة بأمان عبر Supabase' },
+                      { icon: 'token', text: 'رمز وصول JWT قصير الأجل (ساعة واحدة) مع رمز تحديث طويل الأجل' },
                       { icon: 'visibility_off', text: 'عدم عرض كلمات المرور أو البيانات الحساسة في الواجهة' },
                       { icon: 'admin_panel_settings', text: 'تقييد الوصول للبيانات الحساسة حسب صلاحيات المستخدم' },
                       { icon: 'gpp_good', text: 'مراجعة دورية لإجراءات الأمان وتحديثها باستمرار' },
