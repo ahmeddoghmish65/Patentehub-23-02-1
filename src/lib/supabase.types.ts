@@ -17,6 +17,10 @@ export interface Database {
         Args: { requested_username: string };
         Returns: { available: boolean; suggestions: string[] };
       };
+      update_last_login: {
+        Args: { user_id: string };
+        Returns: void;
+      };
     };
     Enums: {
       user_role: 'user' | 'manager' | 'admin';

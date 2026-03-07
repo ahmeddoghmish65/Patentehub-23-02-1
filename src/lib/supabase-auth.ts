@@ -12,7 +12,7 @@
 
 import { supabase } from './supabase';
 import type { User, UserProgress, UserSettings } from '@/types';
-import type { ProfileRow } from './supabase.types';
+import type { ProfileRow, UserProgressJson, UserSettingsJson } from './supabase.types';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -119,7 +119,7 @@ export async function supabaseLogin(
 
   // Run update_last_login and fetchProfile in parallel to save one round-trip
   const [, profile] = await Promise.all([
-    supabase.rpc('update_last_login', { user_id: data.user.id } as never),
+    supabase.rpc('update_last_login', { user_id: data.user.id }),
     fetchProfile(data.user.id),
   ]);
 
@@ -184,15 +184,13 @@ export async function supabaseUpdateProfile(
   userId: string,
   data: { name?: string; avatar?: string },
 ): Promise<AuthResult<Omit<User, 'password'>>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const update: Record<string, any> = {};
+  const update: Partial<{ name: string; avatar: string }> = {};
   if (data.name   !== undefined) update.name   = data.name;
   if (data.avatar !== undefined) update.avatar = data.avatar;
 
   const { error } = await supabase
     .from('profiles')
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .update(update as any)
+    .update(update)
     .eq('id', userId);
 
   if (error) return { success: false, error: error.message };
@@ -220,8 +218,7 @@ export async function supabaseUpdateSettings(
 
   const { error } = await supabase
     .from('profiles')
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .update({ settings: merged } as any)
+    .update({ settings: merged as unknown as UserSettingsJson })
     .eq('id', userId);
 
   if (error) return { success: false, error: error.message };
@@ -245,8 +242,7 @@ export async function supabaseUpdateProgress(
 
   const { error } = await supabase
     .from('profiles')
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .update({ progress: merged } as any)
+    .update({ progress: merged as unknown as UserProgressJson })
     .eq('id', userId);
 
   if (error) return { success: false, error: error.message };
@@ -259,7 +255,7 @@ export async function supabaseCheckUsername(
 ): Promise<{ available: boolean; suggestions: string[] }> {
   const { data, error } = await supabase.rpc(
     'check_username',
-    { requested_username: username } as never,
+    { requested_username: username },
   );
   if (error) return { available: false, suggestions: [] };
   return data as { available: boolean; suggestions: string[] };
