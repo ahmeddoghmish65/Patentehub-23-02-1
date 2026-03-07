@@ -78,7 +78,7 @@ export function ContactPage() {
       <header className="sticky top-0 z-50 bg-white border-b border-surface-100 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
           <button
-            onClick={() => navigate(ROUTES.LANDING)}
+            onClick={() => navigate(-1)}
             className="flex items-center gap-1.5 text-surface-500 hover:text-primary-600 transition-colors"
           >
             <Icon name="arrow_forward" size={20} className="ltr:rotate-180" />
