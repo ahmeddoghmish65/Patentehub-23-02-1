@@ -117,10 +117,12 @@ export async function supabaseLogin(
   if (error)         return { success: false, error: 'بريد أو كلمة مرور خاطئة' };
   if (!data.session) return { success: false, error: 'فشل تسجيل الدخول' };
 
-  // Update last_login timestamp via RPC
-  await supabase.rpc('update_last_login', { user_id: data.user.id } as never);
+  // Run update_last_login and fetchProfile in parallel to save one round-trip
+  const [, profile] = await Promise.all([
+    supabase.rpc('update_last_login', { user_id: data.user.id } as never),
+    fetchProfile(data.user.id),
+  ]);
 
-  const profile = await fetchProfile(data.user.id);
   if (!profile) return { success: false, error: 'فشل تحميل بيانات المستخدم' };
 
   if (profile.isBanned) {
@@ -146,8 +148,10 @@ export async function supabaseLogout(): Promise<void> {
 /**
  * Get current user from the active Supabase session.
  * Called on app load to restore auth state.
+ * Accepts an optional userId to skip a redundant getSession() call.
  */
-export async function supabaseGetCurrentUser(): Promise<Omit<User, 'password'> | null> {
+export async function supabaseGetCurrentUser(userId?: string): Promise<Omit<User, 'password'> | null> {
+  if (userId) return fetchProfile(userId);
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) return null;
   return fetchProfile(session.user.id);
@@ -280,14 +284,14 @@ async function fetchProfile(userId: string): Promise<Omit<User, 'password'> | nu
  */
 async function fetchProfileWithRetry(
   userId: string,
-  maxAttempts = 5,
-  delayMs = 500,
+  maxAttempts = 4,
+  delayMs = 150,
 ): Promise<Omit<User, 'password'> | null> {
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const profile = await fetchProfile(userId);
     if (profile) return profile;
     if (attempt < maxAttempts) {
-      await new Promise(resolve => setTimeout(resolve, delayMs * attempt));
+      await new Promise(resolve => setTimeout(resolve, delayMs));
     }
   }
   return null;

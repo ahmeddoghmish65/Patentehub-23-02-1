@@ -166,7 +166,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
           return;
         }
 
-        const user = await supabaseGetCurrentUser();
+        const user = await supabaseGetCurrentUser(session.user.id);
         if (user) {
           set({ user, token: session.access_token, isLoading: false });
         } else {
