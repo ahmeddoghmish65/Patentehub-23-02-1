@@ -936,15 +936,15 @@ export function CommunityPage({ openPostId, onNavigate }: { openPostId?: string;
                   )}
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-3 mt-1">
+                <div className="grid grid-cols-2 gap-2 mt-1">
                   <button
-                    className="py-4 rounded-2xl border-2 border-surface-900 bg-teal-50 hover:bg-teal-100 text-surface-900 transition-all font-bold text-base text-center"
+                    className="py-2 px-3 rounded-xl border-2 border-surface-900 bg-teal-50 hover:bg-teal-100 text-surface-900 transition-all font-semibold text-sm text-center"
                     onClick={() => handleQuizAnswer(post.id, true)}
                   >
                     {t('community.correct_quiz')}
                   </button>
                   <button
-                    className="py-4 rounded-2xl border-2 border-surface-900 bg-rose-50 hover:bg-rose-100 text-surface-900 transition-all font-bold text-base text-center"
+                    className="py-2 px-3 rounded-xl border-2 border-surface-900 bg-rose-50 hover:bg-rose-100 text-surface-900 transition-all font-semibold text-sm text-center"
                     onClick={() => handleQuizAnswer(post.id, false)}
                   >
                     {t('community.wrong_quiz')}
