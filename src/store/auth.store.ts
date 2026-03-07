@@ -148,18 +148,22 @@ export const useAuthStore = create<AuthState>((set, get) => {
      */
     checkAuth: async () => {
       set({ isLoading: true });
-      const { data: { session } } = await supabase.auth.getSession();
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
 
-      if (!session) {
-        set({ isLoading: false });
-        return;
-      }
+        if (!session) {
+          set({ isLoading: false });
+          return;
+        }
 
-      const user = await supabaseGetCurrentUser();
-      if (user) {
-        set({ user, token: session.access_token, isLoading: false });
-      } else {
-        await supabase.auth.signOut();
+        const user = await supabaseGetCurrentUser();
+        if (user) {
+          set({ user, token: session.access_token, isLoading: false });
+        } else {
+          await supabase.auth.signOut();
+          set({ isLoading: false });
+        }
+      } catch {
         set({ isLoading: false });
       }
     },
