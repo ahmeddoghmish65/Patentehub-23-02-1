@@ -124,7 +124,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
     },
 
     login: async (email, password) => {
-      set({ isLoading: true, error: null });
+      set({ isLoading: true, error: null, confirmationEmailSent: false });
       try {
         const r = await supabaseLogin(email, password);
 
@@ -146,6 +146,13 @@ export const useAuthStore = create<AuthState>((set, get) => {
           }
           return true;
         }
+
+        // Email not confirmed — show the same "check your email" screen
+        if (r.pendingEmailConfirmation) {
+          set({ isLoading: false, confirmationEmailSent: true });
+          return false;
+        }
+
         set({ error: r.error, isLoading: false });
         return false;
       } catch {
@@ -168,8 +175,14 @@ export const useAuthStore = create<AuthState>((set, get) => {
      */
     checkAuth: async () => {
       set({ isLoading: true });
+      const timeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('timeout')), 8000),
+      );
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session } } = await Promise.race([
+          supabase.auth.getSession(),
+          timeout,
+        ]) as Awaited<ReturnType<typeof supabase.auth.getSession>>;
 
         if (!session) {
           set({ isLoading: false });

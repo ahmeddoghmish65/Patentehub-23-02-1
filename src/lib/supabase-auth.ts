@@ -56,6 +56,16 @@ interface AuthResult<T = void> {
   pendingEmailConfirmation?: boolean;
 }
 
+// ── Timeout helper ────────────────────────────────────────────────────────────
+
+/** Wraps a promise with a maximum wait time (ms). Rejects with Error('timeout'). */
+function withTimeout<T>(promise: Promise<T>, ms = 12000): Promise<T> {
+  const t = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error('timeout')), ms),
+  );
+  return Promise.race([promise, t]);
+}
+
 // ── Auth API ──────────────────────────────────────────────────────────────────
 
 /**
@@ -68,18 +78,24 @@ export async function supabaseRegister(
   name: string,
   extra?: { firstName?: string; lastName?: string; username?: string },
 ): Promise<AuthResult<{ user: Omit<User, 'password'>; accessToken: string; refreshToken: string }>> {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        name,
-        firstName: extra?.firstName ?? '',
-        lastName:  extra?.lastName  ?? '',
-        username:  extra?.username  ?? null,
+  let data: Awaited<ReturnType<typeof supabase.auth.signUp>>['data'];
+  let error: Awaited<ReturnType<typeof supabase.auth.signUp>>['error'];
+  try {
+    ({ data, error } = await withTimeout(supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+          firstName: extra?.firstName ?? '',
+          lastName:  extra?.lastName  ?? '',
+          username:  extra?.username  ?? null,
+        },
       },
-    },
-  });
+    })));
+  } catch {
+    return { success: false, error: 'انتهت مهلة الاتصال، يرجى التحقق من الإنترنت والمحاولة مجدداً' };
+  }
 
   if (error)               return { success: false, error: error.message };
   if (!data.user)          return { success: false, error: 'فشل إنشاء الحساب' };
@@ -112,9 +128,23 @@ export async function supabaseLogin(
   email: string,
   password: string,
 ): Promise<AuthResult<{ user: Omit<User, 'password'>; accessToken: string; refreshToken: string }>> {
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  let data: Awaited<ReturnType<typeof supabase.auth.signInWithPassword>>['data'];
+  let error: Awaited<ReturnType<typeof supabase.auth.signInWithPassword>>['error'];
+  try {
+    ({ data, error } = await withTimeout(supabase.auth.signInWithPassword({ email, password })));
+  } catch {
+    return { success: false, error: 'انتهت مهلة الاتصال، يرجى التحقق من الإنترنت والمحاولة مجدداً' };
+  }
 
-  if (error)         return { success: false, error: 'بريد أو كلمة مرور خاطئة' };
+  if (error) {
+    if (
+      error.message?.toLowerCase().includes('email not confirmed') ||
+      error.message?.toLowerCase().includes('email_not_confirmed')
+    ) {
+      return { success: false, pendingEmailConfirmation: true };
+    }
+    return { success: false, error: 'بريد أو كلمة مرور خاطئة' };
+  }
   if (!data.session) return { success: false, error: 'فشل تسجيل الدخول' };
 
   // Run update_last_login and fetchProfile in parallel to save one round-trip

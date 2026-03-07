@@ -79,7 +79,7 @@ export function AuthPage({ mode }: AuthPageProps) {
 // ─── Login Form ───────────────────────────────────────────────────────────────
 
 function LoginForm({ onSuccess, navigate }: { onSuccess: () => void; navigate: ReturnType<typeof useNavigate> }) {
-  const { login, isLoading, clearError } = useAuthStore();
+  const { login, isLoading, clearError, confirmationEmailSent } = useAuthStore();
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -92,6 +92,23 @@ function LoginForm({ onSuccess, navigate }: { onSuccess: () => void; navigate: R
     const success = await login(values.email, values.password);
     if (success) onSuccess();
   };
+
+  if (confirmationEmailSent) {
+    return (
+      <div className="text-center space-y-4">
+        <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
+          <Icon name="mark_email_read" size={36} className="text-green-600" />
+        </div>
+        <h2 className="text-lg font-semibold text-surface-900">تحقق من بريدك الإلكتروني</h2>
+        <p className="text-sm text-surface-500 leading-relaxed">
+          يرجى فتح بريدك الإلكتروني والضغط على رابط التفعيل أولاً، ثم عُد وسجّل الدخول.
+        </p>
+        <Button fullWidth size="lg" onClick={() => clearError()}>
+          حاول مرة أخرى
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
