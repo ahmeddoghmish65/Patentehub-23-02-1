@@ -7,7 +7,7 @@ import type { Comment, Report } from '@/db/database';
 import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
 import { useTranslation, type UiLang } from '@/i18n';
 
-type Tab = 'overview' | 'sections' | 'lessons' | 'questions' | 'signs' | 'dictionary' | 'users' | 'posts' | 'comments' | 'reports' | 'logs' | 'analytics' | 'languages';
+type Tab = 'overview' | 'sections' | 'lessons' | 'questions' | 'signs' | 'dictionary' | 'users' | 'posts' | 'comments' | 'reports' | 'logs' | 'analytics' | 'languages' | 'media';
 type ContentView = 'active' | 'archived' | 'deleted' | 'banned';
 
 export function AdminPage() {
@@ -39,6 +39,13 @@ export function AdminPage() {
   const [filterSignCategory, setFilterSignCategory] = useState('');
   const [filterDictSectionId, setFilterDictSectionId] = useState('');
   const [confirmDel, setConfirmDel] = useState<{ type: string; id: string } | null>(null);
+  // Media picker state
+  const [mediaPicker, setMediaPicker] = useState<{ field: string; squareSize?: number } | null>(null);
+  const [mediaPickerSearch, setMediaPickerSearch] = useState('');
+  const [mediaPickerFilter, setMediaPickerFilter] = useState<'all' | 'sections' | 'lessons' | 'signs' | 'questions'>('all');
+  // Media library tab search/filter
+  const [mediaLibSearch, setMediaLibSearch] = useState('');
+  const [mediaLibFilter, setMediaLibFilter] = useState<'all' | 'sections' | 'lessons' | 'signs' | 'questions'>('all');
   const [allComments, setAllComments] = useState<(Comment & { postContent?: string })[]>([]);
   const [viewUser, setViewUser] = useState<string | null>(null);
   const [viewedReport, setViewedReport] = useState<Report | null>(null);
@@ -166,6 +173,46 @@ export function AdminPage() {
     input.click();
   };
 
+  const handleImageUploadDirect = async (squareSize?: number): Promise<string | null> =>
+    new Promise(resolve => {
+      const input = document.createElement('input');
+      input.type = 'file'; input.accept = 'image/*';
+      input.onchange = (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (!file) return resolve(null);
+        const reader = new FileReader();
+        reader.onload = async () => {
+          const raw = reader.result as string;
+          const result = squareSize ? await resizeImageToSquare(raw, squareSize) : raw;
+          resolve(result);
+        };
+        reader.readAsDataURL(file);
+      };
+      input.oncancel = () => resolve(null);
+      input.click();
+    });
+
+  type MediaItem = { src: string; label: string; source: 'sections' | 'lessons' | 'signs' | 'questions' };
+
+  const collectAllMedia = (): MediaItem[] => {
+    const items: MediaItem[] = [];
+    for (const s of store.sections) {
+      if (s.image) items.push({ src: s.image, label: s.nameAr || s.nameIt, source: 'sections' });
+    }
+    for (const l of store.lessons) {
+      if (l.image) items.push({ src: l.image, label: l.titleAr || l.titleIt, source: 'lessons' });
+    }
+    for (const sg of store.signs) {
+      if (sg.image) items.push({ src: sg.image, label: sg.nameAr || sg.nameIt, source: 'signs' });
+    }
+    for (const q of store.questions) {
+      if (q.image) items.push({ src: q.image, label: (q.questionAr || q.questionIt || '').substring(0, 40), source: 'questions' });
+    }
+    // Deduplicate by src
+    const seen = new Set<string>();
+    return items.filter(i => { if (seen.has(i.src)) return false; seen.add(i.src); return true; });
+  };
+
   const saveItem = async () => {
     if (!modal) return;
     const { type, data } = modal;
@@ -256,6 +303,7 @@ export function AdminPage() {
     { id: 'logs', icon: 'history', label: 'السجلات', permKey: 'logs' },
     { id: 'analytics', icon: 'analytics', label: 'الزيارات', permKey: 'analytics' },
     { id: 'languages', icon: 'translate', label: 'اللغات' },
+    { id: 'media', icon: 'perm_media', label: 'مكتبة الصور' },
   ];
 
   // Filter tabs based on role and permissions
@@ -396,10 +444,16 @@ export function AdminPage() {
         <input type="number" className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as number) || 0} onChange={e => setForm(prev => ({ ...prev, [field]: parseInt(e.target.value) || 0 }))} />
       ) : type === 'image' || type === 'image-square' ? (
         <div>
-          <button className="px-4 py-2 bg-surface-100 rounded-lg text-sm hover:bg-surface-200 flex items-center gap-1"
-            onClick={() => handleImageUpload(field, type === 'image-square' ? 1024 : undefined)}>
-            <Icon name="upload" size={16} /> رفع صورة {type === 'image-square' ? '(1024×1024)' : ''}
-          </button>
+          <div className="flex gap-2 flex-wrap">
+            <button className="px-3 py-2 bg-primary-50 border border-primary-200 rounded-lg text-sm hover:bg-primary-100 flex items-center gap-1.5 text-primary-700 font-medium transition-colors"
+              onClick={() => { setMediaPickerSearch(''); setMediaPickerFilter('all'); setMediaPicker({ field, squareSize: type === 'image-square' ? 1024 : undefined }); }}>
+              <Icon name="photo_library" size={16} /> اختر من المكتبة
+            </button>
+            <button className="px-3 py-2 bg-surface-100 rounded-lg text-sm hover:bg-surface-200 flex items-center gap-1.5 transition-colors"
+              onClick={() => handleImageUpload(field, type === 'image-square' ? 1024 : undefined)}>
+              <Icon name="upload" size={16} /> رفع صورة جديدة
+            </button>
+          </div>
           {form[field] ? (
             <div className="mt-2 flex items-start gap-2">
               <img src={form[field] as string} alt="" className={cn('rounded-lg object-cover', type === 'image-square' ? 'w-24 h-24' : 'w-20 h-20')} />
@@ -2461,6 +2515,224 @@ export function AdminPage() {
           </div>
         </div>
       )}
+
+      {/* ─── Media Library Tab ─────────────────────────────────────── */}
+      {tab === 'media' && (() => {
+        const sourceLabels: Record<string, string> = { sections: 'الأقسام', lessons: 'الدروس', signs: 'الإشارات', questions: 'الأسئلة' };
+        const allMedia = collectAllMedia();
+        const filtered = allMedia.filter(m => {
+          const matchesFilter = mediaLibFilter === 'all' || m.source === mediaLibFilter;
+          const matchesSearch = !mediaLibSearch || m.label.toLowerCase().includes(mediaLibSearch.toLowerCase());
+          return matchesFilter && matchesSearch;
+        });
+        const counts: Record<string, number> = { all: allMedia.length, sections: 0, lessons: 0, signs: 0, questions: 0 };
+        for (const m of allMedia) counts[m.source] = (counts[m.source] || 0) + 1;
+
+        return (
+          <div className="space-y-5">
+            {/* Header */}
+            <div className="bg-white rounded-2xl border border-surface-100 p-5">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center">
+                  <Icon name="perm_media" size={22} className="text-primary-500" filled />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-surface-900">مكتبة الصور</h2>
+                  <p className="text-xs text-surface-400">{allMedia.length} صورة مخزنة من جميع الأقسام</p>
+                </div>
+                <div className="mr-auto">
+                  <button
+                    className="px-4 py-2 bg-primary-500 text-white rounded-xl text-sm font-semibold flex items-center gap-2 hover:bg-primary-600 transition-colors"
+                    onClick={async () => {
+                      const result = await handleImageUploadDirect();
+                      if (result) {
+                        // Copy to clipboard as a preview only — images belong to entities
+                        await navigator.clipboard.writeText(result).catch(() => {});
+                        alert('تم رفع الصورة ونسخ بياناتها. يمكنك لصقها في أي حقل صورة أثناء التحرير.');
+                      }
+                    }}>
+                    <Icon name="add_photo_alternate" size={18} /> رفع صورة جديدة
+                  </button>
+                </div>
+              </div>
+
+              {/* Search + Filter */}
+              <div className="flex gap-2 flex-wrap">
+                <input
+                  className="flex-1 min-w-48 border border-surface-200 rounded-xl px-3 py-2 text-sm"
+                  placeholder="بحث في الصور..."
+                  value={mediaLibSearch}
+                  onChange={e => setMediaLibSearch(e.target.value)}
+                />
+                <div className="flex gap-1.5 flex-wrap">
+                  {(['all', 'sections', 'lessons', 'signs', 'questions'] as const).map(f => (
+                    <button key={f}
+                      className={cn('px-3 py-1.5 rounded-xl text-xs font-semibold border transition-colors',
+                        mediaLibFilter === f ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-surface-600 border-surface-200 hover:border-primary-300')}
+                      onClick={() => setMediaLibFilter(f)}>
+                      {f === 'all' ? 'الكل' : sourceLabels[f]} ({counts[f] || 0})
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Grid */}
+            {filtered.length === 0 ? (
+              <div className="bg-white rounded-2xl border border-surface-100 p-16 text-center">
+                <Icon name="image_not_supported" size={48} className="text-surface-200 mx-auto mb-3" />
+                <p className="text-surface-400 text-sm">لا توجد صور</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                {filtered.map((m, idx) => (
+                  <div key={idx} className="bg-white rounded-xl border border-surface-100 overflow-hidden group hover:shadow-md transition-all hover:border-primary-200">
+                    <div className="aspect-square relative overflow-hidden bg-surface-50">
+                      <img src={m.src} alt={m.label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
+                      {/* Overlay on hover */}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100 gap-2">
+                        <button
+                          className="p-2 bg-white rounded-lg shadow-lg hover:bg-primary-50 transition-colors"
+                          title="عرض الصورة"
+                          onClick={() => window.open(m.src, '_blank')}>
+                          <Icon name="open_in_new" size={16} className="text-surface-700" />
+                        </button>
+                        <button
+                          className="p-2 bg-white rounded-lg shadow-lg hover:bg-primary-50 transition-colors"
+                          title="نسخ الصورة"
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(m.src).catch(() => {});
+                            alert('تم نسخ بيانات الصورة');
+                          }}>
+                          <Icon name="content_copy" size={16} className="text-surface-700" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="p-2">
+                      <p className="text-xs text-surface-700 truncate font-medium" title={m.label}>{m.label || '—'}</p>
+                      <span className={cn('inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded-full font-semibold',
+                        m.source === 'sections' ? 'bg-blue-50 text-blue-600' :
+                        m.source === 'lessons' ? 'bg-green-50 text-green-600' :
+                        m.source === 'signs' ? 'bg-amber-50 text-amber-600' :
+                        'bg-purple-50 text-purple-600')}>
+                        {sourceLabels[m.source]}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
+      {/* ─── Media Picker Modal ────────────────────────────────────── */}
+      {mediaPicker && (() => {
+        const sourceLabels: Record<string, string> = { sections: 'الأقسام', lessons: 'الدروس', signs: 'الإشارات', questions: 'الأسئلة' };
+        const allMedia = collectAllMedia();
+        const filtered = allMedia.filter(m => {
+          const matchesFilter = mediaPickerFilter === 'all' || m.source === mediaPickerFilter;
+          const matchesSearch = !mediaPickerSearch || m.label.toLowerCase().includes(mediaPickerSearch.toLowerCase());
+          return matchesFilter && matchesSearch;
+        });
+        const counts: Record<string, number> = { all: allMedia.length, sections: 0, lessons: 0, signs: 0, questions: 0 };
+        for (const m of allMedia) counts[m.source] = (counts[m.source] || 0) + 1;
+
+        return (
+          <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setMediaPicker(null)}>
+            <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
+              {/* Header */}
+              <div className="p-5 border-b border-surface-100">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Icon name="perm_media" size={20} className="text-primary-500" filled />
+                    <h3 className="text-lg font-bold text-surface-900">اختر صورة</h3>
+                    <span className="text-xs text-surface-400 bg-surface-100 px-2 py-0.5 rounded-full">{allMedia.length} صورة</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="px-3 py-2 bg-primary-500 text-white rounded-xl text-sm font-semibold flex items-center gap-1.5 hover:bg-primary-600 transition-colors"
+                      onClick={async () => {
+                        const result = await handleImageUploadDirect(mediaPicker.squareSize);
+                        if (result) {
+                          setForm(prev => ({ ...prev, [mediaPicker.field]: result }));
+                          setMediaPicker(null);
+                        }
+                      }}>
+                      <Icon name="add_photo_alternate" size={16} /> رفع صورة جديدة
+                    </button>
+                    <button className="p-2 rounded-xl hover:bg-surface-100 transition-colors" onClick={() => setMediaPicker(null)}>
+                      <Icon name="close" size={20} className="text-surface-500" />
+                    </button>
+                  </div>
+                </div>
+                {/* Search */}
+                <input
+                  className="w-full border border-surface-200 rounded-xl px-3 py-2 text-sm mb-3"
+                  placeholder="بحث..."
+                  value={mediaPickerSearch}
+                  onChange={e => setMediaPickerSearch(e.target.value)}
+                  autoFocus
+                />
+                {/* Filter pills */}
+                <div className="flex gap-1.5 flex-wrap">
+                  {(['all', 'sections', 'lessons', 'signs', 'questions'] as const).map(f => (
+                    <button key={f}
+                      className={cn('px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors',
+                        mediaPickerFilter === f ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-surface-600 border-surface-200 hover:border-primary-300')}
+                      onClick={() => setMediaPickerFilter(f)}>
+                      {f === 'all' ? 'الكل' : sourceLabels[f]} ({counts[f] || 0})
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Grid */}
+              <div className="flex-1 overflow-y-auto p-4">
+                {filtered.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <Icon name="image_not_supported" size={48} className="text-surface-200 mb-3" />
+                    <p className="text-surface-400 text-sm">لا توجد صور متاحة</p>
+                    <p className="text-surface-300 text-xs mt-1">يمكنك رفع صورة جديدة من الزر أعلاه</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                    {filtered.map((m, idx) => (
+                      <button key={idx}
+                        className="group relative rounded-xl border-2 border-transparent hover:border-primary-400 overflow-hidden transition-all focus:outline-none focus:border-primary-500"
+                        onClick={() => {
+                          setForm(prev => ({ ...prev, [mediaPicker.field]: m.src }));
+                          setMediaPicker(null);
+                        }}>
+                        <div className="aspect-square bg-surface-50 overflow-hidden">
+                          <img src={m.src} alt={m.label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
+                        </div>
+                        <div className="absolute inset-0 bg-primary-500/0 group-hover:bg-primary-500/10 transition-all flex items-center justify-center">
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="bg-primary-500 text-white rounded-full p-1.5 shadow-lg">
+                              <Icon name="check" size={14} />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-1.5 bg-white">
+                          <p className="text-[10px] text-surface-600 truncate">{m.label || '—'}</p>
+                          <span className={cn('text-[9px] font-semibold',
+                            m.source === 'sections' ? 'text-blue-500' :
+                            m.source === 'lessons' ? 'text-green-500' :
+                            m.source === 'signs' ? 'text-amber-500' :
+                            'text-purple-500')}>
+                            {sourceLabels[m.source]}
+                          </span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
