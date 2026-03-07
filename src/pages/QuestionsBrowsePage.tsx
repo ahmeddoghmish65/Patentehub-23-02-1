@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 
 export function QuestionsBrowsePage() {
-  const { sections, questions, loadSections, loadQuestions, user } = useAuthStore();
+  const { user } = useAuthStore();
+  const { sections, questions, loadSections, loadQuestions } = useDataStore();
   const { t } = useTranslation();
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const [expandedQ, setExpandedQ] = useState<string | null>(null);

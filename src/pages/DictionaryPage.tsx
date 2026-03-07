@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 
 export function DictionaryPage() {
-  const { dictSections, dictEntries, loadDictSections, loadDictEntries, user } = useAuthStore();
+  const { user } = useAuthStore();
+  const { dictSections, dictEntries, loadDictSections, loadDictEntries } = useDataStore();
   const lang = user?.settings.language || 'both';
   const { t, uiLang } = useTranslation();
   const [activeSec, setActiveSec] = useState('');

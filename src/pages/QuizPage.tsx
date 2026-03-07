@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
@@ -13,7 +13,8 @@ export function QuizPage() {
   const { state } = useLocation();
   const lessonId = (state as { lessonId?: string } | null)?.lessonId;
   const sectionId = (state as { sectionId?: string } | null)?.sectionId;
-  const { questions, loadQuestions, saveQuizResult, sections, user } = useAuthStore();
+  const { user } = useAuthStore();
+  const { questions, loadQuestions, saveQuizResult, sections } = useDataStore();
   const lang = user?.settings.language || 'both';
   const { t } = useTranslation();
   const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';

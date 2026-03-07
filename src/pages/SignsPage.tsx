@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 
 export function SignsPage() {
-  const { signs, loadSigns, signSections, loadSignSections, user } = useAuthStore();
+  const { user } = useAuthStore();
+  const { signs, loadSigns, signSections, loadSignSections } = useDataStore();
   const lang = user?.settings.language || 'both';
   const { t, uiLang } = useTranslation();
   const [filter, setFilter] = useState('all');

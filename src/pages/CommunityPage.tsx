@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
@@ -97,7 +97,8 @@ export function CommunityPage() {
   const { state } = useLocation();
   const openPostId = (state as { openPostId?: string } | null)?.openPostId;
   const { t, uiLang } = useTranslation();
-  const { posts, loadPosts, createPost, updatePost, deletePost, toggleLike, checkLike, getComments, createComment, deleteComment, createReport, user, communityNotifs, loadCommunityNotifs, markNotifRead, markAllNotifsRead } = useAuthStore();
+  const { user } = useAuthStore();
+  const { posts, loadPosts, createPost, updatePost, deletePost, toggleLike, checkLike, getComments, createComment, deleteComment, createReport, communityNotifs, loadCommunityNotifs, markNotifRead, markAllNotifsRead } = useDataStore();
   const [newPost, setNewPost] = useState('');
   const [posting, setPosting] = useState(false);
   const [showComments, setShowComments] = useState<string | null>(null);

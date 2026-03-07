@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useDataStore } from '@/store';
 import { ROUTES } from '@/constants';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
@@ -46,7 +46,8 @@ const COUNTRY_CODES = [
 export function ProfilePage() {
   const navigate = useNavigate();
   const { t, uiLang, setUiLang } = useTranslation();
-  const { user, logout, updateSettings, updateProfile, posts, loadPosts } = useAuthStore();
+  const { user, logout, updateSettings, updateProfile } = useAuthStore();
+  const { posts, loadPosts } = useDataStore();
 
   const [showEditPage, setShowEditPage] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);

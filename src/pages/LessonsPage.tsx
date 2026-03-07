@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
@@ -11,7 +11,8 @@ export function LessonsPage() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const initialSectionId = (state as { sectionId?: string } | null)?.sectionId;
-  const { sections, lessons, loadSections, loadLessons, user } = useAuthStore();
+  const { user } = useAuthStore();
+  const { sections, lessons, loadSections, loadLessons } = useDataStore();
   const completed = user?.progress.completedLessons || [];
   const [newlyCompleted, setNewlyCompleted] = useState<Set<string>>(new Set());
   const prevCompleted = useRef<string[]>([]);

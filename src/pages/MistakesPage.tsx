@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 
 export function MistakesPage() {
-  const { mistakes, loadMistakes, practiceMistake, user } = useAuthStore();
+  const { user } = useAuthStore();
+  const { mistakes, loadMistakes, practiceMistake } = useDataStore();
   const { t } = useTranslation();
   const lang = user?.settings.language || 'both';
   const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';

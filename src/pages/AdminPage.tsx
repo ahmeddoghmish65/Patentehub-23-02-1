@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useDataStore, useAdminStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
@@ -11,7 +11,7 @@ type Tab = 'overview' | 'sections' | 'lessons' | 'questions' | 'signs' | 'dictio
 type ContentView = 'active' | 'archived' | 'deleted' | 'banned';
 
 export function AdminPage() {
-  const store = useAuthStore();
+  const store = { ...useAuthStore(), ...useDataStore(), ...useAdminStore() };
   const [tab, setTab] = useState<Tab>('overview');
   const [contentView, setContentView] = useState<ContentView>('active');
   // Analytics - page visit stats

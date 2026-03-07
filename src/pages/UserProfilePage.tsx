@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
@@ -29,7 +29,8 @@ type StatView = 'followers' | 'following' | null;
 
 export function UserProfilePage({ userId, onNavigate }: Props) {
   const { t, uiLang } = useTranslation();
-  const { posts, user } = useAuthStore();
+  const { user } = useAuthStore();
+  const { posts } = useDataStore();
 
   const [userData, setUserData] = useState<UserData | null>(null);
   const [tab, setTab] = useState<TabType>('posts');

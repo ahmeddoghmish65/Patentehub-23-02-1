@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
@@ -10,7 +10,8 @@ import type { Question } from '@/db/database';
 
 export function ExamSimulatorPage() {
   const navigate = useNavigate();
-  const { questions, loadQuestions, saveQuizResult, user } = useAuthStore();
+  const { user } = useAuthStore();
+  const { questions, loadQuestions, saveQuizResult } = useDataStore();
   const { t } = useTranslation();
   const lang = user?.settings.language || 'both';
   const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
@@ -8,7 +8,8 @@ import { ROUTES } from '@/constants';
 
 export function Dashboard() {
   const navigate = useNavigate();
-  const { user, loadSections, loadLessons, loadMistakes, loadQuestions, mistakes, sections, lessons, questions } = useAuthStore();
+  const { user } = useAuthStore();
+  const { loadSections, loadLessons, loadMistakes, loadQuestions, mistakes, sections, lessons, questions } = useDataStore();
   const { t } = useTranslation();
 
   useEffect(() => {

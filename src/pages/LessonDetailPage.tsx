@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
@@ -12,7 +12,8 @@ export function LessonDetailPage() {
   const { lessonId = '' } = useParams<{ lessonId: string }>();
   const { state } = useLocation();
   const sectionIdFromState = (state as { sectionId?: string } | null)?.sectionId;
-  const { lessons, questions, sections, loadLessons, loadQuestions, user } = useAuthStore();
+  const { user } = useAuthStore();
+  const { lessons, questions, sections, loadLessons, loadQuestions } = useDataStore();
   const [activeTab, setActiveTab] = useState<'content' | 'questions'>('content');
 
   const lang = user?.settings.language || 'both';
