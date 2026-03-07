@@ -34,7 +34,7 @@ export function QuestionsBrowsePage({ onNavigate: _onNavigate }: Props) {
         </button>
 
         <div className="bg-white rounded-2xl p-5 border border-surface-100 mb-6">
-          <div className="flex items-center gap-3" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+          <div className="flex items-center gap-3">
             <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 overflow-hidden"
               style={{ backgroundColor: (section?.color || '#8b5cf6') + '15' }}>
               {section?.image ? (
