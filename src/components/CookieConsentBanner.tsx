@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from '@/i18n';
+import { ROUTES } from '@/constants';
 import {
   setCookie,
   clearActivityCookies,
@@ -18,6 +20,7 @@ interface CookieConsentBannerProps {
 export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
   const [showDetails, setShowDetails] = useState(false);
   const { uiLang } = useTranslation();
+  const navigate = useNavigate();
   const isIt = uiLang === 'it';
 
   const handleConsent = (level: ConsentLevel) => {
@@ -105,8 +108,8 @@ export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
             </h2>
             <p className="text-xs sm:text-sm text-surface-500 leading-relaxed">
               {isIt
-                ? <>Utilizziamo cookie essenziali per salvare la sessione e le preferenze. Con il tuo consenso, salviamo la tua attività recente per continuare da dove hai lasciato. Puoi leggere la nostra{' '}<span className="text-primary-600 font-medium">Informativa sulla privacy</span>{' '}per maggiori dettagli.</>
-                : <>نحتاج إلى ملفات ارتباط أساسية لحفظ جلسة الدخول وتفضيلاتك. بموافقتك، نحفظ نشاطك الأخير لتستمر من حيث توقفت. يمكنك قراءة{' '}<span className="text-primary-600 font-medium">سياسة الخصوصية</span>{' '}للمزيد.</>
+                ? <>Utilizziamo cookie essenziali per salvare la sessione e le preferenze. Con il tuo consenso, salviamo la tua attività recente per continuare da dove hai lasciato. Puoi leggere la nostra{' '}<button onClick={() => navigate(ROUTES.PRIVACY_POLICY)} className="text-primary-600 font-medium hover:underline">Informativa sulla privacy</button>{' '}per maggiori dettagli.</>
+                : <>نحتاج إلى ملفات ارتباط أساسية لحفظ جلسة الدخول وتفضيلاتك. بموافقتك، نحفظ نشاطك الأخير لتستمر من حيث توقفت. يمكنك قراءة{' '}<button onClick={() => navigate(ROUTES.PRIVACY_POLICY)} className="text-primary-600 font-medium hover:underline">سياسة الخصوصية</button>{' '}للمزيد.</>
               }
             </p>
           </div>

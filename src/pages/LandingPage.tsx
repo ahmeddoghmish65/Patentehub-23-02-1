@@ -1,11 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { CookieConsentBanner } from '@/components/CookieConsentBanner';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 import { ROUTES } from '@/constants';
+import { getConsentLevel, type ConsentLevel } from '@/utils/cookieManager';
 
 export function LandingPage() {
   const navigate = useNavigate();
@@ -22,6 +24,9 @@ export function LandingPage() {
   const testimonialDragStartX = useRef(0);
   const [testimonialDragOffset, setTestimonialDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [consentLevel, setConsentLevel] = useState<ConsentLevel | null>(() => getConsentLevel());
+  const showConsentBanner = consentLevel === null;
+  const handleConsent = useCallback((level: ConsentLevel) => setConsentLevel(level), []);
 
   const features = [
     { icon: 'translate', title: t('landing.f1_title'), desc: t('landing.f1_desc'), bg: 'from-blue-500 to-blue-600' },
@@ -960,6 +965,8 @@ export function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {showConsentBanner && <CookieConsentBanner onConsent={handleConsent} />}
     </div>
   );
 }
