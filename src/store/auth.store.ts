@@ -94,44 +94,54 @@ export const useAuthStore = create<AuthState>((set, get) => {
 
     register: async (email, password, name, username) => {
       set({ isLoading: true, error: null });
-      const nameParts  = name.split(' ');
-      const firstName  = nameParts[0] ?? '';
-      const lastName   = nameParts.slice(1).join(' ') || '';
+      try {
+        const nameParts  = name.split(' ');
+        const firstName  = nameParts[0] ?? '';
+        const lastName   = nameParts.slice(1).join(' ') || '';
 
-      const r = await supabaseRegister(email, password, name, { firstName, lastName, username });
+        const r = await supabaseRegister(email, password, name, { firstName, lastName, username });
 
-      if (r.success && r.data) {
-        set({ user: r.data.user, token: r.data.accessToken, isLoading: false });
-        return true;
+        if (r.success && r.data) {
+          set({ user: r.data.user, token: r.data.accessToken, isLoading: false });
+          return true;
+        }
+        set({ error: r.error, isLoading: false });
+        return false;
+      } catch {
+        set({ error: 'حدث خطأ غير متوقع، يرجى المحاولة مجدداً', isLoading: false });
+        return false;
       }
-      set({ error: r.error, isLoading: false });
-      return false;
     },
 
     login: async (email, password) => {
       set({ isLoading: true, error: null });
-      const r = await supabaseLogin(email, password);
+      try {
+        const r = await supabaseLogin(email, password);
 
-      if (r.success && r.data) {
-        set({ user: r.data.user, token: r.data.accessToken, isLoading: false });
+        if (r.success && r.data) {
+          set({ user: r.data.user, token: r.data.accessToken, isLoading: false });
 
-        // Sync preferences cookies
-        if (r.data.user.settings?.language) {
-          setCookie(COOKIE_NAMES.LANGUAGE, r.data.user.settings.language, {
-            days: COOKIE_EXPIRY.PREFERENCES,
-          });
+          // Sync preferences cookies
+          if (r.data.user.settings?.language) {
+            setCookie(COOKIE_NAMES.LANGUAGE, r.data.user.settings.language, {
+              days: COOKIE_EXPIRY.PREFERENCES,
+            });
+          }
+          if (r.data.user.settings?.theme) {
+            setCookie(COOKIE_NAMES.THEME, r.data.user.settings.theme, {
+              days: COOKIE_EXPIRY.PREFERENCES,
+            });
+            const { applyTheme } = await import('./helpers');
+            applyTheme(r.data.user.settings.theme);
+          }
+          return true;
         }
-        if (r.data.user.settings?.theme) {
-          setCookie(COOKIE_NAMES.THEME, r.data.user.settings.theme, {
-            days: COOKIE_EXPIRY.PREFERENCES,
-          });
-          const { applyTheme } = await import('./helpers');
-          applyTheme(r.data.user.settings.theme);
-        }
-        return true;
+        set({ error: r.error, isLoading: false });
+        return false;
+      } catch {
+        set({ error: 'حدث خطأ غير متوقع، يرجى المحاولة مجدداً', isLoading: false });
+        return false;
       }
-      set({ error: r.error, isLoading: false });
-      return false;
     },
 
     logout: async () => {

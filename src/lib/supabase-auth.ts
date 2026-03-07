@@ -80,11 +80,18 @@ export async function supabaseRegister(
   });
 
   if (error)               return { success: false, error: error.message };
-  if (!data.session)       return { success: false, error: 'يرجى تأكيد بريدك الإلكتروني' };
   if (!data.user)          return { success: false, error: 'فشل إنشاء الحساب' };
 
-  // Fetch the profile created by the DB trigger
-  const profile = await fetchProfile(data.user.id);
+  // Email confirmation is required — session will be null until user confirms
+  if (!data.session) {
+    return {
+      success: false,
+      error: 'تم إرسال رابط التأكيد إلى بريدك الإلكتروني. يرجى فتح بريدك والضغط على رابط التفعيل ثم تسجيل الدخول.',
+    };
+  }
+
+  // Fetch the profile created by the DB trigger (with retries for race condition)
+  const profile = await fetchProfileWithRetry(data.user.id);
   if (!profile) return { success: false, error: 'فشل تحميل بيانات المستخدم' };
 
   return {
@@ -265,4 +272,23 @@ async function fetchProfile(userId: string): Promise<Omit<User, 'password'> | nu
 
   if (error || !data) return null;
   return profileToUser(data as unknown as ProfileRow);
+}
+
+/**
+ * Fetch the profile with retries to handle the race condition where
+ * the DB trigger (handle_new_user) may not have completed yet after signUp.
+ */
+async function fetchProfileWithRetry(
+  userId: string,
+  maxAttempts = 5,
+  delayMs = 500,
+): Promise<Omit<User, 'password'> | null> {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const profile = await fetchProfile(userId);
+    if (profile) return profile;
+    if (attempt < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, delayMs * attempt));
+    }
+  }
+  return null;
 }
