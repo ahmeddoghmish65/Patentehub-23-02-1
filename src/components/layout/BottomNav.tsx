@@ -1,0 +1,50 @@
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/utils/cn';
+import { useTranslation } from '@/i18n';
+import { ROUTES } from '@/constants';
+
+interface NavItem {
+  path: string;
+  icon: string;
+  label: string;
+}
+
+export function BottomNav() {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const { t } = useTranslation();
+
+  const items: NavItem[] = [
+    { path: ROUTES.DASHBOARD, icon: 'home', label: t('nav.home') },
+    { path: ROUTES.LESSONS, icon: 'school', label: t('nav.lessons') },
+    { path: ROUTES.TRAINING, icon: 'fitness_center', label: t('nav.training') },
+    { path: ROUTES.COMMUNITY, icon: 'forum', label: t('nav.community') },
+    { path: ROUTES.PROFILE, icon: 'person', label: t('nav.profile') },
+  ];
+
+  const isActive = (path: string) => pathname === path || pathname.startsWith(path + '/');
+
+  return (
+    <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-surface-100 pb-safe">
+      <div className="flex items-center justify-around h-16">
+        {items.map(item => {
+          const active = isActive(item.path);
+          return (
+            <button
+              key={item.path}
+              className={cn(
+                'flex flex-col items-center gap-0.5 px-3 py-2 min-w-0',
+                active ? 'text-primary-600' : 'text-surface-400',
+              )}
+              onClick={() => navigate(item.path)}
+            >
+              <Icon name={item.icon} size={22} filled={active} />
+              <span className="text-[10px] font-medium leading-tight">{item.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
