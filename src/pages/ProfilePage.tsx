@@ -137,7 +137,7 @@ export function ProfilePage() {
   const isAdmin = user.role === 'admin' || user.role === 'manager';
   const storedBio = user.bio || localStorage.getItem(`bio_${user.id}`) || '';
 
-  const handleLogout = async () => { await logout(); onNavigate('landing'); };
+  const handleLogout = async () => { await logout(); navigate(ROUTES.LANDING); };
 
   const handleAvatarChange = () => { fileRef.current?.click(); };
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -640,7 +640,7 @@ export function ProfilePage() {
                     <div className="divide-y divide-surface-50">
                       {myPosts.map(p => (
                         <div key={p.id} className="p-4 cursor-pointer hover:bg-surface-50 transition-colors"
-                          onClick={() => { setActiveStatView(null); onNavigate('community', { openPostId: p.id }); }}>
+                          onClick={() => { setActiveStatView(null); navigate(ROUTES.COMMUNITY, { state: { openPostId: p.id } }); }}>
                           <p dir={getTextDir(p.content)} className="text-sm text-surface-800 line-clamp-3">{p.content}</p>
                           <div className="flex items-center gap-3 mt-2">
                             <span className="text-[10px] text-surface-400 flex items-center gap-0.5"><Icon name="favorite" size={11} /> {p.likesCount}</span>
@@ -660,7 +660,7 @@ export function ProfilePage() {
                     <div className="divide-y divide-surface-50">
                       {myQuizzes.map(p => (
                         <div key={p.id} className="p-4 cursor-pointer hover:bg-surface-50 transition-colors"
-                          onClick={() => { setActiveStatView(null); onNavigate('community', { openPostId: p.id }); }}>
+                          onClick={() => { setActiveStatView(null); navigate(ROUTES.COMMUNITY, { state: { openPostId: p.id } }); }}>
                           <span className="text-[10px] bg-purple-50 text-purple-600 px-1.5 rounded-full mb-1 inline-block">{t('community.quiz_badge')}</span>
                           <p dir={getTextDir(p.content || p.quizQuestion)} className="text-sm text-surface-800 line-clamp-3">{p.content || p.quizQuestion}</p>
                           <div className="flex items-center gap-3 mt-2">
@@ -892,7 +892,7 @@ export function ProfilePage() {
 
         {/* Admin Panel */}
         {isAdmin && (
-          <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-primary-50 transition-colors border-b border-surface-50 group" onClick={() => onNavigate('admin')}>
+          <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-primary-50 transition-colors border-b border-surface-50 group" onClick={() => navigate(ROUTES.ADMIN)}>
             <div className="w-9 h-9 bg-primary-100 rounded-xl flex items-center justify-center shrink-0">
               <Icon name="admin_panel_settings" size={18} className="text-primary-600" />
             </div>
