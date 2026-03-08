@@ -788,85 +788,85 @@ export function ProfilePage() {
         </h2>
 
         {/* Exam Readiness Card */}
-        <div className="mb-4">
+        <div className="bg-surface-50 rounded-xl p-4 mb-4">
 
-          {/* ── Header ── */}
+          {/* ── Header: circle + info ── */}
           {(() => {
             const circleStroke = ({ not_ready: '#ef4444', beginner: '#f97316', developing: '#eab308', ready: '#22c55e', excellent: '#10b981' } as Record<string,string>)[readiness.level] ?? '#3b82f6';
             return (
-              <div className="relative px-4 py-3 flex items-center gap-3 bg-white border-b border-surface-100">
-                {/* Left: Title + Badge */}
-                <div className="flex-1 flex flex-col gap-1.5">
-                  <div className="flex items-center gap-2">
-                    <div className={cn('w-7 h-7 rounded-xl flex items-center justify-center', levelStyle.bg)}>
-                      <Icon name="assignment_turned_in" size={14} className={levelStyle.text} filled />
-                    </div>
-                    <h3 className="font-bold text-sm text-surface-800">{t('dashboard.readiness_card_title')}</h3>
-                  </div>
-                  <span className={cn('text-xs font-bold px-3 py-1 rounded-full self-start', levelStyle.badge)}>
-                    {t(`dashboard.readiness_level_${readiness.level}`)}
-                  </span>
-                </div>
-
-                {/* Right: Small circle */}
-                <div className="relative w-20 h-20 shrink-0">
-                  <svg className="w-full h-full -rotate-90" viewBox="0 0 80 80">
-                    <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="8" />
-                    <circle cx="40" cy="40" r="32" fill="none" stroke={circleStroke} strokeWidth="8" strokeLinecap="round"
-                      strokeDasharray={`${readiness.score * 2.01} ${201 - readiness.score * 2.01}`}
+              <div className="flex items-center gap-4 mb-4">
+                {/* Circle */}
+                <div className="relative w-24 h-24 shrink-0">
+                  <svg className="w-full h-full -rotate-90" viewBox="0 0 96 96">
+                    <circle cx="48" cy="48" r="40" fill="none" stroke="#e5e7eb" strokeWidth="8" />
+                    <circle cx="48" cy="48" r="40" fill="none" stroke={circleStroke} strokeWidth="8" strokeLinecap="round"
+                      strokeDasharray={`${readiness.score * 2.513} ${251.3 - readiness.score * 2.513}`}
                       style={{ transition: 'stroke-dasharray 1.2s ease' }}
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-2xl font-black text-surface-800 leading-none">{readiness.score}</span>
-                    <span className="text-[10px] font-bold text-surface-400">%</span>
+                    <span className="text-3xl font-black text-surface-800 leading-none">{readiness.score}</span>
+                    <span className="text-xs font-bold text-surface-400">%</span>
                   </div>
+                </div>
+                {/* Info */}
+                <div className="flex-1 flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className={cn('w-8 h-8 rounded-xl flex items-center justify-center', levelStyle.bg)}>
+                      <Icon name="assignment_turned_in" size={16} className={levelStyle.text} filled />
+                    </div>
+                    <h3 className="font-bold text-base text-surface-800">{t('dashboard.readiness_card_title')}</h3>
+                  </div>
+                  <span className={cn('text-sm font-bold px-4 py-1.5 rounded-full self-start', levelStyle.badge)}>
+                    {t(`dashboard.readiness_level_${readiness.level}`)}
+                  </span>
                 </div>
               </div>
             );
           })()}
 
+          {/* ── Divider ── */}
+          <div className="border-t border-surface-200 mb-4" />
+
           {/* ── Factors Section ── */}
-          <div className="px-4 pt-4 pb-3">
-            <p className="text-[10px] font-bold text-surface-400 uppercase tracking-widest mb-3">العوامل المؤثرة</p>
-            <div className="space-y-3">
-              {factors.map((f, i) => {
-                const icons = ['quiz','check_circle','book','schedule','trending_up'];
-                const colors = [
-                  { icon: 'text-blue-500',   bg: 'bg-blue-50' },
-                  { icon: 'text-green-500',  bg: 'bg-green-50' },
-                  { icon: 'text-purple-500', bg: 'bg-purple-50' },
-                  { icon: 'text-orange-500', bg: 'bg-orange-50' },
-                  { icon: 'text-teal-500',   bg: 'bg-teal-50' },
-                ];
-                const c = colors[i] ?? colors[0];
-                return (
-                  <div key={f.key} className="flex items-center gap-3">
-                    <div className={cn('w-8 h-8 rounded-xl flex items-center justify-center shrink-0', c.bg)}>
-                      <Icon name={icons[i] ?? 'star'} size={15} className={c.icon} filled />
+          <p className="text-[11px] font-bold text-surface-400 uppercase tracking-widest mb-3">العوامل المؤثرة</p>
+          <div className="space-y-3 mb-3">
+            {factors.map((f, i) => {
+              const icons = ['quiz','check_circle','book','schedule','trending_up'];
+              const colors = [
+                { icon: 'text-blue-500',   bg: 'bg-blue-50' },
+                { icon: 'text-green-500',  bg: 'bg-green-50' },
+                { icon: 'text-purple-500', bg: 'bg-purple-50' },
+                { icon: 'text-orange-500', bg: 'bg-orange-50' },
+                { icon: 'text-teal-500',   bg: 'bg-teal-50' },
+              ];
+              const c = colors[i] ?? colors[0];
+              return (
+                <div key={f.key} className="flex items-center gap-3">
+                  <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0', c.bg)}>
+                    <Icon name={icons[i] ?? 'star'} size={16} className={c.icon} filled />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-sm font-semibold text-surface-700">{f.label}</span>
+                      <span className="text-sm font-bold text-surface-500">{f.value}%</span>
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-semibold text-surface-700">{f.label}</span>
-                        <span className="text-xs font-bold text-surface-500">{f.value}%</span>
-                      </div>
-                      <div className="w-full bg-surface-100 rounded-full h-1.5">
-                        <div className={cn('rounded-full h-1.5 transition-all duration-700', levelStyle.bar)} style={{ width: `${f.value}%` }} />
-                      </div>
+                    <div className="w-full bg-surface-200 rounded-full h-2">
+                      <div className={cn('rounded-full h-2 transition-all duration-700', levelStyle.bar)} style={{ width: `${f.value}%` }} />
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
 
           {/* ── Weakness Penalty ── */}
           {readiness.weaknessPenalty > 0 && (
-            <div className="mx-4 mb-3 flex items-center gap-2.5 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5">
-              <div className="w-7 h-7 bg-red-100 rounded-lg flex items-center justify-center shrink-0">
-                <Icon name="remove_circle" size={14} className="text-red-500" filled />
+            <div className="flex items-center gap-2.5 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5 mb-3">
+              <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center shrink-0">
+                <Icon name="remove_circle" size={16} className="text-red-500" filled />
               </div>
-              <span className="text-[11px] text-red-600 font-medium">
+              <span className="text-xs text-red-600 font-medium">
                 {t('dashboard.readiness_penalty')}: -{readiness.weaknessPenalty} {t('dashboard.readiness_weakness_label')} ({mistakes.length})
               </span>
             </div>
@@ -874,16 +874,16 @@ export function ProfilePage() {
 
           {/* ── Tips ── */}
           {readiness.tips.length > 0 && (
-            <div className="mx-4 mb-4 rounded-xl overflow-hidden border border-amber-100">
-              <div className="bg-amber-50 px-3 py-2 flex items-center gap-1.5">
-                <Icon name="lightbulb" size={14} className="text-amber-500" filled />
-                <p className="text-[11px] font-bold text-amber-700">{t('dashboard.readiness_tips_title')}</p>
+            <div className="rounded-xl overflow-hidden border border-amber-100">
+              <div className="bg-amber-50 px-3 py-2.5 flex items-center gap-2">
+                <Icon name="lightbulb" size={16} className="text-amber-500" filled />
+                <p className="text-xs font-bold text-amber-700">{t('dashboard.readiness_tips_title')}</p>
               </div>
-              <div className="bg-white px-3 py-2.5 space-y-2">
+              <div className="bg-white px-3 py-3 space-y-2">
                 {readiness.tips.map(tip => (
                   <div key={tip} className="flex items-start gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0" />
-                    <p className="text-[11px] leading-snug text-surface-600">{t(`dashboard.readiness_tip_${tip}`)}</p>
+                    <p className="text-xs leading-snug text-surface-600">{t(`dashboard.readiness_tip_${tip}`)}</p>
                   </div>
                 ))}
               </div>
