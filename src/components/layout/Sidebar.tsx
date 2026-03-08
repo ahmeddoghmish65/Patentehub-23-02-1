@@ -53,7 +53,10 @@ export function Sidebar() {
             <Icon name="directions_car" size={22} className="text-white" filled />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-surface-900">Patente Hub</h1>
+            <h1 className="text-lg font-black tracking-tight">
+              <span className="text-surface-900">Patente </span>
+              <span className="text-primary-500">Hub</span>
+            </h1>
             <p className="text-xs text-surface-400">{t('nav.subtitle')}</p>
           </div>
         </div>

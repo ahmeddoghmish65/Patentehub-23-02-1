@@ -13,7 +13,10 @@ export function PageLoader() {
         <div className="w-16 h-16 mx-auto bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center shadow-xl shadow-primary-200 mb-4 animate-pulse">
           <Icon name="directions_car" size={32} className="text-white" filled />
         </div>
-        <h1 className="text-xl font-bold text-surface-900 mb-2">Patente Hub</h1>
+        <h1 className="text-xl font-black tracking-tight mb-2">
+          <span className="text-surface-900">Patente </span>
+          <span className="text-primary-500">Hub</span>
+        </h1>
         <div className="flex items-center justify-center gap-2 text-surface-400">
           <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
