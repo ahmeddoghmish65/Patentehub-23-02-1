@@ -34,11 +34,17 @@ export function AuthPage({ mode }: AuthPageProps) {
     <div className="min-h-screen flex" dir={dir}>
       <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-md">
-          <button onClick={() => navigate(ROUTES.LANDING)} className="flex items-center gap-2 mb-8 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg">
-              <Icon name="directions_car" size={22} className="text-white" filled />
+          <button onClick={() => navigate(ROUTES.LANDING)} className="flex items-center gap-2.5 mb-8 group">
+            <div className="relative">
+              <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/30">
+                <Icon name="directions_car" size={20} className="text-white" filled />
+              </div>
+              <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white" />
             </div>
-            <span className="text-xl font-bold text-surface-900 group-hover:text-primary-600 transition-colors">Patente Hub</span>
+            <span className="text-lg font-black tracking-tight">
+              <span className="text-surface-900 group-hover:text-primary-600 transition-colors">Patente </span>
+              <span className="text-primary-500">Hub</span>
+            </span>
           </button>
 
           <h1 className="text-2xl font-bold text-surface-900 mb-2">
