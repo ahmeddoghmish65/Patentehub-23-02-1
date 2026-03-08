@@ -24,6 +24,7 @@ export function LandingPage() {
   const testimonialDragStartX = useRef(0);
   const [testimonialDragOffset, setTestimonialDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [activeScreen, setActiveScreen] = useState(0);
   const [consentLevel, setConsentLevel] = useState<ConsentLevel | null>(() => getConsentLevel());
   const showConsentBanner = consentLevel === null;
   const handleConsent = useCallback((level: ConsentLevel) => setConsentLevel(level), []);
@@ -66,6 +67,11 @@ export function LandingPage() {
     const interval = setInterval(() => setActiveFeature(p => (p + 1) % features.length), 3200);
     return () => clearInterval(interval);
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => setActiveScreen(p => (p + 1) % 4), 3500);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -704,9 +710,10 @@ export function LandingPage() {
       </section>
 
       {/* ═══ APP PREVIEW ═══ */}
-      <section className="py-24 bg-white overflow-hidden" data-animate id="preview">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className={cn('text-center mb-16 transition-all duration-700', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
+      <section className="py-24 bg-gradient-to-b from-white to-slate-50 overflow-hidden" data-animate id="preview">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className={cn('text-center mb-14 transition-all duration-700', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
             <span className="inline-flex items-center gap-2 bg-violet-50 text-violet-700 border border-violet-100 px-5 py-2 rounded-full text-sm font-semibold mb-5">
               <Icon name="phone_iphone" size={16} filled />
               {t('landing.preview_tag')}
@@ -715,64 +722,284 @@ export function LandingPage() {
             <p className="text-surface-500 mt-4 max-w-xl mx-auto">{t('landing.preview_desc')}</p>
           </div>
 
-          <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-6 transition-all duration-1000', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12')}>
-            {/* Quiz Card */}
-            <div className="rounded-3xl p-[2px] bg-gradient-to-br from-blue-500 via-violet-500 to-pink-500 shadow-2xl group hover:-translate-y-2 transition-all duration-500">
-              <div className="bg-white rounded-[22px] p-6 h-full">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center">
-                    <Icon name="quiz" className="text-red-500" size={22} filled />
+          {/* 3-column layout: Tabs | Phone | Stats */}
+          <div className={cn('flex flex-col lg:flex-row items-center gap-10 lg:gap-8 transition-all duration-1000', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12')}>
+
+            {/* LEFT — Screen selector tabs */}
+            <div className="flex-1 space-y-3 w-full lg:max-w-[270px] order-2 lg:order-1">
+              {[
+                { icon: 'quiz', title: t('landing.preview_quiz_title'), desc: uiLang === 'ar' ? 'أسئلة يومية مع ترجمة فورية' : 'Quiz quotidiano con traduzione', colorKey: 'violet' },
+                { icon: 'category', title: t('landing.preview_sections_title'), desc: uiLang === 'ar' ? 'تعلم حسب الموضوع' : 'Studia per argomento', colorKey: 'amber' },
+                { icon: 'trending_up', title: t('landing.preview_progress_title'), desc: uiLang === 'ar' ? 'تتبع تقدمك يومياً' : 'Monitora i progressi', colorKey: 'green' },
+                { icon: 'groups', title: uiLang === 'ar' ? 'المجتمع' : 'Comunità', desc: uiLang === 'ar' ? 'تواصل مع المتعلمين' : 'Connettiti con altri', colorKey: 'blue' },
+              ].map((tab, i) => {
+                const activeBorder = ['border-violet-400 bg-violet-50', 'border-amber-400 bg-amber-50', 'border-green-400 bg-green-50', 'border-blue-400 bg-blue-50'][i];
+                const iconBg = ['bg-violet-500', 'bg-amber-500', 'bg-green-500', 'bg-blue-500'][i];
+                const textColor = ['text-violet-700', 'text-amber-700', 'text-green-700', 'text-blue-700'][i];
+                const dotColor = ['bg-violet-500', 'bg-amber-500', 'bg-green-500', 'bg-blue-500'][i];
+                return (
+                  <button
+                    key={i}
+                    onClick={() => setActiveScreen(i)}
+                    className={cn(
+                      'w-full flex items-center gap-3 p-3.5 rounded-2xl border-2 text-start transition-all duration-300',
+                      activeScreen === i ? activeBorder : 'border-surface-100 bg-white hover:border-surface-200 hover:bg-slate-50'
+                    )}
+                  >
+                    <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-300', activeScreen === i ? iconBg : 'bg-surface-100')}>
+                      <Icon name={tab.icon} size={18} filled className={activeScreen === i ? 'text-white' : 'text-surface-400'} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={cn('font-bold text-sm transition-colors duration-300', activeScreen === i ? textColor : 'text-surface-800')}>{tab.title}</p>
+                      <p className="text-[11px] text-surface-400 mt-0.5 truncate">{tab.desc}</p>
+                    </div>
+                    <div className={cn('w-2 h-2 rounded-full shrink-0 transition-all duration-300', activeScreen === i ? dotColor : 'bg-transparent')} />
+                  </button>
+                );
+              })}
+              {/* Progress dots */}
+              <div className="flex gap-1.5 justify-center pt-1">
+                {[0,1,2,3].map(i => (
+                  <button key={i} onClick={() => setActiveScreen(i)} className={cn('rounded-full transition-all duration-300', activeScreen === i ? 'w-6 h-2 bg-violet-500' : 'w-2 h-2 bg-surface-200 hover:bg-surface-300')} />
+                ))}
+              </div>
+            </div>
+
+            {/* CENTER — Phone mockup */}
+            <div className="relative flex-shrink-0 order-1 lg:order-2">
+              {/* Glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-300/25 to-blue-300/25 blur-3xl rounded-full scale-150 pointer-events-none" />
+
+              {/* Phone shell */}
+              <div className="relative w-[230px] sm:w-[255px]">
+                <div className="bg-surface-900 rounded-[2.8rem] p-[9px] shadow-2xl shadow-surface-900/25">
+                  <div className="bg-surface-800 rounded-[2.3rem] overflow-hidden">
+                    {/* Dynamic island */}
+                    <div className="bg-white pt-3 flex justify-center">
+                      <div className="w-[72px] h-[22px] bg-surface-900 rounded-b-2xl" />
+                    </div>
+
+                    {/* App screen area */}
+                    <div className="bg-white relative overflow-hidden" style={{ height: '470px' }}>
+
+                      {/* SCREEN 0 — Quiz */}
+                      <div className={cn('absolute inset-0 transition-all duration-500 p-4', activeScreen === 0 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3 pointer-events-none')}>
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 bg-red-50 rounded-lg flex items-center justify-center">
+                              <Icon name="quiz" size={14} className="text-red-500" filled />
+                            </div>
+                            <div>
+                              <p className="text-[11px] font-bold text-surface-900">{t('landing.preview_quiz_title')}</p>
+                              <p className="text-[9px] text-surface-400">{t('landing.preview_quiz_q')}</p>
+                            </div>
+                          </div>
+                          <span className="bg-blue-50 text-blue-600 text-[10px] font-bold px-2 py-0.5 rounded-lg">85%</span>
+                        </div>
+                        {/* Progress bar */}
+                        <div className="w-full bg-surface-100 rounded-full h-[3px] mb-4">
+                          <div className="h-[3px] rounded-full bg-gradient-to-r from-violet-500 to-blue-500" style={{ width: '2.5%' }} />
+                        </div>
+                        {/* Question */}
+                        <div className="bg-violet-50 rounded-xl p-3 mb-3 border border-violet-100">
+                          <p className="text-[11px] font-semibold text-surface-800 leading-relaxed">{t('landing.preview_quiz_question')}</p>
+                          <p className="text-[10px] text-surface-400 mt-1.5" dir="ltr">I segnali di pericolo sono triangolari</p>
+                        </div>
+                        {/* Answer buttons */}
+                        <div className="grid grid-cols-2 gap-2 mb-3">
+                          <div className="py-2.5 rounded-xl border-2 border-surface-900 bg-teal-50 text-center text-[11px] font-bold text-surface-900">✓ Vero</div>
+                          <div className="py-2.5 rounded-xl border-2 border-surface-200 bg-surface-50 text-center text-[11px] font-bold text-surface-400 opacity-50">✗ Falso</div>
+                        </div>
+                        {/* Explanation */}
+                        <div className="bg-surface-50 rounded-xl p-2.5 border border-surface-100">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <Icon name="info" size={11} className="text-blue-500" filled />
+                            <span className="text-[10px] font-bold text-surface-700">{uiLang === 'ar' ? 'الشرح' : 'Spiegazione'}</span>
+                          </div>
+                          <p className="text-[10px] text-surface-500 leading-relaxed">{uiLang === 'ar' ? 'نعم، إشارات الخطر مثلثية الشكل بإطار أحمر.' : 'Sì, i segnali di pericolo sono triangolari con bordo rosso.'}</p>
+                        </div>
+                      </div>
+
+                      {/* SCREEN 1 — Sections */}
+                      <div className={cn('absolute inset-0 transition-all duration-500 p-4', activeScreen === 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3 pointer-events-none')}>
+                        <p className="text-[12px] font-black text-surface-900 mb-4">{t('landing.preview_sections_title')}</p>
+                        <div className="space-y-3">
+                          {[
+                            { icon: 'warning', name: t('landing.preview_s1'), pct: 85, color: '#ef4444' },
+                            { icon: 'block', name: t('landing.preview_s2'), pct: 62, color: '#dc2626' },
+                            { icon: 'speed', name: t('landing.preview_s3'), pct: 48, color: '#8b5cf6' },
+                            { icon: 'directions', name: t('landing.preview_s4'), pct: 31, color: '#3b82f6' },
+                            { icon: 'local_parking', name: uiLang === 'ar' ? 'قواعد الوقوف' : 'Parcheggio', pct: 20, color: '#f59e0b' },
+                          ].map((s, j) => (
+                            <div key={j} className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: s.color + '18' }}>
+                                <Icon name={s.icon} size={14} style={{ color: s.color }} filled />
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-[10px] font-semibold text-surface-700">{s.name}</span>
+                                  <span className="text-[9px] text-surface-400 font-bold">{s.pct}%</span>
+                                </div>
+                                <div className="w-full bg-surface-100 rounded-full h-1.5">
+                                  <div className="h-1.5 rounded-full transition-all duration-700" style={{ width: `${s.pct}%`, backgroundColor: s.color }} />
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* SCREEN 2 — Progress */}
+                      <div className={cn('absolute inset-0 transition-all duration-500 p-4', activeScreen === 2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3 pointer-events-none')}>
+                        <div className="flex items-center justify-between mb-4">
+                          <p className="text-[12px] font-black text-surface-900">{t('landing.preview_progress_title')}</p>
+                          <span className="bg-green-50 text-green-600 text-[10px] font-bold px-2 py-0.5 rounded-lg">{t('landing.preview_progress_ready')}</span>
+                        </div>
+                        {/* Circular progress */}
+                        <div className="flex justify-center mb-4">
+                          <div className="relative w-[90px] h-[90px]">
+                            <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+                              <circle cx="50" cy="50" r="40" fill="none" stroke="#f1f5f9" strokeWidth="9" />
+                              <circle cx="50" cy="50" r="40" fill="none" stroke="url(#pg)" strokeWidth="9" strokeLinecap="round"
+                                strokeDasharray={`${2 * Math.PI * 40}`}
+                                strokeDashoffset={`${2 * Math.PI * 40 * 0.22}`} />
+                              <defs>
+                                <linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="0%">
+                                  <stop offset="0%" stopColor="#8b5cf6" />
+                                  <stop offset="100%" stopColor="#3b82f6" />
+                                </linearGradient>
+                              </defs>
+                            </svg>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                              <span className="text-lg font-black text-surface-900">78%</span>
+                              <span className="text-[9px] text-surface-400">{t('landing.preview_progress_readiness')}</span>
+                            </div>
+                          </div>
+                        </div>
+                        {/* Mini stats */}
+                        <div className="grid grid-cols-3 gap-2 text-center mb-3">
+                          {[
+                            { val: '312', label: t('landing.preview_progress_quizzes') },
+                            { val: '18', label: t('landing.preview_progress_days') },
+                            { val: '91%', label: t('landing.preview_progress_accuracy') },
+                          ].map((s, j) => (
+                            <div key={j} className="bg-surface-50 rounded-xl p-2">
+                              <p className="text-sm font-black text-surface-900">{s.val}</p>
+                              <p className="text-[9px] text-surface-400 mt-0.5">{s.label}</p>
+                            </div>
+                          ))}
+                        </div>
+                        {/* Weekly chart */}
+                        <div className="bg-surface-50 rounded-xl p-2.5">
+                          <p className="text-[9px] font-bold text-surface-500 mb-2">{uiLang === 'ar' ? 'هذا الأسبوع' : 'Questa settimana'}</p>
+                          <div className="flex items-end gap-1 h-10">
+                            {[40, 65, 50, 80, 70, 90, 78].map((h, j) => (
+                              <div key={j} className="flex-1 rounded-t-sm bg-gradient-to-t from-violet-500 to-blue-400 opacity-80" style={{ height: `${h}%` }} />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* SCREEN 3 — Community */}
+                      <div className={cn('absolute inset-0 transition-all duration-500 p-4', activeScreen === 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3 pointer-events-none')}>
+                        <p className="text-[12px] font-black text-surface-900 mb-3">{uiLang === 'ar' ? 'المجتمع' : 'Comunità'}</p>
+                        {[
+                          { initials: 'أم', name: uiLang === 'ar' ? 'أحمد م.' : 'Ahmed M.', msg: uiLang === 'ar' ? 'نجحت في الامتحان! شكراً 🎉' : 'Ho superato l\'esame! 🎉', time: '2m', bg: 'bg-violet-500' },
+                          { initials: 'سخ', name: uiLang === 'ar' ? 'سارة خ.' : 'Sara K.', msg: uiLang === 'ar' ? 'سؤال: ما الفرق بين الإشارتين؟' : 'Domanda: qual è la differenza?', time: '15m', bg: 'bg-blue-500' },
+                          { initials: 'يح', name: uiLang === 'ar' ? 'يوسف ح.' : 'Yousef H.', msg: uiLang === 'ar' ? 'الأقسام الجديدة رائعة 👌' : 'Le nuove sezioni sono ottime 👌', time: '1h', bg: 'bg-amber-500' },
+                          { initials: 'نه', name: uiLang === 'ar' ? 'نور الهدى' : 'Nour H.', msg: uiLang === 'ar' ? 'تجاوزت 90% جاهزية! 💪' : 'Superato 90% prontezza! 💪', time: '3h', bg: 'bg-green-500' },
+                        ].map((m, j) => (
+                          <div key={j} className="flex gap-2 mb-2.5">
+                            <div className={cn('w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-white text-[9px] font-bold', m.bg)}>{m.initials}</div>
+                            <div className="flex-1 bg-surface-50 rounded-xl p-2 border border-surface-100">
+                              <div className="flex items-center justify-between mb-0.5">
+                                <span className="text-[10px] font-bold text-surface-800">{m.name}</span>
+                                <span className="text-[9px] text-surface-400">{m.time}</span>
+                              </div>
+                              <p className="text-[10px] text-surface-600">{m.msg}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                    </div>
+
+                    {/* Bottom nav bar */}
+                    <div className="bg-white border-t border-surface-100 px-5 py-2.5 flex justify-around">
+                      {[
+                        { icon: 'home', active: false },
+                        { icon: 'quiz', active: activeScreen === 0 },
+                        { icon: 'category', active: activeScreen === 1 },
+                        { icon: 'groups', active: activeScreen === 3 },
+                      ].map((item, i) => (
+                        <div key={i} className={cn('flex items-center justify-center transition-colors duration-200', item.active ? 'text-violet-500' : 'text-surface-300')}>
+                          <Icon name={item.icon} size={17} filled={item.active} />
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-surface-900 text-sm">{t('landing.preview_quiz_title')}</h3>
-                    <p className="text-xs text-surface-400">{t('landing.preview_quiz_q')}</p>
-                  </div>
-                  <span className="ms-auto bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-lg">85%</span>
                 </div>
-                <div className="bg-surface-50 rounded-2xl p-4 mb-4 border border-surface-100">
-                  <p className="text-sm font-semibold text-surface-800 leading-relaxed">{t('landing.preview_quiz_question')}</p>
-                  <p className="text-xs text-surface-400 mt-1.5" dir="ltr">I segnali di pericolo sono triangolari</p>
+                {/* Home indicator */}
+                <div className="flex justify-center py-2">
+                  <div className="w-16 h-1 bg-white/25 rounded-full" />
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="py-3.5 px-3 rounded-2xl border-2 border-surface-900 bg-teal-50 text-center font-bold text-sm text-surface-900">
-                    ✓ {t('landing.preview_quiz_correct')}
-                  </div>
-                  <div className="py-3.5 px-3 rounded-2xl border-2 border-surface-900 bg-rose-50 text-center font-bold text-sm text-surface-900 opacity-45">
-                    ✗ {t('landing.preview_quiz_wrong')}
-                  </div>
+              </div>
+
+              {/* Floating badge — top end */}
+              <div className="absolute -top-3 -end-4 bg-white rounded-2xl shadow-lg px-3 py-2 border border-surface-100 flex items-center gap-2 animate-bounce" style={{ animationDuration: '3s' }}>
+                <span className="text-base">🎉</span>
+                <div>
+                  <p className="text-[10px] font-bold text-surface-900">{uiLang === 'ar' ? 'إجابة صحيحة!' : 'Risposta corretta!'}</p>
+                  <p className="text-[9px] text-surface-400">+2 {uiLang === 'ar' ? 'نقطة' : 'punti'}</p>
+                </div>
+              </div>
+
+              {/* Floating badge — bottom start */}
+              <div className="absolute -bottom-3 -start-4 bg-white rounded-2xl shadow-lg px-3 py-2 border border-surface-100 flex items-center gap-2 animate-bounce" style={{ animationDuration: '4s', animationDelay: '1s' }}>
+                <span className="text-base">🏆</span>
+                <div>
+                  <p className="text-[10px] font-bold text-surface-900">{uiLang === 'ar' ? 'المرتبة #12' : 'Posizione #12'}</p>
+                  <p className="text-[9px] text-surface-400">{uiLang === 'ar' ? 'هذا الأسبوع' : 'questa settimana'}</p>
                 </div>
               </div>
             </div>
 
-            {/* Sections Card */}
-            <div className="rounded-3xl p-[2px] bg-gradient-to-br from-amber-400 to-orange-500 shadow-2xl group hover:-translate-y-2 transition-all duration-500">
-              <div className="bg-white rounded-[22px] p-6 h-full">
-                <h3 className="font-bold text-surface-900 mb-5">{t('landing.preview_sections_title')}</h3>
-                <div className="space-y-3">
-                  {[
-                    { icon: 'warning', name: t('landing.preview_s1'), pct: 85, color: '#ef4444' },
-                    { icon: 'block', name: t('landing.preview_s2'), pct: 62, color: '#dc2626' },
-                    { icon: 'speed', name: t('landing.preview_s3'), pct: 48, color: '#8b5cf6' },
-                    { icon: 'directions', name: t('landing.preview_s4'), pct: 31, color: '#3b82f6' },
-                  ].map((s, j) => (
-                    <div key={j} className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: s.color + '18' }}>
-                        <Icon name={s.icon} size={17} style={{ color: s.color }} filled />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-xs font-semibold text-surface-700">{s.name}</span>
-                          <span className="text-xs text-surface-400">{s.pct}%</span>
-                        </div>
-                        <div className="w-full bg-surface-100 rounded-full h-1.5">
-                          <div className="h-1.5 rounded-full transition-all duration-700" style={{ width: `${s.pct}%`, backgroundColor: s.color }} />
-                        </div>
-                      </div>
+            {/* RIGHT — App stats & CTA */}
+            <div className="flex-1 space-y-4 w-full lg:max-w-[270px] order-3">
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { value: '+500', label: uiLang === 'ar' ? 'سؤال تدريبي' : 'domande', icon: 'quiz', colorBg: 'bg-violet-50', colorText: 'text-violet-500' },
+                  { value: '8', label: uiLang === 'ar' ? 'مجال دراسي' : 'argomenti', icon: 'category', colorBg: 'bg-amber-50', colorText: 'text-amber-500' },
+                  { value: '95%', label: uiLang === 'ar' ? 'معدل النجاح' : 'tasso successo', icon: 'trending_up', colorBg: 'bg-green-50', colorText: 'text-green-500' },
+                  { value: '24/7', label: uiLang === 'ar' ? 'متاح دائماً' : 'disponibile', icon: 'schedule', colorBg: 'bg-blue-50', colorText: 'text-blue-500' },
+                ].map((stat, i) => (
+                  <div key={i} className="bg-white rounded-2xl p-4 border border-surface-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                    <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center mb-2.5', stat.colorBg)}>
+                      <Icon name={stat.icon} size={17} filled className={stat.colorText} />
                     </div>
-                  ))}
+                    <p className="text-xl font-black text-surface-900">{stat.value}</p>
+                    <p className="text-[11px] text-surface-400 mt-0.5 leading-tight">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA card */}
+              <div className="bg-gradient-to-br from-violet-500 via-violet-600 to-primary-600 rounded-2xl p-5 text-white relative overflow-hidden">
+                <div className="absolute -top-5 -end-5 w-20 h-20 bg-white/10 rounded-full pointer-events-none" />
+                <div className="absolute -bottom-5 -start-5 w-16 h-16 bg-white/10 rounded-full pointer-events-none" />
+                <div className="relative">
+                  <p className="font-black text-base mb-1">{uiLang === 'ar' ? '🎯 جاهز للامتحان؟' : '🎯 Pronto per l\'esame?'}</p>
+                  <p className="text-xs text-white/75 mb-3 leading-relaxed">{uiLang === 'ar' ? 'انضم لآلاف الطلاب الذين نجحوا معنا' : 'Unisciti a migliaia di studenti che hanno superato'}</p>
+                  <button
+                    onClick={() => navigate(ROUTES.REGISTER)}
+                    className="bg-white text-violet-600 font-bold text-sm px-4 py-2 rounded-xl hover:bg-violet-50 transition-colors shadow-sm"
+                  >
+                    {uiLang === 'ar' ? 'ابدأ مجاناً ←' : 'Inizia gratis →'}
+                  </button>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
