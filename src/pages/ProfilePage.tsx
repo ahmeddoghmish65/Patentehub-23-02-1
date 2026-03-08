@@ -19,19 +19,6 @@ const LEVEL_STYLE: Record<ExamReadinessLevel, { bg: string; text: string; bar: s
   excellent:  { bg: 'bg-emerald-50', text: 'text-emerald-600', bar: 'bg-emerald-500', badge: 'bg-emerald-100 text-emerald-700' },
 };
 
-function FactorBar({ label, value, barClass }: { label: string; value: number; barClass: string }) {
-  return (
-    <div className="space-y-1">
-      <div className="flex items-center justify-between">
-        <span className="text-[10px] text-surface-500">{label}</span>
-        <span className="text-[10px] font-bold text-surface-700">{value}%</span>
-      </div>
-      <div className="w-full bg-surface-100 rounded-full h-1.5">
-        <div className={cn('rounded-full h-1.5 transition-all duration-700', barClass)} style={{ width: `${value}%` }} />
-      </div>
-    </div>
-  );
-}
 
 function getTextDir(text: string): 'rtl' | 'ltr' {
   return /[\u0600-\u06FF]/.test(text) ? 'rtl' : 'ltr';
@@ -788,70 +775,68 @@ export function ProfilePage() {
         </h2>
 
         {/* Exam Readiness Card */}
+        {(() => {
+          const circleStroke = ({ not_ready: '#ef4444', beginner: '#f97316', developing: '#eab308', ready: '#22c55e', excellent: '#10b981' } as Record<string,string>)[readiness.level] ?? '#3b82f6';
+          const factorIcons = ['quiz','check_circle','book','schedule','trending_up'];
+          const factorColors = [
+            { icon: 'text-blue-500',   bg: 'bg-blue-50' },
+            { icon: 'text-green-500',  bg: 'bg-green-50' },
+            { icon: 'text-purple-500', bg: 'bg-purple-50' },
+            { icon: 'text-orange-500', bg: 'bg-orange-50' },
+            { icon: 'text-teal-500',   bg: 'bg-teal-50' },
+          ];
+          return (
         <div className="bg-surface-50 rounded-xl p-4 mb-4">
 
           {/* ── Header: circle + info ── */}
-          {(() => {
-            const circleStroke = ({ not_ready: '#ef4444', beginner: '#f97316', developing: '#eab308', ready: '#22c55e', excellent: '#10b981' } as Record<string,string>)[readiness.level] ?? '#3b82f6';
-            return (
-              <div className="flex items-center gap-4 mb-4">
-                {/* Circle */}
-                <div className="relative w-24 h-24 shrink-0">
-                  <svg className="w-full h-full -rotate-90" viewBox="0 0 96 96">
-                    <circle cx="48" cy="48" r="40" fill="none" stroke="#e5e7eb" strokeWidth="8" />
-                    <circle cx="48" cy="48" r="40" fill="none" stroke={circleStroke} strokeWidth="8" strokeLinecap="round"
-                      strokeDasharray={`${readiness.score * 2.513} ${251.3 - readiness.score * 2.513}`}
-                      style={{ transition: 'stroke-dasharray 1.2s ease' }}
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-3xl font-black text-surface-800 leading-none">{readiness.score}</span>
-                    <span className="text-xs font-bold text-surface-400">%</span>
-                  </div>
-                </div>
-                {/* Info */}
-                <div className="flex-1 flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className={cn('w-8 h-8 rounded-xl flex items-center justify-center', levelStyle.bg)}>
-                      <Icon name="assignment_turned_in" size={16} className={levelStyle.text} filled />
-                    </div>
-                    <h3 className="font-bold text-base text-surface-800">{t('dashboard.readiness_card_title')}</h3>
-                  </div>
-                  <span className={cn('text-sm font-bold px-4 py-1.5 rounded-full self-start', levelStyle.badge)}>
-                    {t(`dashboard.readiness_level_${readiness.level}`)}
-                  </span>
-                </div>
+          <div className="flex items-center gap-4 mb-4">
+            {/* Circle */}
+            <div className="relative w-24 h-24 shrink-0" dir="ltr">
+              <svg className="w-full h-full -rotate-90" viewBox="0 0 96 96">
+                <circle cx="48" cy="48" r="40" fill="none" stroke="#e5e7eb" strokeWidth="8" />
+                <circle cx="48" cy="48" r="40" fill="none" stroke={circleStroke} strokeWidth="8" strokeLinecap="round"
+                  strokeDasharray={`${readiness.score * 2.513} ${251.3 - readiness.score * 2.513}`}
+                  style={{ transition: 'stroke-dasharray 1.2s ease' }}
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-3xl font-black text-surface-800 leading-none">{readiness.score}</span>
+                <span className="text-xs font-bold text-surface-400">%</span>
               </div>
-            );
-          })()}
+            </div>
+            {/* Info */}
+            <div className="flex-1 flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <div className={cn('w-8 h-8 rounded-xl flex items-center justify-center shrink-0', levelStyle.bg)}>
+                  <Icon name="assignment_turned_in" size={16} className={levelStyle.text} filled />
+                </div>
+                <h3 className="font-bold text-base text-surface-800">{t('dashboard.readiness_card_title')}</h3>
+              </div>
+              <span className={cn('text-sm font-bold px-4 py-1.5 rounded-full self-start', levelStyle.badge)}>
+                {t(`dashboard.readiness_level_${readiness.level}`)}
+              </span>
+            </div>
+          </div>
 
           {/* ── Divider ── */}
           <div className="border-t border-surface-200 mb-4" />
 
           {/* ── Factors Section ── */}
-          <p className="text-[11px] font-bold text-surface-400 uppercase tracking-widest mb-3">العوامل المؤثرة</p>
+          <p className="text-[11px] font-bold text-surface-400 uppercase tracking-widest mb-3">{t('dashboard.readiness_factors_title')}</p>
           <div className="space-y-3 mb-3">
             {factors.map((f, i) => {
-              const icons = ['quiz','check_circle','book','schedule','trending_up'];
-              const colors = [
-                { icon: 'text-blue-500',   bg: 'bg-blue-50' },
-                { icon: 'text-green-500',  bg: 'bg-green-50' },
-                { icon: 'text-purple-500', bg: 'bg-purple-50' },
-                { icon: 'text-orange-500', bg: 'bg-orange-50' },
-                { icon: 'text-teal-500',   bg: 'bg-teal-50' },
-              ];
-              const c = colors[i] ?? colors[0];
+              const c = factorColors[i] ?? factorColors[0];
               return (
                 <div key={f.key} className="flex items-center gap-3">
                   <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0', c.bg)}>
-                    <Icon name={icons[i] ?? 'star'} size={16} className={c.icon} filled />
+                    <Icon name={factorIcons[i] ?? 'star'} size={16} className={c.icon} filled />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-sm font-semibold text-surface-700">{f.label}</span>
-                      <span className="text-sm font-bold text-surface-500">{f.value}%</span>
+                      <span className="text-sm font-semibold text-surface-700 truncate">{f.label}</span>
+                      <span className="text-sm font-bold text-surface-500 shrink-0 ms-2">{f.value}%</span>
                     </div>
-                    <div className="w-full bg-surface-200 rounded-full h-2">
+                    <div className="w-full bg-surface-200 rounded-full h-2" dir="ltr">
                       <div className={cn('rounded-full h-2 transition-all duration-700', levelStyle.bar)} style={{ width: `${f.value}%` }} />
                     </div>
                   </div>
@@ -890,6 +875,8 @@ export function ProfilePage() {
             </div>
           )}
         </div>
+          );
+        })()}
 
         {/* Answer Distribution */}
         {totalAnswers > 0 ? (
