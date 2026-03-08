@@ -788,7 +788,7 @@ export function ProfilePage() {
         </h2>
 
         {/* Exam Readiness Card */}
-        <div className="rounded-2xl overflow-hidden mb-4 shadow-md">
+        <div className="mb-4">
 
           {/* ── Header ── */}
           {(() => {
