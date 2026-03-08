@@ -717,7 +717,7 @@ export function LandingPage() {
             <p className="text-surface-400 mt-3 max-w-md mx-auto text-sm">{t('landing.preview_desc')}</p>
           </div>
 
-          <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-5 transition-all duration-1000', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10')}>
+          <div className={cn('grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 transition-all duration-1000', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10')}>
 
             {/* Quiz Card */}
             <div className="bg-white rounded-2xl border border-surface-100 shadow-sm p-5 hover:shadow-md transition-shadow duration-300">
@@ -785,6 +785,66 @@ export function LandingPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Exam Readiness Card */}
+            <div className="bg-white rounded-2xl border border-surface-100 shadow-sm p-5 hover:shadow-md transition-shadow duration-300 md:col-span-2 lg:col-span-1">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
+                  <Icon name="workspace_premium" size={20} className="text-green-500" filled />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-surface-900 text-sm">{t('landing.preview_progress_title')}</h3>
+                </div>
+                <span className="bg-green-50 text-green-600 text-xs font-bold px-2.5 py-1 rounded-lg">{t('landing.preview_progress_ready')}</span>
+              </div>
+
+              {/* Circular progress */}
+              <div className="flex items-center gap-5 mb-4">
+                <div className="relative w-20 h-20 shrink-0">
+                  <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+                    <circle cx="50" cy="50" r="38" fill="none" stroke="#f1f5f9" strokeWidth="10" />
+                    <circle cx="50" cy="50" r="38" fill="none" stroke="url(#rg)" strokeWidth="10"
+                      strokeLinecap="round"
+                      strokeDasharray={`${2 * Math.PI * 38}`}
+                      strokeDashoffset={`${2 * Math.PI * 38 * 0.22}`} />
+                    <defs>
+                      <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#22c55e" />
+                        <stop offset="100%" stopColor="#16a34a" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-base font-black text-surface-900">78%</span>
+                    <span className="text-[9px] text-surface-400">{t('landing.preview_progress_readiness')}</span>
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="flex-1 space-y-2">
+                  {[
+                    { val: '312', label: t('landing.preview_progress_quizzes'), color: 'text-violet-600' },
+                    { val: '18', label: t('landing.preview_progress_days'), color: 'text-blue-600' },
+                    { val: '91%', label: t('landing.preview_progress_accuracy'), color: 'text-green-600' },
+                  ].map((s, j) => (
+                    <div key={j} className="flex items-center justify-between">
+                      <span className="text-xs text-surface-400">{s.label}</span>
+                      <span className={`text-xs font-bold ${s.color}`}>{s.val}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Weekly bar chart */}
+              <div className="bg-slate-50 rounded-xl p-3 border border-surface-100">
+                <p className="text-[10px] font-semibold text-surface-400 mb-2">{uiLang === 'ar' ? 'نشاط هذا الأسبوع' : 'Attività settimanale'}</p>
+                <div className="flex items-end gap-1 h-8">
+                  {[40, 65, 50, 80, 70, 90, 78].map((h, j) => (
+                    <div key={j} className="flex-1 rounded-t bg-gradient-to-t from-green-500 to-green-400" style={{ height: `${h}%`, opacity: 0.6 + j * 0.06 }} />
+                  ))}
+                </div>
               </div>
             </div>
 
