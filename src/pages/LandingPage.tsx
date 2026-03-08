@@ -638,7 +638,7 @@ export function LandingPage() {
             <p className="text-surface-500 mt-4 max-w-xl mx-auto">{t('landing.preview_desc')}</p>
           </div>
 
-          <div className={cn('grid grid-cols-1 md:grid-cols-3 gap-6 transition-all duration-1000', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12')}>
+          <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-6 transition-all duration-1000', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12')}>
             {/* Quiz Card */}
             <div className="rounded-3xl p-[2px] bg-gradient-to-br from-blue-500 via-violet-500 to-pink-500 shadow-2xl group hover:-translate-y-2 transition-all duration-500">
               <div className="bg-white rounded-[22px] p-6 h-full">
@@ -663,48 +663,6 @@ export function LandingPage() {
                   <div className="py-3.5 px-3 rounded-2xl border-2 border-surface-900 bg-rose-50 text-center font-bold text-sm text-surface-900 opacity-45">
                     ✗ {t('landing.preview_quiz_wrong')}
                   </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Progress Card */}
-            <div className="rounded-3xl p-[2px] bg-gradient-to-br from-green-400 to-primary-600 shadow-2xl group hover:-translate-y-2 transition-all duration-500">
-              <div className="bg-white rounded-[22px] p-6 h-full">
-                <div className="flex items-center justify-between mb-5">
-                  <h3 className="font-bold text-surface-900">{t('landing.preview_progress_title')}</h3>
-                  <span className="text-xs bg-green-50 text-green-600 border border-green-200 px-2.5 py-1 rounded-lg font-semibold">{t('landing.preview_progress_ready')}</span>
-                </div>
-                <div className="flex items-center justify-center mb-5">
-                  <div className="relative w-32 h-32">
-                    <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
-                      <circle cx="60" cy="60" r="50" fill="none" stroke="#f1f5f9" strokeWidth="10" />
-                      <circle cx="60" cy="60" r="50" fill="none" strokeWidth="10" strokeLinecap="round"
-                        stroke="url(#pgrad)"
-                        strokeDasharray={`${2 * Math.PI * 50 * 0.78} ${2 * Math.PI * 50}`} />
-                      <defs>
-                        <linearGradient id="pgrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#3b82f6" />
-                          <stop offset="100%" stopColor="#8b5cf6" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-3xl font-black text-surface-900">78%</span>
-                      <span className="text-[10px] text-surface-400">{t('landing.preview_progress_readiness')}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { val: '12', lbl: t('landing.preview_progress_quizzes'), bg: 'bg-blue-50', tc: 'text-blue-600' },
-                    { val: '7', lbl: t('landing.preview_progress_days'), bg: 'bg-orange-50', tc: 'text-orange-600' },
-                    { val: '94%', lbl: t('landing.preview_progress_accuracy'), bg: 'bg-green-50', tc: 'text-green-600' },
-                  ].map((x, j) => (
-                    <div key={j} className={cn('rounded-xl p-2.5 text-center', x.bg)}>
-                      <p className={cn('text-lg font-bold', x.tc)}>{x.val}</p>
-                      <p className="text-[10px] text-surface-500">{x.lbl}</p>
-                    </div>
-                  ))}
                 </div>
               </div>
             </div>
