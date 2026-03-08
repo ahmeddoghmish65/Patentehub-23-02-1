@@ -210,6 +210,12 @@ export function LandingPage() {
             <div className="flex items-center gap-2 md:hidden">
               <LanguageSwitcher />
               <button
+                onClick={() => navigate(ROUTES.LOGIN)}
+                className="px-3 py-1.5 rounded-xl text-sm font-semibold text-primary-600 border border-primary-200 bg-primary-50 hover:bg-primary-100 transition-all"
+              >
+                {t('landing.login')}
+              </button>
+              <button
                 className={cn(
                   'relative p-2 rounded-xl transition-all duration-200',
                   mobileMenu ? 'bg-primary-50 text-primary-600' : 'hover:bg-surface-100 text-surface-800'
