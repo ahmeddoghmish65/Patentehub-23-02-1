@@ -827,7 +827,7 @@ export function ProfilePage() {
           })()}
 
           {/* ── Factors Section ── */}
-          <div className="bg-white px-4 pt-4 pb-3">
+          <div className="px-4 pt-4 pb-3">
             <p className="text-[10px] font-bold text-surface-400 uppercase tracking-widest mb-3">العوامل المؤثرة</p>
             <div className="space-y-3">
               {factors.map((f, i) => {
