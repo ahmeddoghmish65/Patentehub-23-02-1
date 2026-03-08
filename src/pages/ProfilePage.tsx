@@ -787,52 +787,47 @@ export function ProfilePage() {
           <Icon name="trending_up" size={20} className="text-primary-500" /> {t('profile.progress_stats')}
         </h2>
 
-        {/* Exam Readiness - Full Detail Card */}
-        <div className={cn('rounded-2xl border p-5 space-y-4 mb-4', levelStyle.bg,
-          readiness.level === 'excellent' ? 'border-emerald-200' :
-          readiness.level === 'ready'     ? 'border-green-200' :
-          readiness.level === 'developing'? 'border-yellow-200' :
-          readiness.level === 'beginner'  ? 'border-orange-200' :
-          'border-red-200'
-        )}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Icon name="assignment_turned_in" size={20} className={levelStyle.text} filled />
-              <h3 className={cn('font-bold text-sm', levelStyle.text)}>{t('dashboard.readiness_card_title')}</h3>
+        {/* Exam Readiness - Redesigned */}
+        <div className="rounded-2xl overflow-hidden mb-4 border border-surface-100 shadow-sm">
+          {/* Gradient banner with big circle */}
+          <div className={cn('px-5 pt-5 pb-6 flex flex-col items-center',
+            readiness.level === 'excellent' ? 'bg-gradient-to-br from-emerald-500 to-emerald-700' :
+            readiness.level === 'ready'     ? 'bg-gradient-to-br from-green-500 to-green-700' :
+            readiness.level === 'developing'? 'bg-gradient-to-br from-yellow-400 to-orange-500' :
+            readiness.level === 'beginner'  ? 'bg-gradient-to-br from-orange-400 to-orange-600' :
+            'bg-gradient-to-br from-primary-500 to-primary-700'
+          )}>
+            <div className="flex items-center gap-2 mb-4 self-start">
+              <Icon name="assignment_turned_in" size={18} className="text-white/90" filled />
+              <h3 className="font-bold text-sm text-white">{t('dashboard.readiness_card_title')}</h3>
             </div>
-            <span className={cn('text-xs font-bold px-2.5 py-1 rounded-full', levelStyle.badge)}>
+            <div className="relative w-28 h-28 mb-3">
+              <svg className="w-full h-full -rotate-90" viewBox="0 0 112 112">
+                <circle cx="56" cy="56" r="46" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="9" />
+                <circle cx="56" cy="56" r="46" fill="none" stroke="white" strokeWidth="9" strokeLinecap="round"
+                  strokeDasharray={`${readiness.score * 2.89} ${289 - readiness.score * 2.89}`}
+                  style={{ transition: 'stroke-dasharray 1s ease' }}
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-3xl font-black text-white leading-none">{readiness.score}%</span>
+              </div>
+            </div>
+            <span className="bg-white/20 text-white text-xs font-bold px-4 py-1.5 rounded-full border border-white/30 backdrop-blur-sm">
               {t(`dashboard.readiness_level_${readiness.level}`)}
             </span>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="relative shrink-0 w-20 h-20">
-              <svg className="w-full h-full -rotate-90" viewBox="0 0 80 80">
-                <circle cx="40" cy="40" r="32" fill="none" stroke="#e2e8f0" strokeWidth="7" />
-                <circle cx="40" cy="40" r="32" fill="none" strokeWidth="7" strokeLinecap="round"
-                  className={cn('transition-all duration-1000',
-                    readiness.level === 'excellent' ? 'stroke-emerald-500' :
-                    readiness.level === 'ready'     ? 'stroke-green-500' :
-                    readiness.level === 'developing'? 'stroke-yellow-400' :
-                    readiness.level === 'beginner'  ? 'stroke-orange-400' :
-                    'stroke-red-400'
-                  )}
-                  strokeDasharray={`${readiness.score * 2.01} ${201 - readiness.score * 2.01}`}
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className={cn('text-xl font-extrabold leading-none', levelStyle.text)}>{readiness.score}%</span>
-              </div>
-            </div>
-            <div className="flex-1 space-y-2">
-              {factors.map(f => (
-                <FactorBar key={f.key} label={f.label} value={f.value} barClass={levelStyle.bar} />
-              ))}
-            </div>
+          {/* Factor bars */}
+          <div className="bg-white px-4 pt-4 pb-2 space-y-3">
+            {factors.map(f => (
+              <FactorBar key={f.key} label={f.label} value={f.value} barClass={levelStyle.bar} />
+            ))}
           </div>
 
+          {/* Weakness penalty */}
           {readiness.weaknessPenalty > 0 && (
-            <div className="flex items-center gap-2 bg-white/60 rounded-xl px-3 py-2">
+            <div className="mx-4 mb-3 flex items-center gap-2 bg-danger-50 border border-danger-100 rounded-xl px-3 py-2">
               <Icon name="remove_circle" size={14} className="text-danger-500 shrink-0" filled />
               <span className="text-[11px] text-danger-600 font-medium">
                 {t('dashboard.readiness_penalty')}: -{readiness.weaknessPenalty} {t('dashboard.readiness_weakness_label')} ({mistakes.length})
@@ -840,13 +835,14 @@ export function ProfilePage() {
             </div>
           )}
 
+          {/* Tips */}
           {readiness.tips.length > 0 && (
-            <div className="bg-white/60 rounded-xl p-3 space-y-1.5">
+            <div className="mx-4 mb-4 bg-surface-50 rounded-xl p-3 space-y-1.5 border border-surface-100">
               <p className="text-[10px] font-bold text-surface-500 uppercase tracking-wide">{t('dashboard.readiness_tips_title')}</p>
               {readiness.tips.map(tip => (
                 <div key={tip} className="flex items-start gap-1.5">
                   <Icon name="arrow_right" size={14} className={cn('shrink-0 mt-0.5', levelStyle.text)} />
-                  <p className={cn('text-[11px] leading-snug', levelStyle.text)}>{t(`dashboard.readiness_tip_${tip}`)}</p>
+                  <p className="text-[11px] leading-snug text-surface-700">{t(`dashboard.readiness_tip_${tip}`)}</p>
                 </div>
               ))}
             </div>
