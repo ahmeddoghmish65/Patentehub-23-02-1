@@ -790,42 +790,41 @@ export function ProfilePage() {
         {/* Exam Readiness Card */}
         <div className="rounded-2xl overflow-hidden mb-4 shadow-md">
 
-          {/* ── Gradient Header ── */}
-          <div className={cn('relative px-4 py-3 flex items-center gap-3 overflow-hidden',
-            readiness.level === 'excellent' ? 'bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-600' :
-            readiness.level === 'ready'     ? 'bg-gradient-to-br from-green-400 via-green-500 to-emerald-600' :
-            readiness.level === 'developing'? 'bg-gradient-to-br from-amber-400 via-orange-400 to-orange-500' :
-            readiness.level === 'beginner'  ? 'bg-gradient-to-br from-orange-400 via-orange-500 to-red-500' :
-            'bg-gradient-to-br from-blue-500 via-primary-600 to-indigo-700'
-          )}>
-            {/* Left: Title + Badge */}
-            <div className="flex-1 flex flex-col gap-1.5">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 bg-white/20 rounded-xl flex items-center justify-center">
-                  <Icon name="assignment_turned_in" size={14} className="text-white" filled />
+          {/* ── Header ── */}
+          {(() => {
+            const circleStroke = ({ not_ready: '#ef4444', beginner: '#f97316', developing: '#eab308', ready: '#22c55e', excellent: '#10b981' } as Record<string,string>)[readiness.level] ?? '#3b82f6';
+            return (
+              <div className="relative px-4 py-3 flex items-center gap-3 bg-white border-b border-surface-100">
+                {/* Left: Title + Badge */}
+                <div className="flex-1 flex flex-col gap-1.5">
+                  <div className="flex items-center gap-2">
+                    <div className={cn('w-7 h-7 rounded-xl flex items-center justify-center', levelStyle.bg)}>
+                      <Icon name="assignment_turned_in" size={14} className={levelStyle.text} filled />
+                    </div>
+                    <h3 className="font-bold text-sm text-surface-800">{t('dashboard.readiness_card_title')}</h3>
+                  </div>
+                  <span className={cn('text-xs font-bold px-3 py-1 rounded-full self-start', levelStyle.badge)}>
+                    {t(`dashboard.readiness_level_${readiness.level}`)}
+                  </span>
                 </div>
-                <h3 className="font-bold text-sm text-white">{t('dashboard.readiness_card_title')}</h3>
-              </div>
-              <span className="bg-white/25 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full border border-white/40 self-start">
-                {t(`dashboard.readiness_level_${readiness.level}`)}
-              </span>
-            </div>
 
-            {/* Right: Small circle */}
-            <div className="relative w-20 h-20 shrink-0">
-              <svg className="w-full h-full -rotate-90" viewBox="0 0 80 80">
-                <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="8" />
-                <circle cx="40" cy="40" r="32" fill="none" stroke="white" strokeWidth="8" strokeLinecap="round"
-                  strokeDasharray={`${readiness.score * 2.01} ${201 - readiness.score * 2.01}`}
-                  style={{ transition: 'stroke-dasharray 1.2s ease' }}
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-2xl font-black text-white leading-none">{readiness.score}</span>
-                <span className="text-[10px] font-bold text-white/80">%</span>
+                {/* Right: Small circle */}
+                <div className="relative w-20 h-20 shrink-0">
+                  <svg className="w-full h-full -rotate-90" viewBox="0 0 80 80">
+                    <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="8" />
+                    <circle cx="40" cy="40" r="32" fill="none" stroke={circleStroke} strokeWidth="8" strokeLinecap="round"
+                      strokeDasharray={`${readiness.score * 2.01} ${201 - readiness.score * 2.01}`}
+                      style={{ transition: 'stroke-dasharray 1.2s ease' }}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-2xl font-black text-surface-800 leading-none">{readiness.score}</span>
+                    <span className="text-[10px] font-bold text-surface-400">%</span>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            );
+          })()}
 
           {/* ── Factors Section ── */}
           <div className="bg-white px-4 pt-4 pb-3">
