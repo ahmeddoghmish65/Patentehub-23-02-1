@@ -119,47 +119,6 @@ export function Dashboard() {
         </div>
       </div>
 
-      {/* ─── Exam Readiness Card ──────────────────────────────────────────────── */}
-      {(() => {
-        const readinessColor = readiness.score >= 70 ? '#22c55e' : readiness.score >= 40 ? '#f59e0b' : '#6366f1';
-        const readinessBg = readiness.score >= 70 ? 'bg-success-50 text-success-700 border-success-200' : readiness.score >= 40 ? 'bg-warning-50 text-warning-700 border-warning-200' : 'bg-primary-50 text-primary-700 border-primary-200';
-        const r = 40;
-        const circumference = 2 * Math.PI * r;
-        return (
-          <div className="bg-surface-50 rounded-2xl p-5">
-            <div className="flex items-center gap-5">
-              <div className="relative shrink-0" style={{ width: 100, height: 100 }}>
-                <svg width="100" height="100" viewBox="0 0 100 100" className="-rotate-90">
-                  <circle cx="50" cy="50" r={r} fill="none" stroke="#e5e7eb" strokeWidth="9" />
-                  <circle cx="50" cy="50" r={r} fill="none"
-                    stroke={readinessColor} strokeWidth="9"
-                    strokeDasharray={circumference}
-                    strokeDashoffset={circumference * (1 - readiness.score / 100)}
-                    strokeLinecap="round"
-                    style={{ transition: 'stroke-dashoffset 0.7s ease' }} />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-xl font-black text-surface-900 leading-none">{readiness.score}%</span>
-                </div>
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5 mb-2">
-                  <Icon name="verified" size={17} style={{ color: readinessColor }} filled />
-                  <span className="text-sm font-bold text-surface-900">{t('dashboard.readiness_card_title')}</span>
-                </div>
-                <span className={cn('inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full border mb-3', readinessBg)}>
-                  {t(`dashboard.readiness_level_${readiness.level}`)}
-                </span>
-                <div className="w-full bg-surface-200 rounded-full h-2">
-                  <div className="h-2 rounded-full transition-all duration-700" style={{ width: `${readiness.score}%`, backgroundColor: readinessColor }} />
-                </div>
-                <p className="text-[10px] text-surface-400 mt-1.5">{readiness.score} / 100</p>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
-
       {/* Quick Actions */}
       <div className="grid grid-cols-2 gap-3">
         <button
