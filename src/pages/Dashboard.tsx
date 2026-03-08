@@ -1,15 +1,48 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 import { ROUTES } from '@/constants';
+import { calculateExamReadiness } from '@/services/examReadinessService';
+import type { ExamReadinessLevel } from '@/services/examReadinessService';
 
+// ─── Level colours (Tailwind utility strings) ─────────────────────────────────
+const LEVEL_STYLE: Record<ExamReadinessLevel, { bg: string; text: string; bar: string; badge: string }> = {
+  not_ready:  { bg: 'bg-red-50',     text: 'text-red-600',     bar: 'bg-red-400',     badge: 'bg-red-100 text-red-600' },
+  beginner:   { bg: 'bg-orange-50',  text: 'text-orange-600',  bar: 'bg-orange-400',  badge: 'bg-orange-100 text-orange-600' },
+  developing: { bg: 'bg-yellow-50',  text: 'text-yellow-600',  bar: 'bg-yellow-400',  badge: 'bg-yellow-100 text-yellow-700' },
+  ready:      { bg: 'bg-green-50',   text: 'text-green-600',   bar: 'bg-green-500',   badge: 'bg-green-100 text-green-700' },
+  excellent:  { bg: 'bg-emerald-50', text: 'text-emerald-600', bar: 'bg-emerald-500', badge: 'bg-emerald-100 text-emerald-700' },
+};
+
+// ─── Mini factor bar ──────────────────────────────────────────────────────────
+function FactorBar({ label, value, barClass }: { label: string; value: number; barClass: string }) {
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] text-surface-500">{label}</span>
+        <span className="text-[10px] font-bold text-surface-700">{value}%</span>
+      </div>
+      <div className="w-full bg-surface-100 rounded-full h-1.5">
+        <div
+          className={cn('rounded-full h-1.5 transition-all duration-700', barClass)}
+          style={{ width: `${value}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ─── Dashboard ────────────────────────────────────────────────────────────────
 export function Dashboard() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const { loadSections, loadLessons, loadMistakes, loadQuestions, mistakes, sections, lessons, questions } = useDataStore();
+  const {
+    loadSections, loadLessons, loadMistakes, loadQuestions, loadQuizHistory,
+    mistakes, sections, lessons, questions, quizHistory,
+  } = useDataStore();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -17,7 +50,8 @@ export function Dashboard() {
     loadLessons();
     loadMistakes();
     loadQuestions();
-  }, [loadSections, loadLessons, loadMistakes, loadQuestions]);
+    loadQuizHistory();
+  }, [loadSections, loadLessons, loadMistakes, loadQuestions, loadQuizHistory]);
 
   if (!user) return null;
 
@@ -25,38 +59,41 @@ export function Dashboard() {
   const totalAnswers = progress.correctAnswers + progress.wrongAnswers;
   const accuracy = totalAnswers > 0 ? Math.round((progress.correctAnswers / totalAnswers) * 100) : 0;
 
-  // Calculate exam readiness
+  // ─── Run the advanced exam readiness algorithm ───────────────────────────
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const readiness = useMemo(() => calculateExamReadiness({
+    quizHistory,
+    mistakes,
+    progress,
+    totalLessons:   lessons.length,
+    totalQuestions: questions.length,
+  }), [quizHistory, mistakes, progress, lessons.length, questions.length]);
+
+  // Persist computed score back to IndexedDB (only when it changes)
   useEffect(() => {
-    if (!user) return;
-    const quizFactor     = Math.min(100, progress.totalQuizzes * 5);
-    const accuracyFactor = totalAnswers > 0 ? accuracy : 0;
-    const lessonFactor   = Math.min(100, progress.completedLessons.length * 5);
-    const questionFactor = Math.min(100, Math.round(totalAnswers / 2));
-    const streakFactor   = Math.min(100, progress.currentStreak * 14);
-
-    const readiness = Math.round(
-      accuracyFactor  * 0.35 +
-      quizFactor      * 0.20 +
-      lessonFactor    * 0.20 +
-      questionFactor  * 0.15 +
-      streakFactor    * 0.10
-    );
-
-    if (progress.totalQuizzes === 0 && progress.completedLessons.length === 0 && totalAnswers === 0) return;
-    if (readiness === progress.examReadiness) return;
-
+    if (readiness.score === progress.examReadiness) return;
     import('@/db/database').then(({ getDB }) => {
       getDB().then(db => {
         db.get('users', user.id).then(u => {
-          if (u) { u.progress.examReadiness = readiness; db.put('users', u); }
+          if (u) { u.progress.examReadiness = readiness.score; db.put('users', u); }
         });
       });
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [progress.totalQuizzes, progress.correctAnswers, progress.wrongAnswers, progress.completedLessons.length, progress.currentStreak]);
+  }, [readiness.score]);
+
+  const levelStyle = LEVEL_STYLE[readiness.level];
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? t('dashboard.greeting_morning') : t('dashboard.greeting_afternoon');
+
+  const factors = [
+    { key: 'exam',        value: readiness.factors.examSimulation, label: t('dashboard.readiness_factor_exam') },
+    { key: 'accuracy',    value: readiness.factors.quizAccuracy,   label: t('dashboard.readiness_factor_accuracy') },
+    { key: 'coverage',    value: readiness.factors.coverage,       label: t('dashboard.readiness_factor_coverage') },
+    { key: 'consistency', value: readiness.factors.consistency,    label: t('dashboard.readiness_factor_consistency') },
+    { key: 'trend',       value: readiness.factors.trend,          label: t('dashboard.readiness_factor_trend') },
+  ];
 
   return (
     <div className="space-y-5">
@@ -105,6 +142,89 @@ export function Dashboard() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* ─── Exam Readiness Card ──────────────────────────────────────────────── */}
+      <div className={cn('rounded-2xl border p-5 space-y-4', levelStyle.bg,
+        readiness.level === 'excellent' ? 'border-emerald-200' :
+        readiness.level === 'ready'     ? 'border-green-200' :
+        readiness.level === 'developing'? 'border-yellow-200' :
+        readiness.level === 'beginner'  ? 'border-orange-200' :
+        'border-red-200'
+      )}>
+        {/* Header row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Icon name="assignment_turned_in" size={20} className={levelStyle.text} filled />
+            <h3 className={cn('font-bold text-sm', levelStyle.text)}>
+              {t('dashboard.readiness_card_title')}
+            </h3>
+          </div>
+          <span className={cn('text-xs font-bold px-2.5 py-1 rounded-full', levelStyle.badge)}>
+            {t(`dashboard.readiness_level_${readiness.level}`)}
+          </span>
+        </div>
+
+        {/* Score circle + main bar */}
+        <div className="flex items-center gap-4">
+          {/* Circle */}
+          <div className="relative shrink-0 w-20 h-20">
+            <svg className="w-full h-full -rotate-90" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="32" fill="none" stroke="#e2e8f0" strokeWidth="7" />
+              <circle
+                cx="40" cy="40" r="32" fill="none"
+                strokeWidth="7" strokeLinecap="round"
+                className={cn('transition-all duration-1000',
+                  readiness.level === 'excellent' ? 'stroke-emerald-500' :
+                  readiness.level === 'ready'     ? 'stroke-green-500' :
+                  readiness.level === 'developing'? 'stroke-yellow-400' :
+                  readiness.level === 'beginner'  ? 'stroke-orange-400' :
+                  'stroke-red-400'
+                )}
+                strokeDasharray={`${readiness.score * 2.01} ${201 - readiness.score * 2.01}`}
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className={cn('text-xl font-extrabold leading-none', levelStyle.text)}>
+                {readiness.score}%
+              </span>
+            </div>
+          </div>
+
+          {/* Factor bars */}
+          <div className="flex-1 space-y-2">
+            {factors.map(f => (
+              <FactorBar key={f.key} label={f.label} value={f.value} barClass={levelStyle.bar} />
+            ))}
+          </div>
+        </div>
+
+        {/* Weakness penalty */}
+        {readiness.weaknessPenalty > 0 && (
+          <div className="flex items-center gap-2 bg-white/60 rounded-xl px-3 py-2">
+            <Icon name="remove_circle" size={14} className="text-danger-500 shrink-0" filled />
+            <span className="text-[11px] text-danger-600 font-medium">
+              {t('dashboard.readiness_penalty')}: -{readiness.weaknessPenalty} {t('dashboard.readiness_weakness_label')} ({mistakes.length})
+            </span>
+          </div>
+        )}
+
+        {/* Tips */}
+        {readiness.tips.length > 0 && (
+          <div className="bg-white/60 rounded-xl p-3 space-y-1.5">
+            <p className="text-[10px] font-bold text-surface-500 uppercase tracking-wide">
+              {t('dashboard.readiness_tips_title')}
+            </p>
+            {readiness.tips.map(tip => (
+              <div key={tip} className="flex items-start gap-1.5">
+                <Icon name="arrow_right" size={14} className={cn('shrink-0 mt-0.5', levelStyle.text)} />
+                <p className={cn('text-[11px] leading-snug', levelStyle.text)}>
+                  {t(`dashboard.readiness_tip_${tip}`)}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Quick Actions */}
@@ -172,11 +292,11 @@ export function Dashboard() {
             <Icon name="assignment" size={24} className="text-green-600" filled />
           </div>
           <h3 className="font-bold text-surface-900 text-sm group-hover:text-green-600 transition-colors">{t('dashboard.exam_simulator')}</h3>
-          <p className="text-[11px] text-surface-400 mt-0.5">{t('dashboard.exam_readiness')}: {progress.examReadiness}%</p>
+          <p className="text-[11px] text-surface-400 mt-0.5">{t('dashboard.exam_readiness')}: {readiness.score}%</p>
         </button>
       </div>
 
-      {/* أخطائي */}
+      {/* Mistakes button */}
       <button
         className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-red-200 hover:shadow-md transition-all text-start flex items-center gap-4 group"
         onClick={() => navigate(ROUTES.MISTAKES)}
@@ -207,18 +327,16 @@ export function Dashboard() {
               {t('dashboard.progress_summary')}
             </h3>
             <span className={cn('text-xs font-semibold px-2 py-0.5 rounded-full',
-              progress.examReadiness >= 70 ? 'bg-success-50 text-success-600' :
-              progress.examReadiness >= 40 ? 'bg-warning-50 text-warning-600' :
+              readiness.score >= 70 ? 'bg-success-50 text-success-600' :
+              readiness.score >= 40 ? 'bg-warning-50 text-warning-600' :
               'bg-surface-100 text-surface-500'
             )}>
-              {t('dashboard.readiness')}: {progress.examReadiness}%
+              {t('dashboard.readiness')}: {readiness.score}%
             </span>
           </div>
           <div className="w-full bg-surface-100 rounded-full h-2.5 mb-3">
-            <div className={cn('rounded-full h-2.5 transition-all duration-700',
-              progress.examReadiness >= 70 ? 'bg-success-500' :
-              progress.examReadiness >= 40 ? 'bg-warning-500' : 'bg-primary-500'
-            )} style={{ width: `${progress.examReadiness}%` }} />
+            <div className={cn('rounded-full h-2.5 transition-all duration-700', levelStyle.bar)}
+              style={{ width: `${readiness.score}%` }} />
           </div>
           <div className="grid grid-cols-3 gap-3 text-center">
             <div>
