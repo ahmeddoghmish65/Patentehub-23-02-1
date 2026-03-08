@@ -213,7 +213,7 @@ export function LandingPage() {
                 onClick={() => navigate(ROUTES.LOGIN)}
                 className="px-3 py-1.5 rounded-xl text-sm font-semibold text-primary-600 border border-primary-200 bg-primary-50 hover:bg-primary-100 transition-all"
               >
-                {t('landing.login')}
+                الدخول
               </button>
               <button
                 className={cn(
