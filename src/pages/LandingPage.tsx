@@ -705,149 +705,75 @@ export function LandingPage() {
       </section>
 
       {/* ═══ APP PREVIEW ═══ */}
-      <section className="py-20 bg-white overflow-hidden" data-animate id="preview">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-
-          <div className={cn('text-center mb-12 transition-all duration-700', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
-            <span className="inline-flex items-center gap-2 bg-violet-50 text-violet-700 border border-violet-100 px-4 py-2 rounded-full text-sm font-semibold mb-4">
-              <Icon name="phone_iphone" size={15} filled />
+      <section className="py-24 bg-white overflow-hidden" data-animate id="preview">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className={cn('text-center mb-16 transition-all duration-700', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
+            <span className="inline-flex items-center gap-2 bg-violet-50 text-violet-700 border border-violet-100 px-5 py-2 rounded-full text-sm font-semibold mb-5">
+              <Icon name="phone_iphone" size={16} filled />
               {t('landing.preview_tag')}
             </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-surface-900 mt-2">{t('landing.preview_title')}</h2>
-            <p className="text-surface-400 mt-3 max-w-md mx-auto text-sm">{t('landing.preview_desc')}</p>
+            <h2 className="text-4xl sm:text-5xl font-black text-surface-900 mt-2">{t('landing.preview_title')}</h2>
+            <p className="text-surface-500 mt-4 max-w-xl mx-auto">{t('landing.preview_desc')}</p>
           </div>
 
-          <div className={cn('grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 transition-all duration-1000', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10')}>
-
+          <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-6 transition-all duration-1000', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12')}>
             {/* Quiz Card */}
-            <div className="bg-white rounded-2xl border border-surface-100 shadow-sm p-5 hover:shadow-md transition-shadow duration-300">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center">
-                  <Icon name="quiz" size={20} className="text-violet-500" filled />
+            <div className="rounded-3xl p-[2px] bg-gradient-to-br from-blue-500 via-violet-500 to-pink-500 shadow-2xl group hover:-translate-y-2 transition-all duration-500">
+              <div className="bg-white rounded-[22px] p-6 h-full">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center">
+                    <Icon name="quiz" className="text-red-500" size={22} filled />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-surface-900 text-sm">{t('landing.preview_quiz_title')}</h3>
+                    <p className="text-xs text-surface-400">{t('landing.preview_quiz_q')}</p>
+                  </div>
+                  <span className="ms-auto bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-lg">85%</span>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-surface-900 text-sm">{t('landing.preview_quiz_title')}</h3>
-                  <p className="text-xs text-surface-400">{t('landing.preview_quiz_q')}</p>
+                <div className="bg-surface-50 rounded-2xl p-4 mb-4 border border-surface-100">
+                  <p className="text-sm font-semibold text-surface-800 leading-relaxed">{t('landing.preview_quiz_question')}</p>
+                  <p className="text-xs text-surface-400 mt-1.5" dir="ltr">I segnali di pericolo sono triangolari</p>
                 </div>
-                <span className="bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-lg">85%</span>
-              </div>
-
-              {/* Progress bar */}
-              <div className="w-full bg-surface-100 rounded-full h-1 mb-4">
-                <div className="h-1 rounded-full bg-gradient-to-r from-violet-500 to-blue-500 w-[2%]" />
-              </div>
-
-              {/* Question */}
-              <div className="bg-slate-50 rounded-xl p-4 mb-4 border border-surface-100">
-                <p className="text-sm font-semibold text-surface-800 leading-relaxed">{t('landing.preview_quiz_question')}</p>
-                <p className="text-xs text-surface-400 mt-1.5" dir="ltr">I segnali di pericolo sono triangolari</p>
-              </div>
-
-              {/* Answers */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="py-3 rounded-xl border-2 border-teal-500 bg-teal-50 text-center text-sm font-bold text-teal-700">
-                  ✓ {t('landing.preview_quiz_correct')}
-                </div>
-                <div className="py-3 rounded-xl border-2 border-surface-200 bg-surface-50 text-center text-sm font-bold text-surface-400 opacity-50">
-                  ✗ {t('landing.preview_quiz_wrong')}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="py-3.5 px-3 rounded-2xl border-2 border-surface-900 bg-teal-50 text-center font-bold text-sm text-surface-900">
+                    ✓ {t('landing.preview_quiz_correct')}
+                  </div>
+                  <div className="py-3.5 px-3 rounded-2xl border-2 border-surface-900 bg-rose-50 text-center font-bold text-sm text-surface-900 opacity-45">
+                    ✗ {t('landing.preview_quiz_wrong')}
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Sections Card */}
-            <div className="bg-white rounded-2xl border border-surface-100 shadow-sm p-5 hover:shadow-md transition-shadow duration-300">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center">
-                  <Icon name="category" size={20} className="text-amber-500" filled />
-                </div>
-                <h3 className="font-bold text-surface-900 text-sm">{t('landing.preview_sections_title')}</h3>
-              </div>
-
-              <div className="space-y-3.5">
-                {[
-                  { icon: 'warning', name: t('landing.preview_s1'), pct: 85, color: '#ef4444' },
-                  { icon: 'block', name: t('landing.preview_s2'), pct: 62, color: '#dc2626' },
-                  { icon: 'speed', name: t('landing.preview_s3'), pct: 48, color: '#8b5cf6' },
-                  { icon: 'directions', name: t('landing.preview_s4'), pct: 31, color: '#3b82f6' },
-                ].map((s, j) => (
-                  <div key={j} className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: s.color + '18' }}>
-                      <Icon name={s.icon} size={15} style={{ color: s.color }} filled />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-semibold text-surface-700">{s.name}</span>
-                        <span className="text-xs text-surface-400">{s.pct}%</span>
-                      </div>
-                      <div className="w-full bg-surface-100 rounded-full h-1.5">
-                        <div className="h-1.5 rounded-full" style={{ width: `${s.pct}%`, backgroundColor: s.color }} />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Exam Readiness Card */}
-            <div className="bg-white rounded-2xl border border-surface-100 shadow-sm p-5 hover:shadow-md transition-shadow duration-300 md:col-span-2 lg:col-span-1">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
-                  <Icon name="workspace_premium" size={20} className="text-green-500" filled />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-surface-900 text-sm">{t('landing.preview_progress_title')}</h3>
-                </div>
-                <span className="bg-green-50 text-green-600 text-xs font-bold px-2.5 py-1 rounded-lg">{t('landing.preview_progress_ready')}</span>
-              </div>
-
-              {/* Circular progress */}
-              <div className="flex items-center gap-5 mb-4">
-                <div className="relative w-20 h-20 shrink-0">
-                  <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                    <circle cx="50" cy="50" r="38" fill="none" stroke="#f1f5f9" strokeWidth="10" />
-                    <circle cx="50" cy="50" r="38" fill="none" stroke="url(#rg)" strokeWidth="10"
-                      strokeLinecap="round"
-                      strokeDasharray={`${2 * Math.PI * 38}`}
-                      strokeDashoffset={`${2 * Math.PI * 38 * 0.22}`} />
-                    <defs>
-                      <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#22c55e" />
-                        <stop offset="100%" stopColor="#16a34a" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-base font-black text-surface-900">78%</span>
-                    <span className="text-[9px] text-surface-400">{t('landing.preview_progress_readiness')}</span>
-                  </div>
-                </div>
-
-                {/* Stats */}
-                <div className="flex-1 space-y-2">
+            <div className="rounded-3xl p-[2px] bg-gradient-to-br from-amber-400 to-orange-500 shadow-2xl group hover:-translate-y-2 transition-all duration-500">
+              <div className="bg-white rounded-[22px] p-6 h-full">
+                <h3 className="font-bold text-surface-900 mb-5">{t('landing.preview_sections_title')}</h3>
+                <div className="space-y-3">
                   {[
-                    { val: '312', label: t('landing.preview_progress_quizzes'), color: 'text-violet-600' },
-                    { val: '18', label: t('landing.preview_progress_days'), color: 'text-blue-600' },
-                    { val: '91%', label: t('landing.preview_progress_accuracy'), color: 'text-green-600' },
+                    { icon: 'warning', name: t('landing.preview_s1'), pct: 85, color: '#ef4444' },
+                    { icon: 'block', name: t('landing.preview_s2'), pct: 62, color: '#dc2626' },
+                    { icon: 'speed', name: t('landing.preview_s3'), pct: 48, color: '#8b5cf6' },
+                    { icon: 'directions', name: t('landing.preview_s4'), pct: 31, color: '#3b82f6' },
                   ].map((s, j) => (
-                    <div key={j} className="flex items-center justify-between">
-                      <span className="text-xs text-surface-400">{s.label}</span>
-                      <span className={`text-xs font-bold ${s.color}`}>{s.val}</span>
+                    <div key={j} className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: s.color + '18' }}>
+                        <Icon name={s.icon} size={17} style={{ color: s.color }} filled />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-xs font-semibold text-surface-700">{s.name}</span>
+                          <span className="text-xs text-surface-400">{s.pct}%</span>
+                        </div>
+                        <div className="w-full bg-surface-100 rounded-full h-1.5">
+                          <div className="h-1.5 rounded-full transition-all duration-700" style={{ width: `${s.pct}%`, backgroundColor: s.color }} />
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
-
-              {/* Weekly bar chart */}
-              <div className="bg-slate-50 rounded-xl p-3 border border-surface-100">
-                <p className="text-[10px] font-semibold text-surface-400 mb-2">{uiLang === 'ar' ? 'نشاط هذا الأسبوع' : 'Attività settimanale'}</p>
-                <div className="flex items-end gap-1 h-8">
-                  {[40, 65, 50, 80, 70, 90, 78].map((h, j) => (
-                    <div key={j} className="flex-1 rounded-t bg-gradient-to-t from-green-500 to-green-400" style={{ height: `${h}%`, opacity: 0.6 + j * 0.06 }} />
-                  ))}
-                </div>
-              </div>
             </div>
-
           </div>
         </div>
       </section>
