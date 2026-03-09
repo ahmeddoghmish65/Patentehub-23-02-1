@@ -50,7 +50,7 @@ export function QuestionsBrowsePage() {
               {lang === 'it' && <h1 className="text-xl font-bold text-surface-900 text-left" dir="ltr">{section?.nameIt || section?.nameAr || ''}</h1>}
               {lang === 'both' && <h1 className="text-xl font-bold text-surface-900 text-left" dir="ltr">{section?.nameIt || ''}</h1>}
               {lang === 'both' && <p className="text-sm text-surface-400" dir="rtl">{section?.nameAr}</p>}
-              <p className="text-sm text-surface-500" dir="ltr">{sectionQuestions.length} {t('questions_page.questions_count')}</p>
+              <p className="text-sm text-surface-500 text-right">{sectionQuestions.length} {t('questions_page.questions_count')}</p>
             </div>
           </div>
         </div>
