@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
@@ -93,7 +94,7 @@ function relativeTime(iso: string, uiLang?: string): string {
 }
 
 export function CommunityPage() {
-  const navigate = useNavigate();
+  const { navigate } = useLocaleNavigate();
   const { state } = useLocation();
   const openPostId = (state as { openPostId?: string } | null)?.openPostId;
   const { t, uiLang } = useTranslation();

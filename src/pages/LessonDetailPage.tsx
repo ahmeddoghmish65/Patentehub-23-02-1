@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
+import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
@@ -8,7 +9,7 @@ import { useTranslation } from '@/i18n';
 import { ROUTES, buildLessonUrl } from '@/constants';
 
 export function LessonDetailPage() {
-  const navigate = useNavigate();
+  const { navigate } = useLocaleNavigate();
   const { lessonId = '' } = useParams<{ lessonId: string }>();
   const { state } = useLocation();
   const sectionIdFromState = (state as { sectionId?: string } | null)?.sectionId;

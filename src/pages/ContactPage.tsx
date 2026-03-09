@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { ROUTES } from '@/constants';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
@@ -23,7 +23,7 @@ interface FormErrors {
 }
 
 export function ContactPage() {
-  const navigate = useNavigate();
+  const { navigate } = useLocaleNavigate();
   const { uiLang } = useTranslation();
   const isIt = uiLang === 'it';
 

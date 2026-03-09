@@ -1,4 +1,4 @@
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useParams } from 'react-router-dom';
 import { useAuthStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Sidebar } from './Sidebar';
@@ -10,12 +10,14 @@ import { PROFILE_GATED_PAGES } from '@/constants';
 import { useState, useCallback, useEffect } from 'react';
 import { getConsentLevel, type ConsentLevel } from '@/utils/cookieManager';
 import { ROUTES } from '@/constants';
+import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 
 export function AppLayout() {
   const { user } = useAuthStore();
   const { dir, t } = useTranslation();
   const { pathname } = useLocation();
-  const navigate = useNavigate();
+  const { lang } = useParams<{ lang?: string }>();
+  const { navigate } = useLocaleNavigate();
 
   // Scroll to top on route change
   useEffect(() => {
@@ -40,11 +42,14 @@ export function AppLayout() {
   // Direction-aware sidebar positioning
   const mainMarginClass = dir === 'rtl' ? 'lg:mr-72' : 'lg:ml-72';
 
+  // Strip /:lang prefix from pathname before checking gated pages
+  const pathWithoutLang = pathname.replace(`/${lang ?? 'ar'}`, '') || '/';
+
   // Profile completion gate — block access to learning pages
   const needsProfileComplete =
     !user.profileComplete &&
     user.progress.totalQuizzes >= 1 &&
-    PROFILE_GATED_PAGES.has(pathname);
+    PROFILE_GATED_PAGES.has(pathWithoutLang);
 
   if (needsProfileComplete) {
     return (

@@ -1,8 +1,9 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 import { ROUTES } from '@/constants';
+import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 
 interface NavItem {
   path: string;
@@ -11,7 +12,7 @@ interface NavItem {
 }
 
 export function BottomNav() {
-  const navigate = useNavigate();
+  const { navigate, localePath } = useLocaleNavigate();
   const { pathname } = useLocation();
   const { t } = useTranslation();
 
@@ -23,7 +24,10 @@ export function BottomNav() {
     { path: ROUTES.PROFILE, icon: 'person', label: t('nav.profile') },
   ];
 
-  const isActive = (path: string) => pathname === path || pathname.startsWith(path + '/');
+  const isActive = (path: string) => {
+    const lp = localePath(path);
+    return pathname === lp || pathname.startsWith(lp + '/');
+  };
 
   return (
     <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-surface-100 pb-safe">

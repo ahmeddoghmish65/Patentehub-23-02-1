@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -10,7 +10,7 @@ import { ROUTES } from '@/constants';
 import { getConsentLevel, type ConsentLevel } from '@/utils/cookieManager';
 
 export function LandingPage() {
-  const navigate = useNavigate();
+  const { navigate } = useLocaleNavigate();
   const { t, dir, uiLang } = useTranslation();
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [mobileMenu, setMobileMenu] = useState(false);

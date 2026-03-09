@@ -1,4 +1,6 @@
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from '@/i18n';
+import type { UiLang } from '@/i18n';
 import { cn } from '@/utils/cn';
 
 interface LanguageSwitcherProps {
@@ -9,15 +11,25 @@ interface LanguageSwitcherProps {
 
 export function LanguageSwitcher({ variant = 'compact', className }: LanguageSwitcherProps) {
   const { uiLang, setUiLang } = useTranslation();
+  const { lang } = useParams<{ lang?: string }>();
+  const rawNavigate = useNavigate();
+  const { pathname } = useLocation();
   const isAr = uiLang === 'ar';
 
-  const toggle = () => setUiLang(isAr ? 'it' : 'ar');
+  const switchLang = (newLang: UiLang) => {
+    setUiLang(newLang);
+    // Replace current lang prefix with new one, keeping the rest of the path
+    const pathWithoutLang = pathname.replace(`/${lang}`, '') || '';
+    rawNavigate(`/${newLang}${pathWithoutLang}`, { replace: true });
+  };
+
+  const toggle = () => switchLang(isAr ? 'it' : 'ar');
 
   if (variant === 'full') {
     return (
       <div className={cn('flex items-center bg-surface-100 rounded-xl p-1 gap-1', className)}>
         <button
-          onClick={() => setUiLang('ar')}
+          onClick={() => switchLang('ar')}
           className={cn(
             'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
             uiLang === 'ar'
@@ -30,7 +42,7 @@ export function LanguageSwitcher({ variant = 'compact', className }: LanguageSwi
           <span>AR</span>
         </button>
         <button
-          onClick={() => setUiLang('it')}
+          onClick={() => switchLang('it')}
           className={cn(
             'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
             uiLang === 'it'

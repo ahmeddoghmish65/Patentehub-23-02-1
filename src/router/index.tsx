@@ -1,7 +1,16 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { createHashRouter, Navigate, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import {
+  createHashRouter,
+  Navigate,
+  Outlet,
+  useNavigate,
+  useLocation,
+  useParams,
+} from 'react-router-dom';
 import { ROUTES } from '@/constants';
 import { useAuthStore } from '@/store';
+import { useTranslation } from '@/i18n';
+import type { UiLang } from '@/i18n';
 import { PrivateRoute } from '@/components/guards/PrivateRoute';
 import { AdminRoute } from '@/components/guards/AdminRoute';
 import { AppLayout } from '@/components/layout/AppLayout';
@@ -29,11 +38,59 @@ const ExamSimulatorPage = lazy(() => import('@/pages/ExamSimulatorPage').then(m 
 const QuestionsBrowsePage = lazy(() => import('@/pages/QuestionsBrowsePage').then(m => ({ default: m.QuestionsBrowsePage })));
 const AdminPage = lazy(() => import('@/pages/AdminPage').then(m => ({ default: m.AdminPage })));
 
-// ─── Root layout — bootstraps auth & handles redirects ────────────────────────
-function RootLayout() {
-  const { checkAuth, user, isLoading } = useAuthStore();
+// ─── Root redirect — sends / to /:defaultLang ─────────────────────────────────
+function RootRedirect() {
+  const stored = localStorage.getItem('ph_ui_lang');
+  const lang: UiLang = stored === 'it' ? 'it' : 'ar';
+  return <Navigate to={`/${lang}`} replace />;
+}
+
+// ─── Fallback inside /:lang — redirect back to lang root ──────────────────────
+function LocaleFallback() {
+  const { lang } = useParams<{ lang: string }>();
+  return <Navigate to={`/${lang ?? 'ar'}`} replace />;
+}
+
+// ─── Locale layout — validates :lang, syncs i18n, handles auth redirects ──────
+function LocaleLayout() {
+  const { lang } = useParams<{ lang: string }>();
+  const { setUiLang, uiLang } = useTranslation();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { checkAuth, user, isLoading } = useAuthStore();
+
+  // Redirect to valid lang if the :lang param is not supported
+  useEffect(() => {
+    if (lang !== 'ar' && lang !== 'it') {
+      const validLang = localStorage.getItem('ph_ui_lang') === 'it' ? 'it' : 'ar';
+      navigate(`/${validLang}`, { replace: true });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang]);
+
+  // Sync URL :lang param → i18n state
+  useEffect(() => {
+    if ((lang === 'ar' || lang === 'it') && lang !== uiLang) {
+      setUiLang(lang as UiLang);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang]);
+
+  // Initialise auth from stored cookie on first mount
+  useEffect(() => {
+    checkAuth();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Redirect authenticated users away from public-only pages
+  useEffect(() => {
+    if (isLoading || !lang || (lang !== 'ar' && lang !== 'it')) return;
+    const publicOnlyPaths = [ROUTES.LANDING, ROUTES.LOGIN, ROUTES.REGISTER, ROUTES.RESET_PASSWORD];
+    const pathWithoutLang = pathname.replace(`/${lang}`, '') || '/';
+    if (user && publicOnlyPaths.some(p => pathWithoutLang === p)) {
+      navigate(`/${lang}${ROUTES.DASHBOARD}`, { replace: true });
+    }
+  }, [user, isLoading, pathname, navigate, lang]);
 
   // Scroll to top on route change
   useEffect(() => {
@@ -45,20 +102,7 @@ function RootLayout() {
     document.body.scrollTop = 0;
   }, [pathname]);
 
-  // Initialise auth from stored cookie on first mount
-  useEffect(() => {
-    checkAuth();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Redirect authenticated users away from public-only pages
-  useEffect(() => {
-    if (isLoading) return;
-    const publicOnlyPaths = [ROUTES.LANDING, ROUTES.LOGIN, ROUTES.REGISTER, ROUTES.RESET_PASSWORD];
-    if (user && publicOnlyPaths.some(p => pathname === p)) {
-      navigate(ROUTES.DASHBOARD, { replace: true });
-    }
-  }, [user, isLoading, pathname, navigate]);
+  if (lang !== 'ar' && lang !== 'it') return null;
 
   return <Outlet />;
 }
@@ -76,17 +120,22 @@ function SuspensePage({ children }: { children: React.ReactNode }) {
 
 // ─── Router ───────────────────────────────────────────────────────────────────
 export const router = createHashRouter([
+  // Root redirect: / → /:defaultLang
+  { path: '/', element: <RootRedirect /> },
+
+  // Locale subtree: /ar/... and /it/...
   {
-    element: <RootLayout />,
+    path: '/:lang',
+    element: <LocaleLayout />,
     children: [
       // ── Public routes ──────────────────────────────────────────────────
-      { path: ROUTES.LANDING, element: <SuspensePage><LandingPage /></SuspensePage> },
-      { path: ROUTES.LOGIN, element: <SuspensePage><AuthPage mode="login" /></SuspensePage> },
-      { path: ROUTES.REGISTER, element: <SuspensePage><AuthPage mode="register" /></SuspensePage> },
-      { path: ROUTES.RESET_PASSWORD, element: <SuspensePage><AuthPage mode="reset-password" /></SuspensePage> },
-      { path: ROUTES.CONTACT, element: <SuspensePage><ContactPage /></SuspensePage> },
-      { path: ROUTES.PRIVACY_POLICY, element: <SuspensePage><PrivacyPolicyPage /></SuspensePage> },
-      { path: ROUTES.TERMS_OF_SERVICE, element: <SuspensePage><TermsOfServicePage /></SuspensePage> },
+      { index: true, element: <SuspensePage><LandingPage /></SuspensePage> },
+      { path: 'login', element: <SuspensePage><AuthPage mode="login" /></SuspensePage> },
+      { path: 'register', element: <SuspensePage><AuthPage mode="register" /></SuspensePage> },
+      { path: 'reset-password', element: <SuspensePage><AuthPage mode="reset-password" /></SuspensePage> },
+      { path: 'contact', element: <SuspensePage><ContactPage /></SuspensePage> },
+      { path: 'privacy-policy', element: <SuspensePage><PrivacyPolicyPage /></SuspensePage> },
+      { path: 'terms-of-service', element: <SuspensePage><TermsOfServicePage /></SuspensePage> },
 
       // ── Private routes (auth guard + app shell) ────────────────────────
       {
@@ -95,25 +144,25 @@ export const router = createHashRouter([
           {
             element: <AppLayout />,
             children: [
-              { path: ROUTES.DASHBOARD, element: <SuspensePage><Dashboard /></SuspensePage> },
-              { path: ROUTES.LESSONS, element: <SuspensePage><LessonsPage /></SuspensePage> },
-              { path: ROUTES.LESSON_DETAIL, element: <SuspensePage><LessonDetailPage /></SuspensePage> },
-              { path: ROUTES.QUIZ, element: <SuspensePage><QuizPage /></SuspensePage> },
-              { path: ROUTES.SIGNS, element: <SuspensePage><SignsPage /></SuspensePage> },
-              { path: ROUTES.DICTIONARY, element: <SuspensePage><DictionaryPage /></SuspensePage> },
-              { path: ROUTES.TRAINING, element: <SuspensePage><TrainingPage /></SuspensePage> },
-              { path: ROUTES.COMMUNITY, element: <SuspensePage><CommunityPage /></SuspensePage> },
-              { path: ROUTES.PROFILE, element: <SuspensePage><ProfilePage /></SuspensePage> },
-              { path: ROUTES.USER_PROFILE, element: <SuspensePage><UserProfilePage /></SuspensePage> },
-              { path: ROUTES.MISTAKES, element: <SuspensePage><MistakesPage /></SuspensePage> },
-              { path: ROUTES.EXAM_SIMULATOR, element: <SuspensePage><ExamSimulatorPage /></SuspensePage> },
-              { path: ROUTES.QUESTIONS_BROWSE, element: <SuspensePage><QuestionsBrowsePage /></SuspensePage> },
+              { path: 'dashboard', element: <SuspensePage><Dashboard /></SuspensePage> },
+              { path: 'lessons', element: <SuspensePage><LessonsPage /></SuspensePage> },
+              { path: 'lessons/:lessonId', element: <SuspensePage><LessonDetailPage /></SuspensePage> },
+              { path: 'quiz', element: <SuspensePage><QuizPage /></SuspensePage> },
+              { path: 'signs', element: <SuspensePage><SignsPage /></SuspensePage> },
+              { path: 'dictionary', element: <SuspensePage><DictionaryPage /></SuspensePage> },
+              { path: 'training', element: <SuspensePage><TrainingPage /></SuspensePage> },
+              { path: 'community', element: <SuspensePage><CommunityPage /></SuspensePage> },
+              { path: 'profile', element: <SuspensePage><ProfilePage /></SuspensePage> },
+              { path: 'profile/:userId', element: <SuspensePage><UserProfilePage /></SuspensePage> },
+              { path: 'mistakes', element: <SuspensePage><MistakesPage /></SuspensePage> },
+              { path: 'exam', element: <SuspensePage><ExamSimulatorPage /></SuspensePage> },
+              { path: 'questions', element: <SuspensePage><QuestionsBrowsePage /></SuspensePage> },
 
               // Admin-only sub-tree
               {
                 element: <AdminRoute />,
                 children: [
-                  { path: ROUTES.ADMIN, element: <SuspensePage><AdminPage /></SuspensePage> },
+                  { path: 'admin', element: <SuspensePage><AdminPage /></SuspensePage> },
                 ],
               },
             ],
@@ -121,8 +170,11 @@ export const router = createHashRouter([
         ],
       },
 
-      // ── Fallback ───────────────────────────────────────────────────────
-      { path: '*', element: <Navigate to={ROUTES.LANDING} replace /> },
+      // ── Fallback under /:lang ──────────────────────────────────────────
+      { path: '*', element: <LocaleFallback /> },
     ],
   },
+
+  // ── Global fallback ────────────────────────────────────────────────────────
+  { path: '*', element: <RootRedirect /> },
 ]);

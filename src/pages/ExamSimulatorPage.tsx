@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
@@ -9,7 +9,7 @@ import { ROUTES } from '@/constants';
 import type { Question } from '@/db/database';
 
 export function ExamSimulatorPage() {
-  const navigate = useNavigate();
+  const { navigate } = useLocaleNavigate();
   const { user } = useAuthStore();
   const { questions, loadQuestions, saveQuizResult } = useDataStore();
   const { t, contentLang } = useTranslation();

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
@@ -9,7 +10,7 @@ import { ROUTES } from '@/constants';
 import type { Question } from '@/db/database';
 
 export function QuizPage() {
-  const navigate = useNavigate();
+  const { navigate } = useLocaleNavigate();
   const { state } = useLocation();
   const lessonId = (state as { lessonId?: string } | null)?.lessonId;
   const sectionId = (state as { sectionId?: string } | null)?.sectionId;

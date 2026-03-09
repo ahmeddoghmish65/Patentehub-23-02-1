@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
@@ -26,7 +27,7 @@ type TabType = 'posts' | 'quizzes';
 type StatView = 'followers' | 'following' | null;
 
 export function UserProfilePage() {
-  const navigate = useNavigate();
+  const { navigate } = useLocaleNavigate();
   const { userId = '' } = useParams<{ userId: string }>();
   const { t, uiLang } = useTranslation();
   const { user } = useAuthStore();

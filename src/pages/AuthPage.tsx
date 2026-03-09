@@ -3,7 +3,8 @@
  * Uses React Hook Form + Zod for validation and sonner for notifications.
  */
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthStore } from '@/store';
@@ -26,7 +27,7 @@ interface AuthPageProps {
 export function AuthPage({ mode }: AuthPageProps) {
   const { error, clearError } = useAuthStore();
   const { t, dir } = useTranslation();
-  const navigate = useNavigate();
+  const { navigate } = useLocaleNavigate();
   const location = useLocation();
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname ?? ROUTES.DASHBOARD;
 

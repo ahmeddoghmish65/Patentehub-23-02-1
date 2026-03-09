@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from '@/i18n';
@@ -20,7 +20,7 @@ interface CookieConsentBannerProps {
 export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
   const [showDetails, setShowDetails] = useState(false);
   const { uiLang } = useTranslation();
-  const navigate = useNavigate();
+  const { navigate } = useLocaleNavigate();
   const isIt = uiLang === 'it';
 
   const handleConsent = (level: ConsentLevel) => {

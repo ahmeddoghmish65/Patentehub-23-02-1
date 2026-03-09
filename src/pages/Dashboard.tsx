@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
@@ -20,7 +20,7 @@ const LEVEL_STYLE: Record<ExamReadinessLevel, { bg: string; text: string; bar: s
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 export function Dashboard() {
-  const navigate = useNavigate();
+  const { navigate } = useLocaleNavigate();
   const { user } = useAuthStore();
   const {
     loadSections, loadLessons, loadMistakes, loadQuestions, loadQuizHistory,

@@ -1,10 +1,11 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 import { ROUTES } from '@/constants';
+import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 
 interface NavItem {
   path: string;
@@ -14,7 +15,7 @@ interface NavItem {
 
 export function Sidebar() {
   const { user } = useAuthStore();
-  const navigate = useNavigate();
+  const { navigate, localePath } = useLocaleNavigate();
   const { pathname } = useLocation();
   const { t, dir } = useTranslation();
 
@@ -39,7 +40,10 @@ export function Sidebar() {
 
   const navButtonAlign = dir === 'rtl' ? 'text-right' : 'text-left';
 
-  const isActive = (path: string) => pathname === path || pathname.startsWith(path + '/');
+  const isActive = (path: string) => {
+    const lp = localePath(path);
+    return pathname === lp || pathname.startsWith(lp + '/');
+  };
 
   return (
     <aside className={cn(

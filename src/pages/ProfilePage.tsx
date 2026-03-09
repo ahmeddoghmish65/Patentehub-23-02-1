@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore } from '@/store';
 import { ROUTES } from '@/constants';
 import { Icon } from '@/components/ui/Icon';
@@ -55,7 +55,7 @@ const COUNTRY_CODES = [
 ];
 
 export function ProfilePage() {
-  const navigate = useNavigate();
+  const { navigate } = useLocaleNavigate();
   const { t, uiLang, setUiLang } = useTranslation();
   const { user, logout, updateSettings, updateProfile } = useAuthStore();
   const { posts, loadPosts, loadMistakes, loadQuestions, loadQuizHistory, loadLessons, mistakes, questions, quizHistory, lessons } = useDataStore();
