@@ -786,9 +786,9 @@ export function ProfilePage() {
             { icon: 'text-teal-500',   bg: 'bg-teal-50',   border: 'border-teal-100' },
           ];
           return (
-        <div className="bg-surface-50 rounded-xl p-4 mb-4">
+        <div className="rounded-xl mb-4">
           {/* Header: circle + title + badge */}
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-4 mb-4 bg-surface-50 rounded-xl p-4">
             <div className="relative w-20 h-20 shrink-0" dir="ltr">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 80 80">
                 <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="7" />
