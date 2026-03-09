@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import {
-  createHashRouter,
+  createBrowserRouter,
   Navigate,
   Outlet,
   useNavigate,
@@ -119,7 +119,7 @@ function SuspensePage({ children }: { children: React.ReactNode }) {
 }
 
 // ─── Router ───────────────────────────────────────────────────────────────────
-export const router = createHashRouter([
+export const router = createBrowserRouter([
   // Root redirect: / → /:defaultLang
   { path: '/', element: <RootRedirect /> },
 
