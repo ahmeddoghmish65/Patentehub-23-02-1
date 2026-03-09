@@ -66,7 +66,7 @@ export function QuestionsBrowsePage() {
               <div key={q.id} className="bg-white rounded-xl border border-surface-100 overflow-hidden">
                 <button
                   className="w-full p-4 text-start flex items-start gap-3 hover:bg-surface-50 transition-colors"
-                  dir="ltr"
+                  dir={lang === 'ar' ? 'rtl' : 'ltr'}
                   onClick={() => setExpandedQ(expandedQ === q.id ? null : q.id)}
                 >
                   <div className="flex flex-col items-center shrink-0 mt-0.5 gap-0.5">
@@ -103,7 +103,7 @@ export function QuestionsBrowsePage() {
                 </button>
 
                 {expandedQ === q.id && (
-                  <div className="px-4 pb-4 border-t border-surface-50 pt-3 mr-11">
+                  <div className="px-4 pb-4 border-t border-surface-50 pt-3 ms-11">
                     <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
                       <p className="text-xs font-semibold text-blue-600 mb-1 flex items-center gap-1">
                         <Icon name="lightbulb" size={14} filled />
