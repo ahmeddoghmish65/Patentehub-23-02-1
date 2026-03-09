@@ -137,7 +137,7 @@ export function AdminPage() {
       const text = await file.text();
       const data = JSON.parse(text);
       const count = await store.importData(storeName, data);
-      alert(`تم استيراد ${count} سجل`);
+      alert(t('admin.import_success') + ' ' + count + ' ' + t('admin.records'));
       store.loadSections(); store.loadLessons(); store.loadQuestions();
       store.loadSigns(); store.loadDictSections(); store.loadDictEntries();
     };
@@ -281,7 +281,7 @@ export function AdminPage() {
     setConfirmDel(null);
   };
 
-  const { t, uiLang, setUiLang } = useTranslation();
+  const { t, dir, uiLang, setUiLang } = useTranslation();
 
   // Language management state (stored in localStorage)
   const [langDefault, setLangDefault] = useState<UiLang>(
