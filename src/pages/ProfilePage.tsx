@@ -825,7 +825,7 @@ export function ProfilePage() {
                     <Icon name={factorIcons[i] ?? 'star'} size={18} className={c.icon} filled />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xl font-black text-surface-900 leading-none mb-0.5">{f.value}%</p>
+                    <p className="text-base font-bold text-surface-900 leading-none mb-0.5">{f.value}%</p>
                     <p className="text-xs text-surface-500 truncate leading-tight">{f.label}</p>
                   </div>
                 </div>
@@ -856,13 +856,15 @@ export function ProfilePage() {
             </div>
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded-full bg-success-500 inline-block" />
-                <span className="text-xs text-surface-600">{t('profile.correct_label')} <strong className="text-success-600">{progress.correctAnswers}</strong></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-success-500 shrink-0 inline-block" />
+                <span className="text-xs text-surface-600">{t('profile.correct_label')}</span>
+                <strong className="text-xs text-success-600">{progress.correctAnswers}</strong>
               </div>
-              <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2.5 py-0.5 rounded-full border border-primary-100">{accuracy}% {t('profile.total_label')}</span>
+              <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full border border-primary-100">{accuracy}%</span>
               <div className="flex items-center gap-1.5">
-                <span className="text-xs text-surface-600">{t('profile.wrong_label')} <strong className="text-danger-500">{progress.wrongAnswers}</strong></span>
-                <span className="w-3 h-3 rounded-full bg-danger-400 inline-block" />
+                <strong className="text-xs text-danger-500">{progress.wrongAnswers}</strong>
+                <span className="text-xs text-surface-600">{t('profile.wrong_label')}</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-danger-400 shrink-0 inline-block" />
               </div>
             </div>
           </div>
@@ -883,13 +885,13 @@ export function ProfilePage() {
             { label: t('profile.best_streak'), value: `${progress.bestStreak} ${t('profile.streak_days')}`, icon: 'emoji_events', color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
             { label: t('profile.learning_days'), value: progress.totalStudyDays || 0, icon: 'calendar_month', color: 'text-teal-600', bg: 'bg-teal-50', border: 'border-teal-100' },
           ].map((m, i) => (
-            <div key={i} className={cn('rounded-xl p-3.5 border flex items-center gap-3', m.bg, m.border)}>
-              <div className="w-10 h-10 rounded-xl bg-white/80 flex items-center justify-center shrink-0 shadow-sm">
-                <Icon name={m.icon} size={22} className={m.color} filled />
+            <div key={i} className={cn('rounded-xl p-3 border flex items-center gap-2.5', m.bg, m.border)}>
+              <div className="w-9 h-9 rounded-xl bg-white/80 flex items-center justify-center shrink-0 shadow-sm">
+                <Icon name={m.icon} size={18} className={m.color} filled />
               </div>
-              <div>
-                <p className="text-xl font-black text-surface-900 leading-none mb-0.5">{m.value}</p>
-                <p className="text-xs text-surface-500">{m.label}</p>
+              <div className="min-w-0">
+                <p className="text-base font-bold text-surface-900 leading-none mb-0.5 truncate">{m.value}</p>
+                <p className="text-xs text-surface-500 truncate">{m.label}</p>
               </div>
             </div>
           ))}
