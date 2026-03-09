@@ -799,7 +799,7 @@ export function ProfilePage() {
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-2xl font-black text-surface-800 leading-none">{readiness.score}</span>
-                <span className="text-[10px] font-bold text-surface-400">%</span>
+                <span className="text-xs font-bold text-surface-400">%</span>
               </div>
             </div>
             <div className="flex-1">
@@ -825,8 +825,8 @@ export function ProfilePage() {
                     <Icon name={factorIcons[i] ?? 'star'} size={18} className={c.icon} filled />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-lg font-black text-surface-900 leading-none mb-0.5">{f.value}%</p>
-                    <p className="text-[10px] text-surface-500 truncate leading-tight">{f.label}</p>
+                    <p className="text-xl font-black text-surface-900 leading-none mb-0.5">{f.value}%</p>
+                    <p className="text-xs text-surface-500 truncate leading-tight">{f.label}</p>
                   </div>
                 </div>
               );
@@ -889,7 +889,7 @@ export function ProfilePage() {
               </div>
               <div>
                 <p className="text-xl font-black text-surface-900 leading-none mb-0.5">{m.value}</p>
-                <p className="text-[10px] text-surface-500">{m.label}</p>
+                <p className="text-xs text-surface-500">{m.label}</p>
               </div>
             </div>
           ))}

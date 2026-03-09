@@ -99,21 +99,21 @@ export function Dashboard() {
                 <Icon name="local_fire_department" size={18} className="text-orange-300" filled />
                 <span className="text-lg font-bold">{progress.currentStreak}</span>
               </div>
-              <span className="text-[10px] text-primary-200">{t('dashboard.streak_days')}</span>
+              <span className="text-xs text-primary-200">{t('dashboard.streak_days')}</span>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center border border-white/10">
               <div className="flex items-center justify-center gap-1.5 mb-1">
                 <Icon name="military_tech" size={18} className="text-yellow-300" filled />
                 <span className="text-lg font-bold">{progress.level}</span>
               </div>
-              <span className="text-[10px] text-primary-200">{t('dashboard.level')}</span>
+              <span className="text-xs text-primary-200">{t('dashboard.level')}</span>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center border border-white/10">
               <div className="flex items-center justify-center gap-1.5 mb-1">
                 <Icon name="target" size={18} className="text-green-300" filled />
                 <span className="text-lg font-bold">{accuracy}%</span>
               </div>
-              <span className="text-[10px] text-primary-200">{t('dashboard.accuracy')}</span>
+              <span className="text-xs text-primary-200">{t('dashboard.accuracy')}</span>
             </div>
           </div>
         </div>
@@ -129,7 +129,7 @@ export function Dashboard() {
             <Icon name="school" size={24} className="text-blue-500" filled />
           </div>
           <h3 className="font-bold text-surface-900 text-sm group-hover:text-blue-600 transition-colors">{t('dashboard.lessons')}</h3>
-          <p className="text-[11px] text-surface-400 mt-0.5">{progress.completedLessons.length} {t('dashboard.lesson_completed')}</p>
+          <p className="text-xs text-surface-400 mt-0.5">{progress.completedLessons.length} {t('dashboard.lesson_completed')}</p>
         </button>
 
         <button
@@ -140,7 +140,7 @@ export function Dashboard() {
             <Icon name="quiz" size={24} className="text-purple-500" filled />
           </div>
           <h3 className="font-bold text-surface-900 text-sm group-hover:text-purple-600 transition-colors">{t('dashboard.questions')}</h3>
-          <p className="text-[11px] text-surface-400 mt-0.5">{questions.length} {t('dashboard.questions_available')}</p>
+          <p className="text-xs text-surface-400 mt-0.5">{questions.length} {t('dashboard.questions_available')}</p>
         </button>
 
         <button
@@ -151,7 +151,7 @@ export function Dashboard() {
             <Icon name="traffic" size={24} className="text-red-500" filled />
           </div>
           <h3 className="font-bold text-surface-900 text-sm group-hover:text-red-600 transition-colors">{t('dashboard.signs')}</h3>
-          <p className="text-[11px] text-surface-400 mt-0.5">{t('dashboard.signs_desc')}</p>
+          <p className="text-xs text-surface-400 mt-0.5">{t('dashboard.signs_desc')}</p>
         </button>
 
         <button
@@ -162,7 +162,7 @@ export function Dashboard() {
             <Icon name="menu_book" size={24} className="text-cyan-500" filled />
           </div>
           <h3 className="font-bold text-surface-900 text-sm group-hover:text-cyan-600 transition-colors">{t('dashboard.dictionary')}</h3>
-          <p className="text-[11px] text-surface-400 mt-0.5">{t('dashboard.dictionary_desc')}</p>
+          <p className="text-xs text-surface-400 mt-0.5">{t('dashboard.dictionary_desc')}</p>
         </button>
 
         <button
@@ -173,7 +173,7 @@ export function Dashboard() {
             <Icon name="fitness_center" size={24} className="text-amber-500" filled />
           </div>
           <h3 className="font-bold text-surface-900 text-sm group-hover:text-amber-600 transition-colors">{t('dashboard.training')}</h3>
-          <p className="text-[11px] text-surface-400 mt-0.5">{t('dashboard.training_desc')}</p>
+          <p className="text-xs text-surface-400 mt-0.5">{t('dashboard.training_desc')}</p>
         </button>
 
         <button
@@ -184,7 +184,7 @@ export function Dashboard() {
             <Icon name="assignment" size={24} className="text-green-600" filled />
           </div>
           <h3 className="font-bold text-surface-900 text-sm group-hover:text-green-600 transition-colors">{t('dashboard.exam_simulator')}</h3>
-          <p className="text-[11px] text-surface-400 mt-0.5">{t('dashboard.exam_readiness')}: {readiness.score}%</p>
+          <p className="text-xs text-surface-400 mt-0.5">{t('dashboard.exam_readiness')}: {readiness.score}%</p>
         </button>
       </div>
 
@@ -198,7 +198,7 @@ export function Dashboard() {
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="font-bold text-surface-900 text-sm group-hover:text-red-600 transition-colors">{t('dashboard.mistakes')}</h3>
-          <p className="text-[11px] text-surface-400 mt-0.5">
+          <p className="text-xs text-surface-400 mt-0.5">
             {mistakes.length > 0 ? `${mistakes.length} ${t('dashboard.mistakes_count')}` : t('dashboard.no_mistakes')}
           </p>
         </div>
@@ -233,15 +233,15 @@ export function Dashboard() {
           <div className="grid grid-cols-3 gap-3 text-center">
             <div>
               <p className="text-base font-bold text-surface-900">{progress.completedLessons.length}</p>
-              <p className="text-[10px] text-surface-400">{t('dashboard.completed_lessons')}</p>
+              <p className="text-xs text-surface-400">{t('dashboard.completed_lessons')}</p>
             </div>
             <div>
               <p className="text-base font-bold text-surface-900">{progress.totalQuizzes}</p>
-              <p className="text-[10px] text-surface-400">{t('dashboard.quizzes')}</p>
+              <p className="text-xs text-surface-400">{t('dashboard.quizzes')}</p>
             </div>
             <div>
               <p className="text-base font-bold text-surface-900">{progress.xp}</p>
-              <p className="text-[10px] text-surface-400">XP</p>
+              <p className="text-xs text-surface-400">XP</p>
             </div>
           </div>
         </div>
