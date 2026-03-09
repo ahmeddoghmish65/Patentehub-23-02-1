@@ -779,99 +779,65 @@ export function ProfilePage() {
           const circleStroke = ({ not_ready: '#ef4444', beginner: '#f97316', developing: '#eab308', ready: '#22c55e', excellent: '#10b981' } as Record<string,string>)[readiness.level] ?? '#3b82f6';
           const factorIcons = ['quiz','check_circle','book','schedule','trending_up'];
           const factorColors = [
-            { icon: 'text-blue-500',   bg: 'bg-blue-50' },
-            { icon: 'text-green-500',  bg: 'bg-green-50' },
-            { icon: 'text-purple-500', bg: 'bg-purple-50' },
-            { icon: 'text-orange-500', bg: 'bg-orange-50' },
-            { icon: 'text-teal-500',   bg: 'bg-teal-50' },
+            { icon: 'text-blue-500',   bg: 'bg-blue-50',   border: 'border-blue-100' },
+            { icon: 'text-green-500',  bg: 'bg-green-50',  border: 'border-green-100' },
+            { icon: 'text-purple-500', bg: 'bg-purple-50', border: 'border-purple-100' },
+            { icon: 'text-orange-500', bg: 'bg-orange-50', border: 'border-orange-100' },
+            { icon: 'text-teal-500',   bg: 'bg-teal-50',   border: 'border-teal-100' },
           ];
           return (
         <div className="bg-surface-50 rounded-xl p-4 mb-4">
-
-          {/* ── Header: circle + info ── */}
+          {/* Header: circle + title + badge */}
           <div className="flex items-center gap-4 mb-4">
-            {/* Circle */}
-            <div className="relative w-24 h-24 shrink-0" dir="ltr">
-              <svg className="w-full h-full -rotate-90" viewBox="0 0 96 96">
-                <circle cx="48" cy="48" r="40" fill="none" stroke="#e5e7eb" strokeWidth="8" />
-                <circle cx="48" cy="48" r="40" fill="none" stroke={circleStroke} strokeWidth="8" strokeLinecap="round"
-                  strokeDasharray={`${readiness.score * 2.513} ${251.3 - readiness.score * 2.513}`}
+            <div className="relative w-20 h-20 shrink-0" dir="ltr">
+              <svg className="w-full h-full -rotate-90" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="7" />
+                <circle cx="40" cy="40" r="32" fill="none" stroke={circleStroke} strokeWidth="7" strokeLinecap="round"
+                  strokeDasharray={`${readiness.score * 2.01} ${201 - readiness.score * 2.01}`}
                   style={{ transition: 'stroke-dasharray 1.2s ease' }}
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-3xl font-black text-surface-800 leading-none">{readiness.score}</span>
-                <span className="text-xs font-bold text-surface-400">%</span>
+                <span className="text-2xl font-black text-surface-800 leading-none">{readiness.score}</span>
+                <span className="text-[10px] font-bold text-surface-400">%</span>
               </div>
             </div>
-            {/* Info */}
-            <div className="flex-1 flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <div className={cn('w-8 h-8 rounded-xl flex items-center justify-center shrink-0', levelStyle.bg)}>
-                  <Icon name="assignment_turned_in" size={16} className={levelStyle.text} filled />
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <div className={cn('w-7 h-7 rounded-lg flex items-center justify-center shrink-0', levelStyle.bg)}>
+                  <Icon name="assignment_turned_in" size={14} className={levelStyle.text} filled />
                 </div>
-                <h3 className="font-bold text-base text-surface-800">{t('dashboard.readiness_card_title')}</h3>
+                <p className="text-sm font-semibold text-surface-700">{t('dashboard.readiness_card_title')}</p>
               </div>
-              <span className={cn('text-sm font-bold px-4 py-1.5 rounded-full self-start', levelStyle.badge)}>
+              <span className={cn('text-xs font-bold px-3 py-1 rounded-full', levelStyle.badge)}>
                 {t(`dashboard.readiness_level_${readiness.level}`)}
               </span>
             </div>
           </div>
 
-          {/* ── Divider ── */}
-          <div className="border-t border-surface-200 mb-4" />
-
-          {/* ── Factors Section ── */}
-          <p className="text-[11px] font-bold text-surface-400 uppercase tracking-widest mb-3">{t('dashboard.readiness_factors_title')}</p>
-          <div className="space-y-3 mb-3">
+          {/* Factors grid */}
+          <div className="grid grid-cols-2 gap-2">
             {factors.map((f, i) => {
               const c = factorColors[i] ?? factorColors[0];
               return (
-                <div key={f.key} className="flex items-center gap-3">
-                  <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0', c.bg)}>
-                    <Icon name={factorIcons[i] ?? 'star'} size={16} className={c.icon} filled />
+                <div key={f.key} className={cn('rounded-xl p-3 border flex items-center gap-2.5', c.bg, c.border)}>
+                  <div className="w-9 h-9 rounded-xl bg-white/80 flex items-center justify-center shrink-0 shadow-sm">
+                    <Icon name={factorIcons[i] ?? 'star'} size={18} className={c.icon} filled />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-sm font-semibold text-surface-700 truncate">{f.label}</span>
-                      <span className="text-sm font-bold text-surface-500 shrink-0 ms-2">{f.value}%</span>
-                    </div>
-                    <div className="w-full bg-surface-200 rounded-full h-2" dir="ltr">
-                      <div className={cn('rounded-full h-2 transition-all duration-700', levelStyle.bar)} style={{ width: `${f.value}%` }} />
-                    </div>
+                  <div className="min-w-0">
+                    <p className="text-lg font-black text-surface-900 leading-none mb-0.5">{f.value}%</p>
+                    <p className="text-[10px] text-surface-500 truncate leading-tight">{f.label}</p>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          {/* ── Weakness Penalty ── */}
+          {/* Weakness penalty */}
           {readiness.weaknessPenalty > 0 && (
-            <div className="flex items-center gap-2.5 bg-red-50 border border-red-100 rounded-xl px-3 py-2.5 mb-3">
-              <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center shrink-0">
-                <Icon name="remove_circle" size={16} className="text-red-500" filled />
-              </div>
-              <span className="text-xs text-red-600 font-medium">
-                {t('dashboard.readiness_penalty')}: -{readiness.weaknessPenalty} {t('dashboard.readiness_weakness_label')} ({mistakes.length})
-              </span>
-            </div>
-          )}
-
-          {/* ── Tips ── */}
-          {readiness.tips.length > 0 && (
-            <div className="rounded-xl overflow-hidden border border-amber-100">
-              <div className="bg-amber-50 px-3 py-2.5 flex items-center gap-2">
-                <Icon name="lightbulb" size={16} className="text-amber-500" filled />
-                <p className="text-xs font-bold text-amber-700">{t('dashboard.readiness_tips_title')}</p>
-              </div>
-              <div className="bg-white px-3 py-3 space-y-2">
-                {readiness.tips.map(tip => (
-                  <div key={tip} className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0" />
-                    <p className="text-xs leading-snug text-surface-600">{t(`dashboard.readiness_tip_${tip}`)}</p>
-                  </div>
-                ))}
-              </div>
+            <div className="mt-2 flex items-center gap-2 bg-red-50 border border-red-100 rounded-xl px-3 py-2">
+              <Icon name="remove_circle" size={14} className="text-red-500 shrink-0" filled />
+              <span className="text-xs text-red-600 font-medium">-{readiness.weaknessPenalty} {t('dashboard.readiness_weakness_label')} ({mistakes.length})</span>
             </div>
           )}
         </div>
