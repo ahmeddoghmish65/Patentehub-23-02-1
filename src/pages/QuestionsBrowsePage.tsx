@@ -15,6 +15,12 @@ export function QuestionsBrowsePage() {
 
   useEffect(() => { loadSections(); loadQuestions(); }, [loadSections, loadQuestions]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [selectedSection]);
+
   const sectionQuestions = selectedSection
     ? questions.filter(q => q.sectionId === selectedSection)
     : [];
@@ -39,12 +45,12 @@ export function QuestionsBrowsePage() {
                 <Icon name={section?.icon || 'quiz'} size={26} style={{ color: section?.color || '#8b5cf6' }} filled />
               )}
             </div>
-            <div>
-              {lang === 'ar' && <h1 className="text-xl font-bold text-surface-900" dir="rtl">{section?.nameAr || ''}</h1>}
-              {lang === 'it' && <h1 className="text-xl font-bold text-surface-900 text-left" dir="ltr">{section?.nameIt || section?.nameAr || ''}</h1>}
-              {lang === 'both' && <h1 className="text-xl font-bold text-surface-900 text-left" dir="ltr">{section?.nameIt || ''}</h1>}
+            <div dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+              {lang === 'ar' && <h1 className="text-xl font-bold text-surface-900">{section?.nameAr || ''}</h1>}
+              {lang === 'it' && <h1 className="text-xl font-bold text-surface-900">{section?.nameIt || section?.nameAr || ''}</h1>}
+              {lang === 'both' && <h1 className="text-xl font-bold text-surface-900">{section?.nameIt || ''}</h1>}
               {lang === 'both' && <p className="text-sm text-surface-400" dir="rtl">{section?.nameAr}</p>}
-              <p className="text-sm text-surface-500">{sectionQuestions.length} {t('questions_page.questions_count')}</p>
+              <p className="text-sm text-surface-500" dir="rtl">{sectionQuestions.length} {t('questions_page.questions_count')}</p>
             </div>
           </div>
         </div>
@@ -170,10 +176,10 @@ export function QuestionsBrowsePage() {
                     {sectionQs.length}
                   </span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  {lang === 'ar' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors" dir="rtl">{section.nameAr}</h3>}
-                  {lang === 'it' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors" dir="ltr">{section.nameIt}</h3>}
-                  {lang === 'both' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors" dir="ltr">{section.nameIt}</h3>}
+                <div className="flex-1 min-w-0" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+                  {lang === 'ar' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors">{section.nameAr}</h3>}
+                  {lang === 'it' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors">{section.nameIt}</h3>}
+                  {lang === 'both' && <h3 className="font-bold text-surface-800 text-sm group-hover:text-purple-600 transition-colors">{section.nameIt}</h3>}
                   {lang === 'both' && <p className="text-xs text-surface-400 mt-0.5" dir="rtl">{section.nameAr}</p>}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
