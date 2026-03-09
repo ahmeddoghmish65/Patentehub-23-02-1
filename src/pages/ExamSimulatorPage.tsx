@@ -199,7 +199,7 @@ export function ExamSimulatorPage() {
             </div>
 
             {/* Error counter - only shown here in results */}
-            <div className="grid grid-cols-4 gap-3 mb-6">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
               <div className="bg-success-50 rounded-xl p-3 border border-success-100">
                 <p className="text-xl font-bold text-success-600">{correctCount}</p>
                 <p className="text-[10px] text-success-500">{t('exam.correct_label')}</p>
@@ -393,13 +393,13 @@ export function ExamSimulatorPage() {
       {showGrid && (
         <div className="bg-white rounded-xl border border-surface-100 p-4 mb-3">
           <p className="text-xs font-semibold text-surface-600 mb-3">{t('exam.go_to_q')}</p>
-          <div className="grid grid-cols-10 gap-1.5">
+          <div className="grid grid-cols-6 sm:grid-cols-10 gap-1.5">
             {examQuestions.map((_, i) => {
               const isAnswered = answers[i] !== undefined;
               const isCurrent = i === currentIndex;
               return (
                 <button key={i}
-                  className={cn('w-8 h-8 rounded-lg text-xs font-bold transition-all flex items-center justify-center',
+                  className={cn('h-8 rounded-lg text-xs font-bold transition-all flex items-center justify-center',
                     isCurrent ? 'bg-primary-500 text-white ring-2 ring-primary-300' :
                     isAnswered ? 'bg-primary-50 text-primary-600 border border-primary-200' :
                     'bg-surface-50 text-surface-500 hover:bg-surface-100'

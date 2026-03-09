@@ -38,13 +38,13 @@ export function BottomNav() {
             <button
               key={item.path}
               className={cn(
-                'flex flex-col items-center gap-0.5 px-3 py-2 min-w-0',
+                'flex flex-col items-center gap-0.5 px-3 py-2 min-w-0 min-h-[44px] justify-center',
                 active ? 'text-primary-600' : 'text-surface-400',
               )}
               onClick={() => navigate(item.path)}
             >
               <Icon name={item.icon} size={22} filled={active} />
-              <span className="text-[10px] font-medium leading-tight">{item.label}</span>
+              <span className="text-xs font-medium leading-tight">{item.label}</span>
             </button>
           );
         })}

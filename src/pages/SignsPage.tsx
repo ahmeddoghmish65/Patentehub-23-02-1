@@ -50,9 +50,9 @@ export function SignsPage() {
       {/* Search & Filter */}
       <div className="bg-white rounded-xl p-4 border border-surface-100 mb-6 space-y-3">
         <div className="relative">
-          <Icon name="search" size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400" />
+          <Icon name="search" size={20} className="absolute end-3 top-1/2 -translate-y-1/2 text-surface-400" />
           <input
-            className="w-full pr-10 pl-4 py-2.5 rounded-xl border border-surface-200 text-sm focus:border-primary-500 transition-colors"
+            className="w-full pe-10 ps-4 py-2.5 rounded-xl border border-surface-200 text-sm focus:border-primary-500 transition-colors"
             placeholder={t('signs_page.search_placeholder')}
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -147,7 +147,7 @@ export function SignsPage() {
       {/* Sign Detail Modal */}
       {selectedSignData && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setSelectedSign(null)}>
-          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             {/* Image */}
             <div className="w-full aspect-square relative overflow-hidden">
               {selectedSignData.image ? (

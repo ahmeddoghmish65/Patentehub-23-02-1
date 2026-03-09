@@ -144,3 +144,10 @@ body {
 input:focus, select:focus, textarea:focus {
   outline: none;
 }
+
+/* Restore focus indicator for keyboard navigation after global outline removal */
+:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
