@@ -23,6 +23,12 @@ export function LessonsPage() {
   useEffect(() => { loadSections(); loadLessons(); }, [loadSections, loadLessons]);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [selectedSection]);
+
+  useEffect(() => {
     const fresh = completed.filter(id => !prevCompleted.current.includes(id));
     if (fresh.length > 0) {
       setNewlyCompleted(prev => new Set([...prev, ...fresh]));
