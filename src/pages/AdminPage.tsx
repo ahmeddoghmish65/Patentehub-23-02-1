@@ -312,20 +312,20 @@ export function AdminPage() {
   };
 
   const allTabs: { id: Tab; icon: string; label: string; permKey?: string }[] = [
-    { id: 'overview', icon: 'dashboard', label: 'نظرة عامة', permKey: 'overview' },
-    { id: 'sections', icon: 'folder', label: 'الأقسام', permKey: 'sections' },
-    { id: 'lessons', icon: 'school', label: 'الدروس', permKey: 'lessons' },
-    { id: 'questions', icon: 'quiz', label: 'الأسئلة', permKey: 'questions' },
-    { id: 'signs', icon: 'traffic', label: 'الإشارات', permKey: 'signs' },
-    { id: 'dictionary', icon: 'menu_book', label: 'القاموس', permKey: 'dictionary' },
-    { id: 'users', icon: 'group', label: 'المستخدمين', permKey: 'users' },
-    { id: 'posts', icon: 'forum', label: 'المنشورات', permKey: 'posts' },
-    { id: 'comments', icon: 'chat_bubble', label: 'التعليقات', permKey: 'comments' },
-    { id: 'reports', icon: 'flag', label: 'البلاغات', permKey: 'reports' },
-    { id: 'logs', icon: 'history', label: 'السجلات', permKey: 'logs' },
-    { id: 'analytics', icon: 'analytics', label: 'الزيارات', permKey: 'analytics' },
-    { id: 'languages', icon: 'translate', label: 'اللغات' },
-    { id: 'media', icon: 'perm_media', label: 'مكتبة الصور' },
+    { id: 'overview', icon: 'dashboard', label: t('admin.tab_overview'), permKey: 'overview' },
+    { id: 'sections', icon: 'folder', label: t('admin.tab_sections'), permKey: 'sections' },
+    { id: 'lessons', icon: 'school', label: t('admin.tab_lessons'), permKey: 'lessons' },
+    { id: 'questions', icon: 'quiz', label: t('admin.tab_questions'), permKey: 'questions' },
+    { id: 'signs', icon: 'traffic', label: t('admin.tab_signs'), permKey: 'signs' },
+    { id: 'dictionary', icon: 'menu_book', label: t('admin.tab_dictionary'), permKey: 'dictionary' },
+    { id: 'users', icon: 'group', label: t('admin.tab_users'), permKey: 'users' },
+    { id: 'posts', icon: 'forum', label: t('admin.tab_posts'), permKey: 'posts' },
+    { id: 'comments', icon: 'chat_bubble', label: t('admin.tab_comments'), permKey: 'comments' },
+    { id: 'reports', icon: 'flag', label: t('admin.tab_reports'), permKey: 'reports' },
+    { id: 'logs', icon: 'history', label: t('admin.tab_logs'), permKey: 'logs' },
+    { id: 'analytics', icon: 'analytics', label: t('admin.tab_analytics'), permKey: 'analytics' },
+    { id: 'languages', icon: 'translate', label: t('admin.tab_languages') },
+    { id: 'media', icon: 'perm_media', label: t('admin.tab_media') },
   ];
 
   // Filter tabs based on role and permissions
@@ -354,8 +354,8 @@ export function AdminPage() {
           <div className="w-16 h-16 bg-surface-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Icon name="lock" size={32} className="text-surface-400" />
           </div>
-          <h2 className="text-lg font-bold text-surface-800 mb-2">لا توجد صلاحيات</h2>
-          <p className="text-sm text-surface-500 leading-relaxed">لم يتم منحك أي صلاحيات إدارية. تواصل مع المسؤول الرئيسي لمنح الصلاحيات.</p>
+          <h2 className="text-lg font-bold text-surface-800 mb-2">{t('admin.no_perms_title')}</h2>
+          <p className="text-sm text-surface-500 leading-relaxed">{t('admin.no_perms_desc')}</p>
         </div>
       </div>
     );
@@ -368,31 +368,31 @@ export function AdminPage() {
         <textarea className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none" rows={3} value={(form[field] as string) || ''} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))} />
       ) : type === 'boolean' ? (
         <select className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={String(form[field] || false)} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value === 'true' }))}>
-          <option value="true">صحيح / Vero</option>
-          <option value="false">خطأ / Falso</option>
+          <option value="true">{t('admin.answer_true_label')}</option>
+          <option value="false">{t('admin.answer_false_label')}</option>
         </select>
       ) : type === 'select-difficulty' ? (
         <select className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as string) || 'easy'} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}>
-          <option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">صعب</option>
+          <option value="easy">{t('admin.diff_easy')}</option><option value="medium">{t('admin.diff_medium')}</option><option value="hard">{t('admin.diff_hard')}</option>
         </select>
       ) : type === 'select-section' ? (
         <select className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as string) || ''} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}>
-          <option value="">اختر قسم</option>
+          <option value="">{t('admin.select_section')}</option>
           {store.sections.map(s => <option key={s.id} value={s.id}>{s.nameAr}</option>)}
         </select>
       ) : type === 'select-lesson' ? (
         <select className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as string) || ''} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}>
-          <option value="">اختر درس</option>
+          <option value="">{t('admin.select_lesson')}</option>
           {store.lessons.map(l => <option key={l.id} value={l.id}>{l.titleAr}</option>)}
         </select>
       ) : type === 'select-dict-section' ? (
         <select className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as string) || ''} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}>
-          <option value="">اختر قسم</option>
+          <option value="">{t('admin.select_section')}</option>
           {store.dictSections.map(s => <option key={s.id} value={s.id}>{s.nameAr}</option>)}
         </select>
       ) : type === 'select-sign-section' ? (
         <select className="w-full border border-surface-200 rounded-xl p-3 text-sm" value={(form[field] as string) || ''} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}>
-          <option value="">بدون قسم</option>
+          <option value="">{t('admin.no_section')}</option>
           {store.signSections.filter(s => !s.status || s.status === 'active').map(s => <option key={s.id} value={s.id}>{s.nameAr}</option>)}
         </select>
       ) : type === 'richtext' ? (
@@ -421,14 +421,14 @@ export function AdminPage() {
             <select title="حجم الخط" className="text-xs border border-surface-200 rounded px-1 py-0.5 bg-white cursor-pointer"
               onMouseDown={e => { e.stopPropagation(); }}
               onChange={e => { e.preventDefault(); const sel = window.getSelection(); if (savedRangeRef.current && sel) { sel.removeAllRanges(); sel.addRange(savedRangeRef.current); } document.execCommand('fontSize', false, e.target.value); e.target.value = ''; }}>
-              <option value="">حجم</option>
-              <option value="1">صغير جداً</option>
-              <option value="2">صغير</option>
-              <option value="3">عادي</option>
-              <option value="4">كبير</option>
-              <option value="5">كبير جداً</option>
-              <option value="6">ضخم</option>
-              <option value="7">ضخم جداً</option>
+              <option value="">{t('admin.font_size')}</option>
+              <option value="1">{t('admin.font_very_small')}</option>
+              <option value="2">{t('admin.font_small')}</option>
+              <option value="3">{t('admin.font_normal')}</option>
+              <option value="4">{t('admin.font_large')}</option>
+              <option value="5">{t('admin.font_very_large')}</option>
+              <option value="6">{t('admin.font_huge')}</option>
+              <option value="7">{t('admin.font_very_huge')}</option>
             </select>
             <label title="لون النص" className="flex items-center gap-1 cursor-pointer">
               <span className="text-xs border border-surface-200 rounded px-1.5 py-0.5 bg-white">A</span>
@@ -469,18 +469,18 @@ export function AdminPage() {
           <div className="flex gap-2 flex-wrap">
             <button className="px-3 py-2 bg-primary-50 border border-primary-200 rounded-lg text-sm hover:bg-primary-100 flex items-center gap-1.5 text-primary-700 font-medium transition-colors"
               onClick={() => { setMediaPickerSearch(''); setMediaPickerFilter('all'); setMediaPicker({ field, squareSize: type === 'image-square' ? 1024 : undefined }); }}>
-              <Icon name="photo_library" size={16} /> اختر من المكتبة
+              <Icon name="photo_library" size={16} /> {t('admin.from_library')}
             </button>
             <button className="px-3 py-2 bg-surface-100 rounded-lg text-sm hover:bg-surface-200 flex items-center gap-1.5 transition-colors"
               onClick={() => handleImageUpload(field, type === 'image-square' ? 1024 : undefined)}>
-              <Icon name="upload" size={16} /> رفع صورة جديدة
+              <Icon name="upload" size={16} /> {t('admin.upload_image')}
             </button>
           </div>
           <div className="mt-2 flex gap-2 items-center">
             <input
               type="url"
               className="flex-1 border border-surface-200 rounded-lg px-3 py-1.5 text-sm"
-              placeholder="أو أدخل رابط الصورة (URL)..."
+              placeholder={t('admin.image_url_placeholder')}
               value={(form[field] as string)?.startsWith('http') ? (form[field] as string) : ''}
               onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}
             />
@@ -505,8 +505,8 @@ export function AdminPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-surface-900 mb-1">لوحة التحكم</h1>
-        <p className="text-sm text-surface-400">إدارة كاملة للتطبيق والمحتوى والمستخدمين</p>
+        <h1 className="text-2xl font-bold text-surface-900 mb-1">{t('admin.page_title')}</h1>
+        <p className="text-sm text-surface-400">{t('admin.page_subtitle')}</p>
       </div>
 
       {/* Tabs */}
@@ -559,16 +559,16 @@ export function AdminPage() {
                   <Icon name="admin_panel_settings" size={26} className="text-white" filled />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold">مرحباً في لوحة التحكم</h2>
-                  <p className="text-primary-200 text-xs">نظرة شاملة على Patente Hub</p>
+                  <h2 className="text-lg font-bold">{t('admin.overview_welcome')}</h2>
+                  <p className="text-primary-200 text-xs">{t('admin.overview_overview')}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                  { label: 'إجمالي المستخدمين', value: store.adminStats.totalUsers, icon: 'group', sub: `${store.adminStats.activeToday} نشط اليوم` },
-                  { label: 'المنشورات', value: store.adminStats.totalPosts, icon: 'forum', sub: 'في المجتمع' },
-                  { label: 'الأسئلة التعليمية', value: store.adminStats.totalQuestions, icon: 'quiz', sub: `${store.adminStats.totalSections} قسم` },
-                  { label: 'البلاغات المعلقة', value: pendingReports, icon: 'flag', sub: pendingReports > 0 ? '⚠️ بانتظار مراجعة' : '✓ لا يوجد' },
+                  { label: t('admin.stat_total_users'), value: store.adminStats.totalUsers, icon: 'group', sub: `${store.adminStats.activeToday} ${t('admin.stat_active_today')}` },
+                  { label: t('admin.stat_posts'), value: store.adminStats.totalPosts, icon: 'forum', sub: t('admin.stat_in_community') },
+                  { label: t('admin.stat_edu_questions'), value: store.adminStats.totalQuestions, icon: 'quiz', sub: `${store.adminStats.totalSections} ${t('admin.stat_sections')}` },
+                  { label: t('admin.stat_pending_reports'), value: pendingReports, icon: 'flag', sub: pendingReports > 0 ? t('admin.stat_waiting_review') : t('admin.stat_no_reports') },
                 ].map((s, i) => (
                   <div key={i} className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/10">
                     <div className="flex items-center gap-2 mb-1">
@@ -586,10 +586,10 @@ export function AdminPage() {
           {/* Quick KPIs row */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { label: 'موثّقون', value: verifiedUsers, icon: 'verified', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-              { label: 'مديرون', value: managersCount, icon: 'manage_accounts', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-              { label: 'محظورون', value: bannedUsers, icon: 'block', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-100' },
-              { label: 'جاهزون للامتحان', value: readyForExam, icon: 'emoji_events', color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
+              { label: t('admin.kpi_verified'), value: verifiedUsers, icon: 'verified', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+              { label: t('admin.kpi_managers'), value: managersCount, icon: 'manage_accounts', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
+              { label: t('admin.kpi_banned'), value: bannedUsers, icon: 'block', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-100' },
+              { label: t('admin.kpi_ready'), value: readyForExam, icon: 'emoji_events', color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
             ].map((s, i) => (
               <div key={i} className={cn('bg-white rounded-xl p-4 border flex items-center gap-3', s.border)}>
                 <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center shrink-0', s.bg)}>
@@ -609,9 +609,9 @@ export function AdminPage() {
             <div className="bg-white rounded-xl border border-surface-100 p-5">
               <h3 className="font-bold text-surface-900 mb-1 flex items-center gap-2">
                 <Icon name="person_add" size={18} className="text-primary-500" filled />
-                تسجيلات آخر 7 أيام
+                {t('admin.chart_reg_title')}
               </h3>
-              <p className="text-xs text-surface-400 mb-4">إجمالي جديد: {last7Reg.reduce((s, d) => s + d.count, 0)} مستخدم</p>
+              <p className="text-xs text-surface-400 mb-4">{t('admin.chart_new_total')} {last7Reg.reduce((s, d) => s + d.count, 0)} {t('admin.chart_new_users')}</p>
               <div className="flex items-end gap-1.5 h-24">
                 {last7Reg.map((d, i) => {
                   const colors = ['#6366f1','#8b5cf6','#ec4899','#f59e0b','#22c55e','#06b6d4','#3b82f6'];
@@ -631,14 +631,14 @@ export function AdminPage() {
             <div className="bg-white rounded-xl border border-surface-100 p-5">
               <h3 className="font-bold text-surface-900 mb-1 flex items-center gap-2">
                 <Icon name="school" size={18} className="text-purple-500" filled />
-                توزيع مستوى الجاهزية
+                {t('admin.chart_readiness_title')}
               </h3>
-              <p className="text-xs text-surface-400 mb-4">متوسط الجاهزية: <strong className="text-surface-700">{avgReadiness}%</strong></p>
+              <p className="text-xs text-surface-400 mb-4">{t('admin.chart_avg_readiness')} <strong className="text-surface-700">{avgReadiness}%</strong></p>
               <div className="space-y-2.5">
                 {[
-                  { label: 'جاهز 70%+', count: readyForExam, color: '#22c55e', max: store.adminUsers.length },
-                  { label: 'متقدم 40-69%', count: store.adminUsers.filter(u => u.progress.examReadiness >= 40 && u.progress.examReadiness < 70).length, color: '#f59e0b', max: store.adminUsers.length },
-                  { label: 'مبتدئ 0-39%', count: store.adminUsers.filter(u => u.progress.examReadiness < 40).length, color: '#ef4444', max: store.adminUsers.length },
+                  { label: t('admin.readiness_high'), count: readyForExam, color: '#22c55e', max: store.adminUsers.length },
+                  { label: t('admin.readiness_mid'), count: store.adminUsers.filter(u => u.progress.examReadiness >= 40 && u.progress.examReadiness < 70).length, color: '#f59e0b', max: store.adminUsers.length },
+                  { label: t('admin.readiness_low'), count: store.adminUsers.filter(u => u.progress.examReadiness < 40).length, color: '#ef4444', max: store.adminUsers.length },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-2">
                     <span className="text-xs text-surface-600 w-24 shrink-0">{item.label}</span>
@@ -655,19 +655,20 @@ export function AdminPage() {
           {/* Content Stats Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { label: 'الأقسام', value: store.adminStats.totalSections, icon: 'folder', color: 'text-purple-500', bg: 'bg-purple-50', tab: 'sections' as Tab },
-              { label: 'الدروس', value: store.adminStats.totalLessons, icon: 'school', color: 'text-green-500', bg: 'bg-green-50', tab: 'lessons' as Tab },
-              { label: 'الأسئلة', value: store.adminStats.totalQuestions, icon: 'quiz', color: 'text-orange-500', bg: 'bg-orange-50', tab: 'questions' as Tab },
-              { label: 'الإشارات', value: store.adminStats.totalSigns, icon: 'traffic', color: 'text-red-500', bg: 'bg-red-50', tab: 'signs' as Tab },
-              { label: 'أقسام القاموس', value: dictTotal, icon: 'menu_book', color: 'text-cyan-500', bg: 'bg-cyan-50', tab: 'dictionary' as Tab },
-              { label: 'مصطلحات', value: dictEntriesTotal, icon: 'translate', color: 'text-indigo-500', bg: 'bg-indigo-50', tab: 'dictionary' as Tab },
-              { label: 'إجمالي الاختبارات', value: totalQuizzes, icon: 'history_edu', color: 'text-pink-500', bg: 'bg-pink-50', tab: 'overview' as Tab },
-              { label: 'البلاغات الكلية', value: store.adminStats.totalReports, icon: 'flag', color: 'text-red-500', bg: 'bg-red-50', tab: 'reports' as Tab },
+              { label: t('admin.tab_sections'), value: store.adminStats.totalSections, icon: 'folder', color: 'text-purple-500', bg: 'bg-purple-50', tab: 'sections' as Tab },
+              { label: t('admin.tab_lessons'), value: store.adminStats.totalLessons, icon: 'school', color: 'text-green-500', bg: 'bg-green-50', tab: 'lessons' as Tab },
+              { label: t('admin.tab_questions'), value: store.adminStats.totalQuestions, icon: 'quiz', color: 'text-orange-500', bg: 'bg-orange-50', tab: 'questions' as Tab },
+              { label: t('admin.tab_signs'), value: store.adminStats.totalSigns, icon: 'traffic', color: 'text-red-500', bg: 'bg-red-50', tab: 'signs' as Tab },
+              { label: t('admin.stat_dict_sections'), value: dictTotal, icon: 'menu_book', color: 'text-cyan-500', bg: 'bg-cyan-50', tab: 'dictionary' as Tab },
+              { label: t('admin.stat_terms'), value: dictEntriesTotal, icon: 'translate', color: 'text-indigo-500', bg: 'bg-indigo-50', tab: 'dictionary' as Tab },
+              { label: t('admin.stat_total_quizzes'), value: totalQuizzes, icon: 'history_edu', color: 'text-pink-500', bg: 'bg-pink-50', tab: 'overview' as Tab },
+              { label: t('admin.stat_total_reports_all'), value: store.adminStats.totalReports, icon: 'flag', color: 'text-red-500', bg: 'bg-red-50', tab: 'reports' as Tab },
             ].map((s, i) => {
               const canAccess = isFullAdmin || !allTabs.find(t => t.id === s.tab)?.permKey || userPerms.includes(allTabs.find(t => t.id === s.tab)?.permKey || '');
               return (
                 <button key={i}
-                  className={cn('bg-white rounded-xl p-4 border border-surface-100 transition-all text-right',
+                  className={cn('bg-white rounded-xl p-4 border border-surface-100 transition-all',
+                    dir === 'rtl' ? 'text-right' : 'text-left',
                     canAccess ? 'hover:border-primary-200 hover:shadow-md cursor-pointer' : 'opacity-60 cursor-not-allowed')}
                   onClick={() => canAccess && setTab(s.tab)}>
                   <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center mb-3', s.bg)}>
@@ -675,7 +676,7 @@ export function AdminPage() {
                   </div>
                   <p className="text-2xl font-bold text-surface-900">{s.value}</p>
                   <p className="text-xs text-surface-500">{s.label}</p>
-                  {!canAccess && <p className="text-[10px] text-surface-300 mt-0.5">غير مصرح</p>}
+                  {!canAccess && <p className="text-[10px] text-surface-300 mt-0.5">{t('admin.no_access')}</p>}
                 </button>
               );
             })}
@@ -686,16 +687,16 @@ export function AdminPage() {
             <div className="bg-white rounded-xl border border-danger-100 p-5">
               <h3 className="font-bold text-surface-900 mb-3 flex items-center gap-2">
                 <Icon name="flag" size={20} className="text-danger-500" filled />
-                بلاغات بانتظار المراجعة ({pendingReports})
+                {t('admin.pending_reports')} ({pendingReports})
               </h3>
               <div className="space-y-2">
                 {store.adminReports.filter(r => r.status === 'pending').slice(0, 3).map(r => (
                   <div key={r.id} className="flex items-center justify-between bg-danger-50 rounded-lg p-3">
                     <div>
                       <p className="text-sm text-surface-800">{r.reason.substring(0, 60)}...</p>
-                      <p className="text-xs text-surface-400">{r.type === 'post' ? 'منشور' : r.type === 'comment' ? 'تعليق' : 'مستخدم'} — {new Date(r.createdAt).toLocaleDateString('ar')}</p>
+                      <p className="text-xs text-surface-400">{r.type === 'post' ? t('admin.report_type_post') : r.type === 'comment' ? t('admin.report_type_comment') : t('admin.report_type_user')} — {new Date(r.createdAt).toLocaleDateString(uiLang === 'it' ? 'it' : 'ar')}</p>
                     </div>
-                    <Button size="sm" onClick={() => setTab('reports')}>مراجعة</Button>
+                    <Button size="sm" onClick={() => setTab('reports')}>{t('admin.review')}</Button>
                   </div>
                 ))}
               </div>
@@ -709,9 +710,9 @@ export function AdminPage() {
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-bold text-surface-900 flex items-center gap-2">
                     <Icon name="group" size={18} className="text-blue-500" filled />
-                    آخر المستخدمين
+                    {t('admin.recent_users')}
                   </h3>
-                  <button className="text-xs text-primary-500 font-medium" onClick={() => setTab('users')}>عرض الكل</button>
+                  <button className="text-xs text-primary-500 font-medium" onClick={() => setTab('users')}>{t('admin.view_all')}</button>
                 </div>
                 <div className="space-y-2">
                   {store.adminUsers.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 5).map(u => (
@@ -721,13 +722,13 @@ export function AdminPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-medium text-surface-800 truncate">{u.name}</p>
-                        <p className="text-[10px] text-surface-400">{new Date(u.createdAt).toLocaleDateString('ar')}</p>
+                        <p className="text-[10px] text-surface-400">{new Date(u.createdAt).toLocaleDateString(uiLang === 'it' ? 'it' : 'ar')}</p>
                       </div>
                       <span className={cn('text-[9px] px-1.5 py-0.5 rounded-full font-bold',
                         u.role === 'admin' ? 'bg-purple-100 text-purple-700' :
                         u.role === 'manager' ? 'bg-amber-100 text-amber-700' :
                         u.isBanned ? 'bg-danger-50 text-danger-600' : 'bg-success-50 text-success-600')}>
-                        {u.role === 'admin' ? 'أدمن' : u.role === 'manager' ? 'مدير' : u.isBanned ? 'محظور' : 'نشط'}
+                        {u.role === 'admin' ? t('admin.role_admin_badge') : u.role === 'manager' ? t('admin.role_manager_badge') : u.isBanned ? t('admin.role_banned_badge') : t('admin.role_active_badge')}
                       </span>
                     </div>
                   ))}
@@ -740,15 +741,15 @@ export function AdminPage() {
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-bold text-surface-900 flex items-center gap-2">
                     <Icon name="history" size={18} className="text-surface-400" />
-                    آخر الإجراءات
+                    {t('admin.recent_actions')}
                   </h3>
-                  <button className="text-xs text-primary-500 font-medium" onClick={() => setTab('logs')}>عرض الكل</button>
+                  <button className="text-xs text-primary-500 font-medium" onClick={() => setTab('logs')}>{t('admin.view_all')}</button>
                 </div>
                 <div className="space-y-2">
                   {store.adminLogs.slice(0, 5).map(l => {
-                    const isCreate = l.action.includes('إنشاء') || l.action.includes('إضافة');
-                    const isDelete = l.action.includes('حذف');
-                    const isExport = l.action.includes('تصدير') || l.action.includes('استيراد');
+                    const isCreate = l.action.includes('إنشاء') || l.action.includes('إضافة') || l.action.includes('create') || l.action.includes('add');
+                    const isDelete = l.action.includes('حذف') || l.action.includes('delete');
+                    const isExport = l.action.includes('تصدير') || l.action.includes('استيراد') || l.action.includes('export') || l.action.includes('import');
                     return (
                       <div key={l.id} className="flex items-center gap-2 py-1.5">
                         <div className={cn('w-6 h-6 rounded-lg flex items-center justify-center shrink-0',
@@ -758,7 +759,7 @@ export function AdminPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs text-surface-700 truncate">{l.action}: {l.details}</p>
-                          <p className="text-[10px] text-surface-400">{new Date(l.createdAt).toLocaleString('ar')}</p>
+                          <p className="text-[10px] text-surface-400">{new Date(l.createdAt).toLocaleString(uiLang === 'it' ? 'it' : 'ar')}</p>
                         </div>
                       </div>
                     );
@@ -774,7 +775,7 @@ export function AdminPage() {
       {/* Sections CRUD */}
       {tab === 'sections' && (
         <ContentWithTrash
-          title="الأقسام" icon="folder" iconColor="indigo"
+          title={t('admin.sections_title')} icon="folder" iconColor="indigo"
           contentView={contentView}
           setContentView={setContentView}
           activeItems={store.sections.filter(s => !s.status || s.status === 'active')}
@@ -784,7 +785,7 @@ export function AdminPage() {
           setSearch={setSearch}
           selectedIds={selectedIds}
           setSelectedIds={setSelectedIds}
-          columns={[{ key: 'nameAr', label: 'الاسم' }, { key: 'nameIt', label: 'بالإيطالية' }, { key: 'order', label: 'الترتيب' }]}
+          columns={[{ key: 'nameAr', label: t('admin.col_name') }, { key: 'nameIt', label: t('admin.col_name_it') }, { key: 'order', label: t('admin.col_order') }]}
           filterFn={(item) => !search || item.nameAr.includes(search) || item.nameIt?.toLowerCase().includes(search.toLowerCase())}
           onAdd={() => { setForm({ nameAr: '', nameIt: '', descriptionAr: '', descriptionIt: '', icon: 'school', color: '#3b82f6', image: '', order: store.sections.length + 1 }); setModal({ type: 'section' }); }}
           onEdit={(item) => { setForm(item); setModal({ type: 'section', data: item as Record<string, unknown> }); }}
@@ -804,11 +805,11 @@ export function AdminPage() {
       {/* Lessons CRUD */}
       {tab === 'lessons' && (
         <ContentWithTrash
-            title="الدروس" icon="school" iconColor="primary"
+            title={t('admin.lessons_title')} icon="school" iconColor="primary"
             filterSlot={
               <select value={filterSectionId} onChange={e => setFilterSectionId(e.target.value)}
                 className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
-                <option value="">كل الأقسام</option>
+                <option value="">{t('admin.all_sections')}</option>
                 {store.sections.map(sec => (
                   <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.lessons.filter(l => l.sectionId === sec.id).length})</option>
                 ))}
@@ -825,9 +826,9 @@ export function AdminPage() {
             selectedIds={selectedIds}
             setSelectedIds={setSelectedIds}
             columns={[
-              { key: 'titleAr', label: 'العنوان' },
-              { key: 'sectionId', label: 'القسم', render: (v) => store.sections.find(s => s.id === v)?.nameAr || String(v) },
-              { key: 'order', label: 'الترتيب' },
+              { key: 'titleAr', label: t('admin.col_title') },
+              { key: 'sectionId', label: t('admin.col_section'), render: (v) => store.sections.find(s => s.id === v)?.nameAr || String(v) },
+              { key: 'order', label: t('admin.col_order') },
             ]}
             filterFn={(item) => !search || item.titleAr?.includes(search) || item.titleIt?.toLowerCase().includes(search.toLowerCase())}
             onAdd={() => { setForm({ sectionId: filterSectionId || '', titleAr: '', titleIt: '', contentAr: '', contentIt: '', image: '', order: store.lessons.length + 1 }); setModal({ type: 'lesson' }); }}
@@ -848,11 +849,11 @@ export function AdminPage() {
       {/* Questions CRUD */}
       {tab === 'questions' && (
         <ContentWithTrash
-            title="الأسئلة" icon="quiz" iconColor="purple"
+            title={t('admin.questions_title')} icon="quiz" iconColor="purple"
             filterSlot={
               <select value={filterSectionId} onChange={e => setFilterSectionId(e.target.value)}
                 className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
-                <option value="">كل الأقسام</option>
+                <option value="">{t('admin.all_sections')}</option>
                 {store.sections.map(sec => {
                   const sectionLessonIds = store.lessons.filter(l => l.sectionId === sec.id).map(l => l.id);
                   const count = store.questions.filter(q => sectionLessonIds.includes(q.lessonId)).length;
@@ -870,9 +871,9 @@ export function AdminPage() {
             selectedIds={selectedIds}
             setSelectedIds={setSelectedIds}
             columns={[
-              { key: 'questionAr', label: 'السؤال', render: (v: unknown) => String(v || '').substring(0, 50) + '...' },
-              { key: 'isTrue', label: 'الإجابة', render: (v) => v ? '✓ صحيح' as string : '✗ خطأ' as string },
-              { key: 'difficulty', label: 'الصعوبة' },
+              { key: 'questionAr', label: t('admin.col_question'), render: (v: unknown) => String(v || '').substring(0, 50) + '...' },
+              { key: 'isTrue', label: t('admin.col_answer'), render: (v) => v ? `✓ ${t('admin.answer_true_label')}` as string : `✗ ${t('admin.answer_false_label')}` as string },
+              { key: 'difficulty', label: t('admin.col_difficulty') },
             ]}
             filterFn={(item) => !search || item.questionAr?.includes(search) || item.questionIt?.toLowerCase().includes(search.toLowerCase())}
             onAdd={() => { setForm({ lessonId: '', sectionId: filterSectionId || '', questionAr: '', questionIt: '', isTrue: true, explanationAr: '', explanationIt: '', difficulty: 'easy', image: '', order: store.questions.length + 1 }); setModal({ type: 'question' }); }}
@@ -895,7 +896,7 @@ export function AdminPage() {
         <div className="space-y-4">
           {/* Sign Sections */}
           <ContentWithTrash
-            title="أقسام الإشارات" icon="traffic" iconColor="orange"
+            title={t('admin.sign_sections_title')} icon="traffic" iconColor="orange"
             contentView={contentView}
             setContentView={setContentView}
             activeItems={store.signSections.filter(s => !s.status || s.status === 'active')}
@@ -905,7 +906,7 @@ export function AdminPage() {
             setSearch={setSearch}
             selectedIds={selectedIds}
             setSelectedIds={setSelectedIds}
-            columns={[{ key: 'nameAr', label: 'الاسم' }, { key: 'nameIt', label: 'بالإيطالية' }]}
+            columns={[{ key: 'nameAr', label: t('admin.col_name') }, { key: 'nameIt', label: t('admin.col_name_it') }]}
             filterFn={(item) => !search || item.nameAr?.includes(search) || item.nameIt?.toLowerCase().includes(search.toLowerCase())}
             onAdd={() => { setForm({ nameAr: '', nameIt: '', icon: 'traffic', order: store.signSections.length + 1 }); setModal({ type: 'signSection' }); }}
             onEdit={(item) => { setForm(item); setModal({ type: 'signSection', data: item as Record<string, unknown> }); }}
@@ -921,11 +922,11 @@ export function AdminPage() {
           />
           {/* Signs list with section filter */}
           <ContentWithTrash
-              title="الإشارات" icon="traffic" iconColor="red"
+              title={t('admin.signs_title')} icon="traffic" iconColor="red"
               filterSlot={
                 <select value={filterSignCategory} onChange={e => setFilterSignCategory(e.target.value)}
                   className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
-                  <option value="">كل الأقسام</option>
+                  <option value="">{t('admin.all_sections')}</option>
                   {store.signSections.filter(s => !s.status || s.status === 'active').map(sec => (
                     <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.signs.filter(s => s.sectionId === sec.id).length})</option>
                   ))}
@@ -940,7 +941,7 @@ export function AdminPage() {
               setSearch={setSearch}
               selectedIds={selectedIds}
               setSelectedIds={setSelectedIds}
-              columns={[{ key: 'nameAr', label: 'الاسم' }, { key: 'nameIt', label: 'بالإيطالية' }, { key: 'sectionId', label: 'القسم', render: (v: unknown) => store.signSections.find(s => s.id === v)?.nameAr || '' }]}
+              columns={[{ key: 'nameAr', label: t('admin.col_name') }, { key: 'nameIt', label: t('admin.col_name_it') }, { key: 'sectionId', label: t('admin.col_section'), render: (v: unknown) => store.signSections.find(s => s.id === v)?.nameAr || '' }]}
               filterFn={(item) => !search || item.nameAr?.includes(search)}
               onAdd={() => { setForm({ nameAr: '', nameIt: '', descriptionAr: '', descriptionIt: '', sectionId: filterSignCategory || '', category: 'pericolo', image: '', order: store.signs.length + 1 }); setModal({ type: 'sign' }); }}
               onEdit={(item) => { setForm(item); setModal({ type: 'sign', data: item as Record<string, unknown> }); }}
@@ -962,7 +963,7 @@ export function AdminPage() {
       {tab === 'dictionary' && (
         <div className="space-y-4">
           <ContentWithTrash
-            title="أقسام القاموس" icon="menu_book" iconColor="teal"
+            title={t('admin.dict_sections_title')} icon="menu_book" iconColor="teal"
             contentView={contentView}
             setContentView={setContentView}
             activeItems={store.dictSections.filter(s => !s.status || s.status === 'active')}
@@ -972,7 +973,7 @@ export function AdminPage() {
             setSearch={setSearch}
             selectedIds={selectedIds}
             setSelectedIds={setSelectedIds}
-            columns={[{ key: 'nameAr', label: 'الاسم' }, { key: 'nameIt', label: 'بالإيطالية' }]}
+            columns={[{ key: 'nameAr', label: t('admin.col_name') }, { key: 'nameIt', label: t('admin.col_name_it') }]}
             filterFn={(item) => !search || item.nameAr?.includes(search) || item.nameIt?.toLowerCase().includes(search.toLowerCase())}
             onAdd={() => { setForm({ nameAr: '', nameIt: '', icon: 'menu_book', order: store.dictSections.length + 1 }); setModal({ type: 'dictSection' }); }}
             onEdit={(item) => { setForm(item); setModal({ type: 'dictSection', data: item as Record<string, unknown> }); }}
@@ -988,11 +989,11 @@ export function AdminPage() {
             onExport={() => handleExport('dictionarySections')} onImport={() => handleImport('dictionarySections')}
           />
           <ContentWithTrash
-            title="مصطلحات القاموس" icon="menu_book" iconColor="cyan"
+            title={t('admin.dict_entries_title')} icon="menu_book" iconColor="cyan"
             filterSlot={
               <select value={filterDictSectionId} onChange={e => setFilterDictSectionId(e.target.value)}
                 className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
-                <option value="">كل الأقسام</option>
+                <option value="">{t('admin.all_sections')}</option>
                 {store.dictSections.filter(s => !s.status || s.status === 'active').map(sec => (
                   <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.dictEntries.filter(e => e.sectionId === sec.id).length})</option>
                 ))}
@@ -1007,7 +1008,7 @@ export function AdminPage() {
             setSearch={setSearch}
             selectedIds={selectedIds}
             setSelectedIds={setSelectedIds}
-            columns={[{ key: 'termAr', label: 'المصطلح' }, { key: 'termIt', label: 'بالإيطالية' }, { key: 'sectionId', label: 'القسم', render: (v: unknown) => store.dictSections.find(s => s.id === v)?.nameAr || '' }]}
+            columns={[{ key: 'termAr', label: t('admin.col_term') }, { key: 'termIt', label: t('admin.col_name_it') }, { key: 'sectionId', label: t('admin.col_section'), render: (v: unknown) => store.dictSections.find(s => s.id === v)?.nameAr || '' }]}
             filterFn={(item) => !search || item.termAr?.includes(search) || item.termIt?.toLowerCase().includes(search.toLowerCase())}
             onAdd={() => { setForm({ sectionId: '', termIt: '', termAr: '', definitionIt: '', definitionAr: '', order: store.dictEntries.length + 1 }); setModal({ type: 'dictEntry' }); }}
             onEdit={(item) => { setForm(item); setModal({ type: 'dictEntry', data: item as Record<string, unknown> }); }}
@@ -1035,7 +1036,7 @@ export function AdminPage() {
           return (
             <div className="space-y-4">
               <button onClick={() => setViewUser(null)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600">
-                <Icon name="arrow_forward" size={20} /><span className="text-sm">العودة للمستخدمين</span>
+                <Icon name="arrow_forward" size={20} className={dir === 'ltr' ? 'rotate-180' : ''} /><span className="text-sm">{t('admin.back_to_users')}</span>
               </button>
               <div className="bg-white rounded-xl border border-surface-100 p-6">
                 <div className="flex items-center gap-4 mb-6">
@@ -1401,12 +1402,12 @@ export function AdminPage() {
                       else setUserSelectedIds(new Set());
                     }} />
                 </th>
-                <th className="text-right p-3 font-semibold text-surface-600">المستخدم</th>
-                <th className="text-right p-3 font-semibold text-surface-600">البريد</th>
-                <th className="text-right p-3 font-semibold text-surface-600">الدور</th>
-                <th className="text-right p-3 font-semibold text-surface-600">المستوى</th>
-                <th className="text-right p-3 font-semibold text-surface-600">الحالة</th>
-                <th className="text-right p-3 font-semibold text-surface-600 w-28">إجراءات</th>
+                <th className={cn('p-3 font-semibold text-surface-600', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('admin.tab_users')}</th>
+                <th className={cn('p-3 font-semibold text-surface-600', dir === 'rtl' ? 'text-right' : 'text-left')}>Email</th>
+                <th className={cn('p-3 font-semibold text-surface-600', dir === 'rtl' ? 'text-right' : 'text-left')}>{uiLang === 'it' ? 'Ruolo' : 'الدور'}</th>
+                <th className={cn('p-3 font-semibold text-surface-600', dir === 'rtl' ? 'text-right' : 'text-left')}>{t('nav.level')}</th>
+                <th className={cn('p-3 font-semibold text-surface-600', dir === 'rtl' ? 'text-right' : 'text-left')}>{uiLang === 'it' ? 'Stato' : 'الحالة'}</th>
+                <th className={cn('p-3 font-semibold text-surface-600 w-28', dir === 'rtl' ? 'text-right' : 'text-left')}></th>
               </tr></thead>
               <tbody>
                 {store.adminUsers.filter(u => !u.isBanned && (!search || u.name.includes(search) || u.email.includes(search))).map(u => (
@@ -1429,13 +1430,13 @@ export function AdminPage() {
                         u.role === 'admin' ? 'bg-purple-50 text-purple-600' :
                         u.role === 'manager' ? 'bg-amber-50 text-amber-600' :
                         'bg-surface-100 text-surface-500')}>
-                        {u.role === 'admin' ? 'أدمن' : u.role === 'manager' ? 'مدير' : 'مستخدم'}
+                        {u.role === 'admin' ? t('admin.role_admin_badge') : u.role === 'manager' ? t('admin.role_manager_badge') : uiLang === 'it' ? 'Utente' : 'مستخدم'}
                       </span>
                     </td>
                     <td className="p-3">{u.progress.level}</td>
                     <td className="p-3">
                       <span className={cn('text-xs px-2 py-0.5 rounded-full', u.isBanned ? 'bg-danger-50 text-danger-600' : 'bg-success-50 text-success-600')}>
-                        {u.isBanned ? 'محظور' : 'نشط'}
+                        {u.isBanned ? t('admin.role_banned_badge') : t('admin.role_active_badge')}
                       </span>
                     </td>
                     <td className="p-3" onClick={e => e.stopPropagation()}>
