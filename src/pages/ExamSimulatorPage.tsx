@@ -55,6 +55,12 @@ export function ExamSimulatorPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, startTime]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [phase, currentIndex]);
+
   const start = useCallback(() => {
     const shuffled = [...activeQuestions].sort(() => Math.random() - 0.5).slice(0, EXAM_QUESTIONS);
     setExamQuestions(shuffled);

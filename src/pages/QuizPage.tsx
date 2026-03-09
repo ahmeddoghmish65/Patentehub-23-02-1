@@ -49,6 +49,12 @@ export function QuizPage() {
     return () => clearInterval(iv);
   }, [phase, startTime]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [phase, currentIndex]);
+
   const start = useCallback(() => { setPhase('quiz'); setStartTime(Date.now()); setCurrentIndex(0); setAnswers([]); setSelectedAnswer(null); setShowExplanation(false); }, []);
 
   const handleAnswer = (ans: boolean) => {
