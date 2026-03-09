@@ -16,8 +16,8 @@ export function LessonDetailPage() {
   const { lessons, questions, sections, loadLessons, loadQuestions } = useDataStore();
   const [activeTab, setActiveTab] = useState<'content' | 'questions'>('content');
 
-  const lang = user?.settings.language || 'both';
-  const { t } = useTranslation();
+  const { t, contentLang } = useTranslation();
+  const lang = user?.settings.language || contentLang;
 
   useEffect(() => { loadLessons(); loadQuestions(lessonId); }, [loadLessons, loadQuestions, lessonId]);
 

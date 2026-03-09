@@ -7,11 +7,11 @@ import { useTranslation } from '@/i18n';
 export function QuestionsBrowsePage() {
   const { user } = useAuthStore();
   const { sections, questions, loadSections, loadQuestions } = useDataStore();
-  const { t } = useTranslation();
+  const { t, contentLang } = useTranslation();
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
   const [expandedQ, setExpandedQ] = useState<string | null>(null);
 
-  const lang = user?.settings.language || 'both';
+  const lang = user?.settings.language || contentLang;
 
   useEffect(() => { loadSections(); loadQuestions(); }, [loadSections, loadQuestions]);
 

@@ -17,8 +17,8 @@ export function LessonsPage() {
   const [newlyCompleted, setNewlyCompleted] = useState<Set<string>>(new Set());
   const prevCompleted = useRef<string[]>([]);
   const [selectedSection, setSelectedSection] = useState<string | null>(initialSectionId || null);
-  const lang = user?.settings.language || 'both';
-  const { t } = useTranslation();
+  const { t, contentLang } = useTranslation();
+  const lang = user?.settings.language || contentLang;
 
   useEffect(() => { loadSections(); loadLessons(); }, [loadSections, loadLessons]);
 

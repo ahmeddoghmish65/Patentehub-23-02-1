@@ -12,8 +12,8 @@ type Phase = 'select' | 'training' | 'result';
 export function TrainingPage() {
   const { user } = useAuthStore();
   const { questions, signs, dictEntries, mistakes, loadQuestions, loadSigns, loadDictEntries, loadMistakes } = useDataStore();
-  const { t } = useTranslation();
-  const lang = user?.settings.language || 'both';
+  const { t, contentLang } = useTranslation();
+  const lang = user?.settings.language || contentLang;
   const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';
   const falseLabel = lang === 'ar' ? 'خطأ'  : lang === 'it' ? 'Falso' : 'خطأ / Falso';
   const [mode, setMode] = useState<TrainMode>('questions');

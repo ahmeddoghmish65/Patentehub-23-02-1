@@ -12,6 +12,22 @@ import { recalculateReputation, getCachedReputation } from '@/services/reputatio
 import { computeCommentScore } from '@/services/commentRankingService';
 import { extractHashtags, indexHashtags, decrementHashtags, getTrendingHashtags, suggestHashtags } from '@/services/hashtagService';
 
+// ============ BROWSER LANGUAGE DETECTION ============
+/** Returns the appropriate default content language based on browser language.
+ *  Italian browser → 'it', Arabic browser or anything else → 'both'
+ */
+function detectDefaultContentLang(): 'ar' | 'it' | 'both' {
+  const langs: readonly string[] =
+    (navigator.languages?.length ? navigator.languages : [navigator.language]) as string[];
+  for (const lang of langs) {
+    if (!lang) continue;
+    const prefix = lang.split('-')[0].toLowerCase();
+    if (prefix === 'it') return 'it';
+    if (prefix === 'ar') return 'both';
+  }
+  return 'both';
+}
+
 // ============ RATE LIMITING ============
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 function checkRateLimit(key: string, max = 30, windowMs = 60000): boolean {
@@ -149,7 +165,7 @@ export async function apiRegister(email: string, password: string, name: string,
       currentStreak: 0, bestStreak: 0, lastStudyDate: '', totalStudyDays: 0,
       level: 1, xp: 0, badges: ['newcomer'], examReadiness: 0,
     },
-    settings: { language: 'both', theme: 'light', notifications: true, soundEffects: true, fontSize: 'medium' },
+    settings: { language: detectDefaultContentLang(), theme: 'light', notifications: true, soundEffects: true, fontSize: 'medium' },
   };
   await db.put('users', user);
 

@@ -7,8 +7,8 @@ import { useTranslation } from '@/i18n';
 export function MistakesPage() {
   const { user } = useAuthStore();
   const { mistakes, loadMistakes, practiceMistake } = useDataStore();
-  const { t } = useTranslation();
-  const lang = user?.settings.language || 'both';
+  const { t, contentLang } = useTranslation();
+  const lang = user?.settings.language || contentLang;
   const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';
   const falseLabel = lang === 'ar' ? 'خطأ'  : lang === 'it' ? 'Falso' : 'خطأ / Falso';
 

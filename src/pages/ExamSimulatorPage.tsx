@@ -12,8 +12,8 @@ export function ExamSimulatorPage() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const { questions, loadQuestions, saveQuizResult } = useDataStore();
-  const { t } = useTranslation();
-  const lang = user?.settings.language || 'both';
+  const { t, contentLang } = useTranslation();
+  const lang = user?.settings.language || contentLang;
   const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';
   const falseLabel = lang === 'ar' ? 'خطأ'  : lang === 'it' ? 'Falso' : 'خطأ / Falso';
   const [examQuestions, setExamQuestions] = useState<Question[]>([]);

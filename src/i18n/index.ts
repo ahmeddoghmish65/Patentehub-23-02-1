@@ -4,10 +4,12 @@ import arDict from './ar.json';
 import itDict from './it.json';
 
 export type UiLang = 'ar' | 'it';
+export type ContentLang = 'ar' | 'it' | 'both';
 
 interface I18nContextValue {
   uiLang: UiLang;
   setUiLang: (lang: UiLang) => void;
+  contentLang: ContentLang;
   t: (key: string) => string;
   dir: 'rtl' | 'ltr';
 }
@@ -15,11 +17,13 @@ interface I18nContextValue {
 const I18nContext = createContext<I18nContextValue>({
   uiLang: 'ar',
   setUiLang: () => {},
+  contentLang: 'both',
   t: (key) => key,
   dir: 'rtl',
 });
 
 const STORAGE_KEY = 'ph_ui_lang';
+const CONTENT_LANG_KEY = 'ph_content_lang';
 
 type NestedDict = { [k: string]: string | NestedDict };
 
@@ -58,6 +62,20 @@ function getInitialLang(): UiLang {
   return 'ar';
 }
 
+/**
+ * Derives the initial content language from the browser language.
+ * Italian browser → 'it' (Italian content only)
+ * Arabic browser  → 'both' (Arabic + Italian content)
+ * Other/default   → 'both'
+ */
+function getInitialContentLang(): ContentLang {
+  const stored = localStorage.getItem(CONTENT_LANG_KEY);
+  if (stored === 'ar' || stored === 'it' || stored === 'both') return stored;
+  const browserLang = detectBrowserLang();
+  if (browserLang === 'it') return 'it';
+  return 'both';
+}
+
 function applyDocumentLang(lang: UiLang) {
   const dir = lang === 'ar' ? 'rtl' : 'ltr';
   document.documentElement.setAttribute('dir', dir);
@@ -66,6 +84,7 @@ function applyDocumentLang(lang: UiLang) {
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [uiLang, setUiLangState] = useState<UiLang>(getInitialLang);
+  const [contentLang] = useState<ContentLang>(getInitialContentLang);
 
   useEffect(() => {
     applyDocumentLang(uiLang);
@@ -74,6 +93,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const setUiLang = useCallback((lang: UiLang) => {
     setUiLangState(lang);
     localStorage.setItem(STORAGE_KEY, lang);
+    // Sync content language with UI language change when no user preference is stored
+    if (!localStorage.getItem(CONTENT_LANG_KEY)) {
+      const derived: ContentLang = lang === 'it' ? 'it' : 'both';
+      localStorage.setItem(CONTENT_LANG_KEY, derived);
+    }
   }, []);
 
   const t = useCallback((key: string): string => {
@@ -90,7 +114,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   return createElement(
     I18nContext.Provider,
-    { value: { uiLang, setUiLang, t, dir } },
+    { value: { uiLang, setUiLang, contentLang, t, dir } },
     children,
   );
 }

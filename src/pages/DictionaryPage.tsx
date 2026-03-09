@@ -7,8 +7,8 @@ import { useTranslation } from '@/i18n';
 export function DictionaryPage() {
   const { user } = useAuthStore();
   const { dictSections, dictEntries, loadDictSections, loadDictEntries } = useDataStore();
-  const lang = user?.settings.language || 'both';
-  const { t, uiLang } = useTranslation();
+  const { t, uiLang, contentLang } = useTranslation();
+  const lang = user?.settings.language || contentLang;
   const [activeSec, setActiveSec] = useState('');
   const [search, setSearch] = useState('');
 

@@ -7,8 +7,8 @@ import { useTranslation } from '@/i18n';
 export function SignsPage() {
   const { user } = useAuthStore();
   const { signs, loadSigns, signSections, loadSignSections } = useDataStore();
-  const lang = user?.settings.language || 'both';
-  const { t, uiLang } = useTranslation();
+  const { t, uiLang, contentLang } = useTranslation();
+  const lang = user?.settings.language || contentLang;
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [selectedSign, setSelectedSign] = useState<string | null>(null);

@@ -15,8 +15,8 @@ export function QuizPage() {
   const sectionId = (state as { sectionId?: string } | null)?.sectionId;
   const { user } = useAuthStore();
   const { questions, loadQuestions, saveQuizResult, sections } = useDataStore();
-  const lang = user?.settings.language || 'both';
-  const { t } = useTranslation();
+  const { t, contentLang } = useTranslation();
+  const lang = user?.settings.language || contentLang;
   const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';
   const falseLabel = lang === 'ar' ? 'خطأ'  : lang === 'it' ? 'Falso' : 'خطأ / Falso';
   const [quizQuestions, setQuizQuestions] = useState<Question[]>([]);
