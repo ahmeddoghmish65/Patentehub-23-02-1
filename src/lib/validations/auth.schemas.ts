@@ -13,6 +13,16 @@ export const loginSchema = z.object({
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
 
+// SECURITY FIX (VULN-013): Shared strong-password rule used by both register
+// and reset-password schemas. Minimum 8 characters, at least one letter and
+// one number. Max 128 to prevent DoS via extremely long inputs.
+const strongPassword = z
+  .string()
+  .min(8, 'Password must be at least 8 characters')
+  .max(128, 'Password is too long')
+  .refine(v => /[a-zA-Z]/.test(v), 'Password must contain at least one letter')
+  .refine(v => /[0-9]/.test(v), 'Password must contain at least one number');
+
 /** Register form */
 export const registerSchema = z
   .object({
@@ -36,9 +46,7 @@ export const registerSchema = z
       .string()
       .min(1, 'Email is required')
       .email('Please enter a valid email address'),
-    password: z
-      .string()
-      .min(6, 'Password must be at least 6 characters'),
+    password: strongPassword,
     confirmPassword: z.string(),
   })
   .refine(data => data.password === data.confirmPassword, {
@@ -71,9 +79,7 @@ export type ResetCodeFormValues = z.infer<typeof resetCodeSchema>;
 /** Password reset — step 3: new password */
 export const resetPasswordSchema = z
   .object({
-    newPassword: z
-      .string()
-      .min(6, 'Password must be at least 6 characters'),
+    newPassword: strongPassword,
     confirmNewPassword: z.string(),
   })
   .refine(data => data.newPassword === data.confirmNewPassword, {

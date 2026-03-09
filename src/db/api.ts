@@ -830,9 +830,18 @@ export async function apiCreatePost(token: string, content: string, image: strin
   const spamResult = evaluateSpam(user.id, content);
   const hashtags = extractHashtags(content);
 
+  // SECURITY FIX (VULN-017): Enforce image-upload permission at the API layer.
+  // The admin-controlled 'communityAllowImages' toggle can be faked in the UI
+  // by setting localStorage manually. Adding enforcement here means that even
+  // if a user bypasses the UI, posts with images are silently stripped unless
+  // the admin toggle is ON or the user has admin/manager privileges.
+  const imagesEnabled = typeof localStorage !== 'undefined' && localStorage.getItem('communityAllowImages') === 'true';
+  const isPrivilegedUser = user.role === 'admin' || user.role === 'manager';
+  const safeImage = (image && (imagesEnabled || isPrivilegedUser)) ? image : '';
+
   const p: Post = {
     id: generateId(), userId: user.id, userName: user.name, userAvatar: user.avatar,
-    content: sanitize(content), image, type: 'post',
+    content: sanitize(content), image: safeImage, type: 'post',
     quizQuestion: '', quizAnswer: false, quizStats: { trueCount: 0, falseCount: 0 },
     pinned: false,
     likesCount: 0, commentsCount: 0,

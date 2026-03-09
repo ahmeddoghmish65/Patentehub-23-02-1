@@ -66,7 +66,11 @@ ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "own_profile_select" ON public.profiles
   FOR SELECT USING (auth.uid() = id);
 
--- Users can update their own profile (not role/permissions/verified/is_banned)
+-- Users can update ONLY their own safe fields.
+-- SECURITY FIX: role, permissions, is_banned, verified, email, created_at are locked.
+-- We enforce this via a before-update trigger (see section 3b below) rather than
+-- column-level grants (not available in Supabase RLS), so the WITH CHECK here simply
+-- confirms identity while the trigger rejects any attempt to modify privileged columns.
 CREATE POLICY "own_profile_update" ON public.profiles
   FOR UPDATE USING (auth.uid() = id)
   WITH CHECK (auth.uid() = id);
@@ -89,6 +93,45 @@ CREATE POLICY "admin_profiles_update" ON public.profiles
     )
   );
 
+-- ── 3b. Trigger: prevent users from self-promoting or altering protected fields ─
+-- SECURITY FIX (VULN-005): The RLS WITH CHECK only verifies the row ID.
+-- This trigger enforces column-level write protection for non-admin users.
+CREATE OR REPLACE FUNCTION public.protect_profile_sensitive_fields()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  _caller_role TEXT;
+BEGIN
+  -- Determine the role of the caller from their own profile row
+  SELECT role INTO _caller_role FROM public.profiles WHERE id = auth.uid();
+
+  -- Admins may change any field — allow through
+  IF _caller_role = 'admin' THEN
+    RETURN NEW;
+  END IF;
+
+  -- For all other users: revert privileged fields to the OLD (database) values.
+  -- This silently restores them so the update still succeeds for the allowed
+  -- fields while making any privilege escalation attempt a no-op.
+  NEW.role        := OLD.role;
+  NEW.permissions := OLD.permissions;
+  NEW.is_banned   := OLD.is_banned;
+  NEW.verified    := OLD.verified;
+  NEW.email       := OLD.email;
+  NEW.created_at  := OLD.created_at;
+
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS enforce_profile_field_protection ON public.profiles;
+CREATE TRIGGER enforce_profile_field_protection
+  BEFORE UPDATE ON public.profiles
+  FOR EACH ROW EXECUTE FUNCTION public.protect_profile_sensitive_fields();
+
 -- ── 4. Trigger: auto-create profile on sign-up ───────────────
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER
@@ -101,16 +144,17 @@ DECLARE
   _first_name TEXT;
   _last_name  TEXT;
   _username   TEXT;
-  _role       TEXT;
 BEGIN
   _name       := COALESCE(NEW.raw_user_meta_data->>'name', '');
   _first_name := COALESCE(NEW.raw_user_meta_data->>'firstName', '');
   _last_name  := COALESCE(NEW.raw_user_meta_data->>'lastName', '');
   _username   := COALESCE(NEW.raw_user_meta_data->>'username', NULL);
-  _role       := CASE WHEN NEW.email = 'admin@patente.com' THEN 'admin' ELSE 'user' END;
 
+  -- SECURITY FIX (VULN-008): Admin role MUST be assigned manually via the
+  -- Supabase dashboard or a secure migration — never automatically from email.
+  -- Hardcoding an admin email in source code exposes which account to target.
   INSERT INTO public.profiles (id, email, name, first_name, last_name, username, role)
-  VALUES (NEW.id, NEW.email, _name, _first_name, _last_name, _username, _role);
+  VALUES (NEW.id, NEW.email, _name, _first_name, _last_name, _username, 'user');
 
   RETURN NEW;
 END;
@@ -126,6 +170,8 @@ CREATE OR REPLACE FUNCTION public.check_username(requested_username TEXT)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
+-- SECURITY FIX (VULN-010): Add search_path guard to prevent schema injection.
+SET search_path = public
 AS $$
 DECLARE
   _available   BOOLEAN;
@@ -177,11 +223,20 @@ CREATE TABLE IF NOT EXISTS public.contact_messages (
 CREATE INDEX IF NOT EXISTS contact_messages_email_idx  ON public.contact_messages (email);
 CREATE INDEX IF NOT EXISTS contact_messages_status_idx ON public.contact_messages (status);
 
--- Anyone (including anonymous visitors) can insert; only admins can read
+-- Anyone (including anonymous visitors) can insert; only admins can read.
 ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
 
+-- SECURITY FIX (VULN-007): Rate-limit anonymous contact form submissions.
+-- Allow at most 5 messages per email address in any 60-minute window.
 CREATE POLICY "contact_insert" ON public.contact_messages
-  FOR INSERT WITH CHECK (true);
+  FOR INSERT WITH CHECK (
+    (
+      SELECT COUNT(*)
+      FROM public.contact_messages cm
+      WHERE cm.email = email
+        AND cm.created_at > NOW() - INTERVAL '60 minutes'
+    ) < 5
+  );
 
 CREATE POLICY "admin_contact_select" ON public.contact_messages
   FOR SELECT USING (
@@ -199,16 +254,25 @@ CREATE POLICY "admin_contact_update" ON public.contact_messages
     )
   );
 
--- ── 7. Trigger: update last_login on each sign-in ────────────
--- (Called from frontend via RPC or handled by onAuthStateChange)
+-- ── 7. Update last_login — authenticated callers only ────────
+-- SECURITY FIX (VULN-006): The original function accepted any UUID without
+-- verifying the caller's identity. It now updates only the calling user's
+-- own row, making the user_id parameter advisory/unused for security.
 CREATE OR REPLACE FUNCTION public.update_last_login(user_id UUID)
 RETURNS VOID
 LANGUAGE plpgsql
 SECURITY DEFINER
+SET search_path = public
 AS $$
 BEGIN
+  -- Enforce: only the authenticated user can update their own last_login.
+  -- Ignore the caller-supplied user_id in favour of auth.uid().
+  IF auth.uid() IS NULL THEN
+    RAISE EXCEPTION 'authentication required';
+  END IF;
+
   UPDATE public.profiles
   SET last_login = NOW()
-  WHERE id = user_id;
+  WHERE id = auth.uid();
 END;
 $$;

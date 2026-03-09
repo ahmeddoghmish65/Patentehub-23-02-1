@@ -209,11 +209,23 @@ export async function supabaseUpdatePassword(newPassword: string): Promise<AuthR
   return { success: true };
 }
 
-/** Update display name and/or avatar URL in the profiles table. */
+/**
+ * Update display name and/or avatar URL in the profiles table.
+ *
+ * SECURITY FIX (VULN-014): The userId parameter is no longer trusted from
+ * the caller. We derive the authenticated user's ID from the active Supabase
+ * session, ensuring a user can only update their own profile. The RLS trigger
+ * on the database also enforces this, but defence-in-depth is preferred.
+ */
 export async function supabaseUpdateProfile(
-  userId: string,
+  _callerUserId: string,
   data: { name?: string; avatar?: string },
 ): Promise<AuthResult<Omit<User, 'password'>>> {
+  // Always use the session-verified user ID, never the caller-supplied one.
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return { success: false, error: 'غير مصرح — الجلسة منتهية' };
+  const userId = session.user.id;
+
   const update: Partial<{ name: string; avatar: string }> = {};
   if (data.name   !== undefined) update.name   = data.name;
   if (data.avatar !== undefined) update.avatar = data.avatar;
@@ -230,11 +242,19 @@ export async function supabaseUpdateProfile(
   return { success: true, data: profile };
 }
 
-/** Update app settings (language, theme, etc.) in the profiles table. */
+/**
+ * Update app settings (language, theme, etc.) in the profiles table.
+ *
+ * SECURITY FIX (VULN-014): Uses session-derived userId, not caller-supplied.
+ */
 export async function supabaseUpdateSettings(
-  userId: string,
+  _callerUserId: string,
   settings: Partial<UserSettings>,
 ): Promise<AuthResult<UserSettings>> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return { success: false, error: 'غير مصرح — الجلسة منتهية' };
+  const userId = session.user.id;
+
   // Fetch current settings first, then merge
   const { data: row, error: fetchErr } = await supabase
     .from('profiles')
@@ -255,11 +275,19 @@ export async function supabaseUpdateSettings(
   return { success: true, data: merged };
 }
 
-/** Update learning progress in the profiles table. */
+/**
+ * Update learning progress in the profiles table.
+ *
+ * SECURITY FIX (VULN-014): Uses session-derived userId, not caller-supplied.
+ */
 export async function supabaseUpdateProgress(
-  userId: string,
+  _callerUserId: string,
   progress: Partial<UserProgress>,
 ): Promise<AuthResult<UserProgress>> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return { success: false, error: 'غير مصرح — الجلسة منتهية' };
+  const userId = session.user.id;
+
   const { data: row, error: fetchErr } = await supabase
     .from('profiles')
     .select('progress')
