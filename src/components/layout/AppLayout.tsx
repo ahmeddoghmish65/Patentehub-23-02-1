@@ -19,7 +19,12 @@ export function AppLayout() {
 
   // Scroll to top on route change
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
   }, [pathname]);
 
   // Cookie consent
