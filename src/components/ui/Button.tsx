@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { cn } from '@/utils/cn';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
@@ -10,7 +11,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: ReactNode;
 }
 
-export function Button({
+export const Button = memo(function Button({
   variant = 'primary',
   size = 'md',
   children,
@@ -58,4 +59,4 @@ export function Button({
       {children}
     </button>
   );
-}
+});

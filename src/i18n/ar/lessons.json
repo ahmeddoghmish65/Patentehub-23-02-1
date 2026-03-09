@@ -1,0 +1,21 @@
+{
+  "lessons_page": {
+    "back_to_sections": "العودة للأقسام",
+    "title": "الدروس",
+    "subtitle": "اختر قسماً لبدء الدراسة",
+    "no_sections": "لا توجد أقسام بعد",
+    "no_sections_desc": "سيقوم المسؤول بإضافة المحتوى قريباً",
+    "completed": "مكتمل",
+    "no_lessons": "لا توجد دروس في هذا القسم بعد",
+    "section_quiz_btn": "اختبار القسم كامل",
+    "lesson_label": "درس",
+    "back_to_lessons": "العودة للدروس",
+    "lesson_not_found": "الدرس غير موجود",
+    "go_back": "العودة للدروس",
+    "tab_content": "الشرح",
+    "tab_questions": "الأسئلة",
+    "no_lesson_questions": "لا توجد أسئلة لهذا الدرس بعد",
+    "start_lesson_quiz": "ابدأ اختبار الدرس",
+    "questions_suffix": "أسئلة"
+  }
+}

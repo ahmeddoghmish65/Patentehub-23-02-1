@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { cn } from '@/utils/cn';
 import type { InputHTMLAttributes } from 'react';
 import { Icon } from './Icon';
@@ -8,7 +9,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   icon?: string;
 }
 
-export function Input({ label, error, icon, className, ...props }: InputProps) {
+export const Input = memo(function Input({ label, error, icon, className, ...props }: InputProps) {
   return (
     <div className="w-full">
       {label && (
@@ -43,4 +44,4 @@ export function Input({ label, error, icon, className, ...props }: InputProps) {
       )}
     </div>
   );
-}
+});

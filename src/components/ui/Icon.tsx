@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { cn } from '@/utils/cn';
 
 interface IconProps {
@@ -8,7 +9,7 @@ interface IconProps {
   style?: React.CSSProperties;
 }
 
-export function Icon({ name, filled = false, size = 24, className, style }: IconProps) {
+export const Icon = memo(function Icon({ name, filled = false, size = 24, className, style }: IconProps) {
   return (
     <span
       className={cn(
@@ -21,4 +22,4 @@ export function Icon({ name, filled = false, size = 24, className, style }: Icon
       {name}
     </span>
   );
-}
+});

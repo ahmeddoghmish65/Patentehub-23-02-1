@@ -1,12 +1,13 @@
-import { useEffect, useMemo } from 'react';
+import { memo, useEffect, useMemo, useCallback } from 'react';
 import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
-import { useAuthStore, useDataStore } from '@/store';
+import { useAuthStore, useDataStore, useProgressStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 import { ROUTES } from '@/constants';
 import { calculateExamReadiness } from '@/services/examReadinessService';
 import type { ExamReadinessLevel } from '@/services/examReadinessService';
+import * as profileService from '@/services/supabase/profile.service';
 
 // ─── Level colours (Tailwind utility strings) ─────────────────────────────────
 const LEVEL_STYLE: Record<ExamReadinessLevel, { bg: string; text: string; bar: string; badge: string }> = {
@@ -19,22 +20,26 @@ const LEVEL_STYLE: Record<ExamReadinessLevel, { bg: string; text: string; bar: s
 
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
-export function Dashboard() {
+export const Dashboard = memo(function Dashboard() {
   const { navigate } = useLocaleNavigate();
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
+
+  // Use the new domain stores (preferred) with data.store as fallback
   const {
-    loadSections, loadLessons, loadMistakes, loadQuestions, loadQuizHistory,
-    mistakes, sections, lessons, questions, quizHistory,
+    loadSections, loadLessons, loadQuestions,
+    sections, lessons, questions,
   } = useDataStore();
+
+  const { loadMistakes, loadQuizHistory, mistakes, quizHistory } = useProgressStore();
   const { t } = useTranslation();
 
   useEffect(() => {
     loadSections();
     loadLessons();
-    loadMistakes();
     loadQuestions();
+    loadMistakes();
     loadQuizHistory();
-  }, [loadSections, loadLessons, loadMistakes, loadQuestions, loadQuizHistory]);
+  }, [loadSections, loadLessons, loadQuestions, loadMistakes, loadQuizHistory]);
 
   if (!user) return null;
 
@@ -43,7 +48,6 @@ export function Dashboard() {
   const accuracy = totalAnswers > 0 ? Math.round((progress.correctAnswers / totalAnswers) * 100) : 0;
 
   // ─── Run the advanced exam readiness algorithm ───────────────────────────
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const readiness = useMemo(() => calculateExamReadiness({
     quizHistory,
     mistakes,
@@ -52,18 +56,15 @@ export function Dashboard() {
     totalQuestions: questions.length,
   }), [quizHistory, mistakes, progress, lessons.length, questions.length]);
 
-  // Persist computed score back to IndexedDB (only when it changes)
+  // Persist computed score via service layer (not direct DB access)
+  const persistReadiness = useCallback(async (score: number) => {
+    if (!token || score === progress.examReadiness) return;
+    await profileService.updateProgress(token, { examReadiness: score });
+  }, [token, progress.examReadiness]);
+
   useEffect(() => {
-    if (readiness.score === progress.examReadiness) return;
-    import('@/db/database').then(({ getDB }) => {
-      getDB().then(db => {
-        db.get('users', user.id).then(u => {
-          if (u) { u.progress.examReadiness = readiness.score; db.put('users', u); }
-        });
-      });
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [readiness.score]);
+    persistReadiness(readiness.score);
+  }, [readiness.score, persistReadiness]);
 
   const levelStyle = LEVEL_STYLE[readiness.level];
 
@@ -248,4 +249,4 @@ export function Dashboard() {
       )}
     </div>
   );
-}
+});

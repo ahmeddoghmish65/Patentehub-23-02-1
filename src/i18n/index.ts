@@ -1,7 +1,66 @@
+/**
+ * i18n/index.ts
+ * Internationalisation context with modular namespace support.
+ *
+ * Translations live in two layers:
+ *  1. Modular namespace files (ar/|it/ + common/auth/quiz/lessons) — source of truth
+ *  2. Monolithic ar.json / it.json — fallback for keys not yet migrated
+ *
+ * The deep-merge strategy means modular files always win over the monolithic fallback.
+ */
 import { createContext, useContext, useState, useEffect, useCallback, createElement } from 'react';
 import type { ReactNode } from 'react';
-import arDict from './ar.json';
-import itDict from './it.json';
+
+// ── Monolithic fallback dictionaries ─────────────────────────────────────────
+import arFull from './ar.json';
+import itFull from './it.json';
+
+// ── Modular namespace imports ─────────────────────────────────────────────────
+import arCommon  from './ar/common.json';
+import arAuth    from './ar/auth.json';
+import arQuiz    from './ar/quiz.json';
+import arLessons from './ar/lessons.json';
+
+import itCommon  from './it/common.json';
+import itAuth    from './it/auth.json';
+import itQuiz    from './it/quiz.json';
+import itLessons from './it/lessons.json';
+
+type NestedDict = { [k: string]: string | NestedDict };
+
+// ── Deep merge: modular files override the monolithic fallback ────────────────
+function deepMerge(base: NestedDict, override: NestedDict): NestedDict {
+  const result: NestedDict = { ...base };
+  for (const key of Object.keys(override)) {
+    const bVal = base[key];
+    const oVal = override[key];
+    if (
+      typeof bVal === 'object' && bVal !== null &&
+      typeof oVal === 'object' && oVal !== null
+    ) {
+      result[key] = deepMerge(bVal as NestedDict, oVal as NestedDict);
+    } else {
+      result[key] = oVal;
+    }
+  }
+  return result;
+}
+
+const arDict: NestedDict = deepMerge(
+  arFull as NestedDict,
+  deepMerge(
+    deepMerge(arCommon as NestedDict, arAuth as NestedDict),
+    deepMerge(arQuiz as NestedDict, arLessons as NestedDict),
+  ),
+);
+
+const itDict: NestedDict = deepMerge(
+  itFull as NestedDict,
+  deepMerge(
+    deepMerge(itCommon as NestedDict, itAuth as NestedDict),
+    deepMerge(itQuiz as NestedDict, itLessons as NestedDict),
+  ),
+);
 
 export type UiLang = 'ar' | 'it';
 export type ContentLang = 'ar' | 'it' | 'both';
@@ -24,8 +83,6 @@ const I18nContext = createContext<I18nContextValue>({
 
 const STORAGE_KEY = 'ph_ui_lang';
 const CONTENT_LANG_KEY = 'ph_content_lang';
-
-type NestedDict = { [k: string]: string | NestedDict };
 
 function getNestedValue(obj: NestedDict, key: string): string {
   const parts = key.split('.');
@@ -101,11 +158,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const t = useCallback((key: string): string => {
-    const dict = uiLang === 'it' ? (itDict as NestedDict) : (arDict as NestedDict);
+    const dict = uiLang === 'it' ? itDict : arDict;
     const val = getNestedValue(dict, key);
-    // Fallback to Arabic if key missing in Italian
+    // Fallback to Arabic when key is missing in Italian
     if (val === key && uiLang === 'it') {
-      return getNestedValue(arDict as NestedDict, key);
+      return getNestedValue(arDict, key);
     }
     return val;
   }, [uiLang]);

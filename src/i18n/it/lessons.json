@@ -1,0 +1,21 @@
+{
+  "lessons_page": {
+    "back_to_sections": "Torna alle sezioni",
+    "title": "Lezioni",
+    "subtitle": "Scegli una sezione per iniziare a studiare",
+    "no_sections": "Nessuna sezione ancora",
+    "no_sections_desc": "L'amministratore aggiungerà presto i contenuti",
+    "completed": "Completata",
+    "no_lessons": "Nessuna lezione in questa sezione ancora",
+    "section_quiz_btn": "Quiz intera sezione",
+    "lesson_label": "lezione",
+    "back_to_lessons": "Torna alle lezioni",
+    "lesson_not_found": "Lezione non trovata",
+    "go_back": "Torna alle lezioni",
+    "tab_content": "Spiegazione",
+    "tab_questions": "Domande",
+    "no_lesson_questions": "Nessuna domanda per questa lezione ancora",
+    "start_lesson_quiz": "Inizia quiz lezione",
+    "questions_suffix": "domande"
+  }
+}
