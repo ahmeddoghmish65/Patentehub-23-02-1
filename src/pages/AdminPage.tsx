@@ -530,7 +530,7 @@ export function AdminPage() {
         const totalQuizzes = store.adminUsers.reduce((s, u) => s + u.progress.totalQuizzes, 0);
         const readyForExam = store.adminUsers.filter(u => u.progress.examReadiness >= 70).length;
         const avgReadiness = store.adminUsers.length > 0
-          ? Math.round(store.adminUsers.reduce((s, u) => s + u.progress.examReadiness, 0) / store.adminUsers.length)
+          ? Math.round(store.adminUsers.reduce((s, u) => s + (u.progress.examReadiness || 0), 0) / store.adminUsers.length)
           : 0;
 
         // Last 7 days registrations
@@ -2349,7 +2349,7 @@ export function AdminPage() {
                   <p className="text-[10px] text-purple-500">منشور</p>
                 </div>
                 <div className="bg-orange-50 rounded-xl p-3 text-center">
-                  <p className="text-xl font-bold text-orange-600">{Math.round(store.adminUsers.reduce((s, u) => s + u.progress.examReadiness, 0) / Math.max(1, totalUsers))}%</p>
+                  <p className="text-xl font-bold text-orange-600">{Math.round(store.adminUsers.reduce((s, u) => s + (u.progress.examReadiness || 0), 0) / Math.max(1, totalUsers))}%</p>
                   <p className="text-[10px] text-orange-500">متوسط الجاهزية</p>
                 </div>
               </div>
