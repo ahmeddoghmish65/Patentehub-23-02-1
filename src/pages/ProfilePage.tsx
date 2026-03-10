@@ -1005,11 +1005,12 @@ export function ProfilePage() {
                   {t('profile.ui_language_label')}
                 </p>
                 <p className="text-xs text-surface-400 mb-3">{t('profile.ui_language_desc')}</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {(['ar', 'it'] as const).map(l => (
+                <div className="grid grid-cols-3 gap-2">
+                  {(['ar', 'it', 'en'] as const).map(l => (
                     <button key={l} className={cn('flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all', uiLang === l ? 'border-primary-500 bg-primary-50' : 'border-surface-100 hover:border-surface-200')} onClick={() => setUiLang(l)}>
                       {l === 'ar' && <span className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center text-lg font-bold text-orange-600">ع</span>}
                       {l === 'it' && <span className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600" dir="ltr">IT</span>}
+                      {l === 'en' && <span className="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center text-xs font-bold text-green-600" dir="ltr">EN</span>}
                       <span className={cn('text-xs font-medium text-center', uiLang === l ? 'text-primary-700' : 'text-surface-600')}>{t(`profile.ui_lang_${l}`)}</span>
                       {uiLang === l && <Icon name="check_circle" size={16} className="text-primary-500" filled />}
                     </button>

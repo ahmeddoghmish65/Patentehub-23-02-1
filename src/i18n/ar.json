@@ -295,6 +295,7 @@
     "lang_current_default": "الافتراضي الحالي",
     "lang_ar_name": "العربية",
     "lang_it_name": "الإيطالية",
+    "lang_en_name": "الإنجليزية",
     "lang_active_users": "الإعداد النشط حالياً",
     "tab_overview": "نظرة عامة",
     "tab_sections": "الأقسام",
@@ -749,7 +750,8 @@
     "ui_language_label": "لغة واجهة التطبيق",
     "ui_language_desc": "لغة عرض القوائم والأزرار في التطبيق",
     "ui_lang_ar": "العربية",
-    "ui_lang_it": "الإيطالية"
+    "ui_lang_it": "الإيطالية",
+    "ui_lang_en": "الإنجليزية"
   },
   "lessons_page": {
     "back_to_sections": "العودة للأقسام",

@@ -1,0 +1,21 @@
+{
+  "lessons_page": {
+    "back_to_sections": "Back to Sections",
+    "title": "Lessons",
+    "subtitle": "Choose a section to start studying",
+    "no_sections": "No sections yet",
+    "no_sections_desc": "The admin will add content soon",
+    "completed": "Completed",
+    "no_lessons": "No lessons in this section yet",
+    "section_quiz_btn": "Full Section Quiz",
+    "lesson_label": "lesson",
+    "back_to_lessons": "Back to Lessons",
+    "lesson_not_found": "Lesson not found",
+    "go_back": "Back to Lessons",
+    "tab_content": "Explanation",
+    "tab_questions": "Questions",
+    "no_lesson_questions": "No questions for this lesson yet",
+    "start_lesson_quiz": "Start Lesson Quiz",
+    "questions_suffix": "questions"
+  }
+}

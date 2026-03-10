@@ -289,8 +289,8 @@ export function AdminPage() {
     () => (localStorage.getItem('ph_admin_default_lang') as UiLang) || 'ar'
   );
   const [langEnabled, setLangEnabled] = useState<Record<UiLang, boolean>>(() => {
-    try { return JSON.parse(localStorage.getItem('ph_admin_lang_enabled') || '{"ar":true,"it":true}'); }
-    catch { return { ar: true, it: true }; }
+    try { return JSON.parse(localStorage.getItem('ph_admin_lang_enabled') || '{"ar":true,"it":true,"en":true}'); }
+    catch { return { ar: true, it: true, en: true }; }
   });
 
   const saveAdminLangSettings = (defaultLang: UiLang, enabled: Record<UiLang, boolean>) => {
@@ -695,7 +695,7 @@ export function AdminPage() {
                   <div key={r.id} className="flex items-center justify-between bg-danger-50 rounded-lg p-3">
                     <div>
                       <p className="text-sm text-surface-800">{r.reason.substring(0, 60)}...</p>
-                      <p className="text-xs text-surface-400">{r.type === 'post' ? t('admin.report_type_post') : r.type === 'comment' ? t('admin.report_type_comment') : t('admin.report_type_user')} — {new Date(r.createdAt).toLocaleDateString(uiLang === 'it' ? 'it' : 'ar')}</p>
+                      <p className="text-xs text-surface-400">{r.type === 'post' ? t('admin.report_type_post') : r.type === 'comment' ? t('admin.report_type_comment') : t('admin.report_type_user')} — {new Date(r.createdAt).toLocaleDateString(uiLang === 'it' ? 'it' : uiLang === 'en' ? 'en' : 'ar')}</p>
                     </div>
                     <Button size="sm" onClick={() => setTab('reports')}>{t('admin.review')}</Button>
                   </div>
@@ -723,7 +723,7 @@ export function AdminPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-medium text-surface-800 truncate">{u.name}</p>
-                        <p className="text-[10px] text-surface-400">{new Date(u.createdAt).toLocaleDateString(uiLang === 'it' ? 'it' : 'ar')}</p>
+                        <p className="text-[10px] text-surface-400">{new Date(u.createdAt).toLocaleDateString(uiLang === 'it' ? 'it' : uiLang === 'en' ? 'en' : 'ar')}</p>
                       </div>
                       <span className={cn('text-[9px] px-1.5 py-0.5 rounded-full font-bold',
                         u.role === 'admin' ? 'bg-purple-100 text-purple-700' :
@@ -760,7 +760,7 @@ export function AdminPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs text-surface-700 truncate">{l.action}: {l.details}</p>
-                          <p className="text-[10px] text-surface-400">{new Date(l.createdAt).toLocaleString(uiLang === 'it' ? 'it' : 'ar')}</p>
+                          <p className="text-[10px] text-surface-400">{new Date(l.createdAt).toLocaleString(uiLang === 'it' ? 'it' : uiLang === 'en' ? 'en' : 'ar')}</p>
                         </div>
                       </div>
                     );
@@ -2435,6 +2435,42 @@ export function AdminPage() {
                   )}
                 </div>
               </div>
+
+              {/* English */}
+              <div className="flex items-center justify-between p-4 bg-surface-50 rounded-xl border border-surface-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                    <span className="text-sm font-black text-green-700">EN</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-surface-900">{t('admin.lang_en_name')}</p>
+                    <p className="text-xs text-surface-400">{t('admin.lang_ltr')} · en</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {langDefault === 'en' && (
+                    <span className="text-xs bg-primary-50 text-primary-700 border border-primary-200 px-2.5 py-1 rounded-full font-semibold">
+                      {t('admin.lang_current_default')}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => handleToggleLang('en')}
+                    className={cn('text-xs px-2.5 py-1 rounded-full font-semibold border transition-colors',
+                      langEnabled.en
+                        ? 'bg-green-50 text-green-700 border-green-200 hover:bg-red-50 hover:text-red-700 hover:border-red-200'
+                        : 'bg-red-50 text-red-700 border-red-200 hover:bg-green-50 hover:text-green-700 hover:border-green-200'
+                    )}>
+                    {langEnabled.en ? t('admin.lang_enabled') : t('admin.lang_disabled')}
+                  </button>
+                  {langDefault !== 'en' && langEnabled.en && (
+                    <button
+                      onClick={() => handleSetDefault('en')}
+                      className="text-xs bg-primary-500 text-white px-3 py-1.5 rounded-lg font-semibold hover:bg-primary-600 transition-colors">
+                      {t('admin.lang_set_default')}
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2444,7 +2480,7 @@ export function AdminPage() {
             <div>
               <p className="text-sm font-semibold text-primary-800">{t('admin.lang_active_users')}</p>
               <p className="text-xs text-primary-600">
-                {uiLang === 'ar' ? t('admin.lang_ar_name') : t('admin.lang_it_name')} ·
+                {uiLang === 'ar' ? t('admin.lang_ar_name') : uiLang === 'en' ? t('admin.lang_en_name') : t('admin.lang_it_name')} ·
                 {uiLang === 'ar' ? ' RTL' : ' LTR'}
               </p>
             </div>

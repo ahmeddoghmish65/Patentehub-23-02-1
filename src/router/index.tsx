@@ -48,7 +48,7 @@ const AdminPage = lazy(() => import('@/pages/AdminPage').then(m => ({ default: m
 // ─── Root redirect — sends / to /:defaultLang ─────────────────────────────────
 function RootRedirect() {
   const stored = localStorage.getItem('ph_ui_lang');
-  const lang: UiLang = stored === 'it' ? 'it' : 'ar';
+  const lang: UiLang = stored === 'it' ? 'it' : stored === 'en' ? 'en' : 'ar';
   return <Navigate to={`/${lang}`} replace />;
 }
 
@@ -66,10 +66,14 @@ function LocaleLayout() {
   const { pathname } = useLocation();
   const { checkAuth, user, isLoading } = useAuthStore();
 
+  const isValidLang = (l: string | undefined): l is UiLang =>
+    l === 'ar' || l === 'it' || l === 'en';
+
   // Redirect to valid lang if the :lang param is not supported
   useEffect(() => {
-    if (lang !== 'ar' && lang !== 'it') {
-      const validLang = localStorage.getItem('ph_ui_lang') === 'it' ? 'it' : 'ar';
+    if (!isValidLang(lang)) {
+      const stored = localStorage.getItem('ph_ui_lang');
+      const validLang: UiLang = stored === 'it' ? 'it' : stored === 'en' ? 'en' : 'ar';
       navigate(`/${validLang}`, { replace: true });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,8 +81,8 @@ function LocaleLayout() {
 
   // Sync URL :lang param → i18n state
   useEffect(() => {
-    if ((lang === 'ar' || lang === 'it') && lang !== uiLang) {
-      setUiLang(lang as UiLang);
+    if (isValidLang(lang) && lang !== uiLang) {
+      setUiLang(lang);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang]);
@@ -91,7 +95,7 @@ function LocaleLayout() {
 
   // Redirect authenticated users away from public-only pages
   useEffect(() => {
-    if (isLoading || !lang || (lang !== 'ar' && lang !== 'it')) return;
+    if (isLoading || !isValidLang(lang)) return;
     const publicOnlyPaths = [ROUTES.LANDING, ROUTES.LOGIN, ROUTES.REGISTER, ROUTES.RESET_PASSWORD];
     const pathWithoutLang = pathname.replace(`/${lang}`, '') || '/';
     if (user && publicOnlyPaths.some(p => pathWithoutLang === p)) {
@@ -109,7 +113,7 @@ function LocaleLayout() {
     document.body.scrollTop = 0;
   }, [pathname]);
 
-  if (lang !== 'ar' && lang !== 'it') return null;
+  if (!isValidLang(lang)) return null;
 
   return <Outlet />;
 }

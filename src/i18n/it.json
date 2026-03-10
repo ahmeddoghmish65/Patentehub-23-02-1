@@ -295,6 +295,7 @@
     "lang_current_default": "Predefinito attuale",
     "lang_ar_name": "Arabo",
     "lang_it_name": "Italiano",
+    "lang_en_name": "Inglese",
     "lang_active_users": "Impostazione attiva corrente",
     "tab_overview": "Panoramica",
     "tab_sections": "Sezioni",
@@ -749,7 +750,8 @@
     "ui_language_label": "Lingua interfaccia",
     "ui_language_desc": "Lingua dei menu e dei pulsanti dell'app",
     "ui_lang_ar": "Arabo",
-    "ui_lang_it": "Italiano"
+    "ui_lang_it": "Italiano",
+    "ui_lang_en": "Inglese"
   },
   "lessons_page": {
     "back_to_sections": "Torna alle sezioni",

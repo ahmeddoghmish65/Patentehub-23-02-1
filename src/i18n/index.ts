@@ -14,6 +14,7 @@ import type { ReactNode } from 'react';
 // ── Monolithic fallback dictionaries ─────────────────────────────────────────
 import arFull from './ar.json';
 import itFull from './it.json';
+import enFull from './en.json';
 
 // ── Modular namespace imports ─────────────────────────────────────────────────
 import arCommon  from './ar/common.json';
@@ -25,6 +26,11 @@ import itCommon  from './it/common.json';
 import itAuth    from './it/auth.json';
 import itQuiz    from './it/quiz.json';
 import itLessons from './it/lessons.json';
+
+import enCommon  from './en/common.json';
+import enAuth    from './en/auth.json';
+import enQuiz    from './en/quiz.json';
+import enLessons from './en/lessons.json';
 
 type NestedDict = { [k: string]: string | NestedDict };
 
@@ -62,7 +68,15 @@ const itDict: NestedDict = deepMerge(
   ),
 );
 
-export type UiLang = 'ar' | 'it';
+const enDict: NestedDict = deepMerge(
+  enFull as NestedDict,
+  deepMerge(
+    deepMerge(enCommon as NestedDict, enAuth as NestedDict),
+    deepMerge(enQuiz as NestedDict, enLessons as NestedDict),
+  ),
+);
+
+export type UiLang = 'ar' | 'it' | 'en';
 export type ContentLang = 'ar' | 'it' | 'both';
 
 interface I18nContextValue {
@@ -104,6 +118,7 @@ function detectBrowserLang(): UiLang | null {
     const prefix = lang.split('-')[0].toLowerCase();
     if (prefix === 'it') return 'it';
     if (prefix === 'ar') return 'ar';
+    if (prefix === 'en') return 'en';
   }
   return null;
 }
@@ -111,7 +126,7 @@ function detectBrowserLang(): UiLang | null {
 function getInitialLang(): UiLang {
   // Priority 1: manual selection saved by the user
   const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored === 'it' || stored === 'ar') return stored;
+  if (stored === 'it' || stored === 'ar' || stored === 'en') return stored;
   // Priority 2: browser preferred language
   const browserLang = detectBrowserLang();
   if (browserLang) return browserLang;
@@ -136,7 +151,7 @@ function getInitialContentLang(): ContentLang {
 function applyDocumentLang(lang: UiLang) {
   const dir = lang === 'ar' ? 'rtl' : 'ltr';
   document.documentElement.setAttribute('dir', dir);
-  document.documentElement.setAttribute('lang', lang);
+  document.documentElement.setAttribute('lang', lang === 'en' ? 'en' : lang);
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
@@ -158,13 +173,23 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const t = useCallback((key: string): string => {
-    const dict = uiLang === 'it' ? itDict : arDict;
-    const val = getNestedValue(dict, key);
-    // Fallback to Arabic when key is missing in Italian
-    if (val === key && uiLang === 'it') {
-      return getNestedValue(arDict, key);
+    if (uiLang === 'it') {
+      const val = getNestedValue(itDict, key);
+      // Fallback to Arabic when key is missing in Italian
+      if (val === key) return getNestedValue(arDict, key);
+      return val;
     }
-    return val;
+    if (uiLang === 'en') {
+      const val = getNestedValue(enDict, key);
+      // Fallback to Italian then Arabic when key is missing in English
+      if (val === key) {
+        const itVal = getNestedValue(itDict, key);
+        if (itVal !== key) return itVal;
+        return getNestedValue(arDict, key);
+      }
+      return val;
+    }
+    return getNestedValue(arDict, key);
   }, [uiLang]);
 
   const dir: 'rtl' | 'ltr' = uiLang === 'ar' ? 'rtl' : 'ltr';
