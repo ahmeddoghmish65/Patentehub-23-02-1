@@ -244,6 +244,7 @@ export function LandingPage() {
             </div>
 
             <div className="flex items-center gap-2 md:hidden">
+              <LanguageSwitcher variant="compact" />
               <button
                 onClick={() => navigate(ROUTES.LOGIN)}
                 className="px-3 py-1.5 rounded-xl text-sm font-semibold text-primary-600 border border-primary-200 bg-primary-50 hover:bg-primary-100 transition-all"
