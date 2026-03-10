@@ -1051,6 +1051,41 @@ export function CommunityPage() {
           <Icon name="arrow_forward" size={20} className="ltr:rotate-180" /><span className="text-sm">{t('community.back')}</span>
         </button>
         {renderPost(post, true)}
+        {/* Likers Modal */}
+        {likersModal && (
+          <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setLikersModal(null)}>
+            <div className="bg-white rounded-2xl w-full max-w-xs max-h-[60vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between px-5 py-4 border-b border-surface-100">
+                <h3 className="font-bold text-surface-900 flex items-center gap-2">
+                  <Icon name="favorite" size={18} className="text-red-500" filled />
+                  {likersModal.likers.length} {t('community.likers_title')}
+                </h3>
+                <button onClick={() => setLikersModal(null)} className="w-8 h-8 rounded-xl hover:bg-surface-100 flex items-center justify-center transition-colors">
+                  <Icon name="close" size={18} className="text-surface-500" />
+                </button>
+              </div>
+              <div className="overflow-y-auto flex-1 p-4 space-y-3">
+                {likersModal.likers.length === 0 && (
+                  <p className="text-sm text-surface-400 text-center py-4">{t('community.no_likers')}</p>
+                )}
+                {likersModal.likers.map(liker => (
+                  <div key={liker.userId} className="flex items-center gap-3">
+                    <button onClick={() => { setLikersModal(null); openUserProfile(liker.userId); }} className="flex items-center gap-3 flex-1 min-w-0">
+                      {liker.userAvatar ? (
+                        <img src={liker.userAvatar} className="w-10 h-10 rounded-xl object-cover flex-shrink-0" alt="" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}>
+                          <span className="text-white font-bold text-sm">{liker.userName.charAt(0)}</span>
+                        </div>
+                      )}
+                      <span className="font-semibold text-surface-900 truncate">{liker.userName}</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
