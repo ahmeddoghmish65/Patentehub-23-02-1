@@ -11,6 +11,7 @@ import { recordEngagement, computeViralScore } from '@/services/viralDetectionSe
 import { recalculateReputation, getCachedReputation } from '@/services/reputationService';
 import { computeCommentScore } from '@/services/commentRankingService';
 import { extractHashtags, indexHashtags, decrementHashtags, getTrendingHashtags, suggestHashtags } from '@/services/hashtagService';
+import { calculateExamReadiness } from '@/services/examReadinessService';
 
 // ============ BROWSER LANGUAGE DETECTION ============
 /** Returns the appropriate default content language based on browser language.
@@ -1205,21 +1206,19 @@ export async function apiAdminGetUsers(token: string): Promise<ApiRes<Omit<User,
   const allLessons = await db.getAll('lessons');
   const activeUsers = all.filter(u => !u.status || u.status === 'active');
 
-  // Calculate exam readiness dynamically for each user based on their actual quiz history
+  // Calculate exam readiness dynamically using the same advanced algorithm as the user dashboard
+  const allQuestions = await db.getAll('questions');
   const usersWithReadiness = await Promise.all(activeUsers.map(async (user) => {
     const allResults = await db.getAllFromIndex('quizResults', 'userId', user.id);
-    if (allResults.length > 0) {
-      const recent = allResults.slice(-20);
-      const avgScore = recent.reduce((s, r) => s + r.score, 0) / recent.length;
-      const quizFactor = Math.min(100, (allResults.length / 30) * 100);
-      const totalA = user.progress.correctAnswers + user.progress.wrongAnswers;
-      const accFactor = totalA > 0 ? (user.progress.correctAnswers / totalA) * 100 : 0;
-      const lessonFactor = allLessons.length > 0 ? (user.progress.completedLessons.length / allLessons.length) * 100 : 0;
-      const streakFactor = Math.min(100, user.progress.currentStreak * 14);
-      user.progress.examReadiness = Math.round(
-        avgScore * 0.4 + quizFactor * 0.2 + accFactor * 0.2 + lessonFactor * 0.1 + streakFactor * 0.1
-      );
-    }
+    const allMistakes = await db.getAllFromIndex('userMistakes', 'userId', user.id);
+    const readiness = calculateExamReadiness({
+      quizHistory: allResults,
+      mistakes: allMistakes,
+      progress: user.progress,
+      totalLessons: allLessons.length,
+      totalQuestions: allQuestions.length,
+    });
+    user.progress.examReadiness = readiness.score;
     const { password: _, ...safe } = user; void _;
     return safe;
   }));
