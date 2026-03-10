@@ -208,14 +208,14 @@ export function LandingPage() {
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
-            <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <div className="flex items-center gap-2.5 cursor-pointer shrink-0" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
               <div className="relative">
                 <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/30">
                   <Icon name="directions_car" size={20} className="text-white" filled />
                 </div>
-                <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white" />
+                <div className="absolute -top-0.5 -end-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white" />
               </div>
-              <span className="text-lg font-black tracking-tight">
+              <span className="text-lg font-black tracking-tight whitespace-nowrap">
                 <span className="text-surface-900">Patente </span>
                 <span className="text-primary-500">Hub</span>
               </span>
