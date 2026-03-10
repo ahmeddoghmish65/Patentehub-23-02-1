@@ -6,6 +6,7 @@ import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 import { getDB } from '@/db/database';
+import { calculateExamReadiness } from '@/services/examReadinessService';
 import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
 import { apiCreateCommunityNotif } from '@/db/api';
 import { ROUTES } from '@/constants';
@@ -80,28 +81,31 @@ export function UserProfilePage() {
       setFollowingList(followingListData);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const prog = (u as any).progress || {};
+      const rawProg = (u as any).progress || {};
+      const prog = {
+        totalQuizzes: 0, correctAnswers: 0, wrongAnswers: 0,
+        completedLessons: [], completedTopics: [], currentStreak: 0,
+        bestStreak: 0, lastStudyDate: '', totalStudyDays: 0,
+        level: 1, xp: 0, badges: [], examReadiness: 0,
+        ...rawProg,
+      };
       const userPosts = posts.filter(p => p.userId === userId && p.type !== 'quiz');
 
-      // Calculate examReadiness dynamically from actual quiz results
+      // Calculate examReadiness using the same advanced algorithm as Dashboard
       let examReadiness = prog.examReadiness || 0;
       try {
         const allResults = await db.getAllFromIndex('quizResults', 'userId', userId);
-        if (allResults.length > 0) {
-          const recent = allResults.slice(-20);
-          const avgScore = recent.reduce((s: number, r: { score: number }) => s + r.score, 0) / recent.length;
-          const quizFactor = Math.min(100, (allResults.length / 30) * 100);
-          const totalA = (prog.correctAnswers || 0) + (prog.wrongAnswers || 0);
-          const accFactor = totalA > 0 ? ((prog.correctAnswers || 0) / totalA) * 100 : 0;
-          const allLessons = await db.getAll('lessons');
-          const lessonFactor = allLessons.length > 0
-            ? ((prog.completedLessons?.length || 0) / allLessons.length) * 100
-            : 0;
-          const streakFactor = Math.min(100, (prog.currentStreak || 0) * 14);
-          examReadiness = Math.round(
-            avgScore * 0.4 + quizFactor * 0.2 + accFactor * 0.2 + lessonFactor * 0.1 + streakFactor * 0.1
-          );
-        }
+        const allMistakes = await db.getAllFromIndex('userMistakes', 'userId', userId);
+        const allLessons = await db.getAll('lessons');
+        const allQuestions = await db.getAll('questions');
+        const result = calculateExamReadiness({
+          quizHistory: allResults,
+          mistakes: allMistakes,
+          progress: prog,
+          totalLessons: allLessons.length,
+          totalQuestions: allQuestions.length,
+        });
+        examReadiness = result.score;
       } catch { /* fallback to stored value */ }
 
       setUserData({
