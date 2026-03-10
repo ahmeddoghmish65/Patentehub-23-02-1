@@ -244,7 +244,6 @@ export function LandingPage() {
             </div>
 
             <div className="flex items-center gap-2 md:hidden">
-              <LanguageSwitcher variant="dropdown" />
               <button
                 onClick={() => navigate(ROUTES.LOGIN)}
                 className="px-3 py-1.5 rounded-xl text-sm font-semibold text-primary-600 border border-primary-200 bg-primary-50 hover:bg-primary-100 transition-all"
@@ -295,6 +294,17 @@ export function LandingPage() {
                   />
                 </button>
               ))}
+            </div>
+
+            {/* Divider */}
+            <div className="mx-3 border-t border-surface-100 my-1" />
+
+            {/* Language Switcher */}
+            <div className="px-3 py-2">
+              <p className="text-[11px] font-bold text-surface-400 uppercase tracking-widest mb-2 px-1">
+                {uiLang === 'ar' ? 'اللغة' : uiLang === 'it' ? 'Lingua' : 'Language'}
+              </p>
+              <LanguageSwitcher variant="full" className="w-full justify-around" />
             </div>
 
             {/* Divider */}
