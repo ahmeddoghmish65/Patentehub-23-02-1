@@ -48,14 +48,17 @@ export const Dashboard = memo(function Dashboard() {
   const totalAnswers = progress.correctAnswers + progress.wrongAnswers;
   const accuracy = totalAnswers > 0 ? Math.round((progress.correctAnswers / totalAnswers) * 100) : 0;
 
+  const activeLessonsCount = useMemo(() => lessons.filter(l => !l.status || l.status === 'active').length, [lessons]);
+  const activeQuestionsCount = useMemo(() => questions.filter(q => !q.status || q.status === 'active').length, [questions]);
+
   // ─── Run the advanced exam readiness algorithm ───────────────────────────
   const readiness = useMemo(() => calculateExamReadiness({
     quizHistory,
     mistakes,
     progress,
-    totalLessons:   lessons.length,
-    totalQuestions: questions.length,
-  }), [quizHistory, mistakes, progress, lessons.length, questions.length]);
+    totalLessons:   activeLessonsCount,
+    totalQuestions: activeQuestionsCount,
+  }), [quizHistory, mistakes, progress, activeLessonsCount, activeQuestionsCount]);
 
   // Persist computed score via service layer (not direct DB access)
   const persistReadiness = useCallback(async (score: number) => {
@@ -78,7 +81,8 @@ export const Dashboard = memo(function Dashboard() {
     setShowStreakModal(false);
     // Find first incomplete lesson (sorted by order), or first lesson for new users
     const completedIds = new Set(progress.completedLessons);
-    const nextLesson = lessons.find(l => !completedIds.has(l.id)) ?? lessons[0];
+    const activeLessons = lessons.filter(l => !l.status || l.status === 'active');
+    const nextLesson = activeLessons.find(l => !completedIds.has(l.id)) ?? activeLessons[0];
     if (nextLesson) {
       navigate(buildLessonUrl(nextLesson.id));
     } else {
