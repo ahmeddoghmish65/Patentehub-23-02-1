@@ -3,6 +3,7 @@ import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { ROUTES } from '@/constants';
 import { Icon } from '@/components/ui/Icon';
 import { useTranslation } from '@/i18n';
+import { usePageMeta } from '@/hooks/usePageMeta';
 
 const sectionsAr = [
   { id: 'intro', title: 'مقدمة', icon: 'info' },
@@ -34,6 +35,15 @@ export function PrivacyPolicyPage() {
   const { uiLang } = useTranslation();
   const isIt = uiLang === 'it';
   const sections = isIt ? sectionsIt : sectionsAr;
+
+  usePageMeta({
+    title: isIt ? 'Privacy Policy – Patente Hub' : 'سياسة الخصوصية – Patente Hub',
+    description: isIt
+      ? 'Leggi la Privacy Policy di Patente Hub. Come raccogliamo, utilizziamo e proteggiamo i tuoi dati personali in conformità con il GDPR.'
+      : 'اقرأ سياسة الخصوصية لتطبيق Patente Hub. كيف نجمع بياناتك الشخصية ونحميها وفق اللائحة الأوروبية.',
+    canonical: `https://patentehub.com/${uiLang}/privacy-policy`,
+    noIndex: false,
+  });
 
   const scrollToSection = (id: string) => {
     setActiveSection(id);

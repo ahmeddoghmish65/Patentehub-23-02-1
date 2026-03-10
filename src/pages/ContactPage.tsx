@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/Input';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 import { supabase } from '@/lib/supabase';
+import { usePageMeta } from '@/hooks/usePageMeta';
 
 interface FormData {
   name: string;
@@ -26,6 +27,17 @@ export function ContactPage() {
   const { navigate } = useLocaleNavigate();
   const { uiLang } = useTranslation();
   const isIt = uiLang === 'it';
+
+  usePageMeta({
+    title: isIt
+      ? 'Contatti – Patente Hub'
+      : 'تواصل معنا – Patente Hub',
+    description: isIt
+      ? 'Contatta il team di Patente Hub per assistenza, segnalazioni o collaborazioni. Siamo qui per aiutarti nella preparazione all\'esame della patente B.'
+      : 'تواصل مع فريق Patente Hub للمساعدة أو الاقتراحات. نحن هنا لمساعدتك في الاستعداد لاختبار رخصة القيادة الإيطالية.',
+    canonical: `https://patentehub.com/${uiLang}/contact`,
+    noIndex: false,
+  });
 
   const [formData, setFormData] = useState<FormData>({ name: '', email: '', subject: '', message: '' });
   const [errors, setErrors] = useState<FormErrors>({});

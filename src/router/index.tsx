@@ -23,6 +23,13 @@ const AuthPage = lazy(() => import('@/pages/AuthPage').then(m => ({ default: m.A
 const ContactPage = lazy(() => import('@/pages/ContactPage').then(m => ({ default: m.ContactPage })));
 const PrivacyPolicyPage = lazy(() => import('@/pages/PrivacyPolicyPage').then(m => ({ default: m.PrivacyPolicyPage })));
 const TermsOfServicePage = lazy(() => import('@/pages/TermsOfServicePage').then(m => ({ default: m.TermsOfServicePage })));
+
+// ─── SEO landing pages (public, no auth required) ────────────────────────────
+const QuizPatenteBPage = lazy(() => import('@/pages/seo/QuizPatenteBPage').then(m => ({ default: m.QuizPatenteBPage })));
+const SimulatoreEsameSeoPage = lazy(() => import('@/pages/seo/SimulatoreEsamePage').then(m => ({ default: m.SimulatoreEsamePage })));
+const SegnaliStradaliInfoPage = lazy(() => import('@/pages/seo/SegnaliStradaliInfoPage').then(m => ({ default: m.SegnaliStradaliInfoPage })));
+const LezioniPatenteInfoPage = lazy(() => import('@/pages/seo/LezioniPatenteInfoPage').then(m => ({ default: m.LezioniPatenteInfoPage })));
+const ErroriComuniPage = lazy(() => import('@/pages/seo/ErroriComuniPage').then(m => ({ default: m.ErroriComuniPage })));
 const Dashboard = lazy(() => import('@/pages/Dashboard').then(m => ({ default: m.Dashboard })));
 const LessonsPage = lazy(() => import('@/pages/LessonsPage').then(m => ({ default: m.LessonsPage })));
 const LessonDetailPage = lazy(() => import('@/pages/LessonDetailPage').then(m => ({ default: m.LessonDetailPage })));
@@ -135,6 +142,13 @@ export const router = createBrowserRouter([
       { path: 'reset-password', element: <SuspensePage><AuthPage mode="reset-password" /></SuspensePage> },
       { path: 'contact', element: <SuspensePage><ContactPage /></SuspensePage> },
       { path: 'privacy-policy', element: <SuspensePage><PrivacyPolicyPage /></SuspensePage> },
+
+      // ── SEO landing pages (Italian only — no auth required) ────────────
+      { path: 'quiz-patente-b', element: <SuspensePage><QuizPatenteBPage /></SuspensePage> },
+      { path: 'simulatore-esame-patente', element: <SuspensePage><SimulatoreEsameSeoPage /></SuspensePage> },
+      { path: 'segnali-stradali-italia', element: <SuspensePage><SegnaliStradaliInfoPage /></SuspensePage> },
+      { path: 'lezioni-patente-b', element: <SuspensePage><LezioniPatenteInfoPage /></SuspensePage> },
+      { path: 'errori-comuni-esame-patente', element: <SuspensePage><ErroriComuniPage /></SuspensePage> },
       { path: 'terms-of-service', element: <SuspensePage><TermsOfServicePage /></SuspensePage> },
 
       // ── Private routes (auth guard + app shell) ────────────────────────

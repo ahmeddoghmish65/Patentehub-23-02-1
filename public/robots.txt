@@ -1,0 +1,50 @@
+User-agent: *
+Allow: /
+
+# Public SEO pages — freely crawlable
+Allow: /it/
+Allow: /ar/
+Allow: /it/quiz-patente-b
+Allow: /it/simulatore-esame-patente
+Allow: /it/segnali-stradali-italia
+Allow: /it/lezioni-patente-b
+Allow: /it/errori-comuni-esame-patente
+Allow: /it/contact
+Allow: /it/privacy-policy
+Allow: /it/terms-of-service
+
+# Disallow private app sections (auth-gated, not useful to crawl)
+Disallow: /it/dashboard
+Disallow: /it/quiz
+Disallow: /it/exam
+Disallow: /it/lessons/
+Disallow: /it/signs
+Disallow: /it/dictionary
+Disallow: /it/training
+Disallow: /it/community
+Disallow: /it/profile
+Disallow: /it/mistakes
+Disallow: /it/questions
+Disallow: /it/admin
+Disallow: /ar/dashboard
+Disallow: /ar/quiz
+Disallow: /ar/exam
+Disallow: /ar/lessons/
+Disallow: /ar/signs
+Disallow: /ar/dictionary
+Disallow: /ar/training
+Disallow: /ar/community
+Disallow: /ar/profile
+Disallow: /ar/mistakes
+Disallow: /ar/questions
+Disallow: /ar/admin
+
+# Auth pages — no indexing value
+Disallow: /it/login
+Disallow: /it/register
+Disallow: /it/reset-password
+Disallow: /ar/login
+Disallow: /ar/register
+Disallow: /ar/reset-password
+
+Sitemap: https://patentehub.com/sitemap.xml
