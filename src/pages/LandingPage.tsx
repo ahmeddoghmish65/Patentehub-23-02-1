@@ -232,7 +232,7 @@ export function LandingPage() {
             </div>
 
             <div className="hidden md:flex items-center gap-2">
-              <LanguageSwitcher />
+              <LanguageSwitcher variant="dropdown" />
               <button onClick={() => navigate(ROUTES.LOGIN)}
                 className={cn('px-4 py-2 rounded-xl text-sm font-semibold transition-all',
                   'text-surface-600 hover:bg-surface-100')}>
@@ -244,7 +244,7 @@ export function LandingPage() {
             </div>
 
             <div className="flex items-center gap-2 md:hidden">
-              <LanguageSwitcher />
+              <LanguageSwitcher variant="dropdown" />
               <button
                 onClick={() => navigate(ROUTES.LOGIN)}
                 className="px-3 py-1.5 rounded-xl text-sm font-semibold text-primary-600 border border-primary-200 bg-primary-50 hover:bg-primary-100 transition-all"
