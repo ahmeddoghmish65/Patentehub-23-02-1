@@ -185,7 +185,7 @@ export function UserProfilePage() {
   };
 
   return (
-    <div className="max-w-lg mx-auto pb-20">
+    <div className="pb-20">
       {/* Header with back button */}
       <div className="sticky top-0 z-10 bg-white/90 backdrop-blur-sm border-b border-surface-100 flex items-center gap-3 px-4 py-3">
         <button onClick={() => navigate(ROUTES.COMMUNITY)}
