@@ -1106,28 +1106,6 @@ export async function apiSaveQuizResult(token: string, result: Omit<QuizResult, 
   if (user.progress.currentStreak >= 7 && !user.progress.badges.includes('week_streak')) user.progress.badges.push('week_streak');
   if (user.progress.level >= 15 && !user.progress.badges.includes('level_5')) user.progress.badges.push('level_5');
 
-  // Exam readiness - comprehensive calculation
-  const allResults = await db.getAllFromIndex('quizResults', 'userId', user.id);
-  if (allResults.length > 0) {
-    // Factor 1: Recent average score (40%)
-    const recent = allResults.slice(-20);
-    const avgScore = recent.reduce((s, r) => s + r.score, 0) / recent.length;
-    // Factor 2: Total quizzes taken (20%) - max at 30 quizzes
-    const quizFactor = Math.min(100, (allResults.length / 30) * 100);
-    // Factor 3: Accuracy (20%)
-    const totalA = user.progress.correctAnswers + user.progress.wrongAnswers;
-    const accFactor = totalA > 0 ? (user.progress.correctAnswers / totalA) * 100 : 0;
-    // Factor 4: Lessons completed (10%)
-    const allLessons = await db.getAll('lessons');
-    const lessonFactor = allLessons.length > 0 ? (user.progress.completedLessons.length / allLessons.length) * 100 : 0;
-    // Factor 5: Consistency/streak (10%)
-    const streakFactor = Math.min(100, user.progress.currentStreak * 14);
-    
-    user.progress.examReadiness = Math.round(
-      avgScore * 0.4 + quizFactor * 0.2 + accFactor * 0.2 + lessonFactor * 0.1 + streakFactor * 0.1
-    );
-  }
-
   await db.put('users', user);
 
   // Track mistakes
