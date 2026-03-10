@@ -269,7 +269,7 @@ export async function apiGetSections(): Promise<ApiRes<Section[]>> {
   const db = await getDB();
   const all = await db.getAll('sections');
   all.sort((a, b) => a.order - b.order);
-  return ok(all);
+  return ok(all.filter(s => !s.status || s.status === 'active'));
 }
 
 export async function apiCreateSection(token: string, data: Omit<Section, 'id' | 'createdAt'>): Promise<ApiRes<Section>> {
@@ -341,7 +341,7 @@ export async function apiGetLessons(sectionId?: string): Promise<ApiRes<Lesson[]
   if (sectionId) { all = await db.getAllFromIndex('lessons', 'sectionId', sectionId); }
   else { all = await db.getAll('lessons'); }
   all.sort((a, b) => a.order - b.order);
-  return ok(all);
+  return ok(all.filter(l => !l.status || l.status === 'active'));
 }
 
 export async function apiGetLesson(id: string): Promise<ApiRes<Lesson>> {
@@ -421,7 +421,7 @@ export async function apiGetQuestions(lessonId?: string, sectionId?: string): Pr
   else if (sectionId) { all = await db.getAllFromIndex('questions', 'sectionId', sectionId); }
   else { all = await db.getAll('questions'); }
   all.sort((a, b) => a.order - b.order);
-  return ok(all);
+  return ok(all.filter(q => !q.status || q.status === 'active'));
 }
 
 export async function apiCreateQuestion(token: string, data: Omit<Question, 'id' | 'createdAt'>): Promise<ApiRes<Question>> {
@@ -544,7 +544,7 @@ export async function apiGetSigns(category?: string): Promise<ApiRes<Sign[]>> {
   if (category) { all = await db.getAllFromIndex('signs', 'category', category); }
   else { all = await db.getAll('signs'); }
   all.sort((a, b) => a.order - b.order);
-  return ok(all);
+  return ok(all.filter(s => !s.status || s.status === 'active'));
 }
 
 export async function apiCreateSign(token: string, data: Omit<Sign, 'id' | 'createdAt'>): Promise<ApiRes<Sign>> {
@@ -611,7 +611,7 @@ export async function apiGetSignSections(): Promise<ApiRes<SignSection[]>> {
   const db = await getDB();
   const all = await db.getAll('signSections');
   all.sort((a, b) => a.order - b.order);
-  return ok(all);
+  return ok(all.filter(s => !s.status || s.status === 'active'));
 }
 export async function apiCreateSignSection(token: string, data: Omit<SignSection, 'id' | 'createdAt'>): Promise<ApiRes<SignSection>> {
   if (!(await isAdmin(token))) return err('غير مصرح', 403);
@@ -654,7 +654,7 @@ export async function apiGetDictSections(): Promise<ApiRes<DictionarySection[]>>
   const db = await getDB();
   const all = await db.getAll('dictionarySections');
   all.sort((a, b) => a.order - b.order);
-  return ok(all);
+  return ok(all.filter(s => !s.status || s.status === 'active'));
 }
 
 export async function apiCreateDictSection(token: string, data: Omit<DictionarySection, 'id' | 'createdAt'>): Promise<ApiRes<DictionarySection>> {
@@ -738,7 +738,7 @@ export async function apiGetDictEntries(sectionId?: string): Promise<ApiRes<Dict
   if (sectionId) { all = await db.getAllFromIndex('dictionaryEntries', 'sectionId', sectionId); }
   else { all = await db.getAll('dictionaryEntries'); }
   all.sort((a, b) => a.order - b.order);
-  return ok(all);
+  return ok(all.filter(e => !e.status || e.status === 'active'));
 }
 
 export async function apiCreateDictEntry(token: string, data: Omit<DictionaryEntry, 'id' | 'createdAt'>): Promise<ApiRes<DictionaryEntry>> {
@@ -754,6 +754,63 @@ export async function apiUpdateDictEntry(token: string, id: string, data: Partia
   const e = await db.get('dictionaryEntries', id); if (!e) return err('غير موجود', 404);
   Object.assign(e, data); await db.put('dictionaryEntries', e);
   return ok(e);
+}
+
+// ============ ADMIN — GET ALL CONTENT (including archived/deleted) ============
+export async function apiAdminGetAllSections(token: string): Promise<ApiRes<Section[]>> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const all = await db.getAll('sections');
+  all.sort((a, b) => a.order - b.order);
+  return ok(all);
+}
+
+export async function apiAdminGetAllLessons(token: string): Promise<ApiRes<Lesson[]>> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const all = await db.getAll('lessons');
+  all.sort((a, b) => a.order - b.order);
+  return ok(all);
+}
+
+export async function apiAdminGetAllQuestions(token: string): Promise<ApiRes<Question[]>> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const all = await db.getAll('questions');
+  all.sort((a, b) => a.order - b.order);
+  return ok(all);
+}
+
+export async function apiAdminGetAllSigns(token: string): Promise<ApiRes<Sign[]>> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const all = await db.getAll('signs');
+  all.sort((a, b) => a.order - b.order);
+  return ok(all);
+}
+
+export async function apiAdminGetAllSignSections(token: string): Promise<ApiRes<SignSection[]>> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const all = await db.getAll('signSections');
+  all.sort((a, b) => a.order - b.order);
+  return ok(all);
+}
+
+export async function apiAdminGetAllDictSections(token: string): Promise<ApiRes<DictionarySection[]>> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const all = await db.getAll('dictionarySections');
+  all.sort((a, b) => a.order - b.order);
+  return ok(all);
+}
+
+export async function apiAdminGetAllDictEntries(token: string): Promise<ApiRes<DictionaryEntry[]>> {
+  if (!(await isAdmin(token))) return err('غير مصرح', 403);
+  const db = await getDB();
+  const all = await db.getAll('dictionaryEntries');
+  all.sort((a, b) => a.order - b.order);
+  return ok(all);
 }
 
 // ============ COMMUNITY API ============

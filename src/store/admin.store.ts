@@ -23,6 +23,16 @@ interface AdminState {
   deletedComments: (Comment & { postContent?: string })[];
   deletedUsers: Omit<User, 'password'>[];
 
+  // All content including archived/deleted (for admin management)
+  allSections: Section[];
+  allLessons: Lesson[];
+  allQuestions: Question[];
+  allSigns: Sign[];
+  allSignSections: SignSection[];
+  allDictSections: DictionarySection[];
+  allDictEntries: DictionaryEntry[];
+  loadAdminContent: () => Promise<void>;
+
   // User management
   loadAdminUsers: () => Promise<void>;
   banUser: (userId: string, banned: boolean) => Promise<boolean>;
@@ -120,13 +130,13 @@ interface AdminState {
 }
 
 const token = () => useAuthStore.getState().token;
-const reloadSections = () => useDataStore.getState().loadSections();
-const reloadLessons = () => useDataStore.getState().loadLessons();
-const reloadQuestions = () => useDataStore.getState().loadQuestions();
-const reloadSigns = () => useDataStore.getState().loadSigns();
-const reloadSignSections = () => useDataStore.getState().loadSignSections();
-const reloadDictSections = () => useDataStore.getState().loadDictSections();
-const reloadDictEntries = () => useDataStore.getState().loadDictEntries();
+const reloadSections = async () => { await useDataStore.getState().loadSections(); await useAdminStore.getState().loadAdminContent(); };
+const reloadLessons = async () => { await useDataStore.getState().loadLessons(); await useAdminStore.getState().loadAdminContent(); };
+const reloadQuestions = async () => { await useDataStore.getState().loadQuestions(); await useAdminStore.getState().loadAdminContent(); };
+const reloadSigns = async () => { await useDataStore.getState().loadSigns(); await useAdminStore.getState().loadAdminContent(); };
+const reloadSignSections = async () => { await useDataStore.getState().loadSignSections(); await useAdminStore.getState().loadAdminContent(); };
+const reloadDictSections = async () => { await useDataStore.getState().loadDictSections(); await useAdminStore.getState().loadAdminContent(); };
+const reloadDictEntries = async () => { await useDataStore.getState().loadDictEntries(); await useAdminStore.getState().loadAdminContent(); };
 const reloadPosts = () => useDataStore.getState().loadPosts();
 
 export const useAdminStore = create<AdminState>((set, get) => ({
@@ -137,6 +147,35 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   deletedPosts: [],
   deletedComments: [],
   deletedUsers: [],
+  allSections: [],
+  allLessons: [],
+  allQuestions: [],
+  allSigns: [],
+  allSignSections: [],
+  allDictSections: [],
+  allDictEntries: [],
+
+  loadAdminContent: async () => {
+    const t = token(); if (!t) return;
+    const [sR, lR, qR, sgR, ssR, dsR, deR] = await Promise.all([
+      api.apiAdminGetAllSections(t),
+      api.apiAdminGetAllLessons(t),
+      api.apiAdminGetAllQuestions(t),
+      api.apiAdminGetAllSigns(t),
+      api.apiAdminGetAllSignSections(t),
+      api.apiAdminGetAllDictSections(t),
+      api.apiAdminGetAllDictEntries(t),
+    ]);
+    set({
+      allSections: sR.data ?? [],
+      allLessons: lR.data ?? [],
+      allQuestions: qR.data ?? [],
+      allSigns: sgR.data ?? [],
+      allSignSections: ssR.data ?? [],
+      allDictSections: dsR.data ?? [],
+      allDictEntries: deR.data ?? [],
+    });
+  },
 
   // ─── User management ──────────────────────────────────────────────────────
   loadAdminUsers: async () => {

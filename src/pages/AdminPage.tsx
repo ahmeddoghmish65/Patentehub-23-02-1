@@ -77,6 +77,7 @@ export function AdminPage() {
     store.loadSignSections();
     store.loadDictSections();
     store.loadDictEntries();
+    store.loadAdminContent();
     store.loadAdminUsers();
     store.loadPosts();
     store.loadAdminReports();
@@ -200,16 +201,16 @@ export function AdminPage() {
 
   const collectAllMedia = (): MediaItem[] => {
     const items: MediaItem[] = [];
-    for (const s of store.sections) {
+    for (const s of store.allSections) {
       if (s.image) items.push({ src: s.image, label: s.nameAr || s.nameIt, source: 'sections', id: s.id });
     }
-    for (const l of store.lessons) {
+    for (const l of store.allLessons) {
       if (l.image) items.push({ src: l.image, label: l.titleAr || l.titleIt, source: 'lessons', id: l.id });
     }
-    for (const sg of store.signs) {
+    for (const sg of store.allSigns) {
       if (sg.image) items.push({ src: sg.image, label: sg.nameAr || sg.nameIt, source: 'signs', id: sg.id });
     }
-    for (const q of store.questions) {
+    for (const q of store.allQuestions) {
       if (q.image) items.push({ src: q.image, label: (q.questionAr || q.questionIt || '').substring(0, 40), source: 'questions', id: q.id });
     }
     // Deduplicate by src
@@ -525,8 +526,8 @@ export function AdminPage() {
         const bannedUsers = store.adminUsers.filter(u => u.isBanned).length;
         const verifiedUsers = store.adminUsers.filter(u => u.verified).length;
         const managersCount = store.adminUsers.filter(u => u.role === 'manager').length;
-        const dictTotal = store.dictSections.length;
-        const dictEntriesTotal = store.dictEntries.length;
+        const dictTotal = store.allDictSections.length;
+        const dictEntriesTotal = store.allDictEntries.length;
         const totalQuizzes = store.adminUsers.reduce((s, u) => s + u.progress.totalQuizzes, 0);
         const readyForExam = store.adminUsers.filter(u => u.progress.examReadiness >= 70).length;
         const avgReadiness = store.adminUsers.length > 0
@@ -778,16 +779,16 @@ export function AdminPage() {
           title={t('admin.sections_title')} icon="folder" iconColor="indigo"
           contentView={contentView}
           setContentView={setContentView}
-          activeItems={store.sections.filter(s => !s.status || s.status === 'active')}
-          archivedItems={store.sections.filter(s => s.status === 'archived')}
-          deletedItems={store.sections.filter(s => s.status === 'deleted')}
+          activeItems={store.allSections.filter(s => !s.status || s.status === 'active')}
+          archivedItems={store.allSections.filter(s => s.status === 'archived')}
+          deletedItems={store.allSections.filter(s => s.status === 'deleted')}
           search={search}
           setSearch={setSearch}
           selectedIds={selectedIds}
           setSelectedIds={setSelectedIds}
           columns={[{ key: 'nameAr', label: t('admin.col_name') }, { key: 'nameIt', label: t('admin.col_name_it') }, { key: 'order', label: t('admin.col_order') }]}
           filterFn={(item) => !search || item.nameAr.includes(search) || item.nameIt?.toLowerCase().includes(search.toLowerCase())}
-          onAdd={() => { setForm({ nameAr: '', nameIt: '', descriptionAr: '', descriptionIt: '', icon: 'school', color: '#3b82f6', image: '', order: store.sections.length + 1 }); setModal({ type: 'section' }); }}
+          onAdd={() => { setForm({ nameAr: '', nameIt: '', descriptionAr: '', descriptionIt: '', icon: 'school', color: '#3b82f6', image: '', order: store.allSections.length + 1 }); setModal({ type: 'section' }); }}
           onEdit={(item) => { setForm(item); setModal({ type: 'section', data: item as Record<string, unknown> }); }}
           onDelete={(id) => setConfirmDel({ type: 'section', id })}
           onPermanentDelete={(id) => setConfirmDel({ type: 'section-permanent', id })}
@@ -810,28 +811,28 @@ export function AdminPage() {
               <select value={filterSectionId} onChange={e => setFilterSectionId(e.target.value)}
                 className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
                 <option value="">{t('admin.all_sections')}</option>
-                {store.sections.map(sec => (
-                  <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.lessons.filter(l => l.sectionId === sec.id).length})</option>
+                {store.allSections.filter(s => !s.status || s.status === 'active').map(sec => (
+                  <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.allLessons.filter(l => l.sectionId === sec.id).length})</option>
                 ))}
               </select>
             }
 
             contentView={contentView}
             setContentView={setContentView}
-            activeItems={store.lessons.filter(s => (!s.status || s.status === 'active') && (!filterSectionId || s.sectionId === filterSectionId))}
-            archivedItems={store.lessons.filter(s => s.status === 'archived' && (!filterSectionId || s.sectionId === filterSectionId))}
-            deletedItems={store.lessons.filter(s => s.status === 'deleted' && (!filterSectionId || s.sectionId === filterSectionId))}
+            activeItems={store.allLessons.filter(s => (!s.status || s.status === 'active') && (!filterSectionId || s.sectionId === filterSectionId))}
+            archivedItems={store.allLessons.filter(s => s.status === 'archived' && (!filterSectionId || s.sectionId === filterSectionId))}
+            deletedItems={store.allLessons.filter(s => s.status === 'deleted' && (!filterSectionId || s.sectionId === filterSectionId))}
             search={search}
             setSearch={setSearch}
             selectedIds={selectedIds}
             setSelectedIds={setSelectedIds}
             columns={[
               { key: 'titleAr', label: t('admin.col_title') },
-              { key: 'sectionId', label: t('admin.col_section'), render: (v) => store.sections.find(s => s.id === v)?.nameAr || String(v) },
+              { key: 'sectionId', label: t('admin.col_section'), render: (v) => store.allSections.find(s => s.id === v)?.nameAr || String(v) },
               { key: 'order', label: t('admin.col_order') },
             ]}
             filterFn={(item) => !search || item.titleAr?.includes(search) || item.titleIt?.toLowerCase().includes(search.toLowerCase())}
-            onAdd={() => { setForm({ sectionId: filterSectionId || '', titleAr: '', titleIt: '', contentAr: '', contentIt: '', image: '', order: store.lessons.length + 1 }); setModal({ type: 'lesson' }); }}
+            onAdd={() => { setForm({ sectionId: filterSectionId || '', titleAr: '', titleIt: '', contentAr: '', contentIt: '', image: '', order: store.allLessons.length + 1 }); setModal({ type: 'lesson' }); }}
             onEdit={(item) => { setForm(item); setModal({ type: 'lesson', data: item as Record<string, unknown> }); }}
             onDelete={(id) => setConfirmDel({ type: 'lesson', id })}
             onPermanentDelete={(id) => setConfirmDel({ type: 'lesson-permanent', id })}
@@ -854,18 +855,18 @@ export function AdminPage() {
               <select value={filterSectionId} onChange={e => setFilterSectionId(e.target.value)}
                 className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
                 <option value="">{t('admin.all_sections')}</option>
-                {store.sections.map(sec => {
-                  const sectionLessonIds = store.lessons.filter(l => l.sectionId === sec.id).map(l => l.id);
-                  const count = store.questions.filter(q => sectionLessonIds.includes(q.lessonId)).length;
+                {store.allSections.filter(s => !s.status || s.status === 'active').map(sec => {
+                  const sectionLessonIds = store.allLessons.filter(l => l.sectionId === sec.id).map(l => l.id);
+                  const count = store.allQuestions.filter(q => sectionLessonIds.includes(q.lessonId)).length;
                   return <option key={sec.id} value={sec.id}>{sec.nameAr} ({count})</option>;
                 })}
               </select>
             }
             contentView={contentView}
             setContentView={setContentView}
-            activeItems={store.questions.filter(s => (!s.status || s.status === 'active') && (!filterSectionId || store.lessons.find(l => l.id === s.lessonId)?.sectionId === filterSectionId))}
-            archivedItems={store.questions.filter(s => s.status === 'archived' && (!filterSectionId || store.lessons.find(l => l.id === s.lessonId)?.sectionId === filterSectionId))}
-            deletedItems={store.questions.filter(s => s.status === 'deleted' && (!filterSectionId || store.lessons.find(l => l.id === s.lessonId)?.sectionId === filterSectionId))}
+            activeItems={store.allQuestions.filter(s => (!s.status || s.status === 'active') && (!filterSectionId || store.allLessons.find(l => l.id === s.lessonId)?.sectionId === filterSectionId))}
+            archivedItems={store.allQuestions.filter(s => s.status === 'archived' && (!filterSectionId || store.allLessons.find(l => l.id === s.lessonId)?.sectionId === filterSectionId))}
+            deletedItems={store.allQuestions.filter(s => s.status === 'deleted' && (!filterSectionId || store.allLessons.find(l => l.id === s.lessonId)?.sectionId === filterSectionId))}
             search={search}
             setSearch={setSearch}
             selectedIds={selectedIds}
@@ -876,7 +877,7 @@ export function AdminPage() {
               { key: 'difficulty', label: t('admin.col_difficulty') },
             ]}
             filterFn={(item) => !search || item.questionAr?.includes(search) || item.questionIt?.toLowerCase().includes(search.toLowerCase())}
-            onAdd={() => { setForm({ lessonId: '', sectionId: filterSectionId || '', questionAr: '', questionIt: '', isTrue: true, explanationAr: '', explanationIt: '', difficulty: 'easy', image: '', order: store.questions.length + 1 }); setModal({ type: 'question' }); }}
+            onAdd={() => { setForm({ lessonId: '', sectionId: filterSectionId || '', questionAr: '', questionIt: '', isTrue: true, explanationAr: '', explanationIt: '', difficulty: 'easy', image: '', order: store.allQuestions.length + 1 }); setModal({ type: 'question' }); }}
             onEdit={(item) => { setForm(item); setModal({ type: 'question', data: item as Record<string, unknown> }); }}
             onDelete={(id) => setConfirmDel({ type: 'question', id })}
             onPermanentDelete={(id) => setConfirmDel({ type: 'question-permanent', id })}
@@ -899,16 +900,16 @@ export function AdminPage() {
             title={t('admin.sign_sections_title')} icon="traffic" iconColor="orange"
             contentView={contentView}
             setContentView={setContentView}
-            activeItems={store.signSections.filter(s => !s.status || s.status === 'active')}
-            archivedItems={store.signSections.filter(s => s.status === 'archived')}
-            deletedItems={store.signSections.filter(s => s.status === 'deleted')}
+            activeItems={store.allSignSections.filter(s => !s.status || s.status === 'active')}
+            archivedItems={store.allSignSections.filter(s => s.status === 'archived')}
+            deletedItems={store.allSignSections.filter(s => s.status === 'deleted')}
             search={search}
             setSearch={setSearch}
             selectedIds={selectedIds}
             setSelectedIds={setSelectedIds}
             columns={[{ key: 'nameAr', label: t('admin.col_name') }, { key: 'nameIt', label: t('admin.col_name_it') }]}
             filterFn={(item) => !search || item.nameAr?.includes(search) || item.nameIt?.toLowerCase().includes(search.toLowerCase())}
-            onAdd={() => { setForm({ nameAr: '', nameIt: '', icon: 'traffic', order: store.signSections.length + 1 }); setModal({ type: 'signSection' }); }}
+            onAdd={() => { setForm({ nameAr: '', nameIt: '', icon: 'traffic', order: store.allSignSections.length + 1 }); setModal({ type: 'signSection' }); }}
             onEdit={(item) => { setForm(item); setModal({ type: 'signSection', data: item as Record<string, unknown> }); }}
             onDelete={(id) => setConfirmDel({ type: 'signSection', id })}
             onPermanentDelete={(id) => setConfirmDel({ type: 'signSection-permanent', id })}
@@ -927,23 +928,23 @@ export function AdminPage() {
                 <select value={filterSignCategory} onChange={e => setFilterSignCategory(e.target.value)}
                   className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
                   <option value="">{t('admin.all_sections')}</option>
-                  {store.signSections.filter(s => !s.status || s.status === 'active').map(sec => (
-                    <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.signs.filter(s => s.sectionId === sec.id).length})</option>
+                  {store.allSignSections.filter(s => !s.status || s.status === 'active').map(sec => (
+                    <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.allSigns.filter(s => s.sectionId === sec.id).length})</option>
                   ))}
                 </select>
               }
               contentView={contentView}
               setContentView={setContentView}
-              activeItems={store.signs.filter(s => (!s.status || s.status === 'active') && (!filterSignCategory || s.sectionId === filterSignCategory))}
-              archivedItems={store.signs.filter(s => s.status === 'archived' && (!filterSignCategory || s.sectionId === filterSignCategory))}
-              deletedItems={store.signs.filter(s => s.status === 'deleted' && (!filterSignCategory || s.sectionId === filterSignCategory))}
+              activeItems={store.allSigns.filter(s => (!s.status || s.status === 'active') && (!filterSignCategory || s.sectionId === filterSignCategory))}
+              archivedItems={store.allSigns.filter(s => s.status === 'archived' && (!filterSignCategory || s.sectionId === filterSignCategory))}
+              deletedItems={store.allSigns.filter(s => s.status === 'deleted' && (!filterSignCategory || s.sectionId === filterSignCategory))}
               search={search}
               setSearch={setSearch}
               selectedIds={selectedIds}
               setSelectedIds={setSelectedIds}
-              columns={[{ key: 'nameAr', label: t('admin.col_name') }, { key: 'nameIt', label: t('admin.col_name_it') }, { key: 'sectionId', label: t('admin.col_section'), render: (v: unknown) => store.signSections.find(s => s.id === v)?.nameAr || '' }]}
+              columns={[{ key: 'nameAr', label: t('admin.col_name') }, { key: 'nameIt', label: t('admin.col_name_it') }, { key: 'sectionId', label: t('admin.col_section'), render: (v: unknown) => store.allSignSections.find(s => s.id === v)?.nameAr || '' }]}
               filterFn={(item) => !search || item.nameAr?.includes(search)}
-              onAdd={() => { setForm({ nameAr: '', nameIt: '', descriptionAr: '', descriptionIt: '', sectionId: filterSignCategory || '', category: 'pericolo', image: '', order: store.signs.length + 1 }); setModal({ type: 'sign' }); }}
+              onAdd={() => { setForm({ nameAr: '', nameIt: '', descriptionAr: '', descriptionIt: '', sectionId: filterSignCategory || '', category: 'pericolo', image: '', order: store.allSigns.length + 1 }); setModal({ type: 'sign' }); }}
               onEdit={(item) => { setForm(item); setModal({ type: 'sign', data: item as Record<string, unknown> }); }}
               onDelete={(id) => setConfirmDel({ type: 'sign', id })}
               onPermanentDelete={(id) => setConfirmDel({ type: 'sign-permanent', id })}
@@ -966,16 +967,16 @@ export function AdminPage() {
             title={t('admin.dict_sections_title')} icon="menu_book" iconColor="teal"
             contentView={contentView}
             setContentView={setContentView}
-            activeItems={store.dictSections.filter(s => !s.status || s.status === 'active')}
-            archivedItems={store.dictSections.filter(s => s.status === 'archived')}
-            deletedItems={store.dictSections.filter(s => s.status === 'deleted')}
+            activeItems={store.allDictSections.filter(s => !s.status || s.status === 'active')}
+            archivedItems={store.allDictSections.filter(s => s.status === 'archived')}
+            deletedItems={store.allDictSections.filter(s => s.status === 'deleted')}
             search={search}
             setSearch={setSearch}
             selectedIds={selectedIds}
             setSelectedIds={setSelectedIds}
             columns={[{ key: 'nameAr', label: t('admin.col_name') }, { key: 'nameIt', label: t('admin.col_name_it') }]}
             filterFn={(item) => !search || item.nameAr?.includes(search) || item.nameIt?.toLowerCase().includes(search.toLowerCase())}
-            onAdd={() => { setForm({ nameAr: '', nameIt: '', icon: 'menu_book', order: store.dictSections.length + 1 }); setModal({ type: 'dictSection' }); }}
+            onAdd={() => { setForm({ nameAr: '', nameIt: '', icon: 'menu_book', order: store.allDictSections.length + 1 }); setModal({ type: 'dictSection' }); }}
             onEdit={(item) => { setForm(item); setModal({ type: 'dictSection', data: item as Record<string, unknown> }); }}
             onDelete={(id) => setConfirmDel({ type: 'dictSection', id })}
             onPermanentDelete={(id) => setConfirmDel({ type: 'dictSection-permanent', id })}
@@ -994,23 +995,23 @@ export function AdminPage() {
               <select value={filterDictSectionId} onChange={e => setFilterDictSectionId(e.target.value)}
                 className="border border-surface-200 rounded-lg px-2 py-1.5 text-xs text-surface-700 bg-surface-50 focus:outline-none focus:border-primary-400 cursor-pointer max-w-[140px]">
                 <option value="">{t('admin.all_sections')}</option>
-                {store.dictSections.filter(s => !s.status || s.status === 'active').map(sec => (
-                  <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.dictEntries.filter(e => e.sectionId === sec.id).length})</option>
+                {store.allDictSections.filter(s => !s.status || s.status === 'active').map(sec => (
+                  <option key={sec.id} value={sec.id}>{sec.nameAr} ({store.allDictEntries.filter(e => e.sectionId === sec.id).length})</option>
                 ))}
               </select>
             }
             contentView={contentView}
             setContentView={setContentView}
-            activeItems={store.dictEntries.filter(s => (!s.status || s.status === 'active') && (!filterDictSectionId || s.sectionId === filterDictSectionId))}
-            archivedItems={store.dictEntries.filter(s => s.status === 'archived' && (!filterDictSectionId || s.sectionId === filterDictSectionId))}
-            deletedItems={store.dictEntries.filter(s => s.status === 'deleted' && (!filterDictSectionId || s.sectionId === filterDictSectionId))}
+            activeItems={store.allDictEntries.filter(s => (!s.status || s.status === 'active') && (!filterDictSectionId || s.sectionId === filterDictSectionId))}
+            archivedItems={store.allDictEntries.filter(s => s.status === 'archived' && (!filterDictSectionId || s.sectionId === filterDictSectionId))}
+            deletedItems={store.allDictEntries.filter(s => s.status === 'deleted' && (!filterDictSectionId || s.sectionId === filterDictSectionId))}
             search={search}
             setSearch={setSearch}
             selectedIds={selectedIds}
             setSelectedIds={setSelectedIds}
-            columns={[{ key: 'termAr', label: t('admin.col_term') }, { key: 'termIt', label: t('admin.col_name_it') }, { key: 'sectionId', label: t('admin.col_section'), render: (v: unknown) => store.dictSections.find(s => s.id === v)?.nameAr || '' }]}
+            columns={[{ key: 'termAr', label: t('admin.col_term') }, { key: 'termIt', label: t('admin.col_name_it') }, { key: 'sectionId', label: t('admin.col_section'), render: (v: unknown) => store.allDictSections.find(s => s.id === v)?.nameAr || '' }]}
             filterFn={(item) => !search || item.termAr?.includes(search) || item.termIt?.toLowerCase().includes(search.toLowerCase())}
-            onAdd={() => { setForm({ sectionId: '', termIt: '', termAr: '', definitionIt: '', definitionAr: '', order: store.dictEntries.length + 1 }); setModal({ type: 'dictEntry' }); }}
+            onAdd={() => { setForm({ sectionId: '', termIt: '', termAr: '', definitionIt: '', definitionAr: '', order: store.allDictEntries.length + 1 }); setModal({ type: 'dictEntry' }); }}
             onEdit={(item) => { setForm(item); setModal({ type: 'dictEntry', data: item as Record<string, unknown> }); }}
             onDelete={(id) => setConfirmDel({ type: 'dictEntry', id })}
             onPermanentDelete={(id) => setConfirmDel({ type: 'dictEntry-permanent', id })}
