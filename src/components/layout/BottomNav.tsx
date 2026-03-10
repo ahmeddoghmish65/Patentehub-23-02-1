@@ -39,12 +39,27 @@ export function BottomNav() {
               key={item.path}
               className={cn(
                 'flex flex-col items-center gap-0.5 px-3 py-2 min-w-0 min-h-[44px] justify-center',
-                active ? 'text-primary-600' : 'text-surface-400',
+                'transition-colors duration-200',
+                active ? 'text-primary-600' : 'text-surface-500',
               )}
               onClick={() => navigate(item.path)}
             >
-              <Icon name={item.icon} size={22} filled={active} />
-              <span className="text-xs font-medium leading-tight">{item.label}</span>
+              <span
+                className={cn(
+                  'transition-transform duration-200',
+                  active ? 'scale-110' : 'scale-100',
+                )}
+              >
+                <Icon name={item.icon} size={22} filled={active} />
+              </span>
+              <span
+                className={cn(
+                  'text-xs font-medium leading-tight transition-all duration-200',
+                  active ? 'font-semibold' : '',
+                )}
+              >
+                {item.label}
+              </span>
             </button>
           );
         })}
