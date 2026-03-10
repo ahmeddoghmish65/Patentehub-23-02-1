@@ -82,6 +82,28 @@ export function UserProfilePage() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const prog = (u as any).progress || {};
       const userPosts = posts.filter(p => p.userId === userId && p.type !== 'quiz');
+
+      // Calculate examReadiness dynamically from actual quiz results
+      let examReadiness = prog.examReadiness || 0;
+      try {
+        const allResults = await db.getAllFromIndex('quizResults', 'userId', userId);
+        if (allResults.length > 0) {
+          const recent = allResults.slice(-20);
+          const avgScore = recent.reduce((s: number, r: { score: number }) => s + r.score, 0) / recent.length;
+          const quizFactor = Math.min(100, (allResults.length / 30) * 100);
+          const totalA = (prog.correctAnswers || 0) + (prog.wrongAnswers || 0);
+          const accFactor = totalA > 0 ? ((prog.correctAnswers || 0) / totalA) * 100 : 0;
+          const allLessons = await db.getAll('lessons');
+          const lessonFactor = allLessons.length > 0
+            ? ((prog.completedLessons?.length || 0) / allLessons.length) * 100
+            : 0;
+          const streakFactor = Math.min(100, (prog.currentStreak || 0) * 14);
+          examReadiness = Math.round(
+            avgScore * 0.4 + quizFactor * 0.2 + accFactor * 0.2 + lessonFactor * 0.1 + streakFactor * 0.1
+          );
+        }
+      } catch { /* fallback to stored value */ }
+
       setUserData({
         name: u.name, username: u.username || '', avatar: u.avatar || '', bio: u.bio || '',
         verified: u.verified || false,
@@ -90,7 +112,7 @@ export function UserProfilePage() {
         followingCount: followingListData.length,
         hideStats: u.privacyHideStats || false,
         joinedAt: u.createdAt || undefined,
-        examReadiness: prog.examReadiness || 0,
+        examReadiness,
         totalQuizzes: prog.totalQuizzes || 0,
         correctAnswers: prog.correctAnswers || 0,
         wrongAnswers: prog.wrongAnswers || 0,
