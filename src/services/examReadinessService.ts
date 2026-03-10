@@ -137,7 +137,7 @@ export function calculateExamReadiness(params: {
   const consistency    = streakScore * 0.6 + studyDaysScore * 0.4;
 
   // ─── Factor 5: Improvement Trend (10%) ──────────────────────────────────────
-  let trend = 50; // neutral baseline when not enough data
+  let trend = 0; // no data means no trend score for new users
   if (sortedHistory.length >= 6) {
     const recentScores   = sortedHistory.slice(0, 5).map(r => r.score);
     const previousScores = sortedHistory.slice(5, 10).map(r => r.score);
