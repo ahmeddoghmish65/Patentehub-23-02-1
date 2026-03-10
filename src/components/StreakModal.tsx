@@ -35,11 +35,11 @@ export function StreakModal({ currentStreak, bestStreak, onStartLesson, onClose 
 
       {/* Modal */}
       <div className={cn(
-        'relative w-full max-w-sm bg-white rounded-3xl shadow-2xl',
+        'relative w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden',
         'animate-fade-in-up',
       )}>
         {/* Top orange accent */}
-        <div className="h-2 bg-gradient-to-r from-orange-400 to-amber-400 rounded-t-3xl" />
+        <div className="h-2 bg-gradient-to-r from-orange-400 to-amber-400" />
 
         <div className="px-6 pt-8 pb-6 flex flex-col items-center text-center gap-5">
           {/* Fire icon */}
