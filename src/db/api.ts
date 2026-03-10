@@ -1202,8 +1202,29 @@ export async function apiAdminGetUsers(token: string): Promise<ApiRes<Omit<User,
   if (!(await isAdmin(token))) return err('غير مصرح', 403);
   const db = await getDB();
   const all = await db.getAll('users');
-  // Filter out soft-deleted users
-  return ok(all.filter(u => !u.status || u.status === 'active').map(u => { const { password: _, ...safe } = u; void _; return safe; }));
+  const allLessons = await db.getAll('lessons');
+  const activeUsers = all.filter(u => !u.status || u.status === 'active');
+
+  // Calculate exam readiness dynamically for each user based on their actual quiz history
+  const usersWithReadiness = await Promise.all(activeUsers.map(async (user) => {
+    const allResults = await db.getAllFromIndex('quizResults', 'userId', user.id);
+    if (allResults.length > 0) {
+      const recent = allResults.slice(-20);
+      const avgScore = recent.reduce((s, r) => s + r.score, 0) / recent.length;
+      const quizFactor = Math.min(100, (allResults.length / 30) * 100);
+      const totalA = user.progress.correctAnswers + user.progress.wrongAnswers;
+      const accFactor = totalA > 0 ? (user.progress.correctAnswers / totalA) * 100 : 0;
+      const lessonFactor = allLessons.length > 0 ? (user.progress.completedLessons.length / allLessons.length) * 100 : 0;
+      const streakFactor = Math.min(100, user.progress.currentStreak * 14);
+      user.progress.examReadiness = Math.round(
+        avgScore * 0.4 + quizFactor * 0.2 + accFactor * 0.2 + lessonFactor * 0.1 + streakFactor * 0.1
+      );
+    }
+    const { password: _, ...safe } = user; void _;
+    return safe;
+  }));
+
+  return ok(usersWithReadiness);
 }
 
 export async function apiAdminBanUser(token: string, userId: string, banned: boolean): Promise<ApiRes> {
