@@ -193,7 +193,10 @@ export function UserProfilePage() {
           <Icon name="arrow_back" size={20} className={cn('text-surface-700', uiLang === 'ar' ? 'rotate-180' : '')} />
         </button>
         <div className="flex-1 min-w-0">
-          <h1 className="font-bold text-surface-900 text-base truncate">{userData.name}</h1>
+          <div className="flex items-center gap-1">
+            <h1 className="font-bold text-surface-900 text-base truncate">{userData.name}</h1>
+            {userData.verified && <VerifiedBadge size="sm" tooltip />}
+          </div>
           {userData.username && <p className="text-xs text-primary-500">@{userData.username}</p>}
         </div>
       </div>
