@@ -1069,17 +1069,30 @@ export function CommunityPage() {
                   <p className="text-sm text-surface-400 text-center py-4">{t('community.no_likers')}</p>
                 )}
                 {likersModal.likers.map(liker => (
-                  <div key={liker.userId} className="flex items-center gap-3">
-                    <button onClick={() => { setLikersModal(null); openUserProfile(liker.userId); }} className="flex items-center gap-3 flex-1 min-w-0">
+                  <div key={liker.userId} className="flex items-center gap-3 hover:bg-surface-50 rounded-xl p-2 transition-colors">
+                    <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 shadow-sm cursor-pointer"
+                      style={{ background: liker.userAvatar ? undefined : 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}
+                      onClick={() => { setLikersModal(null); openUserProfile(liker.userId); }}>
                       {liker.userAvatar ? (
-                        <img src={liker.userAvatar} className="w-10 h-10 rounded-xl object-cover flex-shrink-0" alt="" />
+                        <img src={liker.userAvatar} className="w-full h-full object-cover" alt="" />
                       ) : (
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}>
-                          <span className="text-white font-bold text-sm">{liker.userName.charAt(0)}</span>
+                        <div className="w-full h-full flex items-center justify-center">
+                          <span className="text-sm font-bold text-white">{liker.userName.charAt(0)}</span>
                         </div>
                       )}
-                      <span className="font-semibold text-surface-900 truncate">{liker.userName}</span>
-                    </button>
+                    </div>
+                    <span className="text-sm font-semibold text-surface-800 flex-1 cursor-pointer"
+                      onClick={() => { setLikersModal(null); openUserProfile(liker.userId); }}>{liker.userName}</span>
+                    {liker.userId !== user?.id && (
+                      <button
+                        onClick={e => { e.stopPropagation(); toggleFollow(liker.userId); }}
+                        className={cn('shrink-0 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all',
+                          following.includes(liker.userId)
+                            ? 'bg-surface-100 text-surface-600 hover:bg-danger-50 hover:text-danger-600 border border-surface-200'
+                            : 'bg-primary-500 text-white hover:bg-primary-600 shadow-sm')}>
+                        {following.includes(liker.userId) ? t('community.following_btn') : t('community.follow_btn')}
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
