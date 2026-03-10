@@ -77,7 +77,13 @@
     "readiness_tip_keep_going": "أداء رائع! استمر للوصول إلى 100%",
     "readiness_factors_title": "العوامل المؤثرة",
     "readiness_tips_title": "نصائح للتحسين",
-    "readiness_weakness_label": "نقاط الضعف"
+    "readiness_weakness_label": "نقاط الضعف",
+    "streak_modal_title": "ابدأ سلسلة أيام تعلّم على التوالي",
+    "streak_modal_subtitle": "ادرس يومياً لتكوين وتيرة دراسية وإنشاء عادة تعلّم فعّالة.",
+    "streak_modal_start_lesson": "ابدأ الدرس",
+    "streak_modal_current": "سلسلتك الحالية",
+    "streak_modal_best": "أفضل سلسلة",
+    "streak_modal_days": "يوم"
   },
   "signs_page": {
     "title": "الإشارات المرورية",

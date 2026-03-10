@@ -77,7 +77,13 @@
     "readiness_tip_keep_going": "Ottimo lavoro! Continua per raggiungere il 100%",
     "readiness_factors_title": "Fattori determinanti",
     "readiness_tips_title": "Consigli per migliorare",
-    "readiness_weakness_label": "Punti deboli"
+    "readiness_weakness_label": "Punti deboli",
+    "streak_modal_title": "Inizia una serie di giorni di studio consecutivi",
+    "streak_modal_subtitle": "Studia ogni giorno per creare un ritmo di studio e formare un'abitudine di apprendimento efficace.",
+    "streak_modal_start_lesson": "Inizia la lezione",
+    "streak_modal_current": "Serie attuale",
+    "streak_modal_best": "Serie migliore",
+    "streak_modal_days": "giorni"
   },
   "signs_page": {
     "title": "Segnali stradali",

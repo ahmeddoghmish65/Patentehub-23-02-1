@@ -1,13 +1,14 @@
-import { memo, useEffect, useMemo, useCallback } from 'react';
+import { memo, useEffect, useMemo, useCallback, useState } from 'react';
 import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore, useProgressStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
-import { ROUTES } from '@/constants';
+import { ROUTES, buildLessonUrl } from '@/constants';
 import { calculateExamReadiness } from '@/services/examReadinessService';
 import type { ExamReadinessLevel } from '@/services/examReadinessService';
 import * as profileService from '@/services/supabase/profile.service';
+import { StreakModal } from '@/components/StreakModal';
 
 // ─── Level colours (Tailwind utility strings) ─────────────────────────────────
 const LEVEL_STYLE: Record<ExamReadinessLevel, { bg: string; text: string; bar: string; badge: string }> = {
@@ -71,6 +72,20 @@ export const Dashboard = memo(function Dashboard() {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? t('dashboard.greeting_morning') : t('dashboard.greeting_afternoon');
 
+  const [showStreakModal, setShowStreakModal] = useState(false);
+
+  const handleStartLesson = useCallback(() => {
+    setShowStreakModal(false);
+    // Find first incomplete lesson (sorted by order), or first lesson for new users
+    const completedIds = new Set(progress.completedLessons);
+    const nextLesson = lessons.find(l => !completedIds.has(l.id)) ?? lessons[0];
+    if (nextLesson) {
+      navigate(buildLessonUrl(nextLesson.id));
+    } else {
+      navigate(ROUTES.LESSONS);
+    }
+  }, [lessons, progress.completedLessons, navigate]);
+
   return (
     <div className="space-y-5">
       {/* Welcome Header */}
@@ -95,13 +110,16 @@ export const Dashboard = memo(function Dashboard() {
 
           {/* Stats Row */}
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center border border-white/10">
+            <button
+              className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center border border-white/10 hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
+              onClick={() => setShowStreakModal(true)}
+            >
               <div className="flex items-center justify-center gap-1.5 mb-1">
                 <Icon name="local_fire_department" size={18} className="text-orange-300" filled />
                 <span className="text-lg font-bold">{progress.currentStreak}</span>
               </div>
               <span className="text-xs text-primary-200">{t('dashboard.streak_days')}</span>
-            </div>
+            </button>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center border border-white/10">
               <div className="flex items-center justify-center gap-1.5 mb-1">
                 <Icon name="military_tech" size={18} className="text-yellow-300" filled />
@@ -246,6 +264,16 @@ export const Dashboard = memo(function Dashboard() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Streak Modal */}
+      {showStreakModal && (
+        <StreakModal
+          currentStreak={progress.currentStreak}
+          bestStreak={progress.bestStreak}
+          onStartLesson={handleStartLesson}
+          onClose={() => setShowStreakModal(false)}
+        />
       )}
     </div>
   );
