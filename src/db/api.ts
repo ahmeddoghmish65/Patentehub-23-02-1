@@ -205,10 +205,12 @@ export async function apiLogin(email: string, password: string): Promise<ApiRes<
   const token = generateToken(); const refreshToken = generateToken();
   await db.put('authTokens', { token, refreshToken, userId: user.id, createdAt: now, expiresAt: new Date(Date.now() + 7 * 86400000).toISOString() });
   const { password: _, ...safe } = user; void _;
-  // Log the login event
-  const db2 = await getDB();
-  const sysLog = { id: generateId(), adminId: user.id, action: 'تسجيل دخول', details: `${user.name} (${email}) — ${new Date().toLocaleString('ar')}`, createdAt: new Date().toISOString() };
-  await db2.put('adminLogs', sysLog);
+  // Log the login event only for admin/manager accounts
+  if (user.role === 'admin' || user.role === 'manager') {
+    const db2 = await getDB();
+    const sysLog = { id: generateId(), adminId: user.id, action: 'تسجيل دخول', details: `${user.name} (${email}) — ${new Date().toLocaleString('ar')}`, createdAt: new Date().toISOString() };
+    await db2.put('adminLogs', sysLog);
+  }
   return ok({ user: safe, token, refreshToken });
 }
 
