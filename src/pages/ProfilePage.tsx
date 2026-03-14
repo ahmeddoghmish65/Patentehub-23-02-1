@@ -206,6 +206,7 @@ export function ProfilePage() {
     setCurrentPassword(''); setNewPassword(''); setConfirmPassword('');
     setPasswordMsg(''); setSaveMsg('');
     setShowEditPage(true);
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   const handleSaveEdit = async () => {
@@ -338,7 +339,7 @@ export function ProfilePage() {
         {/* Sticky header */}
         <div className="sticky top-0 z-10 bg-surface-50 -mx-1 px-1 pb-3 pt-1">
           <div className="bg-white rounded-2xl border border-surface-100 px-4 py-3 flex items-center gap-3 shadow-sm">
-            <button onClick={() => setShowEditPage(false)}
+            <button onClick={() => { setShowEditPage(false); window.scrollTo({ top: 0, behavior: 'instant' }); }}
               className="w-9 h-9 rounded-xl bg-surface-100 hover:bg-surface-200 flex items-center justify-center transition-colors shrink-0">
               <Icon name="arrow_forward" size={20} className="text-surface-600 ltr:rotate-180" />
             </button>
