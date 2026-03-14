@@ -374,32 +374,27 @@ export function ExamSimulatorPage() {
       )}
 
       {/* Exam Header */}
-      <div className="bg-white rounded-xl border border-surface-100 p-3 mb-3 shrink-0">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-bold text-surface-700">{t('exam.simulator_label')}</span>
-          <button
-            onClick={handleSubmitClick}
-            className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all',
-              answeredCount === examQuestions.length
-                ? 'bg-success-500 text-white hover:bg-success-600 shadow-sm shadow-success-200'
-                : 'bg-surface-100 text-surface-600 hover:bg-surface-200'
-            )}>
-            <Icon name="send" size={15} />
-            {t('exam.submit_btn')}
-          </button>
+      <div className="bg-white rounded-xl border border-surface-100 px-3 py-2.5 mb-3 shrink-0 flex items-center justify-between gap-2">
+        <div className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-mono font-bold',
+          remaining < 300 ? 'bg-danger-50 text-danger-600 animate-pulse' : remaining < 600 ? 'bg-warning-50 text-warning-600' : 'bg-surface-50 text-surface-700'
+        )}>
+          <Icon name="timer" size={16} />
+          {fmt(remaining)}
         </div>
-        <div className="flex items-center justify-between">
-          <div className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-mono font-bold',
-            remaining < 300 ? 'bg-danger-50 text-danger-600 animate-pulse' : remaining < 600 ? 'bg-warning-50 text-warning-600' : 'bg-surface-50 text-surface-700'
+        <div className="text-xs font-semibold text-surface-500 bg-surface-50 px-2.5 py-1.5 rounded-lg">
+          {answeredCount}/{examQuestions.length} {t('exam.answered_label')}
+        </div>
+        <button
+          onClick={handleSubmitClick}
+          className={cn(
+            'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all',
+            answeredCount === examQuestions.length
+              ? 'bg-success-500 text-white hover:bg-success-600 shadow-sm shadow-success-200'
+              : 'bg-surface-100 text-surface-600 hover:bg-surface-200'
           )}>
-            <Icon name="timer" size={16} />
-            {fmt(remaining)}
-          </div>
-          <div className="text-xs font-semibold text-surface-500 bg-surface-50 px-2.5 py-1.5 rounded-lg">
-            {answeredCount}/{examQuestions.length} {t('exam.answered_label')}
-          </div>
-        </div>
+          <Icon name="send" size={15} />
+          {t('exam.submit_btn')}
+        </button>
       </div>
 
       {/* Question Navigation — Horizontal Scroll Tab Bar */}
