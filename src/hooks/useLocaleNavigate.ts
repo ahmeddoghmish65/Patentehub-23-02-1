@@ -6,9 +6,10 @@ import type { NavigateOptions } from 'react-router-dom';
  * to all absolute path navigations.
  *
  * Usage:
- *   const { navigate, localePath } = useLocaleNavigate();
- *   navigate(ROUTES.DASHBOARD);  // → /ar/dashboard or /it/dashboard
- *   localePath('/login')         // → '/ar/login' or '/it/login'
+ *   const { navigate, localePath, goBack } = useLocaleNavigate();
+ *   navigate(ROUTES.DASHBOARD);        // → /ar/dashboard or /it/dashboard
+ *   localePath('/login')               // → '/ar/login' or '/it/login'
+ *   goBack(ROUTES.DASHBOARD);          // → navigate(-1) or fallback to /ar/dashboard
  */
 export function useLocaleNavigate() {
   const rawNavigate = useNavigate();
@@ -23,5 +24,17 @@ export function useLocaleNavigate() {
     rawNavigate(localePath(to), options);
   };
 
-  return { navigate, localePath };
+  /**
+   * Navigate back in browser history if a previous entry exists,
+   * otherwise fall back to the given route.
+   */
+  const goBack = (fallback: string): void => {
+    if ((window.history.state?.idx ?? 0) > 0) {
+      rawNavigate(-1);
+    } else {
+      rawNavigate(localePath(fallback));
+    }
+  };
+
+  return { navigate, localePath, goBack };
 }

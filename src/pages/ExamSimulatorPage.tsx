@@ -9,7 +9,7 @@ import { ROUTES } from '@/constants';
 import type { Question } from '@/db/database';
 
 export function ExamSimulatorPage() {
-  const { navigate } = useLocaleNavigate();
+  const { navigate, goBack } = useLocaleNavigate();
   const { user } = useAuthStore();
   const { questions, loadQuestions, saveQuizResult } = useDataStore();
   const { t, contentLang } = useTranslation();
@@ -113,7 +113,7 @@ export function ExamSimulatorPage() {
   // INTRO
   if (phase === 'intro') return (
     <div className="max-w-md mx-auto">
-      <button onClick={() => navigate(ROUTES.DASHBOARD)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-4">
+      <button onClick={() => goBack(ROUTES.DASHBOARD)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-4">
         <Icon name="arrow_forward" size={18} className="ltr:rotate-180" /><span className="text-sm">{t('exam.back')}</span>
       </button>
       <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden">

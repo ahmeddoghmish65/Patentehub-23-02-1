@@ -10,7 +10,7 @@ import { ROUTES } from '@/constants';
 import type { Question } from '@/db/database';
 
 export function QuizPage() {
-  const { navigate } = useLocaleNavigate();
+  const { navigate, goBack } = useLocaleNavigate();
   const { state } = useLocation();
   const lessonId = (state as { lessonId?: string } | null)?.lessonId;
   const sectionId = (state as { sectionId?: string } | null)?.sectionId;
@@ -95,7 +95,7 @@ export function QuizPage() {
 
   if (phase === 'intro') return (
     <div className="max-w-lg mx-auto">
-      <button onClick={() => navigate(ROUTES.LESSONS)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-6">
+      <button onClick={() => goBack(ROUTES.LESSONS)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-6">
         <Icon name="arrow_forward" size={20} /><span className="text-sm">{t('quiz_page.back')}</span>
       </button>
       <div className="bg-white rounded-2xl p-8 border border-surface-100 text-center">
@@ -162,7 +162,7 @@ export function QuizPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="flex items-center justify-between mb-6" dir="ltr">
-        <button onClick={() => navigate(ROUTES.LESSONS)} className="text-surface-400 hover:text-surface-600"><Icon name="close" size={24} /></button>
+        <button onClick={() => goBack(ROUTES.LESSONS)} className="text-surface-400 hover:text-surface-600"><Icon name="close" size={24} /></button>
         <div className="flex items-center gap-3">
           <span className="text-sm text-surface-500 flex items-center gap-1"><Icon name="timer" size={18} />{fmt(elapsed)}</span>
           <span className="text-sm font-semibold text-surface-700">{currentIndex + 1}/{quizQuestions.length}</span>

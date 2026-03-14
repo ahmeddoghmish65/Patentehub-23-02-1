@@ -28,7 +28,7 @@ type TabType = 'posts' | 'quizzes';
 type StatView = 'followers' | 'following' | null;
 
 export function UserProfilePage() {
-  const { navigate } = useLocaleNavigate();
+  const { navigate, goBack } = useLocaleNavigate();
   const { userId = '' } = useParams<{ userId: string }>();
   const { t, uiLang } = useTranslation();
   const { user } = useAuthStore();
@@ -188,7 +188,7 @@ export function UserProfilePage() {
     <div className="-mx-4 -mt-4 sm:-mx-6 sm:-mt-6 lg:-mx-8 lg:-mt-8 pb-20">
       {/* Header with back button */}
       <div className="sticky top-0 z-10 bg-white/90 backdrop-blur-sm border-b border-surface-100 flex items-center gap-3 px-4 py-3">
-        <button onClick={() => navigate(ROUTES.COMMUNITY)}
+        <button onClick={() => goBack(ROUTES.COMMUNITY)}
           className="w-9 h-9 rounded-xl hover:bg-surface-100 flex items-center justify-center transition-colors">
           <Icon name="arrow_back" size={20} className={cn('text-surface-700', uiLang === 'ar' ? 'rotate-180' : '')} />
         </button>

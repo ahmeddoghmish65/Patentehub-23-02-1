@@ -9,7 +9,7 @@ import { useTranslation } from '@/i18n';
 import { ROUTES, buildLessonUrl } from '@/constants';
 
 export function LessonDetailPage() {
-  const { navigate } = useLocaleNavigate();
+  const { navigate, goBack } = useLocaleNavigate();
   const { lessonId = '' } = useParams<{ lessonId: string }>();
   const { state } = useLocation();
   const sectionIdFromState = (state as { sectionId?: string } | null)?.sectionId;
@@ -38,7 +38,7 @@ export function LessonDetailPage() {
 
   return (
     <div>
-      <button onClick={() => navigate(ROUTES.LESSONS, { state: { sectionId: lesson.sectionId } })} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-6">
+      <button onClick={() => goBack(ROUTES.LESSONS)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-6">
         <Icon name="arrow_forward" size={20} className="ltr:rotate-180" />
         <span className="text-sm">{t('lessons_page.back_to_lessons')}</span>
       </button>
