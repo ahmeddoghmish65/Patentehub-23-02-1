@@ -89,6 +89,7 @@ export function ProfilePage() {
 
   // Stats modal
   const [activeStatView, setActiveStatView] = useState<null | 'posts' | 'quizzes' | 'followers' | 'following'>(null);
+  const [openBadgeId, setOpenBadgeId] = useState<string | null>(null);
   const [followersList, setFollowersList] = useState<{ id: string; name: string; avatar?: string; username?: string }[]>([]);
   const [followingList, setFollowingList] = useState<{ id: string; name: string; avatar?: string; username?: string }[]>([]);
   const [followingCount, setFollowingCount] = useState(0);
@@ -333,11 +334,11 @@ export function ProfilePage() {
   ];
 
   const allBadges = [
-    { id: 'newcomer', name: t('profile.badge_newcomer'), icon: 'waving_hand', color: 'bg-blue-500' },
-    { id: 'quiz_master', name: t('profile.badge_quiz_master'), icon: 'quiz', color: 'bg-purple-500' },
-    { id: 'perfect_score', name: t('profile.badge_perfect'), icon: 'star', color: 'bg-yellow-500' },
-    { id: 'week_streak', name: t('profile.badge_week_streak'), icon: 'local_fire_department', color: 'bg-orange-500' },
-    { id: 'level_5', name: t('profile.badge_level5'), icon: 'military_tech', color: 'bg-green-500' },
+    { id: 'newcomer', name: t('profile.badge_newcomer'), desc: t('profile.badge_newcomer_desc'), icon: 'waving_hand', color: 'bg-blue-500' },
+    { id: 'quiz_master', name: t('profile.badge_quiz_master'), desc: t('profile.badge_quiz_master_desc'), icon: 'quiz', color: 'bg-purple-500' },
+    { id: 'perfect_score', name: t('profile.badge_perfect'), desc: t('profile.badge_perfect_desc'), icon: 'star', color: 'bg-yellow-500' },
+    { id: 'week_streak', name: t('profile.badge_week_streak'), desc: t('profile.badge_week_streak_desc'), icon: 'local_fire_department', color: 'bg-orange-500' },
+    { id: 'level_5', name: t('profile.badge_level5'), desc: t('profile.badge_level5_desc'), icon: 'military_tech', color: 'bg-green-500' },
   ];
 
   // ==================== EDIT PAGE (not overlay - inline page) ====================
@@ -917,16 +918,39 @@ export function ProfilePage() {
         <div className="grid grid-cols-5 gap-2">
           {allBadges.map(badge => {
             const isEarned = progress.badges.includes(badge.id);
+            const isOpen = openBadgeId === badge.id;
             return (
-              <div key={badge.id} className={cn('rounded-xl p-2 text-center', isEarned ? 'opacity-100' : 'opacity-30')}>
+              <button
+                key={badge.id}
+                onClick={() => setOpenBadgeId(isOpen ? null : badge.id)}
+                className={cn('rounded-xl p-2 text-center transition-all duration-200 w-full', isEarned ? 'opacity-100' : 'opacity-30', isOpen ? 'bg-surface-50 ring-2 ring-primary-200' : 'hover:bg-surface-50')}
+              >
                 <div className={cn('w-10 h-10 mx-auto rounded-lg flex items-center justify-center mb-1', isEarned ? badge.color : 'bg-surface-200')}>
                   <Icon name={badge.icon} size={20} className={isEarned ? 'text-white' : 'text-surface-400'} filled />
                 </div>
                 <p className="text-[10px] font-semibold text-surface-700 leading-tight">{badge.name}</p>
-              </div>
+              </button>
             );
           })}
         </div>
+
+        {/* Badge description panel */}
+        {openBadgeId && (() => {
+          const badge = allBadges.find(b => b.id === openBadgeId);
+          if (!badge) return null;
+          const isEarned = progress.badges.includes(badge.id);
+          return (
+            <div className={cn('mt-3 p-3 rounded-xl border flex items-start gap-3', isEarned ? 'bg-primary-50 border-primary-100' : 'bg-surface-50 border-surface-100')}>
+              <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center shrink-0', isEarned ? badge.color : 'bg-surface-200')}>
+                <Icon name={badge.icon} size={16} className={isEarned ? 'text-white' : 'text-surface-400'} filled />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className={cn('text-xs font-bold mb-0.5', isEarned ? 'text-primary-700' : 'text-surface-600')}>{badge.name}</p>
+                <p className="text-[11px] text-surface-600 leading-relaxed">{badge.desc}</p>
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Account Management */}
