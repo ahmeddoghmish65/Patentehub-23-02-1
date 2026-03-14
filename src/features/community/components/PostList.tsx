@@ -19,6 +19,7 @@ interface PostListProps {
   onOpenDetail: (postId: string) => void;
   onOpenComments: (postId: string) => void;
   onSubmitComment: (postId: string) => void;
+  onUserClick: (userId: string) => void;
   onInsertMention: (username: string, text: string, setter: (t: string) => void) => void;
   onTextChange: (text: string, setter: (t: string) => void) => void;
 }
@@ -34,6 +35,7 @@ export const PostList = memo(function PostList({
   onOpenDetail,
   onOpenComments,
   onSubmitComment,
+  onUserClick,
   onInsertMention,
   onTextChange,
 }: PostListProps) {
@@ -68,6 +70,7 @@ export const PostList = memo(function PostList({
           onOpenDetail={onOpenDetail}
           onOpenComments={onOpenComments}
           onSubmitComment={onSubmitComment}
+          onUserClick={onUserClick}
           onInsertMention={onInsertMention}
           onTextChange={onTextChange}
         />

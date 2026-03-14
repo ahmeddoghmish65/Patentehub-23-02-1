@@ -29,6 +29,7 @@ interface PostCardProps {
   onOpenDetail: (postId: string) => void;
   onOpenComments: (postId: string) => void;
   onSubmitComment: (postId: string) => void;
+  onUserClick: (userId: string) => void;
   mentionSuggestions: CommunityUser[];
   onInsertMention: (username: string, text: string, setter: (t: string) => void) => void;
   onTextChange: (text: string, setter: (t: string) => void) => void;
@@ -44,6 +45,7 @@ export const PostCard = memo(function PostCard({
   onOpenDetail,
   onOpenComments,
   onSubmitComment,
+  onUserClick,
   mentionSuggestions,
   onInsertMention,
   onTextChange,
@@ -245,6 +247,7 @@ export const PostCard = memo(function PostCard({
             <div
               className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 overflow-hidden cursor-pointer"
               style={{ background: postLikerAvatar ? undefined : 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+              onClick={() => onUserClick(post.userId)}
             >
               {postLikerAvatar
                 ? <img src={postLikerAvatar} className="w-10 h-10 rounded-full object-cover" alt="" />
@@ -253,7 +256,7 @@ export const PostCard = memo(function PostCard({
             <div>
               <div className="flex items-center gap-1">
                 <span className="inline-flex items-center gap-1">
-                  <button className="font-semibold text-sm text-surface-900 hover:text-primary-600">{post.userName}</button>
+                  <button className="font-semibold text-sm text-surface-900 hover:text-primary-600" onClick={() => onUserClick(post.userId)}>{post.userName}</button>
                   {verifiedUsers[post.userId] && <VerifiedBadge size="xs" tooltip />}
                 </span>
                 {isQuiz && (
@@ -341,7 +344,6 @@ export const PostCard = memo(function PostCard({
         ) : (
           <>
             {renderPostText()}
-            {renderHashtagPills()}
           </>
         )}
 

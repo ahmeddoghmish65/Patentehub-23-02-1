@@ -146,6 +146,10 @@ export function CommunityPage() {
     if (found && found.id !== user?.id) navigate(`/profile/${found.id}`);
   }, [ui.allUsers, user, navigate]);
 
+  const handleUserClick = useCallback((userId: string) => {
+    if (userId !== user?.id) navigate(`/profile/${userId}`);
+  }, [user, navigate]);
+
   const handleHashtagClick = useCallback((tag: string) => {
     ui.setActiveHashtag(tag);
   }, []);
@@ -244,6 +248,7 @@ export function CommunityPage() {
           onOpenDetail={openPostDetail}
           onOpenComments={openComments}
           onSubmitComment={handleComment}
+          onUserClick={handleUserClick}
           onInsertMention={insertMention}
           onTextChange={handleTextChange}
         />
@@ -640,6 +645,7 @@ export function CommunityPage() {
         onOpenDetail={openPostDetail}
         onOpenComments={openComments}
         onSubmitComment={handleComment}
+        onUserClick={handleUserClick}
         onInsertMention={insertMention}
         onTextChange={handleTextChange}
       />
