@@ -18,7 +18,13 @@ export function UserProfilePage() {
   const { userId = '' } = useParams<{ userId: string }>();
   const { t, uiLang } = useTranslation();
   const { user } = useAuthStore();
-  const { posts } = useDataStore();
+  const { posts, loadPosts } = useDataStore();
+
+  // Ensure posts are loaded (e.g. when navigating directly to a profile URL)
+  useEffect(() => {
+    if (!useDataStore.getState().posts.length) loadPosts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [userData, setUserData] = useState<UserProfile | null>(null);
   const [tab, setTab] = useState<UserTabType>('posts');
