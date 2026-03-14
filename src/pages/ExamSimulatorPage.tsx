@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
-import { useAuthStore, useDataStore } from '@/store';
+import { useAuthStore, useDataStore, useUIStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
@@ -12,6 +12,7 @@ export function ExamSimulatorPage() {
   const { navigate, goBack } = useLocaleNavigate();
   const { user } = useAuthStore();
   const { questions, loadQuestions, saveQuizResult } = useDataStore();
+  const setHideBottomNav = useUIStore(s => s.setHideBottomNav);
   const { t, contentLang } = useTranslation();
   const lang = user?.settings.language || contentLang;
   const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';
@@ -30,6 +31,13 @@ export function ExamSimulatorPage() {
   const MAX_ERRORS = 3;
 
   useEffect(() => { loadQuestions(); }, [loadQuestions]);
+
+  // Hide bottom nav only during active exam, restore on unmount
+  useEffect(() => {
+    setHideBottomNav(phase === 'exam');
+    return () => setHideBottomNav(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
 
   // Only use active (non-archived, non-deleted) questions
   const activeQuestions = questions.filter(q => !q.status || q.status === 'active');

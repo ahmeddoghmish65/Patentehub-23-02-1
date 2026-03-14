@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
-import { useAuthStore, useDataStore } from '@/store';
+import { useAuthStore, useDataStore, useUIStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
@@ -16,6 +16,7 @@ export function QuizPage() {
   const sectionId = (state as { sectionId?: string } | null)?.sectionId;
   const { user } = useAuthStore();
   const { questions, loadQuestions, saveQuizResult, sections } = useDataStore();
+  const setHideBottomNav = useUIStore(s => s.setHideBottomNav);
   const { t, contentLang } = useTranslation();
   const lang = user?.settings.language || contentLang;
   const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';
@@ -32,6 +33,13 @@ export function QuizPage() {
   const section = sections.find(s => s.id === sectionId);
 
   useEffect(() => { loadQuestions(lessonId, sectionId); }, [loadQuestions, lessonId, sectionId]);
+
+  // Hide bottom nav only during active quiz, restore on unmount
+  useEffect(() => {
+    setHideBottomNav(phase === 'quiz');
+    return () => setHideBottomNav(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
 
   useEffect(() => {
     if (questions.length > 0) {

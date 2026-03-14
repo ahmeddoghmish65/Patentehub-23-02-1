@@ -19,4 +19,5 @@ export { useContentStore }   from './content.store';
 export { useCommunityStore } from './community.store';
 export { useProgressStore }  from './progress.store';
 export { useAdminStore }     from './admin.store';
+export { useUIStore }        from './ui.store';
 export { applyTheme }        from './helpers';

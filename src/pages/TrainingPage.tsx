@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useAuthStore, useDataStore } from '@/store';
+import { useAuthStore, useDataStore, useUIStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
@@ -12,6 +12,7 @@ type Phase = 'select' | 'training' | 'result';
 export function TrainingPage() {
   const { user } = useAuthStore();
   const { questions, signs, dictEntries, mistakes, loadQuestions, loadSigns, loadDictEntries, loadMistakes } = useDataStore();
+  const setHideBottomNav = useUIStore(s => s.setHideBottomNav);
   const { t, contentLang } = useTranslation();
   const lang = user?.settings.language || contentLang;
   const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';
@@ -31,6 +32,13 @@ export function TrainingPage() {
   const [userAnswer, setUserAnswer] = useState<boolean | null>(null);
 
   useEffect(() => { loadQuestions(); loadSigns(); loadDictEntries(); loadMistakes(); }, [loadQuestions, loadSigns, loadDictEntries, loadMistakes]);
+
+  // Hide bottom nav only during active training, restore on unmount
+  useEffect(() => {
+    setHideBottomNav(phase === 'training');
+    return () => setHideBottomNav(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
 
   // Timer for timed mode
   useEffect(() => {

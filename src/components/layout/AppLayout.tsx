@@ -45,11 +45,6 @@ export function AppLayout() {
   // Strip /:lang prefix from pathname before checking gated pages
   const pathWithoutLang = pathname.replace(`/${lang ?? 'ar'}`, '') || '/';
 
-  // Hide bottom nav padding on exam/quiz/training pages
-  const hideBottomNav = ['/exam', '/quiz', '/training'].some(p =>
-    pathWithoutLang === p || pathWithoutLang.startsWith(p + '/'),
-  );
-
   // Profile completion gate — block access to learning pages
   const needsProfileComplete =
     !user.profileComplete &&
@@ -74,7 +69,7 @@ export function AppLayout() {
   return (
     <div className="min-h-screen bg-surface-50">
       <Sidebar />
-      <main className={cn(!hideBottomNav && 'pb-20', 'lg:pb-0', mainMarginClass)}>
+      <main className={cn('pb-20 lg:pb-0', mainMarginClass)}>
         <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
           <Outlet />
         </div>

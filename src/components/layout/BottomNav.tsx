@@ -4,6 +4,7 @@ import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 import { ROUTES } from '@/constants';
 import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
+import { useUIStore } from '@/store';
 
 interface NavItem {
   path: string;
@@ -11,18 +12,13 @@ interface NavItem {
   label: string;
 }
 
-const HIDE_BOTTOM_NAV_PATHS = ['/exam', '/quiz', '/training'];
-
 export function BottomNav() {
   const { navigate, localePath } = useLocaleNavigate();
   const { pathname } = useLocation();
   const { t } = useTranslation();
+  const hideBottomNav = useUIStore(s => s.hideBottomNav);
 
-  // Hide bottom nav during exam, quiz, and training to prevent accidental exits
-  const shouldHide = HIDE_BOTTOM_NAV_PATHS.some(p =>
-    pathname.endsWith(p) || pathname.includes(p + '/'),
-  );
-  if (shouldHide) return null;
+  if (hideBottomNav) return null;
 
   const items: NavItem[] = [
     { path: ROUTES.DASHBOARD, icon: 'home', label: t('nav.home') },
