@@ -76,7 +76,7 @@ export function SegnaliStradaliInfoPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <>
+    <SeoLayout>
       <PageMeta
         title="Segnali Stradali Italiani – Guida Completa con Significati 2025"
         description="Guida completa ai segnali stradali italiani: pericolo, divieto, obbligo, indicazione e precedenza. Significati, esempi e spiegazioni per prepararsi all'esame della patente B. Studia gratis su Patente Hub."
@@ -118,7 +118,6 @@ export function SegnaliStradaliInfoPage() {
           },
         ]}
       />
-      <SeoLayout>
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-red-600 via-rose-600 to-pink-700 text-white py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -323,6 +322,5 @@ export function SegnaliStradaliInfoPage() {
         </div>
       </section>
     </SeoLayout>
-    </>
   );
 }

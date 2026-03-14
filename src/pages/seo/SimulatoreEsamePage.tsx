@@ -44,7 +44,7 @@ export function SimulatoreEsamePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <>
+    <SeoLayout>
       <PageMeta
         title="Simulatore Esame Patente B Online Gratis 2025 – 30 Domande Ufficiali"
         description="Simula l'esame teorico della patente B con il simulatore gratuito di Patente Hub. 30 domande ufficiali, timer 30 minuti, massimo 3 errori – identico all'esame reale. Preparati con la simulazione più fedele disponibile online."
@@ -76,7 +76,6 @@ export function SimulatoreEsamePage() {
           },
         ]}
       />
-      <SeoLayout>
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-700 text-white py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -317,6 +316,5 @@ export function SimulatoreEsamePage() {
         </div>
       </section>
     </SeoLayout>
-    </>
   );
 }
