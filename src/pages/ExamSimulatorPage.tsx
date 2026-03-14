@@ -434,16 +434,6 @@ export function ExamSimulatorPage() {
       {/* Question Card — fills remaining height */}
       <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden flex flex-col flex-1 min-h-0">
 
-        {/* Card header */}
-        <div className="bg-surface-50 px-5 py-3 flex items-center justify-between border-b border-surface-100 shrink-0">
-          <span className="text-sm font-bold text-surface-700">{t('exam.q_number')} {currentIndex + 1} {t('exam.of')} {examQuestions.length}</span>
-          <span className={cn('text-xs px-2 py-0.5 rounded-full font-medium',
-            q.difficulty === 'easy' ? 'bg-success-50 text-success-600' : q.difficulty === 'medium' ? 'bg-warning-50 text-warning-600' : 'bg-danger-50 text-danger-600'
-          )}>
-            {q.difficulty === 'easy' ? t('exam.difficulty_easy') : q.difficulty === 'medium' ? t('exam.difficulty_medium') : t('exam.difficulty_hard')}
-          </span>
-        </div>
-
         {/* Question content — grows to fill space, centered vertically */}
         <div className="p-5 sm:p-6 flex-1 overflow-auto flex flex-col justify-center">
           {q.image && <img src={q.image} alt="" className="w-full rounded-xl mb-4 max-h-48 object-contain bg-surface-50" />}
