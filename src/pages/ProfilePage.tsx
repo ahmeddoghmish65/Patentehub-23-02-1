@@ -328,9 +328,9 @@ export function ProfilePage() {
   };
 
   const languageOptions = [
-    { value: 'ar' as const, label: uiLang === 'it' ? 'Solo arabo' : 'العربية فقط' },
-    { value: 'it' as const, label: 'Solo italiano' },
-    { value: 'both' as const, label: 'العربية + Italiano' },
+    { value: 'it' as const, label: 'Solo italiano', comingSoon: false },
+    { value: 'both' as const, label: 'العربية + Italiano', comingSoon: false },
+    { value: 'en_it' as const, label: 'English + Italiano', comingSoon: true },
   ];
 
   const allBadges = [
@@ -1063,12 +1063,15 @@ export function ProfilePage() {
                 <p className="text-xs text-surface-400 mb-3">{t('profile.content_language_desc')}</p>
                 <div className="grid grid-cols-3 gap-2">
                   {languageOptions.map(opt => (
-                    <button key={opt.value} className={cn('flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all', settings.language === opt.value ? 'border-primary-500 bg-primary-50' : 'border-surface-100 hover:border-surface-200')} onClick={() => updateSettings({ language: opt.value })}>
-                      {opt.value === 'ar' && <span className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center text-lg font-bold text-orange-600">ع</span>}
+                    <button key={opt.value} disabled={opt.comingSoon} className={cn('relative flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all', opt.comingSoon ? 'border-surface-100 bg-surface-50 opacity-60 cursor-not-allowed' : settings.language === opt.value ? 'border-primary-500 bg-primary-50' : 'border-surface-100 hover:border-surface-200')} onClick={() => !opt.comingSoon && updateSettings({ language: opt.value })}>
+                      {opt.comingSoon && (
+                        <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-amber-400 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap">{uiLang === 'it' ? 'Presto' : 'قريباً'}</span>
+                      )}
                       {opt.value === 'it' && <span className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600" dir="ltr">IT</span>}
                       {opt.value === 'both' && <Icon name="translate" size={24} className={settings.language === opt.value ? 'text-primary-600' : 'text-surface-500'} />}
+                      {opt.value === 'en_it' && <span className="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center text-[10px] font-bold text-green-600" dir="ltr">EN</span>}
                       <span className={cn('text-xs font-medium text-center leading-tight', settings.language === opt.value ? 'text-primary-700' : 'text-surface-600')}>{opt.label}</span>
-                      {settings.language === opt.value && <Icon name="check_circle" size={16} className="text-primary-500" filled />}
+                      {settings.language === opt.value && !opt.comingSoon && <Icon name="check_circle" size={16} className="text-primary-500" filled />}
                     </button>
                   ))}
                 </div>

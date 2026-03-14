@@ -69,7 +69,7 @@ export interface UserProgress {
 }
 
 export interface UserSettings {
-  language: 'ar' | 'it' | 'both';
+  language: 'ar' | 'it' | 'both' | 'en_it';
   theme: 'light' | 'dark';
   notifications: boolean;
   soundEffects: boolean;
