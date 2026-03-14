@@ -191,52 +191,52 @@ export function ExamSimulatorPage() {
     return (
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden">
-          <div className="p-8 text-center">
-            <div className={cn('w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6', passed ? 'bg-success-50' : 'bg-danger-50')}>
-              <Icon name={passed ? 'celebration' : 'sentiment_dissatisfied'} size={48} className={passed ? 'text-success-500' : 'text-danger-500'} filled />
-            </div>
-            <h1 className="text-3xl font-bold text-surface-900 mb-1">{passed ? t('exam.passed') : t('exam.failed')}</h1>
-            <p className="text-lg text-surface-600 mb-1">{passed ? 'IDONEO' : 'NON IDONEO'}</p>
-            <p className="text-surface-500 text-sm mb-6">
-              {passed
-                ? `${errors} ${errors === 1 ? t('exam.error_singular') : t('exam.errors_plural')}`
-                : `${errors} ${t('exam.errors_plural')} — ${t('exam.errors_allowed')} ${MAX_ERRORS}`}
-            </p>
-
-            {/* Score circle */}
-            <div className="relative w-36 h-36 mx-auto mb-6">
-              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="42" fill="none" stroke="#e2e8f0" strokeWidth="8" />
-                <circle cx="50" cy="50" r="42" fill="none" stroke={passed ? '#22c55e' : '#ef4444'} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${score * 2.64} ${264 - score * 2.64}`} />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className={cn('text-3xl font-bold', passed ? 'text-success-500' : 'text-danger-500')}>{score}%</span>
+          <div className="p-5">
+            {/* Top: icon+status and score circle side by side */}
+            <div className="flex items-center justify-between gap-4 mb-4">
+              <div className="flex flex-col items-center gap-1.5 flex-1">
+                <div className={cn('w-14 h-14 rounded-full flex items-center justify-center', passed ? 'bg-success-50' : 'bg-danger-50')}>
+                  <Icon name={passed ? 'celebration' : 'sentiment_dissatisfied'} size={30} className={passed ? 'text-success-500' : 'text-danger-500'} filled />
+                </div>
+                <h1 className={cn('text-2xl font-bold', passed ? 'text-success-600' : 'text-danger-600')}>{passed ? t('exam.passed') : t('exam.failed')}</h1>
+                <p className="text-sm text-surface-500">{passed ? 'IDONEO' : 'NON IDONEO'}</p>
+              </div>
+              {/* Score circle */}
+              <div className="relative w-28 h-28 shrink-0">
+                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="42" fill="none" stroke="#e2e8f0" strokeWidth="9" />
+                  <circle cx="50" cy="50" r="42" fill="none" stroke={passed ? '#22c55e' : '#ef4444'} strokeWidth="9" strokeLinecap="round" strokeDasharray={`${score * 2.64} ${264 - score * 2.64}`} />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className={cn('text-2xl font-bold leading-none', passed ? 'text-success-500' : 'text-danger-500')}>{score}%</span>
+                  <span className="text-[10px] text-surface-400 mt-0.5">{t('exam.score_label') || 'Score'}</span>
+                </div>
               </div>
             </div>
 
-            {/* Error counter - only shown here in results */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-              <div className="bg-success-50 rounded-xl p-3 border border-success-100">
-                <p className="text-xl font-bold text-success-600">{correctCount}</p>
-                <p className="text-[10px] text-success-500">{t('exam.correct_label')}</p>
+            {/* Stats row */}
+            <div className="grid grid-cols-4 gap-2 mb-3">
+              <div className="bg-success-50 rounded-xl p-2.5 border border-success-100 text-center">
+                <p className="text-lg font-bold text-success-600 leading-none">{correctCount}</p>
+                <p className="text-[10px] text-success-500 mt-0.5">{t('exam.correct_label')}</p>
               </div>
-              <div className="bg-danger-50 rounded-xl p-3 border border-danger-100">
-                <p className="text-xl font-bold text-danger-600">{errors}</p>
-                <p className="text-[10px] text-danger-500">{t('exam.errors_label')}</p>
+              <div className="bg-danger-50 rounded-xl p-2.5 border border-danger-100 text-center">
+                <p className="text-lg font-bold text-danger-600 leading-none">{errors}</p>
+                <p className="text-[10px] text-danger-500 mt-0.5">{t('exam.errors_label')}</p>
               </div>
-              <div className="bg-surface-50 rounded-xl p-3 border border-surface-100">
-                <p className="text-xl font-bold text-surface-600">{unanswered}</p>
-                <p className="text-[10px] text-surface-500">{t('exam.unanswered_label')}</p>
+              <div className="bg-surface-50 rounded-xl p-2.5 border border-surface-100 text-center">
+                <p className="text-lg font-bold text-surface-600 leading-none">{unanswered}</p>
+                <p className="text-[10px] text-surface-500 mt-0.5">{t('exam.unanswered_label')}</p>
               </div>
-              <div className="bg-blue-50 rounded-xl p-3 border border-blue-100">
-                <p className="text-xl font-bold text-blue-600">{fmt(elapsed)}</p>
-                <p className="text-[10px] text-blue-500">{t('exam.time_used')}</p>
+              <div className="bg-blue-50 rounded-xl p-2.5 border border-blue-100 text-center">
+                <p className="text-lg font-bold text-blue-600 leading-none">{fmt(elapsed)}</p>
+                <p className="text-[10px] text-blue-500 mt-0.5">{t('exam.time_used')}</p>
               </div>
             </div>
 
             {/* Error detail bar */}
-            <div className={cn('rounded-xl p-4 mb-6 flex items-center justify-center gap-3', passed ? 'bg-success-50 border border-success-100' : 'bg-danger-50 border border-danger-100')}>
-              <Icon name={passed ? 'check_circle' : 'error'} size={24} className={passed ? 'text-success-500' : 'text-danger-500'} filled />
+            <div className={cn('rounded-xl p-3 mb-4 flex items-center gap-3', passed ? 'bg-success-50 border border-success-100' : 'bg-danger-50 border border-danger-100')}>
+              <Icon name={passed ? 'check_circle' : 'error'} size={20} className={passed ? 'text-success-500' : 'text-danger-500'} filled />
               <div className="text-start">
                 <p className={cn('text-sm font-bold', passed ? 'text-success-700' : 'text-danger-700')}>
                   {t('exam.errors_of')} {errors} / {MAX_ERRORS} {t('exam.errors_allowed')}
@@ -249,12 +249,14 @@ export function ExamSimulatorPage() {
               </div>
             </div>
 
-            <div className="space-y-3">
-              <Button fullWidth variant="secondary" onClick={() => setPhase('review')} icon={<Icon name="visibility" size={20} />}>
+            <div className="space-y-2">
+              <Button fullWidth variant="secondary" onClick={() => setPhase('review')} icon={<Icon name="visibility" size={18} />}>
                 {t('exam.review_btn')}
               </Button>
-              <Button fullWidth onClick={start} icon={<Icon name="replay" size={20} />}>{t('exam.restart_btn')}</Button>
-              <Button fullWidth variant="outline" onClick={() => navigate(ROUTES.DASHBOARD)}>{t('exam.back_home')}</Button>
+              <div className="grid grid-cols-2 gap-2">
+                <Button fullWidth onClick={start} icon={<Icon name="replay" size={18} />}>{t('exam.restart_btn')}</Button>
+                <Button fullWidth variant="outline" onClick={() => navigate(ROUTES.DASHBOARD)}>{t('exam.back_home')}</Button>
+              </div>
             </div>
           </div>
         </div>
