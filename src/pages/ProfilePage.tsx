@@ -101,8 +101,17 @@ export function ProfilePage() {
   const fileRef = useRef<HTMLInputElement>(null);
   const editFileRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => { loadPosts(); }, [loadPosts]);
-  useEffect(() => { loadMistakes(); loadQuestions(); loadQuizHistory(); loadLessons(); }, [loadMistakes, loadQuestions, loadQuizHistory, loadLessons]);
+  useEffect(() => {
+    // Skip loading if data already exists in the store to avoid heavy re-fetching
+    // on every ProfilePage mount, which blocks the JS thread and causes lag/swallowed clicks.
+    const s = useDataStore.getState();
+    if (!s.posts.length) loadPosts();
+    if (!s.mistakes.length) loadMistakes();
+    if (!s.questions.length) loadQuestions();
+    if (!s.quizHistory.length) loadQuizHistory();
+    if (!s.lessons.length) loadLessons();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!user) return;
