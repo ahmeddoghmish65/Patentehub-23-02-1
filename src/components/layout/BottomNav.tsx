@@ -11,10 +11,18 @@ interface NavItem {
   label: string;
 }
 
+const HIDE_BOTTOM_NAV_PATHS = ['/exam', '/quiz', '/training'];
+
 export function BottomNav() {
   const { navigate, localePath } = useLocaleNavigate();
   const { pathname } = useLocation();
   const { t } = useTranslation();
+
+  // Hide bottom nav during exam, quiz, and training to prevent accidental exits
+  const shouldHide = HIDE_BOTTOM_NAV_PATHS.some(p =>
+    pathname.endsWith(p) || pathname.includes(p + '/'),
+  );
+  if (shouldHide) return null;
 
   const items: NavItem[] = [
     { path: ROUTES.DASHBOARD, icon: 'home', label: t('nav.home') },
