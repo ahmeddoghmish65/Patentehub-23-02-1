@@ -447,6 +447,7 @@ export const PostCard = memo(function PostCard({
           onOpenDetail={onOpenDetail}
           onMentionClick={onMentionClick}
           onHashtagClick={onHashtagClick}
+          onUserClick={onUserClick}
           onSubmitComment={onSubmitComment}
           onInsertMention={onInsertMention}
           onTextChange={onTextChange}

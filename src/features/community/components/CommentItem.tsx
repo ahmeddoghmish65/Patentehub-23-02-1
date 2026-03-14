@@ -23,6 +23,7 @@ interface CommentItemProps {
   onOpenDetail: (postId: string) => void;
   onMentionClick: (username: string) => void;
   onHashtagClick: (tag: string) => void;
+  onUserClick: (userId: string) => void;
 }
 
 export const CommentItem = memo(function CommentItem({
@@ -33,6 +34,7 @@ export const CommentItem = memo(function CommentItem({
   onOpenDetail,
   onMentionClick,
   onHashtagClick,
+  onUserClick,
 }: CommentItemProps) {
   const { t, uiLang } = useTranslation();
   const { user } = useAuthStore();
@@ -67,7 +69,7 @@ export const CommentItem = memo(function CommentItem({
         <div className="flex-1 bg-white rounded-xl px-3 py-2">
           <div className="flex items-center justify-between">
             <span className="inline-flex items-center gap-1">
-              <button className="text-xs font-semibold text-surface-800 hover:text-primary-600">{c.userName}</button>
+              <button className="text-xs font-semibold text-surface-800 hover:text-primary-600" onClick={() => onUserClick(c.userId)}>{c.userName}</button>
               {verifiedUsers[c.userId] && <VerifiedBadge size="xs" tooltip />}
             </span>
             <span className="text-[10px] text-surface-400">{relativeTime(c.createdAt, uiLang)}</span>
@@ -119,7 +121,7 @@ export const CommentItem = memo(function CommentItem({
               <div className="flex-1 bg-white rounded-xl px-3 py-2">
                 <div className="flex items-center gap-1">
                   <span className="inline-flex items-center gap-1">
-                    <button className="text-xs font-semibold text-surface-800 hover:text-primary-600">{r.userName}</button>
+                    <button className="text-xs font-semibold text-surface-800 hover:text-primary-600" onClick={() => onUserClick(r.userId)}>{r.userName}</button>
                     {verifiedUsers[r.userId] && <VerifiedBadge size="xs" tooltip />}
                   </span>
                   <Icon name="arrow_back" size={10} className="text-surface-300" />

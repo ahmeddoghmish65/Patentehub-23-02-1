@@ -5,7 +5,7 @@
  * All business logic lives in hooks; all rendering lives in components.
  */
 import { useEffect, useRef, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { useAuthStore } from '@/store/auth.store';
 import { useDataStore } from '@/store';          // backward-compat community notifs
@@ -39,7 +39,8 @@ import { TrendingHashtags }    from './components/TrendingHashtags';
 export function CommunityPage() {
   const { navigate }  = useLocaleNavigate();
   const { state }     = useLocation();
-  const openPostId    = (state as { openPostId?: string } | null)?.openPostId;
+  const { postId: postIdParam } = useParams<{ postId: string }>();
+  const openPostId    = postIdParam || (state as { openPostId?: string } | null)?.openPostId;
   const { t, uiLang } = useTranslation();
   const { user }      = useAuthStore();
 
@@ -55,7 +56,17 @@ export function CommunityPage() {
 
   // ── Hooks ──────────────────────────────────────────────────────────────────
   const { posts, allPosts, likes, postLikers, postSortMode, activeHashtag } = usePosts();
-  const { openComments, openPostDetail, closeDetail, detailPostId } = useComments();
+  const { openComments, openPostDetail: _openPostDetail, closeDetail: _closeDetail, detailPostId } = useComments();
+
+  const openPostDetail = useCallback(async (postId: string) => {
+    await _openPostDetail(postId);
+    navigate(`/community/post/${postId}`);
+  }, [_openPostDetail, navigate]);
+
+  const closeDetail = useCallback(() => {
+    _closeDetail();
+    navigate('/community');
+  }, [_closeDetail, navigate]);
   const { mentionSuggestions, hashtagSuggestions, handleTextChange, insertMention, insertHashtag, sendMentionNotifs } = useMentionParser();
   useTrendingHashtags(allPosts.length);
 

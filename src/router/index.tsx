@@ -170,6 +170,7 @@ export const router = createBrowserRouter([
               { path: 'dictionary', element: <SuspensePage><DictionaryPage /></SuspensePage> },
               { path: 'training', element: <SuspensePage><TrainingPage /></SuspensePage> },
               { path: 'community', element: <SuspensePage><CommunityPage /></SuspensePage> },
+              { path: 'community/post/:postId', element: <SuspensePage><CommunityPage /></SuspensePage> },
               { path: 'profile', element: <SuspensePage><ProfilePage /></SuspensePage> },
               { path: 'profile/:username', element: <SuspensePage><UserProfilePage /></SuspensePage> },
               { path: 'mistakes', element: <SuspensePage><MistakesPage /></SuspensePage> },

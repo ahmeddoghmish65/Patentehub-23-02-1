@@ -2,7 +2,7 @@
  * PostActions.tsx
  * Like / comment / bookmark action bar shown below a post.
  */
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
@@ -34,6 +34,16 @@ export const PostActions = memo(function PostActions({
   onShowLikers,
 }: PostActionsProps) {
   const { t } = useTranslation();
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = () => {
+    const lang = window.location.pathname.split('/')[1] || 'ar';
+    const url = `${window.location.origin}/${lang}/community/post/${post.id}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   return (
     <div className="border-t border-surface-100 px-5 py-3 flex items-center gap-3">
@@ -96,6 +106,15 @@ export const PostActions = memo(function PostActions({
         title={saved ? t('community.unsave_post') : t('community.save_post')}
       >
         <Icon name="bookmark" size={20} filled={saved} />
+      </button>
+
+      {/* Share / copy link */}
+      <button
+        className={cn('flex items-center gap-1 text-sm transition-colors', copied ? 'text-success-500' : 'text-surface-400 hover:text-primary-500')}
+        onClick={handleShare}
+        title={t('community.copy_link') || 'Copy link'}
+      >
+        <Icon name={copied ? 'check' : 'link'} size={18} />
       </button>
 
       {/* View all comments link */}

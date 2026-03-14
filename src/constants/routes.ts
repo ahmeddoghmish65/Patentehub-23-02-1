@@ -21,6 +21,7 @@ export const ROUTES = {
   DICTIONARY: '/dictionary',
   TRAINING: '/training',
   COMMUNITY: '/community',
+  COMMUNITY_POST: '/community/post/:postId',
   PROFILE: '/profile',
   USER_PROFILE: '/profile/:username',
   MISTAKES: '/mistakes',
@@ -38,3 +39,7 @@ export const buildLessonUrl = (lessonId: string) =>
 /** Helper to build user-profile URL using username */
 export const buildUserProfileUrl = (username: string) =>
   `/profile/${username}`;
+
+/** Helper to build a direct post URL */
+export const buildPostUrl = (postId: string) =>
+  `/community/post/${postId}`;

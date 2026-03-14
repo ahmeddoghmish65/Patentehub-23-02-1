@@ -19,6 +19,7 @@ interface CommentListProps {
   onOpenDetail: (postId: string) => void;
   onMentionClick: (username: string) => void;
   onHashtagClick: (tag: string) => void;
+  onUserClick: (userId: string) => void;
   onSubmitComment: (postId: string) => void;
   onInsertMention: (username: string, currentText: string, setter: (t: string) => void) => void;
   onTextChange: (text: string, setter: (t: string) => void) => void;
@@ -33,6 +34,7 @@ export const CommentList = memo(function CommentList({
   onOpenDetail,
   onMentionClick,
   onHashtagClick,
+  onUserClick,
   onSubmitComment,
   onInsertMention,
   onTextChange,
@@ -67,6 +69,7 @@ export const CommentList = memo(function CommentList({
           onOpenDetail={onOpenDetail}
           onMentionClick={onMentionClick}
           onHashtagClick={onHashtagClick}
+          onUserClick={onUserClick}
         />
       ))}
 
