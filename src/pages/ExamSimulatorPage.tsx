@@ -338,7 +338,7 @@ export function ExamSimulatorPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto flex flex-col" style={{ height: 'calc(100dvh - 2rem)' }}>
       {/* Submit warning modal */}
       {showSubmitWarning && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -366,7 +366,7 @@ export function ExamSimulatorPage() {
       )}
 
       {/* Exam Header */}
-      <div className="bg-white rounded-xl border border-surface-100 p-3 mb-3">
+      <div className="bg-white rounded-xl border border-surface-100 p-3 mb-3 shrink-0">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-bold text-surface-700">{t('exam.simulator_label')}</span>
           <button
@@ -399,7 +399,7 @@ export function ExamSimulatorPage() {
 
       {/* Question Navigation Grid */}
       {showGrid && (
-        <div className="bg-white rounded-xl border border-surface-100 p-4 mb-3">
+        <div className="bg-white rounded-xl border border-surface-100 p-4 mb-3 shrink-0">
           <p className="text-xs font-semibold text-surface-600 mb-3">{t('exam.go_to_q')}</p>
           <div className="grid grid-cols-6 sm:grid-cols-10 gap-1.5">
             {examQuestions.map((_, i) => {
@@ -421,12 +421,12 @@ export function ExamSimulatorPage() {
       )}
 
       {/* Progress bar */}
-      <div className="w-full bg-surface-100 rounded-full h-1.5 mb-3">
+      <div className="w-full bg-surface-100 rounded-full h-1.5 mb-3 shrink-0">
         <div className="bg-primary-500 rounded-full h-1.5 transition-all duration-300" style={{ width: `${((currentIndex + 1) / examQuestions.length) * 100}%` }} />
       </div>
 
-      {/* Question Card */}
-      <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden flex flex-col">
+      {/* Question Card — fills remaining height */}
+      <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden flex flex-col flex-1 min-h-0">
 
         {/* Card header */}
         <div className="bg-surface-50 px-5 py-3 flex items-center justify-between border-b border-surface-100 shrink-0">
@@ -438,8 +438,8 @@ export function ExamSimulatorPage() {
           </span>
         </div>
 
-        {/* Question content */}
-        <div className="p-5 sm:p-6">
+        {/* Question content — grows to fill space */}
+        <div className="p-5 sm:p-6 flex-1 overflow-auto">
           {q.image && <img src={q.image} alt="" className="w-full rounded-xl mb-4 max-h-48 object-contain bg-surface-50" />}
           {lang === 'ar' && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="rtl">{q.questionAr}</h2>}
           {lang === 'it' && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="ltr">{q.questionIt}</h2>}

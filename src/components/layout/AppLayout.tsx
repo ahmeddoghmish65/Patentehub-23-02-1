@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useParams } from 'react-router-dom';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useUIStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Sidebar } from './Sidebar';
 import { BottomNav } from './BottomNav';
@@ -14,6 +14,7 @@ import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 
 export function AppLayout() {
   const { user } = useAuthStore();
+  const hideBottomNav = useUIStore(s => s.hideBottomNav);
   const { dir, t } = useTranslation();
   const { pathname } = useLocation();
   const { lang } = useParams<{ lang?: string }>();
@@ -69,7 +70,7 @@ export function AppLayout() {
   return (
     <div className="min-h-screen bg-surface-50">
       <Sidebar />
-      <main className={cn('pb-20 lg:pb-0', mainMarginClass)}>
+      <main className={cn(hideBottomNav ? '' : 'pb-20', 'lg:pb-0', mainMarginClass)}>
         <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8">
           <Outlet />
         </div>
