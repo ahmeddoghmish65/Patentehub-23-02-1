@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore, useUIStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
@@ -23,8 +23,8 @@ export function ExamSimulatorPage() {
   const [phase, setPhase] = useState<'intro' | 'exam' | 'review' | 'result'>('intro');
   const [startTime, setStartTime] = useState(0);
   const [elapsed, setElapsed] = useState(0);
-  const [showGrid, setShowGrid] = useState(false);
   const [showSubmitWarning, setShowSubmitWarning] = useState(false);
+  const navScrollRef = useRef<HTMLDivElement>(null);
 
   const EXAM_QUESTIONS = 30;
   const EXAM_TIME = 30 * 60;
@@ -68,6 +68,14 @@ export function ExamSimulatorPage() {
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
   }, [phase, currentIndex]);
+
+  // Auto-scroll horizontal nav to keep current question button visible
+  useEffect(() => {
+    if (navScrollRef.current) {
+      const btn = navScrollRef.current.children[currentIndex] as HTMLElement;
+      if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }, [currentIndex]);
 
   const start = useCallback(() => {
     const shuffled = [...activeQuestions].sort(() => Math.random() - 0.5).slice(0, EXAM_QUESTIONS);
@@ -391,34 +399,37 @@ export function ExamSimulatorPage() {
           <div className="text-xs font-semibold text-surface-500 bg-surface-50 px-2.5 py-1.5 rounded-lg">
             {answeredCount}/{examQuestions.length} {t('exam.answered_label')}
           </div>
-          <button className="p-1.5 rounded-lg hover:bg-surface-100 text-surface-500" onClick={() => setShowGrid(!showGrid)}>
-            <Icon name="grid_view" size={20} />
-          </button>
         </div>
       </div>
 
-      {/* Question Navigation Grid */}
-      {showGrid && (
-        <div className="bg-white rounded-xl border border-surface-100 p-4 mb-3 shrink-0">
-          <p className="text-xs font-semibold text-surface-600 mb-3">{t('exam.go_to_q')}</p>
-          <div className="grid grid-cols-6 sm:grid-cols-10 gap-1.5">
-            {examQuestions.map((_, i) => {
-              const isAnswered = answers[i] !== undefined;
-              const isCurrent = i === currentIndex;
-              return (
-                <button key={i}
-                  className={cn('h-8 rounded-lg text-xs font-bold transition-all flex items-center justify-center',
-                    isCurrent ? 'bg-primary-500 text-white ring-2 ring-primary-300' :
-                    isAnswered ? 'bg-primary-50 text-primary-600 border border-primary-200' :
-                    'bg-surface-50 text-surface-500 hover:bg-surface-100'
-                  )}
-                  onClick={() => goToQuestion(i)}
-                >{i + 1}</button>
-              );
-            })}
-          </div>
+      {/* Question Navigation — Horizontal Scroll Tab Bar */}
+      <div className="bg-white rounded-xl border border-surface-100 mb-3 shrink-0 overflow-hidden">
+        <div
+          ref={navScrollRef}
+          className="flex gap-2 overflow-x-auto scrollbar-hide px-3 py-2.5 snap-x snap-mandatory"
+        >
+          {examQuestions.map((_, i) => {
+            const isAnswered = answers[i] !== undefined;
+            const isCurrent = i === currentIndex;
+            return (
+              <button
+                key={i}
+                className={cn(
+                  'flex-shrink-0 w-9 h-9 rounded-xl text-xs font-bold transition-all flex items-center justify-center snap-center',
+                  isCurrent
+                    ? 'bg-primary-500 text-white ring-2 ring-primary-300 scale-110'
+                    : isAnswered
+                    ? 'bg-primary-50 text-primary-600 border border-primary-200'
+                    : 'bg-surface-50 text-surface-500 hover:bg-surface-100'
+                )}
+                onClick={() => goToQuestion(i)}
+              >
+                {i + 1}
+              </button>
+            );
+          })}
         </div>
-      )}
+      </div>
 
       {/* Progress bar */}
       <div className="w-full bg-surface-100 rounded-full h-1.5 mb-3 shrink-0">
