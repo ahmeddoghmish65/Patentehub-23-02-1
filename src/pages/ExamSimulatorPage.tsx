@@ -449,8 +449,8 @@ export function ExamSimulatorPage() {
           </span>
         </div>
 
-        {/* Question content — grows to fill space */}
-        <div className="p-5 sm:p-6 flex-1 overflow-auto">
+        {/* Question content — grows to fill space, centered vertically */}
+        <div className="p-5 sm:p-6 flex-1 overflow-auto flex flex-col justify-center">
           {q.image && <img src={q.image} alt="" className="w-full rounded-xl mb-4 max-h-48 object-contain bg-surface-50" />}
           {lang === 'ar' && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="rtl">{q.questionAr}</h2>}
           {lang === 'it' && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="ltr">{q.questionIt}</h2>}
