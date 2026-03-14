@@ -5,7 +5,7 @@
  */
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { usePageMeta } from '@/hooks/usePageMeta';
+import { PageMeta } from '@/hooks/usePageMeta';
 import { SeoLayout } from './SeoLayout';
 
 const CANONICAL = 'https://patentehub.com/it/errori-comuni-esame-patente';
@@ -103,51 +103,49 @@ const FAQ_ITEMS = [
 export function ErroriComuniPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  usePageMeta({
-    title: 'Errori Comuni Esame Patente B – Come Evitarli e Superare il Test',
-    description:
-      'Scopri gli 8 errori più comuni nell\'esame teorico patente B e come evitarli. Guida pratica su segnali, precedenze, velocità, alcol e tecnica d\'esame. Preparati con i consigli di chi ha già superato l\'esame.',
-    canonical: CANONICAL,
-    jsonLd: [
-      {
-        '@context': 'https://schema.org',
-        '@type': 'WebPage',
-        name: 'Errori Comuni Esame Patente B – Patente Hub',
-        url: CANONICAL,
-        description: 'Gli errori più comuni nell\'esame patente B e come evitarli.',
-        inLanguage: 'it',
-        breadcrumb: {
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://patentehub.com/it' },
-            { '@type': 'ListItem', position: 2, name: 'Errori Comuni Esame Patente', item: CANONICAL },
-          ],
-        },
-      },
-      {
-        '@context': 'https://schema.org',
-        '@type': 'Article',
-        headline: 'Errori Comuni Esame Patente B – Come Evitarli',
-        description: 'Guida agli errori più frequenti nell\'esame teorico della patente B in Italia.',
-        author: { '@type': 'Organization', name: 'Patente Hub' },
-        publisher: { '@type': 'Organization', name: 'Patente Hub', url: 'https://patentehub.com' },
-        inLanguage: 'it',
-        url: CANONICAL,
-      },
-      {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        mainEntity: FAQ_ITEMS.map(({ q, a }) => ({
-          '@type': 'Question',
-          name: q,
-          acceptedAnswer: { '@type': 'Answer', text: a },
-        })),
-      },
-    ],
-  });
-
   return (
     <SeoLayout>
+      <PageMeta
+        title="Errori Comuni Esame Patente B – Come Evitarli e Superare il Test"
+        description="Scopri gli 8 errori più comuni nell'esame teorico patente B e come evitarli. Guida pratica su segnali, precedenze, velocità, alcol e tecnica d'esame. Preparati con i consigli di chi ha già superato l'esame."
+        canonical={CANONICAL}
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: 'Errori Comuni Esame Patente B – Patente Hub',
+            url: CANONICAL,
+            description: 'Gli errori più comuni nell\'esame patente B e come evitarli.',
+            inLanguage: 'it',
+            breadcrumb: {
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://patentehub.com/it' },
+                { '@type': 'ListItem', position: 2, name: 'Errori Comuni Esame Patente', item: CANONICAL },
+              ],
+            },
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            headline: 'Errori Comuni Esame Patente B – Come Evitarli',
+            description: 'Guida agli errori più frequenti nell\'esame teorico della patente B in Italia.',
+            author: { '@type': 'Organization', name: 'Patente Hub' },
+            publisher: { '@type': 'Organization', name: 'Patente Hub', url: 'https://patentehub.com' },
+            inLanguage: 'it',
+            url: CANONICAL,
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: FAQ_ITEMS.map(({ q, a }) => ({
+              '@type': 'Question',
+              name: q,
+              acceptedAnswer: { '@type': 'Answer', text: a },
+            })),
+          },
+        ]}
+      />
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-orange-600 via-amber-600 to-yellow-600 text-white py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">

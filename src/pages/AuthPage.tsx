@@ -19,7 +19,7 @@ import {
   type LoginFormValues, type RegisterFormValues,
   type ResetEmailFormValues, type ResetCodeFormValues, type ResetPasswordFormValues,
 } from '@/lib/validations/auth.schemas';
-import { usePageMeta } from '@/hooks/usePageMeta';
+import { PageMeta } from '@/hooks/usePageMeta';
 
 interface AuthPageProps {
   mode: 'login' | 'register' | 'reset-password';
@@ -32,20 +32,20 @@ export function AuthPage({ mode }: AuthPageProps) {
   const location = useLocation();
   const from = (location.state as { from?: { pathname: string } })?.from?.pathname ?? ROUTES.DASHBOARD;
 
-  usePageMeta({
-    title: mode === 'login'
-      ? 'Accedi – Patente Hub'
-      : mode === 'register'
-        ? 'Registrati Gratis – Patente Hub'
-        : 'Recupera Password – Patente Hub',
-    description: mode === 'register'
-      ? 'Crea un account gratuito su Patente Hub e inizia a prepararti per l\'esame della patente B. Quiz, segnali stradali e simulazioni in italiano e arabo.'
-      : 'Accedi a Patente Hub per continuare la preparazione all\'esame della patente B.',
-    noIndex: true,
-  });
-
   return (
-    <div className="min-h-screen flex" dir={dir}>
+    <>
+      <PageMeta
+        title={mode === 'login'
+          ? 'Accedi – Patente Hub'
+          : mode === 'register'
+            ? 'Registrati Gratis – Patente Hub'
+            : 'Recupera Password – Patente Hub'}
+        description={mode === 'register'
+          ? 'Crea un account gratuito su Patente Hub e inizia a prepararti per l\'esame della patente B. Quiz, segnali stradali e simulazioni in italiano e arabo.'
+          : 'Accedi a Patente Hub per continuare la preparazione all\'esame della patente B.'}
+        noIndex={true}
+      />
+      <div className="min-h-screen flex" dir={dir}>
       <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-md">
           <button onClick={() => navigate(ROUTES.LANDING)} className="flex items-center gap-2.5 mb-8 group">
@@ -93,6 +93,7 @@ export function AuthPage({ mode }: AuthPageProps) {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

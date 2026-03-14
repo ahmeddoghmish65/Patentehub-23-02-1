@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Toaster } from 'sonner';
+import { HelmetProvider } from 'react-helmet-async';
 import './index.css';
 import { App } from './App';
 import { getSavedTheme } from '@/utils/cookieManager';
@@ -22,6 +23,7 @@ if (savedTheme) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <HelmetProvider>
     <LanguageProvider>
       <App />
       {/* Global toast notification system */}
@@ -38,5 +40,6 @@ createRoot(document.getElementById('root')!).render(
         }}
       />
     </LanguageProvider>
+    </HelmetProvider>
   </StrictMode>,
 );

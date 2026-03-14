@@ -5,7 +5,7 @@
  */
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { usePageMeta } from '@/hooks/usePageMeta';
+import { PageMeta } from '@/hooks/usePageMeta';
 import { SeoLayout } from './SeoLayout';
 
 const CANONICAL = 'https://patentehub.com/it/quiz-patente-b';
@@ -45,57 +45,55 @@ const TOPICS = [
 export function QuizPatenteBPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  usePageMeta({
-    title: 'Quiz Patente B Gratis 2025 – Esercitati Online con Spiegazioni',
-    description:
-      'Quiz patente B gratuiti con oltre 500 domande ufficiali, spiegazioni dettagliate e tracciamento degli errori. Preparati all\'esame teorico della patente B in italiano e arabo su Patente Hub.',
-    canonical: CANONICAL,
-    jsonLd: [
-      {
-        '@context': 'https://schema.org',
-        '@type': 'WebPage',
-        name: 'Quiz Patente B Gratis – Patente Hub',
-        url: CANONICAL,
-        description:
-          'Esercitati con quiz patente B gratuiti. Domande ufficiali, spiegazioni e simulazioni per superare l\'esame teorico.',
-        inLanguage: 'it',
-        breadcrumb: {
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://patentehub.com/it' },
-            { '@type': 'ListItem', position: 2, name: 'Quiz Patente B', item: CANONICAL },
-          ],
-        },
-      },
-      {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        mainEntity: FAQ_ITEMS.map(({ q, a }) => ({
-          '@type': 'Question',
-          name: q,
-          acceptedAnswer: { '@type': 'Answer', text: a },
-        })),
-      },
-      {
-        '@context': 'https://schema.org',
-        '@type': 'Course',
-        name: 'Quiz Patente B – Preparazione Esame Teorico',
-        description: 'Corso online gratuito con quiz patente B, domande ufficiali e spiegazioni per superare l\'esame della patente in Italia.',
-        provider: {
-          '@type': 'Organization',
-          name: 'Patente Hub',
-          url: 'https://patentehub.com',
-        },
-        educationalLevel: 'Beginner',
-        teaches: 'Codice della strada italiano – preparazione esame patente B',
-        inLanguage: ['it', 'ar'],
-        offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
-      },
-    ],
-  });
-
   return (
     <SeoLayout>
+      <PageMeta
+        title="Quiz Patente B Gratis 2025 – Esercitati Online con Spiegazioni"
+        description="Quiz patente B gratuiti con oltre 500 domande ufficiali, spiegazioni dettagliate e tracciamento degli errori. Preparati all'esame teorico della patente B in italiano e arabo su Patente Hub."
+        canonical={CANONICAL}
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: 'Quiz Patente B Gratis – Patente Hub',
+            url: CANONICAL,
+            description:
+              'Esercitati con quiz patente B gratuiti. Domande ufficiali, spiegazioni e simulazioni per superare l\'esame teorico.',
+            inLanguage: 'it',
+            breadcrumb: {
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://patentehub.com/it' },
+                { '@type': 'ListItem', position: 2, name: 'Quiz Patente B', item: CANONICAL },
+              ],
+            },
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: FAQ_ITEMS.map(({ q, a }) => ({
+              '@type': 'Question',
+              name: q,
+              acceptedAnswer: { '@type': 'Answer', text: a },
+            })),
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Course',
+            name: 'Quiz Patente B – Preparazione Esame Teorico',
+            description: 'Corso online gratuito con quiz patente B, domande ufficiali e spiegazioni per superare l\'esame della patente in Italia.',
+            provider: {
+              '@type': 'Organization',
+              name: 'Patente Hub',
+              url: 'https://patentehub.com',
+            },
+            educationalLevel: 'Beginner',
+            teaches: 'Codice della strada italiano – preparazione esame patente B',
+            inLanguage: ['it', 'ar'],
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+          },
+        ]}
+      />
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-700 text-white py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">

@@ -5,7 +5,7 @@
  */
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { usePageMeta } from '@/hooks/usePageMeta';
+import { PageMeta } from '@/hooks/usePageMeta';
 import { SeoLayout } from './SeoLayout';
 
 const CANONICAL = 'https://patentehub.com/it/simulatore-esame-patente';
@@ -43,41 +43,40 @@ const EXAM_RULES = [
 export function SimulatoreEsamePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  usePageMeta({
-    title: 'Simulatore Esame Patente B Online Gratis 2025 – 30 Domande Ufficiali',
-    description:
-      'Simula l\'esame teorico della patente B con il simulatore gratuito di Patente Hub. 30 domande ufficiali, timer 30 minuti, massimo 3 errori – identico all\'esame reale. Preparati con la simulazione più fedele disponibile online.',
-    canonical: CANONICAL,
-    jsonLd: [
-      {
-        '@context': 'https://schema.org',
-        '@type': 'WebPage',
-        name: 'Simulatore Esame Patente B – Patente Hub',
-        url: CANONICAL,
-        description: 'Simulazione gratuita dell\'esame teorico della patente B. 30 domande, 30 minuti, max 3 errori.',
-        inLanguage: 'it',
-        breadcrumb: {
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://patentehub.com/it' },
-            { '@type': 'ListItem', position: 2, name: 'Simulatore Esame Patente', item: CANONICAL },
-          ],
-        },
-      },
-      {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        mainEntity: FAQ_ITEMS.map(({ q, a }) => ({
-          '@type': 'Question',
-          name: q,
-          acceptedAnswer: { '@type': 'Answer', text: a },
-        })),
-      },
-    ],
-  });
-
   return (
-    <SeoLayout>
+    <>
+      <PageMeta
+        title="Simulatore Esame Patente B Online Gratis 2025 – 30 Domande Ufficiali"
+        description="Simula l'esame teorico della patente B con il simulatore gratuito di Patente Hub. 30 domande ufficiali, timer 30 minuti, massimo 3 errori – identico all'esame reale. Preparati con la simulazione più fedele disponibile online."
+        canonical={CANONICAL}
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: 'Simulatore Esame Patente B – Patente Hub',
+            url: CANONICAL,
+            description: 'Simulazione gratuita dell\'esame teorico della patente B. 30 domande, 30 minuti, max 3 errori.',
+            inLanguage: 'it',
+            breadcrumb: {
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://patentehub.com/it' },
+                { '@type': 'ListItem', position: 2, name: 'Simulatore Esame Patente', item: CANONICAL },
+              ],
+            },
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: FAQ_ITEMS.map(({ q, a }) => ({
+              '@type': 'Question',
+              name: q,
+              acceptedAnswer: { '@type': 'Answer', text: a },
+            })),
+          },
+        ]}
+      />
+      <SeoLayout>
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-700 text-white py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -318,5 +317,6 @@ export function SimulatoreEsamePage() {
         </div>
       </section>
     </SeoLayout>
+    </>
   );
 }

@@ -3,7 +3,7 @@ import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { ROUTES } from '@/constants';
 import { Icon } from '@/components/ui/Icon';
 import { useTranslation } from '@/i18n';
-import { usePageMeta } from '@/hooks/usePageMeta';
+import { PageMeta } from '@/hooks/usePageMeta';
 
 const sectionsAr = [
   { id: 'acceptance', title: 'قبول الشروط', icon: 'handshake' },
@@ -38,15 +38,6 @@ export function TermsOfServicePage() {
   const isIt = uiLang === 'it';
   const sections = isIt ? sectionsIt : sectionsAr;
 
-  usePageMeta({
-    title: isIt ? 'Termini di Servizio – Patente Hub' : 'شروط الخدمة – Patente Hub',
-    description: isIt
-      ? 'Leggi i Termini di Servizio di Patente Hub. Condizioni d\'uso, responsabilità, proprietà intellettuale e regole dell\'account.'
-      : 'اقرأ شروط الخدمة لتطبيق Patente Hub. شروط الاستخدام والمسؤوليات وقواعد الحساب.',
-    canonical: `https://patentehub.com/${uiLang}/terms-of-service`,
-    noIndex: false,
-  });
-
   const scrollToSection = (id: string) => {
     setActiveSection(id);
     const el = document.getElementById(id);
@@ -57,7 +48,16 @@ export function TermsOfServicePage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface-50 animate-fade-in-up">
+    <>
+      <PageMeta
+        title={isIt ? 'Termini di Servizio – Patente Hub' : 'شروط الخدمة – Patente Hub'}
+        description={isIt
+          ? 'Leggi i Termini di Servizio di Patente Hub. Condizioni d\'uso, responsabilità, proprietà intellettuale e regole dell\'account.'
+          : 'اقرأ شروط الخدمة لتطبيق Patente Hub. شروط الاستخدام والمسؤوليات وقواعد الحساب.'}
+        canonical={`https://patentehub.com/${uiLang}/terms-of-service`}
+        noIndex={false}
+      />
+      <div className="min-h-screen bg-surface-50 animate-fade-in-up">
       <header className="sticky top-0 z-50 bg-white border-b border-surface-100 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
           <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-surface-500 hover:text-primary-600 transition-colors">
@@ -490,5 +490,6 @@ export function TermsOfServicePage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

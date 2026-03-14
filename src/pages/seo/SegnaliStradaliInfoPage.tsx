@@ -5,7 +5,7 @@
  */
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { usePageMeta } from '@/hooks/usePageMeta';
+import { PageMeta } from '@/hooks/usePageMeta';
 import { SeoLayout } from './SeoLayout';
 
 const CANONICAL = 'https://patentehub.com/it/segnali-stradali-italia';
@@ -75,51 +75,50 @@ const FAQ_ITEMS = [
 export function SegnaliStradaliInfoPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  usePageMeta({
-    title: 'Segnali Stradali Italiani – Guida Completa con Significati 2025',
-    description:
-      'Guida completa ai segnali stradali italiani: pericolo, divieto, obbligo, indicazione e precedenza. Significati, esempi e spiegazioni per prepararsi all\'esame della patente B. Studia gratis su Patente Hub.',
-    canonical: CANONICAL,
-    jsonLd: [
-      {
-        '@context': 'https://schema.org',
-        '@type': 'WebPage',
-        name: 'Segnali Stradali Italiani – Guida Completa',
-        url: CANONICAL,
-        description: 'Guida completa ai segnali stradali italiani per la patente B.',
-        inLanguage: 'it',
-        breadcrumb: {
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://patentehub.com/it' },
-            { '@type': 'ListItem', position: 2, name: 'Segnali Stradali Italia', item: CANONICAL },
-          ],
-        },
-      },
-      {
-        '@context': 'https://schema.org',
-        '@type': 'Article',
-        headline: 'Segnali Stradali Italiani – Guida Completa con Significati',
-        description: 'Guida completa alle categorie di segnali stradali in Italia: pericolo, divieto, obbligo, indicazione, precedenza.',
-        author: { '@type': 'Organization', name: 'Patente Hub' },
-        publisher: { '@type': 'Organization', name: 'Patente Hub', url: 'https://patentehub.com' },
-        inLanguage: 'it',
-        url: CANONICAL,
-      },
-      {
-        '@context': 'https://schema.org',
-        '@type': 'FAQPage',
-        mainEntity: FAQ_ITEMS.map(({ q, a }) => ({
-          '@type': 'Question',
-          name: q,
-          acceptedAnswer: { '@type': 'Answer', text: a },
-        })),
-      },
-    ],
-  });
-
   return (
-    <SeoLayout>
+    <>
+      <PageMeta
+        title="Segnali Stradali Italiani – Guida Completa con Significati 2025"
+        description="Guida completa ai segnali stradali italiani: pericolo, divieto, obbligo, indicazione e precedenza. Significati, esempi e spiegazioni per prepararsi all'esame della patente B. Studia gratis su Patente Hub."
+        canonical={CANONICAL}
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: 'Segnali Stradali Italiani – Guida Completa',
+            url: CANONICAL,
+            description: 'Guida completa ai segnali stradali italiani per la patente B.',
+            inLanguage: 'it',
+            breadcrumb: {
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://patentehub.com/it' },
+                { '@type': 'ListItem', position: 2, name: 'Segnali Stradali Italia', item: CANONICAL },
+              ],
+            },
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            headline: 'Segnali Stradali Italiani – Guida Completa con Significati',
+            description: 'Guida completa alle categorie di segnali stradali in Italia: pericolo, divieto, obbligo, indicazione, precedenza.',
+            author: { '@type': 'Organization', name: 'Patente Hub' },
+            publisher: { '@type': 'Organization', name: 'Patente Hub', url: 'https://patentehub.com' },
+            inLanguage: 'it',
+            url: CANONICAL,
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: FAQ_ITEMS.map(({ q, a }) => ({
+              '@type': 'Question',
+              name: q,
+              acceptedAnswer: { '@type': 'Answer', text: a },
+            })),
+          },
+        ]}
+      />
+      <SeoLayout>
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-red-600 via-rose-600 to-pink-700 text-white py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -324,5 +323,6 @@ export function SegnaliStradaliInfoPage() {
         </div>
       </section>
     </SeoLayout>
+    </>
   );
 }

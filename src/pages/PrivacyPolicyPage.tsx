@@ -3,7 +3,7 @@ import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { ROUTES } from '@/constants';
 import { Icon } from '@/components/ui/Icon';
 import { useTranslation } from '@/i18n';
-import { usePageMeta } from '@/hooks/usePageMeta';
+import { PageMeta } from '@/hooks/usePageMeta';
 
 const sectionsAr = [
   { id: 'intro', title: 'مقدمة', icon: 'info' },
@@ -36,15 +36,6 @@ export function PrivacyPolicyPage() {
   const isIt = uiLang === 'it';
   const sections = isIt ? sectionsIt : sectionsAr;
 
-  usePageMeta({
-    title: isIt ? 'Privacy Policy – Patente Hub' : 'سياسة الخصوصية – Patente Hub',
-    description: isIt
-      ? 'Leggi la Privacy Policy di Patente Hub. Come raccogliamo, utilizziamo e proteggiamo i tuoi dati personali in conformità con il GDPR.'
-      : 'اقرأ سياسة الخصوصية لتطبيق Patente Hub. كيف نجمع بياناتك الشخصية ونحميها وفق اللائحة الأوروبية.',
-    canonical: `https://patentehub.com/${uiLang}/privacy-policy`,
-    noIndex: false,
-  });
-
   const scrollToSection = (id: string) => {
     setActiveSection(id);
     const el = document.getElementById(id);
@@ -55,7 +46,16 @@ export function PrivacyPolicyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface-50 animate-fade-in-up">
+    <>
+      <PageMeta
+        title={isIt ? 'Privacy Policy – Patente Hub' : 'سياسة الخصوصية – Patente Hub'}
+        description={isIt
+          ? 'Leggi la Privacy Policy di Patente Hub. Come raccogliamo, utilizziamo e proteggiamo i tuoi dati personali in conformità con il GDPR.'
+          : 'اقرأ سياسة الخصوصية لتطبيق Patente Hub. كيف نجمع بياناتك الشخصية ونحميها وفق اللائحة الأوروبية.'}
+        canonical={`https://patentehub.com/${uiLang}/privacy-policy`}
+        noIndex={false}
+      />
+      <div className="min-h-screen bg-surface-50 animate-fade-in-up">
       <header className="sticky top-0 z-50 bg-white border-b border-surface-100 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
           <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-surface-500 hover:text-primary-600 transition-colors">
@@ -561,5 +561,6 @@ export function PrivacyPolicyPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

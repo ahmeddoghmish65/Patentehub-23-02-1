@@ -4,7 +4,7 @@ import { CookieConsentBanner } from '@/components/CookieConsentBanner';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 import { getConsentLevel, type ConsentLevel } from '@/utils/cookieManager';
-import { usePageMeta } from '@/hooks/usePageMeta';
+import { PageMeta } from '@/hooks/usePageMeta';
 import { LandingNavbar } from '@/features/landing/LandingNavbar';
 import { LandingHero } from '@/features/landing/LandingHero';
 import { LandingStats } from '@/features/landing/LandingStats';
@@ -24,40 +24,6 @@ export function LandingPage() {
   const [consentLevel, setConsentLevel] = useState<ConsentLevel | null>(() => getConsentLevel());
   const showConsentBanner = consentLevel === null;
   const handleConsent = useCallback((level: ConsentLevel) => setConsentLevel(level), []);
-
-  usePageMeta({
-    title: uiLang === 'it'
-      ? 'Patente Hub – Quiz Patente B Gratis | Simulatore Esame e Segnali Stradali'
-      : 'Patente Hub – تطبيق تعليم رخصة القيادة الإيطالية | Quiz Patente B',
-    description: uiLang === 'it'
-      ? 'Patente Hub: quiz patente B gratuiti, segnali stradali con spiegazioni, simulazioni d\'esame complete e lezioni sul codice della strada. Disponibile in italiano e arabo. Inizia gratis!'
-      : 'تطبيق Patente Hub: اختبارات رخصة القيادة الإيطالية مجاناً، شرح إشارات المرور، محاكاة الاختبار ودروس قانون المرور بالعربية والإيطالية.',
-    canonical: `https://patentehub.com/${uiLang}`,
-    jsonLd: [
-      {
-        '@context': 'https://schema.org',
-        '@type': 'WebSite',
-        name: 'Patente Hub',
-        url: 'https://patentehub.com',
-        description: 'Piattaforma gratuita per prepararsi all\'esame della patente B in Italia. Quiz, segnali stradali, simulazioni e lezioni in italiano e arabo.',
-        potentialAction: {
-          '@type': 'SearchAction',
-          target: 'https://patentehub.com/it/quiz-patente-b',
-          'query-input': 'required name=search_term_string',
-        },
-      },
-      {
-        '@context': 'https://schema.org',
-        '@type': 'SiteLinksSearchBox',
-        url: 'https://patentehub.com',
-        potentialAction: {
-          '@type': 'SearchAction',
-          target: 'https://patentehub.com/it/quiz-patente-b?q={search_term_string}',
-          'query-input': 'required name=search_term_string',
-        },
-      },
-    ],
-  });
 
   const features = [
     { icon: 'translate', title: t('landing.f1_title'), desc: t('landing.f1_desc'), bg: 'from-blue-500 to-blue-600' },
@@ -116,7 +82,41 @@ export function LandingPage() {
   const isVisible = (id: string) => visibleSections.has(id);
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden" dir={dir}>
+    <>
+      <PageMeta
+        title={uiLang === 'it'
+          ? 'Patente Hub – Quiz Patente B Gratis | Simulatore Esame e Segnali Stradali'
+          : 'Patente Hub – تطبيق تعليم رخصة القيادة الإيطالية | Quiz Patente B'}
+        description={uiLang === 'it'
+          ? 'Patente Hub: quiz patente B gratuiti, segnali stradali con spiegazioni, simulazioni d\'esame complete e lezioni sul codice della strada. Disponibile in italiano e arabo. Inizia gratis!'
+          : 'تطبيق Patente Hub: اختبارات رخصة القيادة الإيطالية مجاناً، شرح إشارات المرور، محاكاة الاختبار ودروس قانون المرور بالعربية والإيطالية.'}
+        canonical={`https://patentehub.com/${uiLang}`}
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: 'Patente Hub',
+            url: 'https://patentehub.com',
+            description: 'Piattaforma gratuita per prepararsi all\'esame della patente B in Italia. Quiz, segnali stradali, simulazioni e lezioni in italiano e arabo.',
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: 'https://patentehub.com/it/quiz-patente-b',
+              'query-input': 'required name=search_term_string',
+            },
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'SiteLinksSearchBox',
+            url: 'https://patentehub.com',
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: 'https://patentehub.com/it/quiz-patente-b?q={search_term_string}',
+              'query-input': 'required name=search_term_string',
+            },
+          },
+        ]}
+      />
+      <div className="min-h-screen bg-white overflow-x-hidden" dir={dir}>
       <LandingNavbar scrolled={scrolled} navLinks={navLinks} />
       <LandingHero features={features} />
       <LandingStats stats={stats} />

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/Input';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 import { supabase } from '@/lib/supabase';
-import { usePageMeta } from '@/hooks/usePageMeta';
+import { PageMeta } from '@/hooks/usePageMeta';
 
 interface FormData {
   name: string;
@@ -27,17 +27,6 @@ export function ContactPage() {
   const { navigate } = useLocaleNavigate();
   const { uiLang } = useTranslation();
   const isIt = uiLang === 'it';
-
-  usePageMeta({
-    title: isIt
-      ? 'Contatti – Patente Hub'
-      : 'تواصل معنا – Patente Hub',
-    description: isIt
-      ? 'Contatta il team di Patente Hub per assistenza, segnalazioni o collaborazioni. Siamo qui per aiutarti nella preparazione all\'esame della patente B.'
-      : 'تواصل مع فريق Patente Hub للمساعدة أو الاقتراحات. نحن هنا لمساعدتك في الاستعداد لاختبار رخصة القيادة الإيطالية.',
-    canonical: `https://patentehub.com/${uiLang}/contact`,
-    noIndex: false,
-  });
 
   const [formData, setFormData] = useState<FormData>({ name: '', email: '', subject: '', message: '' });
   const [errors, setErrors] = useState<FormErrors>({});
@@ -90,7 +79,18 @@ export function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-surface-50 animate-fade-in-up">
+    <>
+      <PageMeta
+        title={isIt
+          ? 'Contatti – Patente Hub'
+          : 'تواصل معنا – Patente Hub'}
+        description={isIt
+          ? 'Contatta il team di Patente Hub per assistenza, segnalazioni o collaborazioni. Siamo qui per aiutarti nella preparazione all\'esame della patente B.'
+          : 'تواصل مع فريق Patente Hub للمساعدة أو الاقتراحات. نحن هنا لمساعدتك في الاستعداد لاختبار رخصة القيادة الإيطالية.'}
+        canonical={`https://patentehub.com/${uiLang}/contact`}
+        noIndex={false}
+      />
+      <div className="min-h-screen bg-surface-50 animate-fade-in-up">
       {/* App Header */}
       <header className="sticky top-0 z-50 bg-white border-b border-surface-100 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
@@ -326,5 +326,6 @@ export function ContactPage() {
       </div>
     </div>
     </div>
+    </>
   );
 }

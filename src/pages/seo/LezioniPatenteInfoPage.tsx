@@ -4,7 +4,7 @@
  * Target keywords: lezioni patente b, codice della strada lezioni, studiare patente b
  */
 import { Link } from 'react-router-dom';
-import { usePageMeta } from '@/hooks/usePageMeta';
+import { PageMeta } from '@/hooks/usePageMeta';
 import { SeoLayout } from './SeoLayout';
 
 const CANONICAL = 'https://patentehub.com/it/lezioni-patente-b';
@@ -100,52 +100,50 @@ const FEATURES = [
 ];
 
 export function LezioniPatenteInfoPage() {
-  usePageMeta({
-    title: 'Lezioni Patente B Online Gratis 2025 – Codice della Strada Completo',
-    description:
-      'Studia il codice della strada con lezioni patente B gratuite su Patente Hub. Segnali stradali, velocità, precedenze, alcol e sicurezza. Lezioni in italiano e arabo con quiz integrati.',
-    canonical: CANONICAL,
-    jsonLd: [
-      {
-        '@context': 'https://schema.org',
-        '@type': 'WebPage',
-        name: 'Lezioni Patente B Online – Patente Hub',
-        url: CANONICAL,
-        description: 'Lezioni online gratuite per prepararsi all\'esame della patente B. Codice della strada completo.',
-        inLanguage: 'it',
-        breadcrumb: {
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://patentehub.com/it' },
-            { '@type': 'ListItem', position: 2, name: 'Lezioni Patente B', item: CANONICAL },
-          ],
-        },
-      },
-      {
-        '@context': 'https://schema.org',
-        '@type': 'Course',
-        name: 'Lezioni Patente B – Codice della Strada Completo',
-        description: 'Corso online gratuito per prepararsi all\'esame della patente B. Tutte le lezioni del codice della strada in italiano e arabo.',
-        provider: {
-          '@type': 'Organization',
-          name: 'Patente Hub',
-          url: 'https://patentehub.com',
-        },
-        educationalLevel: 'Beginner',
-        teaches: 'Codice della strada italiano – segnali stradali, precedenze, velocità, sicurezza',
-        inLanguage: ['it', 'ar'],
-        offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
-        hasCourseInstance: LESSON_TOPICS.map(topic => ({
-          '@type': 'CourseInstance',
-          name: topic.title,
-          description: topic.desc,
-        })),
-      },
-    ],
-  });
-
   return (
     <SeoLayout>
+      <PageMeta
+        title="Lezioni Patente B Online Gratis 2025 – Codice della Strada Completo"
+        description="Studia il codice della strada con lezioni patente B gratuite su Patente Hub. Segnali stradali, velocità, precedenze, alcol e sicurezza. Lezioni in italiano e arabo con quiz integrati."
+        canonical={CANONICAL}
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: 'Lezioni Patente B Online – Patente Hub',
+            url: CANONICAL,
+            description: 'Lezioni online gratuite per prepararsi all\'esame della patente B. Codice della strada completo.',
+            inLanguage: 'it',
+            breadcrumb: {
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://patentehub.com/it' },
+                { '@type': 'ListItem', position: 2, name: 'Lezioni Patente B', item: CANONICAL },
+              ],
+            },
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Course',
+            name: 'Lezioni Patente B – Codice della Strada Completo',
+            description: 'Corso online gratuito per prepararsi all\'esame della patente B. Tutte le lezioni del codice della strada in italiano e arabo.',
+            provider: {
+              '@type': 'Organization',
+              name: 'Patente Hub',
+              url: 'https://patentehub.com',
+            },
+            educationalLevel: 'Beginner',
+            teaches: 'Codice della strada italiano – segnali stradali, precedenze, velocità, sicurezza',
+            inLanguage: ['it', 'ar'],
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+            hasCourseInstance: LESSON_TOPICS.map(topic => ({
+              '@type': 'CourseInstance',
+              name: topic.title,
+              description: topic.desc,
+            })),
+          },
+        ]}
+      />
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-violet-600 via-purple-700 to-indigo-800 text-white py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
