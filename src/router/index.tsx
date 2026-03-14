@@ -16,6 +16,7 @@ import { AdminRoute } from '@/components/guards/AdminRoute';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { PageLoader } from '@/components/feedback/PageLoader';
 import { ErrorBoundary } from '@/components/feedback/ErrorBoundary';
+import { trackPageView } from '@/services/analytics';
 
 // ─── Lazy-loaded pages ────────────────────────────────────────────────────────
 const LandingPage = lazy(() => import('@/pages/LandingPage').then(m => ({ default: m.LandingPage })));
@@ -111,6 +112,11 @@ function LocaleLayout() {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
+  }, [pathname]);
+
+  // Track page view on every route change
+  useEffect(() => {
+    trackPageView(pathname);
   }, [pathname]);
 
   if (!isValidLang(lang)) return null;

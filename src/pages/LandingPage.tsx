@@ -5,6 +5,7 @@ import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
 import { getConsentLevel, type ConsentLevel } from '@/utils/cookieManager';
 import { PageMeta } from '@/hooks/usePageMeta';
+import { initAnalytics } from '@/services/analytics';
 import { LandingNavbar } from '@/features/landing/LandingNavbar';
 import { LandingHero } from '@/features/landing/LandingHero';
 import { LandingStats } from '@/features/landing/LandingStats';
@@ -23,7 +24,10 @@ export function LandingPage() {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const [consentLevel, setConsentLevel] = useState<ConsentLevel | null>(() => getConsentLevel());
   const showConsentBanner = consentLevel === null;
-  const handleConsent = useCallback((level: ConsentLevel) => setConsentLevel(level), []);
+  const handleConsent = useCallback((level: ConsentLevel) => {
+    setConsentLevel(level);
+    if (level === 'all') initAnalytics();
+  }, []);
 
   const features = [
     { icon: 'translate', title: t('landing.f1_title'), desc: t('landing.f1_desc'), bg: 'from-blue-500 to-blue-600' },
@@ -143,5 +147,6 @@ export function LandingPage() {
         <Icon name="keyboard_arrow_up" size={24} />
       </button>
     </div>
+  </>
   );
 }

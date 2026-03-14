@@ -7,6 +7,7 @@ import { App } from './App';
 import { getSavedTheme } from '@/utils/cookieManager';
 import { applyTheme } from '@/store/helpers';
 import { LanguageProvider } from '@/i18n';
+import { initAnalytics } from '@/services/analytics';
 
 // ─── Early startup — apply saved preferences before React renders ─────────────
 // Reading from localStorage synchronously prevents a flash of the wrong theme
@@ -16,6 +17,9 @@ const savedTheme = getSavedTheme();
 if (savedTheme) {
   applyTheme(savedTheme);
 }
+
+// Initialise analytics if the user already gave full consent on a prior visit.
+initAnalytics();
 
 // Language direction is applied by the inline script in index.html (runs
 // synchronously before any paint), so no additional DOM writes are needed here.

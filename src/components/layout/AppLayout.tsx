@@ -9,6 +9,7 @@ import { useTranslation } from '@/i18n';
 import { PROFILE_GATED_PAGES } from '@/constants';
 import { useState, useCallback, useEffect } from 'react';
 import { getConsentLevel, type ConsentLevel } from '@/utils/cookieManager';
+import { initAnalytics } from '@/services/analytics';
 import { ROUTES } from '@/constants';
 import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 
@@ -36,6 +37,7 @@ export function AppLayout() {
 
   const handleConsent = useCallback((level: ConsentLevel) => {
     setConsentLevel(level);
+    if (level === 'all') initAnalytics();
   }, []);
 
   if (!user) return null;
