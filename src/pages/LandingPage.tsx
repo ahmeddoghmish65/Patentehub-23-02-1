@@ -244,7 +244,6 @@ export function LandingPage() {
             </div>
 
             <div className="flex items-center gap-2 md:hidden shrink-0">
-              <LanguageSwitcher variant="compact" />
               <button
                 onClick={() => navigate(ROUTES.LOGIN)}
                 className="px-3 py-1.5 rounded-xl text-sm font-semibold text-primary-600 border border-primary-200 bg-primary-50 hover:bg-primary-100 transition-all whitespace-nowrap"
@@ -1166,6 +1165,19 @@ export function LandingPage() {
       </footer>
 
       {showConsentBanner && <CookieConsentBanner onConsent={handleConsent} />}
+
+      {/* ─── Back to Top Button ─── */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label="العودة لأعلى"
+        className={cn(
+          'fixed bottom-6 z-50 w-11 h-11 rounded-full bg-primary-600 text-white shadow-lg flex items-center justify-center transition-all duration-300 hover:bg-primary-700 hover:scale-110 active:scale-95',
+          dir === 'rtl' ? 'left-6' : 'right-6',
+          scrolled ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-4 pointer-events-none'
+        )}
+      >
+        <Icon name="keyboard_arrow_up" size={24} />
+      </button>
     </div>
   );
 }
