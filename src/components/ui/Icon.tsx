@@ -18,6 +18,8 @@ export const Icon = memo(function Icon({ name, filled = false, size = 24, classN
         className
       )}
       style={{ fontSize: size, ...style }}
+      translate="no"
+      aria-hidden="true"
     >
       {name}
     </span>
