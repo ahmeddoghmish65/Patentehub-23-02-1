@@ -163,6 +163,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }, [uiLang]);
 
   const setUiLang = useCallback((lang: UiLang) => {
+    // Apply dir to <html> immediately (before React re-renders) to avoid
+    // a flash where CSS logical properties and the font selector are inconsistent.
+    applyDocumentLang(lang);
     setUiLangState(lang);
     localStorage.setItem(STORAGE_KEY, lang);
     // Sync content language with UI language change when no user preference is stored

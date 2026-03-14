@@ -52,8 +52,8 @@ export function Sidebar() {
     )}>
       {/* Logo */}
       <div className="p-6 border-b border-surface-100">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-200">
+        <div className="flex items-center gap-3" dir="ltr">
+          <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-200 shrink-0">
             <Icon name="directions_car" size={22} className="text-white" filled />
           </div>
           <div>

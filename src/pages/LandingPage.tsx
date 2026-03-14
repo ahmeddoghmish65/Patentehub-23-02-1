@@ -207,13 +207,13 @@ export function LandingPage() {
         scrolled ? 'bg-white/95 backdrop-blur-2xl shadow-lg shadow-surface-900/5 border-b border-surface-100' : 'bg-white/80 backdrop-blur-md border-b border-surface-100/60'
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            <div className="flex items-center gap-2.5 cursor-pointer shrink-0" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-              <div className="relative">
+          <div className="flex items-center justify-between h-16 lg:h-20 overflow-hidden">
+            <div className="flex items-center gap-2.5 cursor-pointer shrink-0" dir="ltr" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+              <div className="relative shrink-0">
                 <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/30">
                   <Icon name="directions_car" size={20} className="text-white" filled />
                 </div>
-                <div className="absolute -top-0.5 -end-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white" />
+                <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white" />
               </div>
               <span className="text-lg font-black tracking-tight whitespace-nowrap">
                 <span className="text-surface-900">Patente </span>
@@ -243,11 +243,11 @@ export function LandingPage() {
               </Button>
             </div>
 
-            <div className="flex items-center gap-2 md:hidden">
+            <div className="flex items-center gap-2 md:hidden shrink-0">
               <LanguageSwitcher variant="compact" />
               <button
                 onClick={() => navigate(ROUTES.LOGIN)}
-                className="px-3 py-1.5 rounded-xl text-sm font-semibold text-primary-600 border border-primary-200 bg-primary-50 hover:bg-primary-100 transition-all"
+                className="px-3 py-1.5 rounded-xl text-sm font-semibold text-primary-600 border border-primary-200 bg-primary-50 hover:bg-primary-100 transition-all whitespace-nowrap"
               >
                 {t('landing.login')}
               </button>
@@ -1058,8 +1058,8 @@ export function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex flex-col lg:flex-row items-start justify-between gap-10 mb-10">
             <div className="max-w-xs">
-              <div className="flex items-center gap-2.5 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
+              <div className="flex items-center gap-2.5 mb-4" dir="ltr">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20 shrink-0">
                   <Icon name="directions_car" size={20} className="text-white" filled />
                 </div>
                 <span className="text-white font-black text-xl">Patente Hub</span>
