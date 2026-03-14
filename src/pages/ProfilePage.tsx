@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore } from '@/store';
 import { ROUTES } from '@/constants';
@@ -56,6 +57,8 @@ const COUNTRY_CODES = [
 
 export function ProfilePage() {
   const { navigate } = useLocaleNavigate();
+  const rawNavigate = useNavigate();
+  const { pathname } = useLocation();
   const { t, uiLang, setUiLang } = useTranslation();
   const { user, logout, updateSettings, updateProfile } = useAuthStore();
   const { posts, loadPosts, loadMistakes, loadQuestions, loadQuizHistory, loadLessons, mistakes, questions, quizHistory, lessons } = useDataStore();
@@ -1007,7 +1010,7 @@ export function ProfilePage() {
                 <p className="text-xs text-surface-400 mb-3">{t('profile.ui_language_desc')}</p>
                 <div className="grid grid-cols-3 gap-2">
                   {(['ar', 'it', 'en'] as const).map(l => (
-                    <button key={l} className={cn('flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all', uiLang === l ? 'border-primary-500 bg-primary-50' : 'border-surface-100 hover:border-surface-200')} onClick={() => setUiLang(l)}>
+                    <button key={l} className={cn('flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all', uiLang === l ? 'border-primary-500 bg-primary-50' : 'border-surface-100 hover:border-surface-200')} onClick={() => { setUiLang(l); const pathWithoutLang = pathname.replace(`/${uiLang}`, '') || ''; rawNavigate(`/${l}${pathWithoutLang}`, { replace: true }); }}>
                       {l === 'ar' && <span className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center text-lg font-bold text-orange-600">ع</span>}
                       {l === 'it' && <span className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600" dir="ltr">IT</span>}
                       {l === 'en' && <span className="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center text-xs font-bold text-green-600" dir="ltr">EN</span>}

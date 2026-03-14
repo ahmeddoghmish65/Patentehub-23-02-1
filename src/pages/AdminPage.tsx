@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore, useDataStore, useAdminStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Button';
@@ -12,6 +13,8 @@ type ContentView = 'active' | 'archived' | 'deleted' | 'banned';
 
 export function AdminPage() {
   const store = { ...useAuthStore(), ...useDataStore(), ...useAdminStore() };
+  const rawNavigate = useNavigate();
+  const { pathname } = useLocation();
   const [tab, setTab] = useState<Tab>('overview');
   const [contentView, setContentView] = useState<ContentView>('active');
   // Analytics - page visit stats
@@ -302,6 +305,8 @@ export function AdminPage() {
     setLangDefault(lang);
     setUiLang(lang);
     saveAdminLangSettings(lang, langEnabled);
+    const pathWithoutLang = pathname.replace(`/${uiLang}`, '') || '';
+    rawNavigate(`/${lang}${pathWithoutLang}`, { replace: true });
   };
 
   const handleToggleLang = (lang: UiLang) => {
