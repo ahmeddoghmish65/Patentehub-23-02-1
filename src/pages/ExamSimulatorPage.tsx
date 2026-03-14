@@ -264,10 +264,7 @@ export function ExamSimulatorPage() {
 
   // REVIEW
   if (phase === 'review') {
-    const totalErrors = Object.entries(answers).filter(([i, a]) => {
-      const q = examQuestions[parseInt(i)];
-      return q && a !== q.isTrue;
-    }).length;
+    const totalErrors = examQuestions.filter((q, i) => answers[i] !== q.isTrue).length;
 
     return (
       <div className="max-w-2xl mx-auto">
