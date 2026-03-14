@@ -22,7 +22,7 @@ export const ROUTES = {
   TRAINING: '/training',
   COMMUNITY: '/community',
   PROFILE: '/profile',
-  USER_PROFILE: '/profile/:userId',
+  USER_PROFILE: '/profile/:username',
   MISTAKES: '/mistakes',
   EXAM_SIMULATOR: '/exam',
   QUESTIONS_BROWSE: '/questions',
@@ -35,6 +35,6 @@ export const ROUTES = {
 export const buildLessonUrl = (lessonId: string) =>
   `/lessons/${lessonId}`;
 
-/** Helper to build user-profile URL */
-export const buildUserProfileUrl = (userId: string) =>
-  `/profile/${userId}`;
+/** Helper to build user-profile URL using username */
+export const buildUserProfileUrl = (username: string) =>
+  `/profile/${username}`;

@@ -171,7 +171,7 @@ export const router = createBrowserRouter([
               { path: 'training', element: <SuspensePage><TrainingPage /></SuspensePage> },
               { path: 'community', element: <SuspensePage><CommunityPage /></SuspensePage> },
               { path: 'profile', element: <SuspensePage><ProfilePage /></SuspensePage> },
-              { path: 'profile/:userId', element: <SuspensePage><UserProfilePage /></SuspensePage> },
+              { path: 'profile/:username', element: <SuspensePage><UserProfilePage /></SuspensePage> },
               { path: 'mistakes', element: <SuspensePage><MistakesPage /></SuspensePage> },
               { path: 'exam', element: <SuspensePage><ExamSimulatorPage /></SuspensePage> },
               { path: 'questions', element: <SuspensePage><QuestionsBrowsePage /></SuspensePage> },

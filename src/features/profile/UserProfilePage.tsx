@@ -9,13 +9,14 @@ import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
 import { apiCreateCommunityNotif } from '@/db/api';
 import { ROUTES, buildUserProfileUrl } from '@/constants';
 import { calculateExamReadiness } from '@/services/examReadinessService';
-import { getPublicUserProfile, getExamReadinessData } from './services/profileService';
+import { getPublicUserProfileByUsername, getExamReadinessData } from './services/profileService';
 import { getTextDir } from './utils/profileUtils';
 import type { UserProfile, UserTabType, UserStatView } from './types/profile.types';
 
 export function UserProfilePage() {
   const { navigate, goBack } = useLocaleNavigate();
-  const { userId = '' } = useParams<{ userId: string }>();
+  const { username: usernameParam = '' } = useParams<{ username: string }>();
+  const [userId, setUserId] = useState('');
   const { t, uiLang } = useTranslation();
   const { user } = useAuthStore();
   const { posts, loadPosts } = useDataStore();
@@ -47,8 +48,9 @@ export function UserProfilePage() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const u = await getPublicUserProfile(userId);
+      const u = await getPublicUserProfileByUsername(usernameParam);
       if (!u) { setLoading(false); return; }
+      setUserId(u.id);
 
       // Build followers / following lists (localStorage-based social graph)
       const { getDB } = await import('@/db/database');
@@ -59,20 +61,20 @@ export function UserProfilePage() {
         .filter(x => {
           try {
             const f = localStorage.getItem(`following_${x.id}`);
-            return f ? (JSON.parse(f) as string[]).includes(userId) : false;
+            return f ? (JSON.parse(f) as string[]).includes(u.id) : false;
           } catch { return false; }
         })
-        .map(x => ({ id: x.id, name: x.name, avatar: x.avatar || '' }));
+        .map(x => ({ id: x.id, name: x.name, avatar: x.avatar || '', username: x.username || '' }));
 
       const followingIds: string[] = (() => {
         try {
-          const f = localStorage.getItem(`following_${userId}`);
+          const f = localStorage.getItem(`following_${u.id}`);
           return f ? (JSON.parse(f) as string[]) : [];
         } catch { return []; }
       })();
       const followingListData = allUsers
         .filter(x => followingIds.includes(x.id))
-        .map(x => ({ id: x.id, name: x.name, avatar: x.avatar || '' }));
+        .map(x => ({ id: x.id, name: x.name, avatar: x.avatar || '', username: x.username || '' }));
 
       setFollowers(followersList);
       setFollowingList(followingListData);
@@ -91,7 +93,7 @@ export function UserProfilePage() {
       let examReadiness = prog.examReadiness || 0;
       try {
         const { allResults, allMistakes, allLessons, allQuestions } =
-          await getExamReadinessData(userId);
+          await getExamReadinessData(u.id);
         const result = calculateExamReadiness({
           quizHistory: allResults,
           mistakes: allMistakes,
@@ -102,7 +104,7 @@ export function UserProfilePage() {
         examReadiness = result.score;
       } catch { /* fallback to stored value */ }
 
-      const userPosts = posts.filter(p => p.userId === userId && p.type !== 'quiz');
+      const userPosts = posts.filter(p => p.userId === u.id && p.type !== 'quiz');
 
       setUserData({
         name:           u.name,
@@ -124,7 +126,7 @@ export function UserProfilePage() {
       });
       setLoading(false);
     })();
-  }, [userId, posts]);
+  }, [usernameParam, posts]);
 
   const toggleFollow = useCallback(async (targetId: string) => {
     if (!user) return;
@@ -142,7 +144,7 @@ export function UserProfilePage() {
     if (targetId === userId && userData) {
       setUserData(prev => prev ? { ...prev, followersCount: prev.followersCount + (wasFollowing ? -1 : 1) } : prev);
       if (wasFollowing) setFollowers(prev => prev.filter(f => f.id !== user.id));
-      else setFollowers(prev => [...prev, { id: user.id, name: user.name, avatar: user.avatar || '' }]);
+      else setFollowers(prev => [...prev, { id: user.id, name: user.name, avatar: user.avatar || '', username: user.username || '' }]);
     }
   }, [following, user, userId, userData]);
 
@@ -323,7 +325,7 @@ export function UserProfilePage() {
                   <div
                     className="w-9 h-9 rounded-full overflow-hidden shrink-0 cursor-pointer"
                     style={{ background: u.avatar ? undefined : 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}
-                    onClick={() => navigate(buildUserProfileUrl(u.id))}
+                    onClick={() => navigate(buildUserProfileUrl(u.username || u.id))}
                   >
                     {u.avatar ? (
                       <img src={u.avatar} className="w-full h-full object-cover" alt="" />
@@ -335,7 +337,7 @@ export function UserProfilePage() {
                   </div>
                   <span
                     className="flex-1 text-sm font-semibold text-surface-800 truncate cursor-pointer"
-                    onClick={() => navigate(buildUserProfileUrl(u.id))}
+                    onClick={() => navigate(buildUserProfileUrl(u.username || u.id))}
                   >
                     {u.name}
                   </span>

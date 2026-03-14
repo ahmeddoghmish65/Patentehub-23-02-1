@@ -48,17 +48,17 @@ export const ProfileStats = React.memo(function ProfileStats({
             src={u.avatar}
             className="w-10 h-10 rounded-full object-cover shrink-0 cursor-pointer"
             alt=""
-            onClick={() => navigate(buildUserProfileUrl(u.id))}
+            onClick={() => navigate(buildUserProfileUrl(u.username || u.id))}
           />
         ) : (
           <div
             className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center shrink-0 cursor-pointer"
-            onClick={() => navigate(buildUserProfileUrl(u.id))}
+            onClick={() => navigate(buildUserProfileUrl(u.username || u.id))}
           >
             <span className="font-bold text-primary-700">{u.name.charAt(0)}</span>
           </div>
         )}
-        <div className="flex-1 min-w-0 cursor-pointer" onClick={() => navigate(buildUserProfileUrl(u.id))}>
+        <div className="flex-1 min-w-0 cursor-pointer" onClick={() => navigate(buildUserProfileUrl(u.username || u.id))}>
           <p className="text-sm font-semibold text-surface-800 truncate">{u.name}</p>
           {u.username && <p className="text-xs text-primary-500">@{u.username}</p>}
         </div>

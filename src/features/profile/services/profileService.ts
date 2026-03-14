@@ -183,6 +183,12 @@ export async function getPublicUserProfile(userId: string) {
   return db.get('users', userId);
 }
 
+export async function getPublicUserProfileByUsername(username: string) {
+  const db = await getDB();
+  const all = await db.getAll('users');
+  return all.find(u => (u.username || '').toLowerCase() === username.toLowerCase()) ?? null;
+}
+
 export async function getExamReadinessData(userId: string) {
   const db = await getDB();
   const [allResults, allMistakes, allLessons, allQuestions] = await Promise.all([

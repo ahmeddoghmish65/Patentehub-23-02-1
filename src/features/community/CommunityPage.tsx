@@ -138,17 +138,22 @@ export function CommunityPage() {
 
   // ── Helpers ────────────────────────────────────────────────────────────────
 
+  const getUsernameById = useCallback((id: string) => {
+    const found = ui.allUsers.find(u => u.id === id);
+    return found?.username || id;
+  }, [ui.allUsers]);
+
   const handleMentionClick = useCallback((username: string) => {
     const found = ui.allUsers.find(u =>
       (u.username || '').toLowerCase() === username.toLowerCase() ||
       u.name.toLowerCase() === username.toLowerCase(),
     );
-    if (found && found.id !== user?.id) navigate(`/profile/${found.id}`);
+    if (found && found.id !== user?.id) navigate(`/profile/${found.username || found.id}`);
   }, [ui.allUsers, user, navigate]);
 
   const handleUserClick = useCallback((userId: string) => {
-    if (userId !== user?.id) navigate(`/profile/${userId}`);
-  }, [user, navigate]);
+    if (userId !== user?.id) navigate(`/profile/${getUsernameById(userId)}`);
+  }, [user, navigate, getUsernameById]);
 
   const handleHashtagClick = useCallback((tag: string) => {
     ui.setActiveHashtag(tag);
@@ -210,7 +215,7 @@ export function CommunityPage() {
     markNotifRead(String(n.id));
     ui.setShowNotifs(false);
     if (n.type === 'follow' && n.fromUserId) {
-      navigate(`/profile/${String(n.fromUserId)}`);
+      navigate(`/profile/${getUsernameById(String(n.fromUserId))}`);
       return;
     }
     if (n.postId) {
@@ -278,7 +283,7 @@ export function CommunityPage() {
                     <div
                       className="w-9 h-9 rounded-full overflow-hidden shrink-0 shadow-sm cursor-pointer"
                       style={{ background: liker.userAvatar ? undefined : 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}
-                      onClick={() => { ui.setLikersModal(null); navigate(`/profile/${liker.userId}`); }}
+                      onClick={() => { ui.setLikersModal(null); navigate(`/profile/${getUsernameById(liker.userId)}`); }}
                     >
                       {liker.userAvatar
                         ? <img src={liker.userAvatar} className="w-full h-full object-cover" alt="" />
@@ -286,7 +291,7 @@ export function CommunityPage() {
                     </div>
                     <span
                       className="text-sm font-semibold text-surface-800 flex-1 cursor-pointer"
-                      onClick={() => { ui.setLikersModal(null); navigate(`/profile/${liker.userId}`); }}
+                      onClick={() => { ui.setLikersModal(null); navigate(`/profile/${getUsernameById(liker.userId)}`); }}
                     >
                       {liker.userName}
                     </span>
@@ -735,14 +740,14 @@ export function CommunityPage() {
                   <div
                     className="w-9 h-9 rounded-full overflow-hidden shrink-0 shadow-sm cursor-pointer"
                     style={{ background: liker.userAvatar ? undefined : 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}
-                    onClick={() => { ui.setLikersModal(null); navigate(`/profile/${liker.userId}`); }}
+                    onClick={() => { ui.setLikersModal(null); navigate(`/profile/${getUsernameById(liker.userId)}`); }}
                   >
                     {liker.userAvatar
                       ? <img src={liker.userAvatar} className="w-full h-full object-cover" alt="" />
                       : <div className="w-full h-full flex items-center justify-center"><span className="text-sm font-bold text-white">{liker.userName.charAt(0)}</span></div>}
                   </div>
                   <span className="text-sm font-semibold text-surface-800 flex-1 cursor-pointer"
-                    onClick={() => { ui.setLikersModal(null); navigate(`/profile/${liker.userId}`); }}>
+                    onClick={() => { ui.setLikersModal(null); navigate(`/profile/${getUsernameById(liker.userId)}`); }}>
                     {liker.userName}
                   </span>
                   {liker.userId !== user?.id && (
