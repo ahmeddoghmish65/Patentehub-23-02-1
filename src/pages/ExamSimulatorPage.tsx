@@ -91,6 +91,12 @@ export function ExamSimulatorPage() {
 
   const handleAnswer = (val: boolean) => {
     setAnswers(prev => ({ ...prev, [currentIndex]: val }));
+    // Auto-advance to next question after a short delay
+    if (currentIndex < examQuestions.length - 1) {
+      setTimeout(() => {
+        setCurrentIndex(i => i + 1);
+      }, 400);
+    }
   };
 
   const goToQuestion = (idx: number) => { setCurrentIndex(idx); setShowGrid(false); };
