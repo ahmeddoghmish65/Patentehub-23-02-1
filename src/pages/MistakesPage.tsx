@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAuthStore, useDataStore } from '@/store';
+import { useAuthStore, useDataStore, useUIStore } from '@/store';
 import { Icon } from '@/components/ui/Icon';
 import { cn } from '@/utils/cn';
 import { useTranslation } from '@/i18n';
@@ -12,11 +12,19 @@ export function MistakesPage() {
   const trueLabel  = lang === 'ar' ? 'صحيح' : lang === 'it' ? 'Vero'  : 'صحيح / Vero';
   const falseLabel = lang === 'ar' ? 'خطأ'  : lang === 'it' ? 'Falso' : 'خطأ / Falso';
 
+  const setHideBottomNav = useUIStore(s => s.setHideBottomNav);
   const [practiceActive, setPracticeActive] = useState(false);
   const [practiceIdx, setPracticeIdx] = useState(0);
   const [practiceResult, setPracticeResult] = useState<'correct' | 'wrong' | null>(null);
 
   useEffect(() => { loadMistakes(); }, [loadMistakes]);
+
+  // Hide bottom nav during active practice, restore on unmount
+  useEffect(() => {
+    setHideBottomNav(practiceActive);
+    return () => setHideBottomNav(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [practiceActive]);
 
   const startPractice = () => { setPracticeActive(true); setPracticeIdx(0); setPracticeResult(null); };
   const stopPractice  = () => { setPracticeActive(false); setPracticeResult(null); };
