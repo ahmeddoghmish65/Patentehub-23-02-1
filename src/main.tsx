@@ -2,8 +2,10 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Toaster } from 'sonner';
 import { HelmetProvider } from 'react-helmet-async';
+import { QueryClientProvider } from '@tanstack/react-query';
 import './index.css';
 import { App } from './App';
+import { queryClient } from '@/app/providers/AppProviders';
 import { getSavedTheme } from '@/shared/utils/cookieManager';
 import { applyTheme } from '@/store/helpers';
 import { LanguageProvider } from '@/i18n';
@@ -33,22 +35,24 @@ initLogRocket();
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HelmetProvider>
-    <LanguageProvider>
-      <App />
-      {/* Global toast notification system */}
-      <Toaster
-        position="top-center"
-        richColors
-        closeButton
-        duration={4000}
-        toastOptions={{
-          style: {
-            fontFamily: 'inherit',
-            borderRadius: '12px',
-          },
-        }}
-      />
-    </LanguageProvider>
+      <QueryClientProvider client={queryClient}>
+        <LanguageProvider>
+          <App />
+          {/* Global toast notification system */}
+          <Toaster
+            position="top-center"
+            richColors
+            closeButton
+            duration={4000}
+            toastOptions={{
+              style: {
+                fontFamily: 'inherit',
+                borderRadius: '12px',
+              },
+            }}
+          />
+        </LanguageProvider>
+      </QueryClientProvider>
     </HelmetProvider>
   </StrictMode>,
 );
