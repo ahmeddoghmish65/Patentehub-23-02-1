@@ -32,7 +32,7 @@ const sectionsIt = [
 ];
 
 export function TermsOfServicePage() {
-  const { navigate } = useLocaleNavigate();
+  const { navigate, goBack } = useLocaleNavigate();
   const [activeSection, setActiveSection] = useState('acceptance');
   const { uiLang } = useTranslation();
   const isIt = uiLang === 'it';
@@ -60,7 +60,7 @@ export function TermsOfServicePage() {
       <div className="min-h-screen bg-surface-50 animate-fade-in-up">
       <header className="sticky top-0 z-50 bg-white border-b border-surface-100 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-surface-500 hover:text-primary-600 transition-colors">
+          <button onClick={() => goBack(ROUTES.LANDING)} className="flex items-center gap-1.5 text-surface-500 hover:text-primary-600 transition-colors">
             <Icon name="arrow_forward" size={20} className="ltr:rotate-180" />
             <span className="text-sm font-medium">{isIt ? 'Indietro' : 'رجوع'}</span>
           </button>
