@@ -44,7 +44,7 @@ export function LandingHero({ features }: LandingHeroProps) {
 
           {/* Content */}
           <div className={cn('text-center order-2 lg:order-1', dir === 'rtl' ? 'lg:text-right' : 'lg:text-left')}>
-            <div className="inline-flex items-center gap-2.5 bg-primary-50 border border-primary-200/70 text-primary-700 px-5 py-2.5 rounded-full text-sm font-medium mb-8 animate-fade-in-up shadow-sm">
+            <div className="inline-flex items-center gap-2.5 bg-primary-50 border border-primary-200/70 text-primary-700 dark:bg-primary-900/30 dark:border-primary-700/40 dark:text-primary-300 px-5 py-2.5 rounded-full text-sm font-medium mb-8 animate-fade-in-up shadow-sm">
               <Icon name="auto_awesome" size={18} filled className="text-primary-500" />
               <span>{t('landing.hero_badge')}</span>
             </div>
@@ -69,7 +69,7 @@ export function LandingHero({ features }: LandingHeroProps) {
                 <span className="relative">{t('landing.cta_start')}</span>
               </button>
               <button onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-9 py-4 border-2 border-primary-200 text-primary-700 font-semibold text-base rounded-2xl hover:bg-primary-50 hover:border-primary-300 transition-all duration-300">
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-9 py-4 border-2 border-primary-200 text-primary-700 font-semibold text-base rounded-2xl hover:bg-primary-50 hover:border-primary-300 dark:border-primary-700/50 dark:text-primary-300 dark:hover:bg-primary-900/20 dark:hover:border-primary-600/50 transition-all duration-300">
                 <Icon name="play_circle" size={20} />
                 {t('landing.cta_discover')}
               </button>

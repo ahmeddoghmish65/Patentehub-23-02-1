@@ -83,14 +83,14 @@ export function LandingNavbar({ scrolled, navLinks }: LandingNavbarProps) {
             <div className="flex items-center gap-2 md:hidden shrink-0">
               <button
                 onClick={() => navigate(ROUTES.LOGIN)}
-                className="px-3 py-1.5 rounded-xl text-sm font-semibold text-primary-600 border border-primary-200 bg-primary-50 hover:bg-primary-100 transition-all whitespace-nowrap"
+                className="px-3 py-1.5 rounded-xl text-sm font-semibold text-primary-600 border border-primary-200 bg-primary-50 hover:bg-primary-100 dark:border-primary-700/50 dark:bg-primary-900/30 dark:text-primary-300 dark:hover:bg-primary-900/50 transition-all whitespace-nowrap"
               >
                 {t('landing.login')}
               </button>
               <button
                 className={cn(
                   'relative p-2 rounded-xl transition-all duration-200',
-                  mobileMenu ? 'bg-primary-50 text-primary-600' : 'hover:bg-surface-100 text-surface-800'
+                  mobileMenu ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300' : 'hover:bg-surface-100 text-surface-800'
                 )}
                 onClick={() => setMobileMenu(!mobileMenu)}
                 aria-expanded={mobileMenu}
@@ -115,10 +115,10 @@ export function LandingNavbar({ scrolled, navLinks }: LandingNavbarProps) {
                 <button
                   key={l.id}
                   onClick={() => scrollToSection(l.id)}
-                  className="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-surface-700 font-medium hover:bg-primary-50 hover:text-primary-700 transition-all group"
+                  className="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-surface-700 font-medium hover:bg-primary-50 hover:text-primary-700 dark:hover:bg-primary-900/30 dark:hover:text-primary-300 transition-all group"
                   style={{ animationDelay: `${i * 40}ms` }}
                 >
-                  <div className="w-9 h-9 bg-primary-50 group-hover:bg-primary-100 rounded-xl flex items-center justify-center shrink-0 transition-colors">
+                  <div className="w-9 h-9 bg-primary-50 group-hover:bg-primary-100 dark:bg-primary-900/30 dark:group-hover:bg-primary-900/50 rounded-xl flex items-center justify-center shrink-0 transition-colors">
                     <Icon name={l.icon} size={18} className="text-primary-500" />
                   </div>
                   <span className="flex-1 text-start">{l.label}</span>
