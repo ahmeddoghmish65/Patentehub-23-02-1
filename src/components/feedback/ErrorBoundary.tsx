@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import type { ReactNode, ErrorInfo } from 'react';
 import { Icon } from '@/shared/ui/Icon';
+import { captureException } from '@/infrastructure/monitoring';
 
 interface Props {
   children:  ReactNode;
@@ -40,10 +41,16 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, info: ErrorInfo) {
     this.setState(s => ({ errorCount: s.errorCount + 1 }));
 
-    // Production logging hook
+    // Report to Sentry with component context
+    captureException(error, {
+      componentName: this.props.name,
+      componentStack: info.componentStack,
+    });
+
+    // Additional custom handler (e.g. for tests or parent components)
     if (this.props.onError) {
       this.props.onError(error, info);
-    } else {
+    } else if (import.meta.env.DEV) {
       console.error(
         `[ErrorBoundary${this.props.name ? `:${this.props.name}` : ''}]`,
         error.message,

@@ -8,6 +8,7 @@ import { getSavedTheme } from '@/shared/utils/cookieManager';
 import { applyTheme } from '@/store/helpers';
 import { LanguageProvider } from '@/i18n';
 import { initAnalytics } from '@/infrastructure/analytics';
+import { initSentry, initLogRocket } from '@/infrastructure/monitoring';
 
 // ─── Early startup — apply saved preferences before React renders ─────────────
 // Reading from localStorage synchronously prevents a flash of the wrong theme
@@ -18,8 +19,12 @@ if (savedTheme) {
   applyTheme(savedTheme);
 }
 
-// Initialise analytics if the user already gave full consent on a prior visit.
+// Sentry: initialise early so no errors are missed (no consent required).
+initSentry();
+
+// Analytics & LogRocket: only active when the user gave full cookie consent.
 initAnalytics();
+initLogRocket();
 
 // Language direction is applied by the inline script in index.html (runs
 // synchronously before any paint), so no additional DOM writes are needed here.
