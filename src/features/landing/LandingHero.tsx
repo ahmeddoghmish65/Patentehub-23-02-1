@@ -44,8 +44,8 @@ export function LandingHero({ features }: LandingHeroProps) {
 
           {/* Content */}
           <div className={cn('text-center order-2 lg:order-1', dir === 'rtl' ? 'lg:text-right' : 'lg:text-left')}>
-            <div className="inline-flex items-center gap-2.5 bg-primary-50 border border-primary-200/70 text-primary-700 dark:bg-primary-900/60 dark:border-primary-600/60 dark:text-primary-200 px-5 py-2.5 rounded-full text-sm font-medium mb-8 animate-fade-in-up shadow-sm dark:shadow-primary-900/40">
-              <Icon name="auto_awesome" size={18} filled className="text-primary-500" />
+            <div className="inline-flex items-center gap-2.5 bg-primary-50 border border-primary-200/70 text-primary-700 dark:bg-primary-900 dark:border-primary-600/80 dark:text-primary-200 px-5 py-2.5 rounded-full text-sm font-medium mb-8 animate-fade-in-up shadow-sm dark:shadow-lg dark:shadow-primary-900/50">
+              <Icon name="auto_awesome" size={18} filled className="text-primary-500 dark:text-primary-400" />
               <span>{t('landing.hero_badge')}</span>
             </div>
 

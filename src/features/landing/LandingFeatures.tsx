@@ -29,7 +29,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
         )}>
 
           {/* F1: Bilingual — large (2 col × 2 row) */}
-          <div className="col-span-2 lg:row-span-2 rounded-3xl bg-gradient-to-br from-blue-50 dark:from-blue-950/40 via-primary-50/60 dark:via-primary-950/30 to-indigo-50 dark:to-indigo-950/40 border border-blue-100 dark:border-blue-900/50 p-6 sm:p-7 flex flex-col justify-between shadow-sm hover:shadow-2xl hover:shadow-blue-100/60 transition-all duration-500"
+          <div className="col-span-2 lg:row-span-2 rounded-3xl bg-gradient-to-br from-blue-50 via-primary-50/60 to-indigo-50 dark:from-blue-950 dark:via-slate-900 dark:to-indigo-950 border border-blue-100 dark:border-blue-800/60 p-6 sm:p-7 flex flex-col justify-between shadow-sm hover:shadow-2xl hover:shadow-blue-100/60 dark:hover:shadow-blue-900/30 transition-all duration-500"
             style={{ transitionDelay: '0ms' }}>
             <div>
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/25 mb-4">
