@@ -40,7 +40,8 @@
   --font-family-inter: 'Inter', 'Cairo', sans-serif;
 }
 
-* {
+/* :where() gives (0,0,0) specificity so any class selector always wins */
+:where(*) {
   font-family: var(--font-family-cairo);
 }
 
@@ -49,7 +50,8 @@ html[dir="ltr"] *:not(.material-symbols-rounded) {
 }
 
 .material-symbols-rounded {
-  font-family: 'Material Symbols Rounded';
+  /* Explicitly re-declare font-family so it wins regardless of cascade position */
+  font-family: 'Material Symbols Rounded' !important;
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
