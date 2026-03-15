@@ -16,7 +16,7 @@ export const AdminCard = React.memo(function AdminCard({
   padding = 'p-5',
 }: AdminCardProps) {
   return (
-    <div className={cn('bg-white rounded-xl border border-surface-100', padding, className)}>
+    <div className={cn('bg-white dark:bg-surface-100 rounded-xl border border-surface-100', padding, className)}>
       {children}
     </div>
   );

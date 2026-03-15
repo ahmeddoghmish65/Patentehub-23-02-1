@@ -36,7 +36,7 @@ export const ReportsTab = React.memo(function ReportsTab({
         const reportedUser = r.type === 'user' ? adminUsers.find((u: AnyItem) => u.id === r.targetId) : null;
         return (
           <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setViewedReport(null)}>
-            <div className="bg-white rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="bg-white dark:bg-surface-100 rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto shadow-2xl" onClick={e => e.stopPropagation()}>
               <div className="flex items-center justify-between p-5 border-b border-surface-100">
                 <div className="flex items-center gap-2">
                   <Icon name="flag" size={20} className="text-warning-500" />
@@ -121,7 +121,7 @@ export const ReportsTab = React.memo(function ReportsTab({
         );
       })()}
 
-      <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+      <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 overflow-hidden">
         <div className="p-4 border-b border-surface-100">
           <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <h2 className="font-bold text-surface-900 flex items-center gap-2">
@@ -137,7 +137,7 @@ export const ReportsTab = React.memo(function ReportsTab({
                   className={cn('text-[11px] px-2.5 py-1 rounded-lg border font-medium',
                     (s === 'all' && !search) || search === s
                       ? 'bg-primary-500 text-white border-primary-500'
-                      : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300')}>
+                      : 'bg-white dark:bg-surface-100 text-surface-500 border-surface-200 hover:border-primary-300')}>
                   {s === 'all' ? 'الكل' : s === 'pending' ? 'قيد المراجعة' : s === 'reviewed' ? 'مراجعة' : 'مرفوض'}
                 </button>
               ))}

@@ -74,7 +74,7 @@ export const ProfileExamReadiness = React.memo(function ProfileExamReadiness({
   const metrics = useMemo(() => METRIC_ITEMS(progress, t), [progress, t]);
 
   return (
-    <div className="bg-white rounded-xl p-5 border border-surface-100">
+    <div className="bg-white dark:bg-surface-100 rounded-xl p-5 border border-surface-100">
       <h2 className="font-bold text-surface-900 mb-4 flex items-center gap-2">
         <Icon name="trending_up" size={20} className="text-primary-500" />
         {t('profile.progress_stats')}
@@ -117,7 +117,7 @@ export const ProfileExamReadiness = React.memo(function ProfileExamReadiness({
             const c = FACTOR_COLORS[i] ?? FACTOR_COLORS[0];
             return (
               <div key={f.key} className={cn('rounded-xl p-3 border flex items-center gap-2.5', c.bg, c.border)}>
-                <div className="w-9 h-9 rounded-xl bg-white/80 flex items-center justify-center shrink-0 shadow-sm">
+                <div className="w-9 h-9 rounded-xl bg-white/80 dark:bg-surface-200/80 flex items-center justify-center shrink-0 shadow-sm">
                   <Icon name={FACTOR_ICONS[i] ?? 'star'} size={18} className={c.icon} filled />
                 </div>
                 <div className="min-w-0">
@@ -144,7 +144,7 @@ export const ProfileExamReadiness = React.memo(function ProfileExamReadiness({
         <div className="mb-4 bg-surface-50 rounded-xl p-4">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-semibold text-surface-800">{t('profile.answer_dist')}</span>
-            <span className="text-xs font-semibold bg-white text-surface-600 px-2.5 py-0.5 rounded-full border border-surface-200">
+            <span className="text-xs font-semibold bg-white dark:bg-surface-200 text-surface-600 px-2.5 py-0.5 rounded-full border border-surface-200">
               {totalAnswers} {t('profile.total_label')}
             </span>
           </div>

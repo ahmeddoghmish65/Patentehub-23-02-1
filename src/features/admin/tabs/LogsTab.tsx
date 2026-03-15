@@ -59,7 +59,7 @@ export const LogsTab = React.memo(function LogsTab({
 
   return (
     <div className="space-y-3">
-      <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+      <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 overflow-hidden">
         <div className="p-3.5 border-b border-surface-100 space-y-2.5">
           {/* Row 1: title + search + export */}
           <div className="flex items-center gap-2 flex-wrap">
@@ -135,7 +135,7 @@ export const LogsTab = React.memo(function LogsTab({
             </p>
             <div className="flex gap-2">
               <button onClick={() => setShowDeleteLogsConfirm(false)}
-                className="flex-1 py-1.5 rounded-lg text-xs font-medium bg-white border border-surface-200 text-surface-600 hover:bg-surface-50">
+                className="flex-1 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-surface-200 border border-surface-200 text-surface-600 hover:bg-surface-50 dark:hover:bg-surface-300">
                 إلغاء
               </button>
               <button onClick={async () => {

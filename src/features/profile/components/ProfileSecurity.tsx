@@ -43,7 +43,7 @@ export const ProfileSecurity = React.memo(function ProfileSecurity({
   };
 
   return (
-    <div className="bg-white rounded-2xl p-4 border border-surface-100 space-y-3">
+    <div className="bg-white dark:bg-surface-100 rounded-2xl p-4 border border-surface-100 space-y-3">
       <SectionHeader icon="security" label={t('profile.change_password')} />
 
       <div>

@@ -42,7 +42,7 @@ export const PostsTab = React.memo(function PostsTab({
         {(['active', 'deleted'] as const).map(v => (
           <button key={v} onClick={() => setContentView(v)}
             className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border',
-              contentView === v ? (v === 'deleted' ? 'bg-danger-500 text-white border-danger-500' : 'bg-primary-500 text-white border-primary-500') : 'bg-white text-surface-600 border-surface-200 hover:border-primary-200')}>
+              contentView === v ? (v === 'deleted' ? 'bg-danger-500 text-white border-danger-500' : 'bg-primary-500 text-white border-primary-500') : 'bg-white dark:bg-surface-100 text-surface-600 border-surface-200 hover:border-primary-200')}>
             <Icon name={v === 'deleted' ? 'delete' : 'forum'} size={14} />
             {v === 'active' ? `نشط (${posts.length})` : `محذوف (${deletedPosts.length})`}
           </button>
@@ -51,7 +51,7 @@ export const PostsTab = React.memo(function PostsTab({
 
       {/* Deleted posts */}
       {contentView === 'deleted' && (
-        <div className="bg-white rounded-xl border border-danger-100 overflow-hidden">
+        <div className="bg-white dark:bg-surface-100 rounded-xl border border-danger-100 overflow-hidden">
           <div className="p-4 border-b border-danger-100 bg-danger-50 flex items-center gap-2">
             <Icon name="delete" size={18} className="text-danger-500" />
             <h3 className="font-bold text-danger-700">المنشورات المحذوفة ({deletedPosts.length})</h3>
@@ -91,7 +91,7 @@ export const PostsTab = React.memo(function PostsTab({
       {contentView === 'active' && (
         <>
           {/* Community settings */}
-          <div className="bg-white rounded-xl border border-surface-100 p-4">
+          <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 p-4">
             <h3 className="text-sm font-bold text-surface-800 flex items-center gap-2 mb-3">
               <Icon name="settings" size={16} className="text-primary-500" />
               إعدادات المجتمع
@@ -114,7 +114,7 @@ export const PostsTab = React.memo(function PostsTab({
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+          <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 overflow-hidden">
             <div className="p-4 border-b border-surface-100">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="font-bold text-surface-900 flex items-center gap-2">
@@ -140,7 +140,7 @@ export const PostsTab = React.memo(function PostsTab({
             ) : (
               <div className="divide-y divide-surface-50 max-h-[600px] overflow-y-auto">
                 {filtered.map((p: AnyItem) => (
-                  <div key={p.id} className={cn('p-4 flex items-start gap-3 hover:bg-surface-50 transition-colors', postSelectedIds.has(p.id) && 'bg-primary-50')}>
+                  <div key={p.id} className={cn('p-4 flex items-start gap-3 hover:bg-surface-50 dark:hover:bg-surface-200 transition-colors', postSelectedIds.has(p.id) && 'bg-primary-50 dark:bg-primary-900/20')}>
                     <input type="checkbox" className="mt-1 rounded" checked={postSelectedIds.has(p.id)}
                       onChange={e => { const s = new Set(postSelectedIds); e.target.checked ? s.add(p.id) : s.delete(p.id); setPostSelectedIds(s); }} />
                     <div className="min-w-0 flex-1">

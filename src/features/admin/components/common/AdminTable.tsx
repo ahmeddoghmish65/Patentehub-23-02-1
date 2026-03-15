@@ -59,7 +59,7 @@ export const AdminTable = React.memo(function AdminTable({
 
   return (
     <div className="space-y-0">
-      <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+      <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 overflow-hidden">
         <div className="border-b border-surface-100">
           {/* Row 1: icon+title | view tabs */}
           <div className="flex items-center gap-0 border-b border-surface-50">
@@ -81,7 +81,7 @@ export const AdminTable = React.memo(function AdminTable({
                 <button key={v.id}
                   onClick={() => { setContentView(v.id); setSelectedIds(new Set()); }}
                   className={cn('flex items-center gap-1.5 px-3.5 py-2.5 text-xs font-semibold border-b-2 transition-all whitespace-nowrap',
-                    contentView === v.id ? v.activeClass : 'border-transparent text-surface-400 hover:text-surface-600 hover:bg-surface-50')}>
+                    contentView === v.id ? v.activeClass : 'border-transparent text-surface-400 hover:text-surface-600 hover:bg-surface-50 dark:hover:bg-surface-200')}>
                   {v.label}
                   {v.count > 0 && (
                     <span className={cn('rounded-full text-[9px] px-1.5 py-0 font-bold min-w-[16px] text-center',
@@ -97,7 +97,7 @@ export const AdminTable = React.memo(function AdminTable({
           <div className="flex items-center gap-1.5 px-3 py-2 flex-wrap bg-surface-50/50">
             {filterSlot}
             <input
-              className="border border-surface-200 rounded-lg px-2.5 py-1.5 text-xs w-28 focus:outline-none focus:border-primary-400 bg-white"
+              className="border border-surface-200 rounded-lg px-2.5 py-1.5 text-xs w-28 focus:outline-none focus:border-primary-400 bg-white dark:bg-surface-100 dark:text-surface-900"
               placeholder="بحث..."
               value={search}
               onChange={e => setSearch(e.target.value)}
@@ -105,8 +105,8 @@ export const AdminTable = React.memo(function AdminTable({
             <div className="flex-1" />
             {contentView === 'active' && (
               <>
-                <button className="p-1.5 rounded-lg hover:bg-white text-surface-400 border border-surface-200 bg-white" onClick={onImport} title="استيراد"><Icon name="upload" size={15} /></button>
-                <button className="p-1.5 rounded-lg hover:bg-white text-surface-400 border border-surface-200 bg-white" onClick={onExport} title="تصدير"><Icon name="download" size={15} /></button>
+                <button className="p-1.5 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-200 text-surface-400 border border-surface-200 bg-white dark:bg-surface-100" onClick={onImport} title="استيراد"><Icon name="upload" size={15} /></button>
+                <button className="p-1.5 rounded-lg hover:bg-surface-50 dark:hover:bg-surface-200 text-surface-400 border border-surface-200 bg-white dark:bg-surface-100" onClick={onExport} title="تصدير"><Icon name="download" size={15} /></button>
                 <Button size="sm" onClick={onAdd} icon={<Icon name="add" size={14} />}>إضافة</Button>
               </>
             )}

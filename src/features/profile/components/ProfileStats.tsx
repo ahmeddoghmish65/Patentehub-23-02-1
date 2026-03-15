@@ -88,7 +88,7 @@ export const ProfileStats = React.memo(function ProfileStats({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl w-full max-w-md max-h-[70vh] overflow-hidden shadow-2xl flex flex-col"
+        className="bg-white dark:bg-surface-100 rounded-2xl w-full max-w-md max-h-[70vh] overflow-hidden shadow-2xl flex flex-col"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-surface-100 shrink-0">

@@ -72,7 +72,7 @@ export const MediaTab = React.memo(function MediaTab({
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="bg-white rounded-2xl border border-surface-100 p-5">
+      <div className="bg-white dark:bg-surface-100 rounded-2xl border border-surface-100 p-5">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center">
             <Icon name="perm_media" size={22} className="text-primary-500" filled />
@@ -121,7 +121,7 @@ export const MediaTab = React.memo(function MediaTab({
             {(['all', 'sections', 'lessons', 'signs', 'questions'] as const).map(f => (
               <button key={f}
                 className={cn('px-3 py-1.5 rounded-xl text-xs font-semibold border transition-colors',
-                  mediaLibFilter === f ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-surface-600 border-surface-200 hover:border-primary-300')}
+                  mediaLibFilter === f ? 'bg-primary-500 text-white border-primary-500' : 'bg-white dark:bg-surface-100 text-surface-600 border-surface-200 hover:border-primary-300')}
                 onClick={() => setMediaLibFilter(f)}>
                 {f === 'all' ? 'الكل' : SOURCE_LABELS[f]} ({counts[f] || 0})
               </button>
@@ -149,7 +149,7 @@ export const MediaTab = React.memo(function MediaTab({
 
       {/* Grid */}
       {filtered.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-surface-100 p-16 text-center">
+        <div className="bg-white dark:bg-surface-100 rounded-2xl border border-surface-100 p-16 text-center">
           <Icon name="image_not_supported" size={48} className="text-surface-200 mx-auto mb-3" />
           <p className="text-surface-400 text-sm">لا توجد صور</p>
         </div>
@@ -159,7 +159,7 @@ export const MediaTab = React.memo(function MediaTab({
             const itemKey = `${m.source}:${m.id}`;
             const isSelected = mediaLibSelectedIds.has(itemKey);
             return (
-              <div key={idx} className={cn('bg-white rounded-xl border overflow-hidden group hover:shadow-md transition-all',
+              <div key={idx} className={cn('bg-white dark:bg-surface-100 rounded-xl border overflow-hidden group hover:shadow-md transition-all',
                 isSelected ? 'border-primary-500 ring-2 ring-primary-300' : 'border-surface-100 hover:border-primary-200')}>
                 <div className="aspect-square relative overflow-hidden bg-surface-50">
                   <div className="absolute top-1.5 right-1.5 z-10">
@@ -174,14 +174,14 @@ export const MediaTab = React.memo(function MediaTab({
                   </div>
                   <img src={m.src} alt={m.label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100 gap-1.5">
-                    <button className="p-1.5 bg-white rounded-lg shadow-lg hover:bg-primary-50 transition-colors" title="عرض الصورة" onClick={() => window.open(m.src, '_blank')}>
+                    <button className="p-1.5 bg-white dark:bg-surface-200 rounded-lg shadow-lg hover:bg-primary-50 dark:hover:bg-surface-300 transition-colors" title="عرض الصورة" onClick={() => window.open(m.src, '_blank')}>
                       <Icon name="open_in_new" size={14} className="text-surface-700" />
                     </button>
-                    <button className="p-1.5 bg-white rounded-lg shadow-lg hover:bg-primary-50 transition-colors" title="تعديل الصورة"
+                    <button className="p-1.5 bg-white dark:bg-surface-200 rounded-lg shadow-lg hover:bg-primary-50 dark:hover:bg-surface-300 transition-colors" title="تعديل الصورة"
                       onClick={() => { setMediaEditModal({ source: m.source, id: m.id, label: m.label, src: m.src }); setMediaEditSrc(m.src); }}>
                       <Icon name="edit" size={14} className="text-primary-600" />
                     </button>
-                    <button className="p-1.5 bg-white rounded-lg shadow-lg hover:bg-danger-50 transition-colors" title="حذف الصورة"
+                    <button className="p-1.5 bg-white dark:bg-surface-200 rounded-lg shadow-lg hover:bg-danger-50 dark:hover:bg-surface-300 transition-colors" title="حذف الصورة"
                       onClick={async () => {
                         if (!confirm('هل تريد حذف هذه الصورة؟')) return;
                         await deleteMediaImage(m);
@@ -211,7 +211,7 @@ export const MediaTab = React.memo(function MediaTab({
       {/* Media Edit Modal */}
       {mediaEditModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setMediaEditModal(null)}>
-          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div className="bg-white dark:bg-surface-100 rounded-2xl w-full max-w-md p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-bold text-surface-900 mb-4">تعديل بيانات الصورة</h3>
             <div className="flex gap-4 mb-4">
               {mediaEditSrc && <img src={mediaEditSrc} alt="" className="w-24 h-24 rounded-xl object-cover border border-surface-200" />}
@@ -224,7 +224,7 @@ export const MediaTab = React.memo(function MediaTab({
               <div>
                 <label className="block text-sm font-medium text-surface-700 mb-1">رابط الصورة (URL أو base64)</label>
                 <textarea
-                  className="w-full border border-surface-200 rounded-xl px-3 py-2 text-xs h-20 resize-none"
+                  className="w-full border border-surface-200 rounded-xl px-3 py-2 text-xs h-20 resize-none bg-white dark:bg-surface-200 dark:text-surface-900"
                   placeholder="أدخل رابط الصورة أو اتركه كما هو..."
                   value={mediaEditSrc}
                   onChange={e => setMediaEditSrc(e.target.value)}
@@ -236,7 +236,7 @@ export const MediaTab = React.memo(function MediaTab({
               </button>
             </div>
             <div className="flex gap-2 justify-end">
-              <button className="px-4 py-2 rounded-xl border border-surface-200 text-sm hover:bg-surface-50 transition-colors" onClick={() => setMediaEditModal(null)}>إلغاء</button>
+              <button className="px-4 py-2 rounded-xl border border-surface-200 text-sm hover:bg-surface-50 dark:hover:bg-surface-200 transition-colors" onClick={() => setMediaEditModal(null)}>إلغاء</button>
               <button className="px-4 py-2 bg-danger-500 text-white rounded-xl text-sm font-semibold hover:bg-danger-600 transition-colors"
                 onClick={async () => {
                   if (!confirm('هل تريد حذف هذه الصورة نهائياً؟')) return;

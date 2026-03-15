@@ -187,7 +187,7 @@ export function UserProfilePage() {
   return (
     <div className="-mx-4 -mt-4 sm:-mx-6 sm:-mt-6 lg:-mx-8 lg:-mt-8 pb-20">
       {/* Sticky header */}
-      <div className="sticky top-0 z-10 bg-white/90 backdrop-blur-sm border-b border-surface-100 flex items-center gap-3 px-4 py-3">
+      <div className="sticky top-0 z-10 bg-white/90 dark:bg-surface-100/95 backdrop-blur-sm border-b border-surface-100 flex items-center gap-3 px-4 py-3">
         <button
           onClick={() => goBack(ROUTES.COMMUNITY)}
           className="w-9 h-9 rounded-xl hover:bg-surface-100 flex items-center justify-center transition-colors"
@@ -278,15 +278,15 @@ export function UserProfilePage() {
               </span>
             </div>
             <div className="grid grid-cols-3 gap-1.5">
-              <div className="bg-white/70 rounded-lg p-1.5 text-center">
+              <div className="bg-white/70 dark:bg-surface-200/80 rounded-lg p-1.5 text-center">
                 <p className="text-sm font-black text-primary-700">{userData.examReadiness || 0}%</p>
                 <p className="text-[9px] text-surface-400">{t('community.readiness_label')}</p>
               </div>
-              <div className="bg-white/70 rounded-lg p-1.5 text-center">
+              <div className="bg-white/70 dark:bg-surface-200/80 rounded-lg p-1.5 text-center">
                 <p className="text-sm font-black text-success-600">{userData.correctAnswers || 0}</p>
                 <p className="text-[9px] text-surface-400">{t('community.correct_label')}</p>
               </div>
-              <div className="bg-white/70 rounded-lg p-1.5 text-center">
+              <div className="bg-white/70 dark:bg-surface-200/80 rounded-lg p-1.5 text-center">
                 <p className="text-sm font-black text-surface-600">{userData.totalQuizzes || 0}</p>
                 <p className="text-[9px] text-surface-400">{t('community.quiz_label')}</p>
               </div>
@@ -364,7 +364,7 @@ export function UserProfilePage() {
       {/* Posts / Quizzes tabs */}
       {!statView && (
         <div className="border-t border-surface-100">
-          <div className="flex border-b border-surface-100 sticky top-[57px] bg-white z-10">
+          <div className="flex border-b border-surface-100 sticky top-[57px] bg-white dark:bg-surface-50 z-10">
             {(['posts', 'quizzes'] as const).map(tabKey => (
               <button
                 key={tabKey}

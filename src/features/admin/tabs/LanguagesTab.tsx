@@ -42,7 +42,7 @@ export const LanguagesTab = React.memo(function LanguagesTab() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl border border-surface-100 p-6">
+      <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 p-6">
         <h2 className="text-lg font-bold text-surface-900 mb-1 flex items-center gap-2">
           <Icon name="translate" size={20} className="text-primary-500" filled />
           {t('admin.lang_title')}

@@ -49,7 +49,7 @@ export const ProfileHeader = React.memo(function ProfileHeader({
   ];
 
   return (
-    <div className="bg-white rounded-2xl p-5 border border-surface-100">
+    <div className="bg-white dark:bg-surface-100 rounded-2xl p-5 border border-surface-100">
       <div className="flex items-start gap-4">
         <ProfileAvatarUpload
           avatar={user.avatar}

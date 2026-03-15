@@ -15,7 +15,7 @@ import { ProfileSecurity } from './ProfileSecurity';
 import { usePasswordChange } from '../hooks/usePasswordChange';
 
 const FIELD_CLASS =
-  'w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary-400 transition-colors';
+  'w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary-400 transition-colors bg-white dark:bg-surface-100 dark:text-surface-900';
 
 const SectionHeader = ({ icon, label }: { icon: string; label: string }) => (
   <div className="flex items-center gap-2 mb-3">
@@ -98,7 +98,7 @@ export const ProfileEditForm = React.memo(function ProfileEditForm({
     <div className="max-w-lg mx-auto pb-6">
       {/* Sticky header */}
       <div className="sticky top-0 z-10 bg-surface-50 -mx-1 px-1 pb-3 pt-1">
-        <div className="bg-white rounded-2xl border border-surface-100 px-4 py-3 flex items-center gap-3 shadow-sm">
+        <div className="bg-white dark:bg-surface-100 rounded-2xl border border-surface-100 px-4 py-3 flex items-center gap-3 shadow-sm">
           <button
             onClick={onBack}
             className="w-9 h-9 rounded-xl bg-surface-100 hover:bg-surface-200 flex items-center justify-center transition-colors shrink-0"
@@ -139,7 +139,7 @@ export const ProfileEditForm = React.memo(function ProfileEditForm({
 
       <div className="space-y-3">
         {/* Personal info */}
-        <div className="bg-white rounded-2xl p-4 border border-surface-100 space-y-3">
+        <div className="bg-white dark:bg-surface-100 rounded-2xl p-4 border border-surface-100 space-y-3">
           <SectionHeader icon="person" label={t('profile.personal_info')} />
 
           <div className="grid grid-cols-2 gap-2">
@@ -251,7 +251,7 @@ export const ProfileEditForm = React.memo(function ProfileEditForm({
         </div>
 
         {/* Contact info */}
-        <div className="bg-white rounded-2xl p-4 border border-surface-100 space-y-3">
+        <div className="bg-white dark:bg-surface-100 rounded-2xl p-4 border border-surface-100 space-y-3">
           <SectionHeader icon="contact_mail" label={t('profile.contact_info')} />
 
           <div>
@@ -269,7 +269,7 @@ export const ProfileEditForm = React.memo(function ProfileEditForm({
             <label className="text-[11px] text-surface-400 font-medium mb-1 block">{t('profile.phone_label')}</label>
             <div className="flex gap-2">
               <PhoneCodeSelect
-                className="w-28 border border-surface-200 rounded-xl px-2 py-2.5 text-sm shrink-0 focus:outline-none focus:border-primary-400"
+                className="w-28 border border-surface-200 rounded-xl px-2 py-2.5 text-sm shrink-0 focus:outline-none focus:border-primary-400 bg-white dark:bg-surface-100 dark:text-surface-900"
                 value={editForm.phoneCode}
                 onChange={v => setEditForm(f => ({ ...f, phoneCode: v }))}
               />
@@ -315,7 +315,7 @@ export const ProfileEditForm = React.memo(function ProfileEditForm({
         </div>
 
         {/* Privacy */}
-        <div className="bg-white rounded-2xl p-4 border border-surface-100">
+        <div className="bg-white dark:bg-surface-100 rounded-2xl p-4 border border-surface-100">
           <SectionHeader icon="lock" label={t('profile.privacy_label')} />
           <div className="flex items-center justify-between">
             <div>

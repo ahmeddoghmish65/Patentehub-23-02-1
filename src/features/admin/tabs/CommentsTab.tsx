@@ -28,7 +28,7 @@ export const CommentsTab = React.memo(function CommentsTab({
         {(['active', 'deleted'] as const).map(v => (
           <button key={v} onClick={() => setContentView(v)}
             className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border',
-              contentView === v ? (v === 'deleted' ? 'bg-danger-500 text-white border-danger-500' : 'bg-primary-500 text-white border-primary-500') : 'bg-white text-surface-600 border-surface-200 hover:border-primary-200')}>
+              contentView === v ? (v === 'deleted' ? 'bg-danger-500 text-white border-danger-500' : 'bg-primary-500 text-white border-primary-500') : 'bg-white dark:bg-surface-100 text-surface-600 border-surface-200 hover:border-primary-200')}>
             <Icon name={v === 'deleted' ? 'delete' : 'chat_bubble'} size={14} />
             {v === 'active' ? `نشط (${allComments.length})` : `محذوف (${deletedComments.length})`}
           </button>
@@ -37,7 +37,7 @@ export const CommentsTab = React.memo(function CommentsTab({
 
       {/* Deleted comments */}
       {contentView === 'deleted' && (
-        <div className="bg-white rounded-xl border border-danger-100 overflow-hidden">
+        <div className="bg-white dark:bg-surface-100 rounded-xl border border-danger-100 overflow-hidden">
           <div className="p-4 border-b border-danger-100 bg-danger-50 flex items-center gap-2">
             <Icon name="delete" size={18} className="text-danger-500" />
             <h3 className="font-bold text-danger-700">التعليقات المحذوفة ({deletedComments.length})</h3>
@@ -82,7 +82,7 @@ export const CommentsTab = React.memo(function CommentsTab({
 
       {/* Active comments */}
       {contentView === 'active' && (
-        <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+        <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 overflow-hidden">
           <div className="p-4 border-b border-surface-100">
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-bold text-surface-900 flex items-center gap-2">

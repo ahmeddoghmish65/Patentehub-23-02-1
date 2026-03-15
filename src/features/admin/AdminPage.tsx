@@ -294,18 +294,18 @@ export function AdminPage() {
     <div className="mb-3">
       <label className="block text-sm font-medium text-surface-700 mb-1">{label}</label>
       {type === 'textarea' ? (
-        <textarea className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none" rows={3}
+        <textarea className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none bg-white dark:bg-surface-100 dark:text-surface-900" rows={3}
           value={(form[field] as string) || ''}
           onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))} />
       ) : type === 'boolean' ? (
-        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm"
+        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm bg-white dark:bg-surface-100 dark:text-surface-900"
           value={String(form[field] || false)}
           onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value === 'true' }))}>
           <option value="true">{t('admin.answer_true_label')}</option>
           <option value="false">{t('admin.answer_false_label')}</option>
         </select>
       ) : type === 'select-difficulty' ? (
-        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm"
+        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm bg-white dark:bg-surface-100 dark:text-surface-900"
           value={(form[field] as string) || 'easy'}
           onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}>
           <option value="easy">{t('admin.diff_easy')}</option>
@@ -313,28 +313,28 @@ export function AdminPage() {
           <option value="hard">{t('admin.diff_hard')}</option>
         </select>
       ) : type === 'select-section' ? (
-        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm"
+        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm bg-white dark:bg-surface-100 dark:text-surface-900"
           value={(form[field] as string) || ''}
           onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}>
           <option value="">{t('admin.select_section')}</option>
           {data.sections.map(s => <option key={s.id} value={s.id}>{s.nameAr}</option>)}
         </select>
       ) : type === 'select-lesson' ? (
-        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm"
+        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm bg-white dark:bg-surface-100 dark:text-surface-900"
           value={(form[field] as string) || ''}
           onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}>
           <option value="">{t('admin.select_lesson')}</option>
           {data.lessons.map(l => <option key={l.id} value={l.id}>{l.titleAr}</option>)}
         </select>
       ) : type === 'select-dict-section' ? (
-        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm"
+        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm bg-white dark:bg-surface-100 dark:text-surface-900"
           value={(form[field] as string) || ''}
           onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}>
           <option value="">{t('admin.select_section')}</option>
           {data.dictSections.map(s => <option key={s.id} value={s.id}>{s.nameAr}</option>)}
         </select>
       ) : type === 'select-sign-section' ? (
-        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm"
+        <select className="w-full border border-surface-200 rounded-xl p-3 text-sm bg-white dark:bg-surface-100 dark:text-surface-900"
           value={(form[field] as string) || ''}
           onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}>
           <option value="">{t('admin.no_section')}</option>
@@ -353,7 +353,7 @@ export function AdminPage() {
             ].map(b => (
               <button key={b.cmd} type="button" title={b.title}
                 onMouseDown={e => { e.preventDefault(); document.execCommand(b.cmd); }}
-                className={`px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-white ${b.style}`}>
+                className={`px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-surface-50 dark:hover:bg-surface-200 bg-white dark:bg-surface-100 ${b.style}`}>
                 {b.icon}
               </button>
             ))}
@@ -361,16 +361,16 @@ export function AdminPage() {
             {['H2','H3','H4'].map((h, i) => (
               <button key={h} type="button" title={h}
                 onMouseDown={e => { e.preventDefault(); document.execCommand('formatBlock', false, ['h2','h3','h4'][i]); }}
-                className="px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-white font-bold">
+                className="px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-surface-50 dark:hover:bg-surface-200 bg-white dark:bg-surface-100 font-bold">
                 {h}
               </button>
             ))}
             <button type="button" title="نص عادي"
               onMouseDown={e => { e.preventDefault(); document.execCommand('formatBlock', false, 'p'); }}
-              className="px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-white">P</button>
+              className="px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-surface-50 dark:hover:bg-surface-200 bg-white dark:bg-surface-100">P</button>
             <div className="w-px h-4 bg-surface-200 mx-0.5" />
             <select title="حجم الخط"
-              className="text-xs border border-surface-200 rounded px-1 py-0.5 bg-white cursor-pointer"
+              className="text-xs border border-surface-200 rounded px-1 py-0.5 bg-white dark:bg-surface-100 dark:text-surface-900 cursor-pointer"
               onMouseDown={e => e.stopPropagation()}
               onChange={e => {
                 e.preventDefault();
@@ -389,7 +389,7 @@ export function AdminPage() {
               <option value="7">{t('admin.font_very_huge')}</option>
             </select>
             <label title="لون النص" className="flex items-center gap-1 cursor-pointer">
-              <span className="text-xs border border-surface-200 rounded px-1.5 py-0.5 bg-white">A</span>
+              <span className="text-xs border border-surface-200 rounded px-1.5 py-0.5 bg-white dark:bg-surface-100">A</span>
               <input type="color" className="w-5 h-5 p-0 border-0 rounded cursor-pointer"
                 onMouseDown={() => {
                   const sel = window.getSelection();
@@ -404,10 +404,10 @@ export function AdminPage() {
             <div className="w-px h-4 bg-surface-200 mx-0.5" />
             <button type="button" title="مسح التنسيق"
               onMouseDown={e => { e.preventDefault(); document.execCommand('removeFormat'); }}
-              className="px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-white text-surface-400">✕</button>
+              className="px-2 py-0.5 text-xs rounded border border-surface-200 hover:bg-surface-50 dark:hover:bg-surface-200 bg-white dark:bg-surface-100 text-surface-400">✕</button>
           </div>
           <div
-            className="w-full p-3 text-sm min-h-[100px] focus:outline-none"
+            className="w-full p-3 text-sm min-h-[100px] focus:outline-none bg-white dark:bg-surface-100 dark:text-surface-900"
             contentEditable suppressContentEditableWarning
             dir={field.includes('It') ? 'ltr' : 'rtl'}
             dangerouslySetInnerHTML={{ __html: (form[field] as string) || '' }}
@@ -416,7 +416,7 @@ export function AdminPage() {
           />
         </div>
       ) : type === 'number' ? (
-        <input type="number" className="w-full border border-surface-200 rounded-xl p-3 text-sm"
+        <input type="number" className="w-full border border-surface-200 rounded-xl p-3 text-sm bg-white dark:bg-surface-100 dark:text-surface-900"
           value={(form[field] as number) || 0}
           onChange={e => setForm(prev => ({ ...prev, [field]: parseInt(e.target.value) || 0 }))} />
       ) : type === 'image' || type === 'image-square' ? (
@@ -435,7 +435,7 @@ export function AdminPage() {
           </div>
           <div className="mt-2 flex gap-2 items-center">
             <input type="url"
-              className="flex-1 border border-surface-200 rounded-lg px-3 py-1.5 text-sm"
+              className="flex-1 border border-surface-200 rounded-lg px-3 py-1.5 text-sm bg-white dark:bg-surface-100 dark:text-surface-900"
               placeholder={t('admin.image_url_placeholder')}
               value={(form[field] as string)?.startsWith('http') ? (form[field] as string) : ''}
               onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}
@@ -454,7 +454,7 @@ export function AdminPage() {
           ) : null}
         </div>
       ) : (
-        <input type={type} className="w-full border border-surface-200 rounded-xl p-3 text-sm"
+        <input type={type} className="w-full border border-surface-200 rounded-xl p-3 text-sm bg-white dark:bg-surface-100 dark:text-surface-900"
           value={(form[field] as string) || ''}
           onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))} />
       )}
@@ -465,7 +465,7 @@ export function AdminPage() {
   if (!isFullAdmin && userPerms.length === 0) {
     return (
       <div className="max-w-sm mx-auto text-center py-20">
-        <div className="bg-white rounded-2xl p-8 border border-surface-100 shadow-sm">
+        <div className="bg-white dark:bg-surface-100 rounded-2xl p-8 border border-surface-100 shadow-sm">
           <div className="w-16 h-16 bg-surface-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Icon name="lock" size={32} className="text-surface-400" />
           </div>
@@ -493,7 +493,7 @@ export function AdminPage() {
         {visibleTabs.map(cfg => (
           <button key={cfg.id}
             className={cn('shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all',
-              tab === cfg.id ? 'bg-primary-500 text-white' : 'bg-white text-surface-600 border border-surface-200 hover:border-primary-200')}
+              tab === cfg.id ? 'bg-primary-500 text-white' : 'bg-white dark:bg-surface-100 text-surface-600 border border-surface-200 hover:border-primary-200')}
             onClick={() => setTab(cfg.id)}>
             <Icon name={cfg.icon} size={16} />
             {t(cfg.labelKey)}
@@ -763,7 +763,7 @@ export function AdminPage() {
       {modal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 overflow-y-auto"
           onClick={() => setModal(null)}>
-          <div className="bg-white rounded-2xl p-6 w-full max-w-lg my-8 max-h-[90vh] overflow-y-auto"
+          <div className="bg-white dark:bg-surface-100 rounded-2xl p-6 w-full max-w-lg my-8 max-h-[90vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}>
             <h3 className="text-lg font-bold text-surface-900 mb-4">{modal.data?.id ? 'تعديل' : 'إضافة'}</h3>
             {modal.type === 'section' && (<>
@@ -839,7 +839,7 @@ export function AdminPage() {
       {confirmDel && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
           onClick={() => setConfirmDel(null)}>
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
+          <div className="bg-white dark:bg-surface-100 rounded-2xl p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
             <Icon name="warning" size={40} className="text-danger-500 mx-auto mb-4" />
             <h3 className="text-lg font-bold text-surface-900 text-center mb-2">
               {confirmDel.type.includes('permanent') ? 'حذف نهائي' : 'نقل إلى المحذوفات'}
@@ -874,7 +874,7 @@ export function AdminPage() {
         return (
           <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
             onClick={() => setMediaPicker(null)}>
-            <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col"
+            <div className="bg-white dark:bg-surface-100 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col"
               onClick={e => e.stopPropagation()}>
               {/* Header */}
               <div className="p-5 border-b border-surface-100">
@@ -900,7 +900,7 @@ export function AdminPage() {
                   </div>
                 </div>
                 <input
-                  className="w-full border border-surface-200 rounded-xl px-3 py-2 text-sm mb-3"
+                  className="w-full border border-surface-200 rounded-xl px-3 py-2 text-sm mb-3 bg-white dark:bg-surface-200 dark:text-surface-900"
                   placeholder="بحث..."
                   value={mediaPickerSearch}
                   onChange={e => setMediaPickerSearch(e.target.value)}
@@ -910,7 +910,7 @@ export function AdminPage() {
                   {(['all', 'sections', 'lessons', 'signs', 'questions'] as const).map(f => (
                     <button key={f}
                       className={cn('px-2.5 py-1 rounded-lg text-xs font-semibold border transition-colors',
-                        mediaPickerFilter === f ? 'bg-primary-500 text-white border-primary-500' : 'bg-white text-surface-600 border-surface-200 hover:border-primary-300')}
+                        mediaPickerFilter === f ? 'bg-primary-500 text-white border-primary-500' : 'bg-white dark:bg-surface-200 text-surface-600 border-surface-200 hover:border-primary-300')}
                       onClick={() => setMediaPickerFilter(f)}>
                       {f === 'all' ? 'الكل' : sourceLabels[f]} ({counts[f] || 0})
                     </button>
@@ -942,7 +942,7 @@ export function AdminPage() {
                             </div>
                           </div>
                         </div>
-                        <div className="p-1.5 bg-white">
+                        <div className="p-1.5 bg-white dark:bg-surface-200">
                           <p className="text-[10px] text-surface-600 truncate">{m.label || '—'}</p>
                           <span className={cn('text-[9px] font-semibold',
                             m.source === 'sections' ? 'text-blue-500' :
