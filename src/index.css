@@ -61,9 +61,11 @@ html[dir="ltr"] *:not(.material-symbols-rounded) {
   display: inline-block;
   white-space: nowrap;
   word-wrap: normal;
-  direction: ltr;
-  -webkit-font-feature-settings: 'liga';
+  direction: ltr !important;
+  font-feature-settings: 'liga' 1;
+  -webkit-font-feature-settings: 'liga' 1;
   -webkit-font-smoothing: antialiased;
+  font-optical-sizing: none;
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
