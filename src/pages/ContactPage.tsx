@@ -92,7 +92,7 @@ export function ContactPage() {
       />
       <div className="min-h-screen bg-surface-50 animate-fade-in-up">
       {/* App Header */}
-      <header className="sticky top-0 z-50 bg-white border-b border-surface-100 shadow-sm">
+      <header className="sticky top-0 z-50 bg-white dark:bg-surface-100 border-b border-surface-100 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
           <button
             onClick={() => navigate(-1)}
@@ -116,7 +116,7 @@ export function ContactPage() {
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Contact Form */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+          <div className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
             {submitted ? (
               <div className="text-center py-10">
                 <div className="w-20 h-20 mx-auto bg-success-50 rounded-full flex items-center justify-center mb-6">
@@ -185,7 +185,7 @@ export function ContactPage() {
                     value={formData.message}
                     onChange={e => handleChange('message', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-3 rounded-xl border border-surface-200 bg-white resize-none',
+                      'w-full px-4 py-3 rounded-xl border border-surface-200 bg-white dark:bg-surface-200 resize-none',
                       'text-surface-800 placeholder:text-surface-400',
                       'focus:border-primary-500 focus:ring-2 focus:ring-primary-100',
                       'transition-all duration-200',
@@ -227,7 +227,7 @@ export function ContactPage() {
         {/* Contact Info Sidebar */}
         <div className="space-y-4">
           {/* Contact Details */}
-          <div className="bg-white rounded-2xl p-5 border border-surface-100 shadow-sm">
+          <div className="bg-white dark:bg-surface-100 rounded-2xl p-5 border border-surface-100 shadow-sm">
             <h3 className="font-bold text-surface-900 mb-4 flex items-center gap-2">
               <Icon name="contact_support" size={20} className="text-primary-500" filled />
               {isIt ? 'Informazioni di contatto' : 'معلومات التواصل'}
@@ -293,7 +293,7 @@ export function ContactPage() {
           </div>
 
           {/* Quick Links */}
-          <div className="bg-white rounded-2xl p-5 border border-surface-100 shadow-sm">
+          <div className="bg-white dark:bg-surface-100 rounded-2xl p-5 border border-surface-100 shadow-sm">
             <h3 className="font-bold text-surface-900 mb-3 flex items-center gap-2">
               <Icon name="link" size={20} className="text-surface-400" />
               {isIt ? 'Link utili' : 'روابط مفيدة'}

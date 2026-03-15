@@ -12,11 +12,11 @@ import { StreakModal } from '@/components/StreakModal';
 
 // ─── Level colours (Tailwind utility strings) ─────────────────────────────────
 const LEVEL_STYLE: Record<ExamReadinessLevel, { bg: string; text: string; bar: string; badge: string }> = {
-  not_ready:  { bg: 'bg-red-50',     text: 'text-red-600',     bar: 'bg-red-400',     badge: 'bg-red-100 text-red-600' },
-  beginner:   { bg: 'bg-orange-50',  text: 'text-orange-600',  bar: 'bg-orange-400',  badge: 'bg-orange-100 text-orange-600' },
-  developing: { bg: 'bg-yellow-50',  text: 'text-yellow-600',  bar: 'bg-yellow-400',  badge: 'bg-yellow-100 text-yellow-700' },
-  ready:      { bg: 'bg-green-50',   text: 'text-green-600',   bar: 'bg-green-500',   badge: 'bg-green-100 text-green-700' },
-  excellent:  { bg: 'bg-emerald-50', text: 'text-emerald-600', bar: 'bg-emerald-500', badge: 'bg-emerald-100 text-emerald-700' },
+  not_ready:  { bg: 'bg-red-50 dark:bg-red-950/30',         text: 'text-red-600',     bar: 'bg-red-400',     badge: 'bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400' },
+  beginner:   { bg: 'bg-orange-50 dark:bg-orange-950/30',   text: 'text-orange-600',  bar: 'bg-orange-400',  badge: 'bg-orange-100 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400' },
+  developing: { bg: 'bg-yellow-50 dark:bg-yellow-950/30',   text: 'text-yellow-600',  bar: 'bg-yellow-400',  badge: 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-600 dark:text-yellow-700' },
+  ready:      { bg: 'bg-green-50 dark:bg-green-950/30',     text: 'text-green-600',   bar: 'bg-green-500',   badge: 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400' },
+  excellent:  { bg: 'bg-emerald-50 dark:bg-emerald-950/30', text: 'text-emerald-600', bar: 'bg-emerald-500', badge: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400' },
 };
 
 
@@ -145,10 +145,10 @@ export const Dashboard = memo(function Dashboard() {
       {/* Quick Actions */}
       <div className="grid grid-cols-2 gap-3">
         <button
-          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-blue-200 hover:shadow-md transition-all text-start group"
+          className="bg-white dark:bg-surface-100 rounded-xl p-4 border border-surface-100 hover:border-blue-200 hover:shadow-md transition-all text-start group"
           onClick={() => navigate(ROUTES.LESSONS)}
         >
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-blue-50">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-blue-50 dark:bg-blue-900/30">
             <Icon name="school" size={24} className="text-blue-500" filled />
           </div>
           <h3 className="font-bold text-surface-900 text-sm group-hover:text-blue-600 transition-colors">{t('dashboard.lessons')}</h3>
@@ -156,10 +156,10 @@ export const Dashboard = memo(function Dashboard() {
         </button>
 
         <button
-          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-purple-200 hover:shadow-md transition-all text-start group"
+          className="bg-white dark:bg-surface-100 rounded-xl p-4 border border-surface-100 hover:border-purple-200 hover:shadow-md transition-all text-start group"
           onClick={() => navigate(ROUTES.QUESTIONS_BROWSE)}
         >
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-purple-50">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-purple-50 dark:bg-purple-900/30">
             <Icon name="quiz" size={24} className="text-purple-500" filled />
           </div>
           <h3 className="font-bold text-surface-900 text-sm group-hover:text-purple-600 transition-colors">{t('dashboard.questions')}</h3>
@@ -167,10 +167,10 @@ export const Dashboard = memo(function Dashboard() {
         </button>
 
         <button
-          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-red-200 hover:shadow-md transition-all text-start group"
+          className="bg-white dark:bg-surface-100 rounded-xl p-4 border border-surface-100 hover:border-red-200 hover:shadow-md transition-all text-start group"
           onClick={() => navigate(ROUTES.SIGNS)}
         >
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-red-50">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-red-50 dark:bg-red-900/30">
             <Icon name="traffic" size={24} className="text-red-500" filled />
           </div>
           <h3 className="font-bold text-surface-900 text-sm group-hover:text-red-600 transition-colors">{t('dashboard.signs')}</h3>
@@ -178,10 +178,10 @@ export const Dashboard = memo(function Dashboard() {
         </button>
 
         <button
-          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-cyan-200 hover:shadow-md transition-all text-start group"
+          className="bg-white dark:bg-surface-100 rounded-xl p-4 border border-surface-100 hover:border-cyan-200 hover:shadow-md transition-all text-start group"
           onClick={() => navigate(ROUTES.DICTIONARY)}
         >
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-cyan-50">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-cyan-50 dark:bg-cyan-900/30">
             <Icon name="menu_book" size={24} className="text-cyan-500" filled />
           </div>
           <h3 className="font-bold text-surface-900 text-sm group-hover:text-cyan-600 transition-colors">{t('dashboard.dictionary')}</h3>
@@ -189,10 +189,10 @@ export const Dashboard = memo(function Dashboard() {
         </button>
 
         <button
-          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-amber-200 hover:shadow-md transition-all text-start group"
+          className="bg-white dark:bg-surface-100 rounded-xl p-4 border border-surface-100 hover:border-amber-200 hover:shadow-md transition-all text-start group"
           onClick={() => navigate(ROUTES.TRAINING)}
         >
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-amber-50">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-amber-50 dark:bg-amber-900/30">
             <Icon name="fitness_center" size={24} className="text-amber-500" filled />
           </div>
           <h3 className="font-bold text-surface-900 text-sm group-hover:text-amber-600 transition-colors">{t('dashboard.training')}</h3>
@@ -200,10 +200,10 @@ export const Dashboard = memo(function Dashboard() {
         </button>
 
         <button
-          className="bg-white rounded-xl p-4 border border-surface-100 hover:border-green-200 hover:shadow-md transition-all text-start group"
+          className="bg-white dark:bg-surface-100 rounded-xl p-4 border border-surface-100 hover:border-green-200 hover:shadow-md transition-all text-start group"
           onClick={() => navigate(ROUTES.EXAM_SIMULATOR)}
         >
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-green-50">
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 bg-green-50 dark:bg-green-900/30">
             <Icon name="assignment" size={24} className="text-green-600" filled />
           </div>
           <h3 className="font-bold text-surface-900 text-sm group-hover:text-green-600 transition-colors">{t('dashboard.exam_simulator')}</h3>
@@ -213,10 +213,10 @@ export const Dashboard = memo(function Dashboard() {
 
       {/* Mistakes button */}
       <button
-        className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-red-200 hover:shadow-md transition-all text-start flex items-center gap-4 group"
+        className="w-full bg-white dark:bg-surface-100 rounded-xl p-4 border border-surface-100 hover:border-red-200 hover:shadow-md transition-all text-start flex items-center gap-4 group"
         onClick={() => navigate(ROUTES.MISTAKES)}
       >
-        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-red-50 shrink-0">
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-red-50 dark:bg-red-900/30 shrink-0">
           <Icon name="error_outline" size={26} className="text-red-500" filled />
         </div>
         <div className="flex-1 min-w-0">
@@ -235,7 +235,7 @@ export const Dashboard = memo(function Dashboard() {
 
       {/* Study Progress Summary */}
       {(sections.length > 0 || lessons.length > 0) && (
-        <div className="bg-white rounded-xl p-4 border border-surface-100">
+        <div className="bg-white dark:bg-surface-100 rounded-xl p-4 border border-surface-100">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-surface-900 text-sm flex items-center gap-2">
               <Icon name="insights" size={18} className="text-primary-500" filled />

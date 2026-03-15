@@ -35,7 +35,7 @@ export function StreakModal({ currentStreak, bestStreak, onStartLesson, onClose 
 
       {/* Modal */}
       <div className={cn(
-        'relative w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden',
+        'relative w-full max-w-sm bg-white dark:bg-surface-100 rounded-3xl shadow-2xl overflow-hidden',
         'animate-fade-in-up',
       )}>
         {/* Top orange accent */}
@@ -67,11 +67,11 @@ export function StreakModal({ currentStreak, bestStreak, onStartLesson, onClose 
 
           {/* Stats row */}
           <div className="w-full grid grid-cols-2 gap-3">
-            <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-4 border border-orange-100">
+            <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-2xl p-4 border border-orange-100 dark:border-orange-800/30">
               <p className="text-3xl font-black text-orange-600">{currentStreak}</p>
               <p className="text-xs text-orange-500 mt-1">{t('dashboard.streak_modal_current')}</p>
             </div>
-            <div className="bg-gradient-to-br from-primary-50 to-blue-50 rounded-2xl p-4 border border-primary-100">
+            <div className="bg-gradient-to-br from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20 rounded-2xl p-4 border border-primary-100 dark:border-primary-800/30">
               <p className="text-3xl font-black text-primary-600">{bestStreak}</p>
               <p className="text-xs text-primary-500 mt-1">{t('dashboard.streak_modal_best')}</p>
             </div>

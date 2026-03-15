@@ -73,7 +73,7 @@ export function LanguageSwitcher({ variant = 'compact', className }: LanguageSwi
         {isOpen && (
           <div
             className={cn(
-              'absolute z-50 mt-1.5 min-w-[130px] rounded-xl border border-surface-200 bg-white shadow-lg py-1',
+              'absolute z-50 mt-1.5 min-w-[130px] rounded-xl border border-surface-200 bg-white dark:bg-surface-100 shadow-lg py-1',
               uiLang === 'ar' ? 'left-0' : 'right-0',
             )}
             role="listbox"
@@ -114,7 +114,7 @@ export function LanguageSwitcher({ variant = 'compact', className }: LanguageSwi
           className={cn(
             'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
             uiLang === 'ar'
-              ? 'bg-white text-surface-900 shadow-sm'
+              ? 'bg-white dark:bg-surface-200 text-surface-900 shadow-sm'
               : 'text-surface-500 hover:text-surface-700',
           )}
           title="العربية"
@@ -127,7 +127,7 @@ export function LanguageSwitcher({ variant = 'compact', className }: LanguageSwi
           className={cn(
             'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
             uiLang === 'it'
-              ? 'bg-white text-surface-900 shadow-sm'
+              ? 'bg-white dark:bg-surface-200 text-surface-900 shadow-sm'
               : 'text-surface-500 hover:text-surface-700',
           )}
           title="Italiano"
@@ -139,7 +139,7 @@ export function LanguageSwitcher({ variant = 'compact', className }: LanguageSwi
           className={cn(
             'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
             uiLang === 'en'
-              ? 'bg-white text-surface-900 shadow-sm'
+              ? 'bg-white dark:bg-surface-200 text-surface-900 shadow-sm'
               : 'text-surface-500 hover:text-surface-700',
           )}
           title="English"

@@ -106,7 +106,7 @@ export function QuizPage() {
       <button onClick={() => goBack(ROUTES.LESSONS)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-6">
         <Icon name="arrow_forward" size={20} /><span className="text-sm">{t('quiz_page.back')}</span>
       </button>
-      <div className="bg-white rounded-2xl p-8 border border-surface-100 text-center">
+      <div className="bg-white dark:bg-surface-100 rounded-2xl p-8 border border-surface-100 text-center">
         <div className="w-20 h-20 mx-auto rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: (section?.color || '#3b82f6') + '15' }}>
           <Icon name={section?.icon || 'quiz'} size={40} style={{ color: section?.color || '#3b82f6' }} filled />
         </div>
@@ -135,7 +135,7 @@ export function QuizPage() {
     const passed = score >= 70;
     return (
       <div className="max-w-lg mx-auto">
-        <div className="bg-white rounded-2xl p-8 border border-surface-100 text-center">
+        <div className="bg-white dark:bg-surface-100 rounded-2xl p-8 border border-surface-100 text-center">
           <div className={cn('w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6', passed ? 'bg-success-50' : 'bg-danger-50')}>
             <Icon name={passed ? 'celebration' : 'sentiment_dissatisfied'} size={48} className={passed ? 'text-success-500' : 'text-danger-500'} filled />
           </div>
@@ -180,7 +180,7 @@ export function QuizPage() {
         <div className="bg-primary-500 rounded-full h-2 transition-all duration-500" style={{ width: `${pct}%` }} />
       </div>
 
-      <div className="bg-white rounded-2xl border border-surface-100 p-6 sm:p-8 mb-6">
+      <div className="bg-white dark:bg-surface-100 rounded-2xl border border-surface-100 p-6 sm:p-8 mb-6">
         <span className={cn('inline-block px-2.5 py-1 rounded-lg text-xs font-semibold mb-4',
           q.difficulty === 'easy' ? 'bg-success-50 text-success-600' : q.difficulty === 'medium' ? 'bg-warning-50 text-warning-600' : 'bg-danger-50 text-danger-600')}>
           {q.difficulty === 'easy' ? t('quiz_page.difficulty_easy') : q.difficulty === 'medium' ? t('quiz_page.difficulty_medium') : t('quiz_page.difficulty_hard')}
@@ -205,7 +205,7 @@ export function QuizPage() {
                 !show && val === false && 'bg-rose-50 border-surface-900 hover:bg-rose-100 text-surface-900',
                 show && isCorrect && 'border-emerald-400 bg-emerald-50 text-emerald-800',
                 show && isSelected && !isCorrect && 'border-rose-400 bg-rose-100 text-rose-800',
-                show && !isSelected && !isCorrect && 'border-surface-200 bg-white text-surface-400 opacity-40',
+                show && !isSelected && !isCorrect && 'border-surface-200 bg-white dark:bg-surface-100 text-surface-400 opacity-40',
               )}
               onClick={() => handleAnswer(val)}
               disabled={show}
@@ -217,7 +217,7 @@ export function QuizPage() {
       </div>
 
       {showExplanation && (
-        <div className={cn('rounded-xl p-5 mb-6 border', selectedAnswer === q.isTrue ? 'bg-success-50 border-success-200' : 'bg-blue-50 border-blue-200')}>
+        <div className={cn('rounded-xl p-5 mb-6 border', selectedAnswer === q.isTrue ? 'bg-success-50 dark:bg-success-900/20 border-success-200' : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200')}>
           <div className="flex items-start gap-3">
             <Icon name={selectedAnswer === q.isTrue ? 'lightbulb' : 'info'} size={22} className={selectedAnswer === q.isTrue ? 'text-success-500' : 'text-blue-500'} filled />
             <div>

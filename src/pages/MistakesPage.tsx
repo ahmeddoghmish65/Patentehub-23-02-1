@@ -68,7 +68,7 @@ export function MistakesPage() {
 
       {/* Empty state */}
       {mistakes.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl border border-surface-100">
+        <div className="text-center py-20 bg-white dark:bg-surface-100 rounded-2xl border border-surface-100">
           <Icon name="check_circle" size={48} className="text-success-300 mx-auto mb-4" />
           <p className="text-surface-500 text-lg mb-2">{t('mistakes.no_mistakes')}</p>
           <p className="text-sm text-surface-400">{t('mistakes.no_mistakes_desc')}</p>
@@ -80,7 +80,7 @@ export function MistakesPage() {
         return (
           <div className="space-y-4">
             {/* Progress bar */}
-            <div className="bg-white rounded-xl border border-surface-100 px-4 py-3 flex items-center gap-3">
+            <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 px-4 py-3 flex items-center gap-3">
               <div className="flex-1 bg-surface-100 rounded-full h-2 overflow-hidden">
                 <div className="h-full bg-primary-500 rounded-full transition-all duration-300"
                   style={{ width: `${(practiceIdx / mistakes.length) * 100}%` }} />
@@ -92,7 +92,7 @@ export function MistakesPage() {
             </div>
 
             {/* Question card */}
-            <div className="bg-white rounded-2xl border border-surface-100 p-5">
+            <div className="bg-white dark:bg-surface-100 rounded-2xl border border-surface-100 p-5">
               {lang === 'ar' && (
                 <p className="font-semibold text-surface-800 text-base leading-relaxed mb-2" dir="rtl">{q.questionAr}</p>
               )}
@@ -132,7 +132,7 @@ export function MistakesPage() {
                   {`${t('mistakes.error_count_now')} ${practiceResult === 'correct' ? Math.max(0, q.count - 1) : q.count + 1}`}
                 </p>
                 <button onClick={nextQuestion}
-                  className="bg-white border border-surface-200 text-surface-700 font-semibold text-sm px-6 py-2 rounded-xl hover:bg-surface-50 transition-colors">
+                  className="bg-white dark:bg-surface-200 border border-surface-200 text-surface-700 font-semibold text-sm px-6 py-2 rounded-xl hover:bg-surface-50 transition-colors">
                   {practiceIdx + 1 < mistakes.length ? t('mistakes.next') : t('mistakes.finish')}
                 </button>
               </div>
@@ -144,9 +144,9 @@ export function MistakesPage() {
       : (
         <div className="space-y-3">
           {mistakes.map(m => (
-            <div key={m.id} className="bg-white rounded-xl p-5 border border-surface-100">
+            <div key={m.id} className="bg-white dark:bg-surface-100 rounded-xl p-5 border border-surface-100">
               <div className="flex items-start gap-3" dir="ltr">
-                <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center shrink-0', m.count >= 3 ? 'bg-danger-50' : 'bg-warning-50')}>
+                <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center shrink-0', m.count >= 3 ? 'bg-danger-50 dark:bg-red-900/30' : 'bg-warning-50 dark:bg-amber-900/30')}>
                   <span className={cn('text-sm font-black', m.count >= 3 ? 'text-danger-600' : 'text-warning-600')}>×{m.count}</span>
                 </div>
                 <div className="flex-1">

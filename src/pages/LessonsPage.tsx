@@ -59,7 +59,7 @@ export function LessonsPage() {
           <span className="text-sm font-medium">{t('lessons_page.back_to_sections')}</span>
         </button>
 
-        <div className="bg-white rounded-2xl p-5 border border-surface-100 mb-6">
+        <div className="bg-white dark:bg-surface-100 rounded-2xl p-5 border border-surface-100 mb-6">
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 overflow-hidden"
               style={{ backgroundColor: (section?.color || '#3b82f6') + '12' }}>
@@ -86,7 +86,7 @@ export function LessonsPage() {
         </div>
 
         {sectionLessons.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-2xl border border-surface-100">
+          <div className="text-center py-16 bg-white dark:bg-surface-100 rounded-2xl border border-surface-100">
             <Icon name="school" size={40} className="text-surface-300 mx-auto mb-3" />
             <p className="text-surface-500">{t('lessons_page.no_lessons')}</p>
           </div>
@@ -99,7 +99,7 @@ export function LessonsPage() {
                   key={lesson.id}
                   className={cn(
                     'w-full rounded-xl p-4 border hover:shadow-sm transition-all text-start flex items-center gap-3 group',
-                    'bg-white border-surface-100 hover:border-primary-200'
+                    'bg-white dark:bg-surface-100 border-surface-100 hover:border-primary-200'
                   )}
                   onClick={() => navigate(buildLessonUrl(lesson.id), { state: { sectionId: selectedSection } })}
                 >
@@ -154,7 +154,7 @@ export function LessonsPage() {
       </div>
 
       {activeSections.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl border border-surface-100">
+        <div className="text-center py-20 bg-white dark:bg-surface-100 rounded-2xl border border-surface-100">
           <Icon name="school" size={48} className="text-surface-300 mx-auto mb-4" />
           <p className="text-surface-500 mb-2">{t('lessons_page.no_sections')}</p>
           <p className="text-sm text-surface-400">{t('lessons_page.no_sections_desc')}</p>
@@ -170,7 +170,7 @@ export function LessonsPage() {
             return (
               <button
                 key={section.id}
-                className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all text-start flex items-center gap-4 group"
+                className="w-full bg-white dark:bg-surface-100 rounded-xl p-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all text-start flex items-center gap-4 group"
                 onClick={() => setSelectedSection(section.id)}
               >
                 {/* Thumbnail on right - bigger */}

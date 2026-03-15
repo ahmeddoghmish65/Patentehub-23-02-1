@@ -48,7 +48,7 @@ export function SignsPage() {
       </div>
 
       {/* Search & Filter */}
-      <div className="bg-white rounded-xl p-4 border border-surface-100 mb-6 space-y-3">
+      <div className="bg-white dark:bg-surface-100 rounded-xl p-4 border border-surface-100 mb-6 space-y-3">
         <div className="relative">
           <Icon name="search" size={20} className="absolute end-3 top-1/2 -translate-y-1/2 text-surface-400" />
           <input
@@ -93,7 +93,7 @@ export function SignsPage() {
       )}
 
       {filtered.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl border border-surface-100">
+        <div className="text-center py-20 bg-white dark:bg-surface-100 rounded-2xl border border-surface-100">
           <Icon name="traffic" size={48} className="text-surface-300 mx-auto mb-4" />
           <p className="text-surface-500 mb-2">{t('signs_page.no_signs')}</p>
           <p className="text-xs text-surface-400">{t('signs_page.no_signs_desc')}</p>
@@ -106,7 +106,7 @@ export function SignsPage() {
             return (
               <button
                 key={sign.id}
-                className="bg-white rounded-xl border border-surface-100 hover:border-primary-200 hover:shadow-lg transition-all text-center group overflow-hidden"
+                className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 hover:border-primary-200 hover:shadow-lg transition-all text-center group overflow-hidden"
                 onClick={() => setSelectedSign(sign.id)}
               >
                 {/* Image area */}
@@ -147,7 +147,7 @@ export function SignsPage() {
       {/* Sign Detail Modal */}
       {selectedSignData && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setSelectedSign(null)}>
-          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+          <div className="bg-white dark:bg-surface-100 rounded-2xl w-full max-w-md overflow-hidden max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             {/* Image */}
             <div className="w-full aspect-square relative overflow-hidden">
               {selectedSignData.image ? (

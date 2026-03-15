@@ -138,7 +138,7 @@ export function ExamSimulatorPage() {
       <button onClick={() => goBack(ROUTES.DASHBOARD)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600 mb-4">
         <Icon name="arrow_forward" size={18} className="ltr:rotate-180" /><span className="text-sm">{t('exam.back')}</span>
       </button>
-      <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden">
+      <div className="bg-white dark:bg-surface-100 rounded-2xl border border-surface-100 overflow-hidden">
         {/* Header */}
         <div className="flex items-center gap-3 p-4 border-b border-surface-100">
           <div className="w-11 h-11 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow shrink-0">
@@ -167,9 +167,9 @@ export function ExamSimulatorPage() {
           </div>
 
           {/* Instructions - compact */}
-          <div className="bg-amber-50 rounded-xl p-3 flex items-start gap-2 border border-amber-100">
+          <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-3 flex items-start gap-2 border border-amber-100 dark:border-amber-800/40">
             <Icon name="info" size={16} className="text-amber-500 shrink-0 mt-0.5" filled />
-            <ul className="text-xs text-amber-700 space-y-0.5 text-start">
+            <ul className="text-xs text-amber-700 dark:text-amber-400 space-y-0.5 text-start">
               <li>• {t('exam.info1')}</li>
               <li>• {t('exam.errors_detail')} {MAX_ERRORS} {t('exam.errors_allowed')}</li>
             </ul>
@@ -196,7 +196,7 @@ export function ExamSimulatorPage() {
 
     return (
       <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden">
+        <div className="bg-white dark:bg-surface-100 rounded-2xl border border-surface-100 overflow-hidden">
           <div className="p-5">
             {/* Top: icon+status and score circle side by side */}
             <div className="flex items-center justify-between gap-4 mb-4">
@@ -296,7 +296,7 @@ export function ExamSimulatorPage() {
             const userAns = answers[i];
             const correct = userAns === q.isTrue;
             return (
-              <div key={q.id} className={cn('bg-white rounded-xl p-4 border-2', correct ? 'border-success-200' : userAns === undefined ? 'border-surface-300' : 'border-red-300')}>
+              <div key={q.id} className={cn('bg-white dark:bg-surface-100 rounded-xl p-4 border-2', correct ? 'border-success-200' : userAns === undefined ? 'border-surface-300' : 'border-red-300')}>
                 <div className="flex items-start gap-3" dir="ltr">
                   <span className={cn('w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0',
                     correct ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600'
@@ -310,7 +310,7 @@ export function ExamSimulatorPage() {
                       <span className={cn('px-2 py-0.5 rounded-full', userAns === undefined ? 'bg-surface-100 text-surface-500' : correct ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600')}>
                         {t('exam.your_answer')} {userAns === undefined ? t('exam.not_answered') : userAns ? trueLabel : falseLabel}
                       </span>
-                      <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
+                      <span className="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full">
                         {t('exam.correct')} {q.isTrue ? trueLabel : falseLabel}
                       </span>
                     </div>
@@ -318,10 +318,10 @@ export function ExamSimulatorPage() {
                       <p className="text-xs text-surface-500 mt-2 bg-surface-50 rounded-lg p-2" dir="rtl">{q.explanationAr}</p>
                     )}
                     {lang === 'it' && q.explanationIt && (
-                      <p className="text-xs text-surface-500 mt-2 bg-blue-50 rounded-lg p-2" dir="ltr">{q.explanationIt}</p>
+                      <p className="text-xs text-surface-500 mt-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2" dir="ltr">{q.explanationIt}</p>
                     )}
                     {lang === 'both' && q.explanationIt && (
-                      <p className="text-xs text-surface-500 mt-2 bg-blue-50 rounded-lg p-2" dir="ltr">{q.explanationIt}</p>
+                      <p className="text-xs text-surface-500 mt-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2" dir="ltr">{q.explanationIt}</p>
                     )}
                     {lang === 'both' && q.explanationAr && (
                       <p className="text-xs text-surface-500 mt-1 bg-surface-50 rounded-lg p-2" dir="rtl">{q.explanationAr}</p>
@@ -355,7 +355,7 @@ export function ExamSimulatorPage() {
       {/* Submit warning modal */}
       {showSubmitWarning && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+          <div className="bg-white dark:bg-surface-100 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
             <div className="w-14 h-14 bg-warning-50 rounded-full flex items-center justify-center mx-auto mb-4">
               <Icon name="warning" size={30} className="text-warning-500" filled />
             </div>
@@ -379,7 +379,7 @@ export function ExamSimulatorPage() {
       )}
 
       {/* Exam Header */}
-      <div className="bg-white rounded-xl border border-surface-100 px-3 py-2.5 mb-3 shrink-0 flex items-center justify-between gap-2">
+      <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 px-3 py-2.5 mb-3 shrink-0 flex items-center justify-between gap-2">
         <div className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-mono font-bold',
           remaining < 300 ? 'bg-danger-50 text-danger-600 animate-pulse' : remaining < 600 ? 'bg-warning-50 text-warning-600' : 'bg-surface-50 text-surface-700'
         )}>
@@ -403,7 +403,7 @@ export function ExamSimulatorPage() {
       </div>
 
       {/* Question Navigation — Horizontal Scroll Tab Bar */}
-      <div className="bg-white rounded-xl border border-surface-100 mb-3 shrink-0 overflow-hidden">
+      <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 mb-3 shrink-0 overflow-hidden">
         <div
           ref={navScrollRef}
           className="flex gap-2 overflow-x-auto scrollbar-hide px-3 py-2.5 snap-x snap-mandatory"
@@ -437,7 +437,7 @@ export function ExamSimulatorPage() {
       </div>
 
       {/* Question Card — fills remaining height */}
-      <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden flex flex-col flex-1 min-h-0">
+      <div className="bg-white dark:bg-surface-100 rounded-2xl border border-surface-100 overflow-hidden flex flex-col flex-1 min-h-0">
 
         {/* Question content — grows to fill space, centered vertically */}
         <div className="p-5 sm:p-6 flex-1 overflow-auto flex flex-col justify-center">
@@ -518,7 +518,7 @@ function SubmitConfirmButton({ answeredCount, totalCount, onConfirm }: {
     return (
       <button
         onClick={() => setStep(1)}
-        className="mx-auto flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold border-2 border-surface-300 text-surface-600 hover:border-surface-400 transition-all bg-white"
+        className="mx-auto flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold border-2 border-surface-300 text-surface-600 hover:border-surface-400 transition-all bg-white dark:bg-surface-200"
       >
         <Icon name="send" size={18} />
         {t('exam.submit_exam_btn')}
@@ -542,7 +542,7 @@ function SubmitConfirmButton({ answeredCount, totalCount, onConfirm }: {
       <div className="flex gap-2">
         <button
           onClick={() => setStep(0)}
-          className="flex-1 py-2 rounded-lg text-xs font-semibold border border-surface-300 bg-white text-surface-600 hover:bg-surface-50 transition-all"
+          className="flex-1 py-2 rounded-lg text-xs font-semibold border border-surface-300 bg-white dark:bg-surface-200 text-surface-600 hover:bg-surface-50 transition-all"
         >
           {t('common.cancel')}
         </button>

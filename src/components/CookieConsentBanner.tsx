@@ -95,7 +95,7 @@ export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
       aria-label={isIt ? 'Informativa sui cookie' : 'إشعار ملفات الارتباط'}
       aria-live="polite"
     >
-      <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl border border-surface-200 overflow-hidden animate-fade-in-up">
+      <div className="max-w-2xl mx-auto bg-white dark:bg-surface-100 rounded-2xl shadow-2xl border border-surface-200 overflow-hidden animate-fade-in-up">
         {/* Main row */}
         <div className="flex items-start gap-3 p-5 pb-4">
           <div className="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center shrink-0 mt-0.5">
@@ -155,7 +155,7 @@ export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
           <div className="flex gap-2.5 w-full sm:w-auto">
             <button
               onClick={() => handleConsent('essential')}
-              className="flex-1 sm:flex-none text-xs font-semibold px-4 py-2.5 rounded-xl border-2 border-surface-300 text-surface-600 hover:border-surface-400 hover:bg-white transition-all"
+              className="flex-1 sm:flex-none text-xs font-semibold px-4 py-2.5 rounded-xl border-2 border-surface-300 text-surface-600 hover:border-surface-400 hover:bg-surface-50 transition-all"
             >
               {isIt ? 'Solo essenziali' : 'الضروري فقط'}
             </button>

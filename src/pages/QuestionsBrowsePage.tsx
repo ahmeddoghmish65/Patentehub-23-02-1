@@ -35,7 +35,7 @@ export function QuestionsBrowsePage() {
           <span className="text-sm font-medium">{t('questions_page.back')}</span>
         </button>
 
-        <div className="bg-white rounded-2xl p-5 border border-surface-100 mb-6">
+        <div className="bg-white dark:bg-surface-100 rounded-2xl p-5 border border-surface-100 mb-6">
           <div className="flex items-center gap-3">
             <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 overflow-hidden"
               style={{ backgroundColor: (section?.color || '#8b5cf6') + '15' }}>
@@ -56,14 +56,14 @@ export function QuestionsBrowsePage() {
         </div>
 
         {sectionQuestions.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-2xl border border-surface-100">
+          <div className="text-center py-16 bg-white dark:bg-surface-100 rounded-2xl border border-surface-100">
             <Icon name="quiz" size={40} className="text-surface-300 mx-auto mb-3" />
             <p className="text-surface-500">{t('questions_page.no_questions')}</p>
           </div>
         ) : (
           <div className="space-y-3">
             {sectionQuestions.map((q, idx) => (
-              <div key={q.id} className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+              <div key={q.id} className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 overflow-hidden">
                 <button
                   className="w-full p-4 text-start flex items-start gap-3 hover:bg-surface-50 transition-colors"
                   dir={lang === 'ar' ? 'rtl' : 'ltr'}
@@ -72,7 +72,7 @@ export function QuestionsBrowsePage() {
                   <div className="flex flex-col items-center shrink-0 mt-0.5 gap-0.5">
                     <span className={cn(
                       'w-8 h-8 rounded-lg flex items-center justify-center text-sm font-black',
-                      q.isTrue ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'
+                      q.isTrue ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400' : 'bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400'
                     )}>
                       {q.isTrue ? 'V' : 'F'}
                     </span>
@@ -104,7 +104,7 @@ export function QuestionsBrowsePage() {
 
                 {expandedQ === q.id && (
                   <div className="px-4 pb-4 border-t border-surface-50 pt-3 ms-11">
-                    <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
+                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 border border-blue-100 dark:border-blue-800/40">
                       <p className="text-xs font-semibold text-blue-600 mb-1 flex items-center gap-1">
                         <Icon name="lightbulb" size={14} filled />
                         {t('questions_page.explanation')}
@@ -150,7 +150,7 @@ export function QuestionsBrowsePage() {
       </div>
 
       {sections.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-2xl border border-surface-100">
+        <div className="text-center py-20 bg-white dark:bg-surface-100 rounded-2xl border border-surface-100">
           <Icon name="quiz" size={48} className="text-surface-300 mx-auto mb-4" />
           <p className="text-surface-500">{t('questions_page.no_sections')}</p>
         </div>
@@ -161,7 +161,7 @@ export function QuestionsBrowsePage() {
             return (
               <button
                 key={section.id}
-                className="w-full bg-white rounded-xl p-4 border border-surface-100 hover:border-purple-200 hover:shadow-md transition-all text-start flex items-center gap-4 group"
+                className="w-full bg-white dark:bg-surface-100 rounded-xl p-4 border border-surface-100 hover:border-purple-200 hover:shadow-md transition-all text-start flex items-center gap-4 group"
                 onClick={() => setSelectedSection(section.id)}
               >
                 <div className="w-20 h-20 rounded-xl flex items-center justify-center shrink-0 overflow-hidden relative"

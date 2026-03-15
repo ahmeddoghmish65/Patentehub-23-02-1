@@ -43,7 +43,7 @@ export function LessonDetailPage() {
         <span className="text-sm">{t('lessons_page.back_to_lessons')}</span>
       </button>
 
-      <div className="bg-white rounded-2xl p-6 border border-surface-100 mb-6">
+      <div className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 mb-6">
         <div className="flex items-start gap-4">
           <div className="w-14 h-14 rounded-xl overflow-hidden flex items-center justify-center shrink-0" style={{ backgroundColor: (section?.color || '#3b82f6') + '15' }}>
             {lesson.image ? (
@@ -64,7 +64,7 @@ export function LessonDetailPage() {
       </div>
 
       {/* Tabs - Modern gradient design */}
-      <div className="bg-white rounded-2xl p-1.5 border border-surface-100 mb-6 flex gap-1">
+      <div className="bg-white dark:bg-surface-100 rounded-2xl p-1.5 border border-surface-100 mb-6 flex gap-1">
         <button className={cn('flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all', 
           activeTab === 'content' ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-200' : 'text-surface-500 hover:bg-surface-50')}
           onClick={() => setActiveTab('content')}>
@@ -78,7 +78,7 @@ export function LessonDetailPage() {
       </div>
 
       {activeTab === 'content' ? (
-        <div className="bg-white rounded-2xl p-6 border border-surface-100 space-y-6">
+        <div className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 space-y-6">
           {lesson.image && <img src={lesson.image} alt="" className="w-full rounded-xl" />}
           
           {(lang === 'it' || lang === 'both') && (
@@ -104,19 +104,19 @@ export function LessonDetailPage() {
       ) : (
         <div className="space-y-4">
           {lessonQuestions.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-2xl border border-surface-100">
+            <div className="text-center py-12 bg-white dark:bg-surface-100 rounded-2xl border border-surface-100">
               <Icon name="quiz" size={40} className="text-surface-300 mx-auto mb-3" />
               <p className="text-surface-500">{t('lessons_page.no_lesson_questions')}</p>
             </div>
           ) : (
             <>
               {lessonQuestions.map((q, i) => (
-                <div key={q.id} className="bg-white rounded-xl p-4 border border-surface-100">
+                <div key={q.id} className="bg-white dark:bg-surface-100 rounded-xl p-4 border border-surface-100">
                   <div className="flex items-start gap-3" dir="ltr">
                     <div className="flex flex-col items-center shrink-0 gap-0.5">
                       <span className={cn(
                         'w-8 h-8 rounded-lg flex items-center justify-center text-sm font-black',
-                        q.isTrue ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'
+                        q.isTrue ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400' : 'bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400'
                       )}>
                         {q.isTrue ? 'V' : 'F'}
                       </span>
