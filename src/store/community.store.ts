@@ -7,8 +7,8 @@
  */
 import { create } from 'zustand';
 import * as communityService from '@/services/supabase/community.service';
-import type { PostSortMode } from '@/db/api';
-import type { Post, Comment } from '@/types';
+import type { PostSortMode } from '@/infrastructure/database/api';
+import type { Post, Comment } from '@/shared/types';
 import { useAuthStore } from './auth.store';
 
 interface CommunityState {

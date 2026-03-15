@@ -1,20 +1,12 @@
 /**
  * shared/ui/index.ts
- * Barrel export for the shared UI component system.
- *
- * Import UI components from here:
- *   import { Button, Badge, Modal } from '@/shared/ui';
- *
- * Note: Button, Input, Icon, VerifiedBadge currently live in
- * src/components/ui/ for backward compatibility. They are re-exported
- * here so consumers can use a single import path.
+ * Single entry-point for all shared UI primitives.
+ * Import from: import { Button, Badge, Modal } from '@/shared/ui';
  */
-export { Button }        from '@/components/ui/Button';
-export { Input }         from '@/components/ui/Input';
-export { Icon }          from '@/components/ui/Icon';
-export { VerifiedBadge } from '@/components/ui/VerifiedBadge';
-
-// New components added during refactor
+export { Button }        from './Button';
+export { Input }         from './Input';
+export { Icon }          from './Icon';
+export { VerifiedBadge } from './VerifiedBadge';
 export { Badge }         from './Badge';
 export { Card }          from './Card';
 export { Loader }        from './Loader';

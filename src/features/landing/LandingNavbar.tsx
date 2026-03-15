@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
-import { ROUTES } from '@/constants';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
+import { ROUTES } from '@/shared/constants';
 
 interface NavLink {
   id: string;

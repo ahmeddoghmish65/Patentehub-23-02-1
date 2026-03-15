@@ -2,7 +2,7 @@
  * AdminCard — generic card wrapper used throughout admin tabs.
  */
 import React from 'react';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 
 interface AdminCardProps {
   children: React.ReactNode;

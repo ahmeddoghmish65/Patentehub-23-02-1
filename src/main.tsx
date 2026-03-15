@@ -4,10 +4,10 @@ import { Toaster } from 'sonner';
 import { HelmetProvider } from 'react-helmet-async';
 import './index.css';
 import { App } from './App';
-import { getSavedTheme } from '@/utils/cookieManager';
+import { getSavedTheme } from '@/shared/utils/cookieManager';
 import { applyTheme } from '@/store/helpers';
 import { LanguageProvider } from '@/i18n';
-import { initAnalytics } from '@/services/analytics';
+import { initAnalytics } from '@/infrastructure/analytics';
 
 // ─── Early startup — apply saved preferences before React renders ─────────────
 // Reading from localStorage synchronously prevents a flash of the wrong theme

@@ -1,6 +1,6 @@
-import type { Question, Sign, DictionaryEntry } from '@/db/database';
-import { Icon } from '@/components/ui/Icon';
-import { cn } from '@/utils/cn';
+import type { Question, Sign, DictionaryEntry } from '@/infrastructure/database/database';
+import { Icon } from '@/shared/ui/Icon';
+import { cn } from '@/shared/utils/cn';
 import type { TrainMode, TrainItem } from '../types';
 import { TIMED_LIMIT } from '../constants';
 import { QuestionCard } from './QuestionCard';

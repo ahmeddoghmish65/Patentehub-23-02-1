@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { calculateExamReadiness } from '@/services/examReadinessService';
-import type { UserProgress, QuizResult, UserMistake, Lesson, Question } from '@/types';
+import { calculateExamReadiness } from '@/infrastructure/database/services/examReadinessService';
+import type { UserProgress, QuizResult, UserMistake, Lesson, Question } from '@/shared/types';
 
 interface UseExamReadinessParams {
   quizHistory: QuizResult[];

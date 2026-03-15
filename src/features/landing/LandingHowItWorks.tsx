@@ -1,5 +1,5 @@
-import { Icon } from '@/components/ui/Icon';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 
 interface Step {

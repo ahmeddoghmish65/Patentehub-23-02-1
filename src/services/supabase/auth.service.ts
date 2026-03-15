@@ -16,4 +16,4 @@ export {
   supabaseUpdateSettings    as updateSettings,
   supabaseUpdateProgress    as updateProgress,
   supabaseCheckUsername     as checkUsername,
-} from '@/lib/supabase-auth';
+} from '@/shared/lib/supabase-auth';

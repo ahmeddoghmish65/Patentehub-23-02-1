@@ -4,22 +4,22 @@
  */
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthStore } from '@/store';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Icon } from '@/components/ui/Icon';
+import { Button } from '@/shared/ui/Button';
+import { Input } from '@/shared/ui/Input';
+import { Icon } from '@/shared/ui/Icon';
 import { useTranslation } from '@/i18n';
-import { toast } from '@/lib/toast';
-import { ROUTES } from '@/constants';
+import { toast } from '@/shared/lib/toast';
+import { ROUTES } from '@/shared/constants';
 import {
   loginSchema, registerSchema, resetEmailSchema, resetCodeSchema, resetPasswordSchema,
   type LoginFormValues, type RegisterFormValues,
   type ResetEmailFormValues, type ResetCodeFormValues, type ResetPasswordFormValues,
-} from '@/lib/validations/auth.schemas';
-import { PageMeta } from '@/hooks/usePageMeta';
+} from '@/shared/lib/validations/auth.schemas';
+import { PageMeta } from '@/shared/hooks/usePageMeta';
 
 interface AuthPageProps {
   mode: 'login' | 'register' | 'reset-password';
@@ -288,7 +288,7 @@ function ResetPasswordFlow({ onSuccess, navigate }: { onSuccess: () => void; nav
 
   const handleEmailSubmit = async (values: ResetEmailFormValues) => {
     clearError();
-    const { getDB } = await import('@/db/database');
+    const { getDB } = await import('@/infrastructure/database/database');
     const db = await getDB();
     const all = await db.getAll('users');
     const found = all.find((u: { email: string }) => u.email.toLowerCase() === values.email.toLowerCase());

@@ -11,7 +11,7 @@ import * as questionsService from '@/services/supabase/questions.service';
 import type {
   Section, Lesson, Question, Sign, SignSection,
   DictionarySection, DictionaryEntry,
-} from '@/types';
+} from '@/shared/types';
 
 interface ContentState {
   // Data

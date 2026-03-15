@@ -3,4 +3,5 @@
  * Barrel export for shared hooks.
  */
 export { useApiError }       from './useApiError';
-export { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
+export { useLocaleNavigate } from './useLocaleNavigate';
+export { usePageMeta }       from './usePageMeta';

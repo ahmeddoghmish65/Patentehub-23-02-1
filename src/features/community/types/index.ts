@@ -2,9 +2,9 @@
  * community/types/index.ts
  * All shared types for the community feature.
  */
-import type { Post, Comment } from '@/types';
-import type { Hashtag } from '@/db/database';
-import type { PostSortMode } from '@/db/api';
+import type { Post, Comment } from '@/shared/types';
+import type { Hashtag } from '@/infrastructure/database/database';
+import type { PostSortMode } from '@/infrastructure/database/api';
 
 export type { Post, Comment, Hashtag, PostSortMode };
 

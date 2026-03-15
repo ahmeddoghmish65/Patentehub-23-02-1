@@ -5,13 +5,13 @@ import {
   type Like, type Report, type QuizResult, type UserMistake,
   type TrainingSession, type Notification, type AdminLog
 } from './database';
-import { computeHotScore, sortPostsByHot, sortPostsByNew, sortPostsByViral } from '@/services/rankingService';
-import { evaluateSpam } from '@/services/spamDetectionService';
-import { recordEngagement, computeViralScore } from '@/services/viralDetectionService';
-import { recalculateReputation, getCachedReputation } from '@/services/reputationService';
-import { computeCommentScore } from '@/services/commentRankingService';
-import { extractHashtags, indexHashtags, decrementHashtags, getTrendingHashtags, suggestHashtags } from '@/services/hashtagService';
-import { calculateExamReadiness } from '@/services/examReadinessService';
+import { computeHotScore, sortPostsByHot, sortPostsByNew, sortPostsByViral } from './services/rankingService';
+import { evaluateSpam } from './services/spamDetectionService';
+import { recordEngagement, computeViralScore } from './services/viralDetectionService';
+import { recalculateReputation, getCachedReputation } from './services/reputationService';
+import { computeCommentScore } from './services/commentRankingService';
+import { extractHashtags, indexHashtags, decrementHashtags, getTrendingHashtags, suggestHashtags } from './services/hashtagService';
+import { calculateExamReadiness } from './services/examReadinessService';
 
 // ============ BROWSER LANGUAGE DETECTION ============
 /** Returns the appropriate default content language based on browser language.
@@ -1120,7 +1120,7 @@ export async function apiGetUserReputation(userId: string): Promise<ApiRes<{ rep
   const db = await getDB();
   const user = await db.get('users', userId);
   if (!user) return err('مستخدم غير موجود', 404);
-  const { getReputationTier } = await import('@/services/reputationService');
+  const { getReputationTier } = await import('./services/reputationService');
   const rep = getCachedReputation(user);
   const tier = getReputationTier(rep);
   return ok({ reputation: rep, tier: tier.label });

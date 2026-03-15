@@ -11,7 +11,7 @@
  */
 
 import { supabase } from './supabase';
-import type { User, UserProgress, UserSettings } from '@/types';
+import type { User, UserProgress, UserSettings } from '@/shared/types';
 import type { ProfileRow, UserProgressJson, UserSettingsJson } from './supabase.types';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────

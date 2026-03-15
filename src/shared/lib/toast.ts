@@ -5,7 +5,7 @@
  * Import from here, not from 'sonner' directly.
  *
  * Usage:
- *   import { toast } from '@/lib/toast';
+ *   import { toast } from '@/shared/lib/toast';
  *   toast.success('Saved!');
  *   toast.error('Something went wrong');
  *   toast.promise(myAsyncFn(), { loading: '...', success: 'Done!', error: 'Failed' });

@@ -4,10 +4,10 @@
  */
 import React, { useEffect, useRef, useState, Suspense } from 'react';
 import { useAuthStore, useDataStore, useAdminStore } from '@/store';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
-import { cn } from '@/utils/cn';
-import type { Comment } from '@/db/database';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
+import { cn } from '@/shared/utils/cn';
+import type { Comment } from '@/infrastructure/database/database';
 import { useTranslation } from '@/i18n';
 import type { AdminTab, ContentView, AdminModal, ConfirmDelete, AnyItem } from './types/admin.types';
 

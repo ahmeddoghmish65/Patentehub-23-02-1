@@ -1,5 +1,5 @@
-import type { Hashtag } from '@/db/database';
-import { getDB, generateId } from '@/db/database';
+import type { Hashtag } from '../database';
+import { getDB, generateId } from '../database';
 
 /** Extract hashtags from post content. Returns lowercase tags without '#'. */
 export function extractHashtags(content: string): string[] {

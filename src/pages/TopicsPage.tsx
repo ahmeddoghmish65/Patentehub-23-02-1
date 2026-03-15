@@ -1,7 +1,7 @@
 import { useAuthStore } from '@/store';
 import { topics, getQuestionsForTopic } from '@/data/questions';
-import { Icon } from '@/components/ui/Icon';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 
 interface TopicsPageProps {

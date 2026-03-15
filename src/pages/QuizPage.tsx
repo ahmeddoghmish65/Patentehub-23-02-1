@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore, useUIStore } from '@/store';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
-import { ROUTES } from '@/constants';
-import type { Question } from '@/db/database';
+import { ROUTES } from '@/shared/constants';
+import type { Question } from '@/infrastructure/database/database';
 
 export function QuizPage() {
   const { navigate, goBack } = useLocaleNavigate();

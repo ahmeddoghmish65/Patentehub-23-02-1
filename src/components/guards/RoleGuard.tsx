@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { useAuthStore } from '@/store';
-import { hasRole } from '@/constants';
-import type { Role } from '@/types';
+import { hasRole } from '@/shared/constants';
+import type { Role } from '@/shared/types';
 
 interface RoleGuardProps {
   /** Minimum role required to render children */

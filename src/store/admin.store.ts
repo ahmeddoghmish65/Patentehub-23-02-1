@@ -2,11 +2,11 @@
  * Admin Store — manages all admin-only state and operations.
  */
 import { create } from 'zustand';
-import * as api from '@/db/api';
+import * as api from '@/infrastructure/database/api';
 import type {
   User, Section, Lesson, Question, Sign, SignSection,
   DictionarySection, DictionaryEntry, Post, Comment, Report, AdminLog,
-} from '@/types';
+} from '@/shared/types';
 import { useAuthStore } from './auth.store';
 import { useDataStore } from './data.store';
 

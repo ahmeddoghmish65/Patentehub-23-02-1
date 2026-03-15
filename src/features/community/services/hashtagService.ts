@@ -2,7 +2,7 @@
  * hashtagService.ts
  * Hashtag trending and suggestion queries.
  */
-import { apiGetTrendingHashtags, apiSuggestHashtags } from '@/db/api';
+import { apiGetTrendingHashtags, apiSuggestHashtags } from '@/infrastructure/database/api';
 import type { Hashtag } from '../types';
 
 export async function getTrendingHashtags(limit = 8): Promise<Hashtag[]> {

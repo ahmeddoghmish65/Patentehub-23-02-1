@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useDataStore } from '@/store';
-import type { Question, Sign, DictionaryEntry } from '@/db/database';
+import type { Question, Sign, DictionaryEntry } from '@/infrastructure/database/database';
 import type { TrainMode, Phase, TrainItem } from '../types';
 import { TIMED_LIMIT, getModeCount } from '../constants';
 

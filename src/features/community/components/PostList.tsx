@@ -3,7 +3,7 @@
  * Renders the full list of posts. Memoized to avoid re-rendering unchanged cards.
  */
 import { memo } from 'react';
-import { Icon } from '@/components/ui/Icon';
+import { Icon } from '@/shared/ui/Icon';
 import { useTranslation } from '@/i18n';
 import { PostCard } from './PostCard';
 import type { Post, PostLiker, CommunityUser } from '../types';

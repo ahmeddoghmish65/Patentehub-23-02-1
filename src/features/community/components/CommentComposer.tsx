@@ -3,8 +3,8 @@
  * The inline text input for writing a new comment.
  */
 import { memo } from 'react';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
 import { useTranslation } from '@/i18n';
 import { useAuthStore } from '@/store/auth.store';
 import { useCommunityUIStore } from '../store/communityUIStore';

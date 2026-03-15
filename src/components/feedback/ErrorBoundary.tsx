@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import type { ReactNode, ErrorInfo } from 'react';
-import { Icon } from '@/components/ui/Icon';
+import { Icon } from '@/shared/ui/Icon';
 
 interface Props {
   children:  ReactNode;

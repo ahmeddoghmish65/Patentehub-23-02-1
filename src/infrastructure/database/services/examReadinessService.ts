@@ -14,7 +14,7 @@
  * A Weakness Penalty (0–15 pts) is subtracted for unresolved mistakes.
  */
 
-import type { QuizResult, UserMistake, UserProgress } from '@/db/database';
+import type { QuizResult, UserMistake, UserProgress } from '@/infrastructure/database/database';
 
 // ─── Public types ──────────────────────────────────────────────────────────────
 

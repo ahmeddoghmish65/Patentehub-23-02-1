@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
 import { useTranslation } from '@/i18n';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 
 interface StreakModalProps {
   currentStreak: number;

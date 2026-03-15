@@ -1,9 +1,9 @@
 import { useLocation } from 'react-router-dom';
-import { Icon } from '@/components/ui/Icon';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
-import { ROUTES } from '@/constants';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
+import { ROUTES } from '@/shared/constants';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
 import { useUIStore } from '@/store';
 
 interface NavItem {

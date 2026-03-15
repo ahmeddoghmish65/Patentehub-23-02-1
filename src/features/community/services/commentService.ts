@@ -2,7 +2,7 @@
  * commentService.ts
  * Comment CRUD operations.
  */
-import * as api from '@/db/api';
+import * as api from '@/infrastructure/database/api';
 import type { Comment } from '../types';
 
 export interface ServiceResult {

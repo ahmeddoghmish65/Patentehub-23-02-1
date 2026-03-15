@@ -5,8 +5,8 @@
  *
  * Architecture: store → progress.service → db/api → data
  */
-import * as api from '@/db/api';
-import type { QuizResult, UserMistake, Notification } from '@/types';
+import * as api from '@/infrastructure/database/api';
+import type { QuizResult, UserMistake, Notification } from '@/shared/types';
 
 export interface ServiceResult<T> {
   success: boolean;

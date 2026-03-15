@@ -5,8 +5,8 @@
  *
  * Architecture: store → profile.service → supabase-auth / db/api → data
  */
-import * as api from '@/db/api';
-import type { User } from '@/types';
+import * as api from '@/infrastructure/database/api';
+import type { User } from '@/shared/types';
 
 export interface ServiceResult<T> {
   success: boolean;

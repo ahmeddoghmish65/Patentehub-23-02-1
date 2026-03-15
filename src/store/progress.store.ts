@@ -7,7 +7,7 @@
  */
 import { create } from 'zustand';
 import * as progressService from '@/services/supabase/progress.service';
-import type { QuizResult, UserMistake, Notification } from '@/types';
+import type { QuizResult, UserMistake, Notification } from '@/shared/types';
 import { useAuthStore } from './auth.store';
 
 interface ProgressState {

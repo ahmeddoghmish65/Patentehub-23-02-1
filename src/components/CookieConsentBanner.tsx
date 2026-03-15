@@ -1,16 +1,16 @@
 import { useState } from 'react';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
 import { useTranslation } from '@/i18n';
-import { ROUTES } from '@/constants';
+import { ROUTES } from '@/shared/constants';
 import {
   setCookie,
   clearActivityCookies,
   COOKIE_NAMES,
   COOKIE_EXPIRY,
   type ConsentLevel,
-} from '@/utils/cookieManager';
+} from '@/shared/utils/cookieManager';
 
 interface CookieConsentBannerProps {
   /** Called once the user makes a consent choice. */

@@ -4,8 +4,8 @@
  */
 import { useState, useCallback } from 'react';
 import { useAuthStore } from '@/store/auth.store';
-import { getDB } from '@/db/database';
-import { extractHashtags, indexHashtags } from '@/services/hashtagService';
+import { getDB } from '@/infrastructure/database/database';
+import { extractHashtags, indexHashtags } from '@/infrastructure/database/services/hashtagService';
 import type { Post } from '../types';
 import { usePostStore } from '../store/postStore';
 import { useCommunityUIStore } from '../store/communityUIStore';

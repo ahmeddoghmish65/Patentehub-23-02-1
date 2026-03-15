@@ -3,8 +3,8 @@
  * Dropdown panel showing trending hashtags.
  */
 import { memo } from 'react';
-import { Icon } from '@/components/ui/Icon';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 import { useCommunityUIStore } from '../store/communityUIStore';
 

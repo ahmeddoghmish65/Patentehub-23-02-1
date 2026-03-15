@@ -2,7 +2,7 @@
  * notificationService.ts
  * Community notification helpers (like, comment, reply, mention, follow).
  */
-import { apiCreateCommunityNotif, apiGetCommunityNotifs, apiMarkNotifRead, apiMarkAllNotifsRead } from '@/db/api';
+import { apiCreateCommunityNotif, apiGetCommunityNotifs, apiMarkNotifRead, apiMarkAllNotifsRead } from '@/infrastructure/database/api';
 
 export interface NotifPayload {
   toUserId: string;

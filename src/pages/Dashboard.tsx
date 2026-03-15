@@ -1,12 +1,12 @@
 import { memo, useEffect, useMemo, useCallback, useState } from 'react';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore, useProgressStore } from '@/store';
-import { Icon } from '@/components/ui/Icon';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
-import { ROUTES, buildLessonUrl } from '@/constants';
-import { calculateExamReadiness } from '@/services/examReadinessService';
-import type { ExamReadinessLevel } from '@/services/examReadinessService';
+import { ROUTES, buildLessonUrl } from '@/shared/constants';
+import { calculateExamReadiness } from '@/infrastructure/database/services/examReadinessService';
+import type { ExamReadinessLevel } from '@/infrastructure/database/services/examReadinessService';
 import * as profileService from '@/services/supabase/profile.service';
 import { StreakModal } from '@/components/StreakModal';
 

@@ -5,9 +5,9 @@
  *
  * Architecture: component → hook → community.service → db/api → data
  */
-import * as api from '@/db/api';
-import type { PostSortMode } from '@/db/api';
-import type { Post, Comment } from '@/types';
+import * as api from '@/infrastructure/database/api';
+import type { PostSortMode } from '@/infrastructure/database/api';
+import type { Post, Comment } from '@/shared/types';
 
 export interface ServiceResult<T> {
   success: boolean;

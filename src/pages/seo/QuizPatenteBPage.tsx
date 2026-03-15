@@ -5,7 +5,7 @@
  */
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { PageMeta } from '@/hooks/usePageMeta';
+import { PageMeta } from '@/shared/hooks/usePageMeta';
 import { SeoLayout } from './SeoLayout';
 
 const CANONICAL = 'https://patentehub.com/it/quiz-patente-b';

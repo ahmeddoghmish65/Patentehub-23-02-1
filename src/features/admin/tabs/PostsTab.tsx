@@ -2,8 +2,8 @@
  * PostsTab — Community posts management: active posts list + deleted posts.
  */
 import React, { useState } from 'react';
-import { cn } from '@/utils/cn';
-import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/shared/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
 import type { AnyItem, ConfirmDelete } from '../types/admin.types';
 
 interface PostsTabProps {

@@ -9,7 +9,7 @@
  *   if (!result) return; // error was handled automatically
  */
 import { useState, useCallback } from 'react';
-import { toast } from '@/lib/toast';
+import { toast } from '@/shared/lib/toast';
 
 interface ApiErrorState {
   error:    string | null;

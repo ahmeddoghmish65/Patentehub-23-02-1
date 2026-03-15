@@ -1,4 +1,4 @@
-import type { ExamReadinessLevel } from '@/services/examReadinessService';
+import type { ExamReadinessLevel } from '@/infrastructure/database/services/examReadinessService';
 
 // ─── Text direction helper ─────────────────────────────────────────────────────
 

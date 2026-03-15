@@ -2,11 +2,11 @@
  * ReportsTab — Report management with detail modal.
  */
 import React, { useState } from 'react';
-import { cn } from '@/utils/cn';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
+import { cn } from '@/shared/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
 import type { AnyItem } from '../types/admin.types';
-import type { Report, Comment } from '@/db/database';
+import type { Report, Comment } from '@/infrastructure/database/database';
 
 interface ReportsTabProps {
   adminReports: Report[];

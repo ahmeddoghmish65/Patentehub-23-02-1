@@ -1,4 +1,4 @@
-import type { Question, Sign, DictionaryEntry } from '@/db/database';
+import type { Question, Sign, DictionaryEntry } from '@/infrastructure/database/database';
 
 export type TrainMode =
   | 'questions'

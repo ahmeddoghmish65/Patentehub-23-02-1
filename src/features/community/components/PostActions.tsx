@@ -3,8 +3,8 @@
  * Like / comment / bookmark action bar shown below a post.
  */
 import { memo, useState } from 'react';
-import { Icon } from '@/components/ui/Icon';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 import type { Post, PostLiker, LikersModalState } from '../types';
 

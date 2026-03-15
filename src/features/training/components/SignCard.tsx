@@ -1,6 +1,6 @@
-import type { Sign } from '@/db/database';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
+import type { Sign } from '@/infrastructure/database/database';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
 import { useTranslation } from '@/i18n';
 
 interface Props {

@@ -7,11 +7,11 @@
  *
  * When migrating to Supabase tables, only this file needs updating.
  */
-import * as api from '@/db/api';
+import * as api from '@/infrastructure/database/api';
 import type {
   Section, Lesson, Question, Sign, SignSection,
   DictionarySection, DictionaryEntry,
-} from '@/types';
+} from '@/shared/types';
 
 export interface ServiceResult<T> {
   success: boolean;

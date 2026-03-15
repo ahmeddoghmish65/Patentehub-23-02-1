@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore } from '@/store';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
-import { ROUTES, buildLessonUrl } from '@/constants';
+import { ROUTES, buildLessonUrl } from '@/shared/constants';
 
 export function LessonsPage() {
   const { navigate } = useLocaleNavigate();

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuthStore, useDataStore } from '@/store';
-import { Icon } from '@/components/ui/Icon';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 
 export function SignsPage() {

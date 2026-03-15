@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Icon } from '@/components/ui/Icon';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
-import { ROUTES } from '@/constants';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
+import { ROUTES } from '@/shared/constants';
 
 interface Feature {
   icon: string;

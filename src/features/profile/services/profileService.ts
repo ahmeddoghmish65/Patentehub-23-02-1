@@ -3,7 +3,7 @@
  * All database / persistence operations for the profile feature.
  * Hooks & components must call this — never access the DB directly.
  */
-import { getDB, verifyPassword, hashPassword } from '@/db/database';
+import { getDB, verifyPassword, hashPassword } from '@/infrastructure/database/database';
 import type { ProfileUpdatePayload, CompleteProfileForm, SocialUser } from '../types/profile.types';
 import { DAYS_60_MS } from '../utils/profileUtils';
 

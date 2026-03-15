@@ -20,7 +20,7 @@ export type {
   TrainingSession,
   Notification,
   AdminLog,
-} from '@/db/database';
+} from '@/infrastructure/database/database';
 
 // ─── App-level types ───────────────────────────────────────────────────────
 

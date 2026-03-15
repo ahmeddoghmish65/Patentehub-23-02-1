@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
-import { Icon } from '@/components/ui/Icon';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
-import type { UserProgress, UserMistake } from '@/types';
-import type { ExamReadinessLevel } from '@/services/examReadinessService';
+import type { UserProgress, UserMistake } from '@/shared/types';
+import type { ExamReadinessLevel } from '@/infrastructure/database/services/examReadinessService';
 import { LEVEL_STYLE } from '../utils/profileUtils';
 
 interface ReadinessResult {

@@ -1,4 +1,4 @@
-import type { Comment } from '@/db/database';
+import type { Comment } from '@/infrastructure/database/database';
 
 /**
  * Smart comment ranking service.

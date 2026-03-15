@@ -3,11 +3,11 @@
  * A single comment with its inline replies and reply composer.
  */
 import { memo } from 'react';
-import { Icon } from '@/components/ui/Icon';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 import { useAuthStore } from '@/store/auth.store';
-import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
+import { VerifiedBadge } from '@/shared/ui/VerifiedBadge';
 import { MentionText } from './MentionText';
 import { getTextDir, relativeTime } from '../utils/textUtils';
 import { getReplyContent } from '../utils/commentUtils';

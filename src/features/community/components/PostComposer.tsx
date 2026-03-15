@@ -3,9 +3,9 @@
  * The new post creation form — supports regular posts and quiz posts.
  */
 import { memo } from 'react';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 import { useAuthStore } from '@/store/auth.store';
 import { useCommunityUIStore } from '../store/communityUIStore';

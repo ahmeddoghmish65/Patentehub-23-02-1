@@ -1,5 +1,5 @@
-import type { DictionaryEntry } from '@/db/database';
-import { Button } from '@/components/ui/Button';
+import type { DictionaryEntry } from '@/infrastructure/database/database';
+import { Button } from '@/shared/ui/Button';
 import { useTranslation } from '@/i18n';
 
 interface Props {

@@ -2,8 +2,8 @@
  * MediaTab — Media library management: grid view, selection, edit, delete.
  */
 import React, { useState } from 'react';
-import { cn } from '@/utils/cn';
-import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/shared/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
 import type { AnyItem, MediaItem } from '../types/admin.types';
 import { uploadImageDirect } from '../services/adminContent.service';
 

@@ -1,11 +1,11 @@
 import { useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore } from '@/store';
-import { ROUTES } from '@/constants';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
-import { cn } from '@/utils/cn';
+import { ROUTES } from '@/shared/constants';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 import { saveCompleteProfile } from './services/profileService';
 import { useProfile } from './hooks/useProfile';

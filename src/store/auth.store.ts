@@ -3,7 +3,7 @@
  * Backed by IndexedDB (local mock database) via db/api.ts.
  */
 import { create } from 'zustand';
-import * as api from '@/db/api';
+import * as api from '@/infrastructure/database/api';
 import {
   setCookie,
   getCookie,
@@ -11,8 +11,8 @@ import {
   clearActivityCookies,
   COOKIE_NAMES,
   COOKIE_EXPIRY,
-} from '@/utils/cookieManager';
-import type { User } from '@/types';
+} from '@/shared/utils/cookieManager';
+import type { User } from '@/shared/types';
 
 // Re-export applyTheme so main.tsx can use it from here
 export { applyTheme } from './helpers';

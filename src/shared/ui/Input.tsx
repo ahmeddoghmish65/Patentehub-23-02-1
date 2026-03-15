@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 import type { InputHTMLAttributes } from 'react';
 import { Icon } from './Icon';
 

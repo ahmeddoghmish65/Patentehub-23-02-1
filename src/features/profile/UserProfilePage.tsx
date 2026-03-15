@@ -1,14 +1,14 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore } from '@/store';
-import { Icon } from '@/components/ui/Icon';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
-import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
-import { apiCreateCommunityNotif } from '@/db/api';
-import { ROUTES, buildUserProfileUrl } from '@/constants';
-import { calculateExamReadiness } from '@/services/examReadinessService';
+import { VerifiedBadge } from '@/shared/ui/VerifiedBadge';
+import { apiCreateCommunityNotif } from '@/infrastructure/database/api';
+import { ROUTES, buildUserProfileUrl } from '@/shared/constants';
+import { calculateExamReadiness } from '@/infrastructure/database/services/examReadinessService';
 import { getPublicUserProfileByUsername, getExamReadinessData } from './services/profileService';
 import { getTextDir } from './utils/profileUtils';
 import type { UserProfile, UserTabType, UserStatView } from './types/profile.types';
@@ -53,7 +53,7 @@ export function UserProfilePage() {
       setUserId(u.id);
 
       // Build followers / following lists (localStorage-based social graph)
-      const { getDB } = await import('@/db/database');
+      const { getDB } = await import('@/infrastructure/database/database');
       const db = await getDB();
       const allUsers = await db.getAll('users');
 

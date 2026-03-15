@@ -2,8 +2,8 @@
  * AnalyticsTab — Page visit stats and learning analytics.
  */
 import React, { useEffect, useState } from 'react';
-import { cn } from '@/utils/cn';
-import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/shared/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
 import type { AnyItem, VisitStats } from '../types/admin.types';
 import { fetchPageVisitStats } from '../services/adminAnalytics.service';
 

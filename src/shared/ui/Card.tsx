@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import type { ReactNode } from 'react';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 
 interface CardProps {
   children:    ReactNode;

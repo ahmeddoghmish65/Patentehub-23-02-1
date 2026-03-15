@@ -1,5 +1,5 @@
-import type { User } from '@/db/database';
-import { getDB } from '@/db/database';
+import type { User } from '@/infrastructure/database/database';
+import { getDB } from '@/infrastructure/database/database';
 
 /**
  * User Reputation Service

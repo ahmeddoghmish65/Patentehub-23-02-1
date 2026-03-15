@@ -1,4 +1,4 @@
-import type { Post } from '@/db/database';
+import type { Post } from '@/infrastructure/database/database';
 
 /**
  * HOT score formula:

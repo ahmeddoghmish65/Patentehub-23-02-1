@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Icon } from '@/components/ui/Icon';
+import { Icon } from '@/shared/ui/Icon';
 import { CookieConsentBanner } from '@/components/CookieConsentBanner';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
-import { getConsentLevel, type ConsentLevel } from '@/utils/cookieManager';
-import { PageMeta } from '@/hooks/usePageMeta';
-import { initAnalytics } from '@/services/analytics';
+import { getConsentLevel, type ConsentLevel } from '@/shared/utils/cookieManager';
+import { PageMeta } from '@/shared/hooks/usePageMeta';
+import { initAnalytics } from '@/infrastructure/analytics';
 import { LandingNavbar } from '@/features/landing/LandingNavbar';
 import { LandingHero } from '@/features/landing/LandingHero';
 import { LandingStats } from '@/features/landing/LandingStats';

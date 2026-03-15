@@ -2,7 +2,7 @@
  * AdminFilters — reusable pill-style filter button group.
  */
 import React from 'react';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 
 interface FilterOption {
   value: string;

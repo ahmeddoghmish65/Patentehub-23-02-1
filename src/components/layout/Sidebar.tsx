@@ -1,11 +1,11 @@
 import { useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/store';
-import { Icon } from '@/components/ui/Icon';
+import { Icon } from '@/shared/ui/Icon';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
-import { ROUTES } from '@/constants';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
+import { ROUTES } from '@/shared/constants';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
 
 interface NavItem {
   path: string;

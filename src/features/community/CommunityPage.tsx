@@ -6,15 +6,15 @@
  */
 import { useEffect, useRef, useCallback } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
 import { useAuthStore } from '@/store/auth.store';
 import { useDataStore } from '@/store';          // backward-compat community notifs
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
-import { getDB } from '@/db/database';
-import type { PostSortMode } from '@/db/api';
+import { getDB } from '@/infrastructure/database/database';
+import type { PostSortMode } from '@/infrastructure/database/api';
 import { createNotification } from './services/notificationService';
 
 // Stores

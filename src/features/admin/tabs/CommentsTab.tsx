@@ -2,10 +2,10 @@
  * CommentsTab — Community comments management.
  */
 import React, { useState } from 'react';
-import { cn } from '@/utils/cn';
-import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/shared/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
 import type { AnyItem, ConfirmDelete } from '../types/admin.types';
-import type { Comment } from '@/db/database';
+import type { Comment } from '@/infrastructure/database/database';
 
 interface CommentsTabProps {
   allComments: (Comment & { postContent?: string })[];

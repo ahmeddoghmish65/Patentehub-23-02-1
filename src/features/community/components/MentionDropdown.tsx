@@ -3,7 +3,7 @@
  * Autocomplete dropdown for @mention suggestions.
  */
 import { memo } from 'react';
-import { Icon } from '@/components/ui/Icon';
+import { Icon } from '@/shared/ui/Icon';
 import { useTranslation } from '@/i18n';
 import type { CommunityUser } from '../types';
 

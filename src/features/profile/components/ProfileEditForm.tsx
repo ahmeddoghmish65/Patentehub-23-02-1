@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
-import type { User as FullUser } from '@/types';
+import type { User as FullUser } from '@/shared/types';
 
 type User = Omit<FullUser, 'password'>;
 import { useAuthStore } from '@/store';

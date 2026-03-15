@@ -6,6 +6,6 @@ export {
   computeCommentScore,
   sortComments,
   buildCommentThreads,
-} from '@/services/commentRankingService';
+} from '@/infrastructure/database/services/commentRankingService';
 
-export type { CommentSortMode, CommentThread } from '@/services/commentRankingService';
+export type { CommentSortMode, CommentThread } from '@/infrastructure/database/services/commentRankingService';

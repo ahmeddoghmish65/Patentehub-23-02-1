@@ -3,13 +3,13 @@
  * and community data (posts, comments, notifications).
  */
 import { create } from 'zustand';
-import * as api from '@/db/api';
-import type { PostSortMode } from '@/db/api';
+import * as api from '@/infrastructure/database/api';
+import type { PostSortMode } from '@/infrastructure/database/api';
 import type {
   Section, Lesson, Question, Sign, SignSection,
   DictionarySection, DictionaryEntry, Post, Comment,
   QuizResult, UserMistake, Notification,
-} from '@/types';
+} from '@/shared/types';
 import { useAuthStore } from './auth.store';
 
 interface DataState {

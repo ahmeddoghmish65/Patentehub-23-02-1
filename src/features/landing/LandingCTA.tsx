@@ -1,7 +1,7 @@
-import { Icon } from '@/components/ui/Icon';
+import { Icon } from '@/shared/ui/Icon';
 import { useTranslation } from '@/i18n';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
-import { ROUTES } from '@/constants';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
+import { ROUTES } from '@/shared/constants';
 
 export function LandingCTA() {
   const { navigate } = useLocaleNavigate();

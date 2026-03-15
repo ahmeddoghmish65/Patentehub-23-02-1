@@ -5,7 +5,7 @@
 import { render } from '@testing-library/react';
 import { HelmetProvider } from 'react-helmet-async';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { PageMeta } from '@/hooks/usePageMeta';
+import { PageMeta } from '@/shared/hooks/usePageMeta';
 
 function renderWithHelmet(ui: React.ReactElement) {
   return render(<HelmetProvider>{ui}</HelmetProvider>);

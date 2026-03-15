@@ -1,8 +1,8 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '@/store';
-import { ROUTES } from '@/constants';
+import { ROUTES } from '@/shared/constants';
 import { PageLoader } from '@/components/feedback/PageLoader';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
 
 /**
  * AdminRoute — restricts access to admin and manager users.

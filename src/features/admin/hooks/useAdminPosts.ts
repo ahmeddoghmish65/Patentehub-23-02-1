@@ -3,7 +3,7 @@
  */
 import { useEffect, useState, useCallback } from 'react';
 import { useAdminStore, useDataStore } from '@/store';
-import type { Comment } from '@/db/database';
+import type { Comment } from '@/infrastructure/database/database';
 
 export function useAdminPosts() {
   const posts = useDataStore(s => s.posts);

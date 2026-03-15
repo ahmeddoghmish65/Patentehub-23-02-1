@@ -2,8 +2,8 @@
  * postService.ts
  * Post CRUD + admin moderation (pin / feature / lock).
  */
-import * as api from '@/db/api';
-import type { PostSortMode } from '@/db/api';
+import * as api from '@/infrastructure/database/api';
+import type { PostSortMode } from '@/infrastructure/database/api';
 import type { Post } from '../types';
 
 export interface ServiceResult<T = void> {

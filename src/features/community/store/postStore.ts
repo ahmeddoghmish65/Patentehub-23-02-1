@@ -4,7 +4,7 @@
  */
 import { create } from 'zustand';
 import { useAuthStore } from '@/store/auth.store';
-import { getDB } from '@/db/database';
+import { getDB } from '@/infrastructure/database/database';
 import * as postService from '../services/postService';
 import type { Post, PostSortMode, PostLiker } from '../types';
 

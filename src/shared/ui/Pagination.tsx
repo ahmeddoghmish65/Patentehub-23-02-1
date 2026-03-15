@@ -1,6 +1,6 @@
 import { memo, useCallback } from 'react';
-import { cn } from '@/utils/cn';
-import { Icon } from '@/components/ui/Icon';
+import { cn } from '@/shared/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
 
 interface PaginationProps {
   page:        number;

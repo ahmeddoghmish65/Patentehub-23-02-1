@@ -3,7 +3,7 @@
  * Renders a list of comments with nested replies for a given post.
  */
 import { memo, useMemo } from 'react';
-import { Icon } from '@/components/ui/Icon';
+import { Icon } from '@/shared/ui/Icon';
 import { useTranslation } from '@/i18n';
 import { CommentItem } from './CommentItem';
 import { CommentComposer } from './CommentComposer';

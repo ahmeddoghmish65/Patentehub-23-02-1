@@ -3,13 +3,13 @@
  * Renders a single post card with quiz support, inline editing, and comment section.
  */
 import { memo, useCallback } from 'react';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 import { useAuthStore } from '@/store/auth.store';
-import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
-import { getDB } from '@/db/database';
+import { VerifiedBadge } from '@/shared/ui/VerifiedBadge';
+import { getDB } from '@/infrastructure/database/database';
 import { MentionText } from './MentionText';
 import { PostActions } from './PostActions';
 import { CommentList } from './CommentList';

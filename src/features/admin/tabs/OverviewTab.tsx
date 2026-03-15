@@ -3,9 +3,9 @@
  * Extracted from AdminPage.tsx overview section.
  */
 import React from 'react';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 import type { AdminTab, AnyItem } from '../types/admin.types';
 

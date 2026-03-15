@@ -1,17 +1,17 @@
 import { Outlet, useLocation, useParams } from 'react-router-dom';
 import { useAuthStore, useUIStore } from '@/store';
-import { Icon } from '@/components/ui/Icon';
+import { Icon } from '@/shared/ui/Icon';
 import { Sidebar } from './Sidebar';
 import { BottomNav } from './BottomNav';
 import { CookieConsentBanner } from '@/components/CookieConsentBanner';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
-import { PROFILE_GATED_PAGES } from '@/constants';
+import { PROFILE_GATED_PAGES } from '@/shared/constants';
 import { useState, useCallback, useEffect } from 'react';
-import { getConsentLevel, type ConsentLevel } from '@/utils/cookieManager';
-import { initAnalytics } from '@/services/analytics';
-import { ROUTES } from '@/constants';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
+import { getConsentLevel, type ConsentLevel } from '@/shared/utils/cookieManager';
+import { initAnalytics } from '@/infrastructure/analytics';
+import { ROUTES } from '@/shared/constants';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
 
 export function AppLayout() {
   const { user } = useAuthStore();

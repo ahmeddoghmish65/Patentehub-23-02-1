@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from '@/i18n';
 import type { UiLang } from '@/i18n';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 
 interface LanguageSwitcherProps {
   /** 'compact' shows a small pill, 'full' shows a wider button with labels, 'dropdown' shows a dropdown menu */

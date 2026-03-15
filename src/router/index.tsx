@@ -7,7 +7,7 @@ import {
   useLocation,
   useParams,
 } from 'react-router-dom';
-import { ROUTES } from '@/constants';
+import { ROUTES } from '@/shared/constants';
 import { useAuthStore } from '@/store';
 import { useTranslation } from '@/i18n';
 import type { UiLang } from '@/i18n';
@@ -16,7 +16,7 @@ import { AdminRoute } from '@/components/guards/AdminRoute';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { PageLoader } from '@/components/feedback/PageLoader';
 import { ErrorBoundary } from '@/components/feedback/ErrorBoundary';
-import { trackPageView } from '@/services/analytics';
+import { trackPageView } from '@/infrastructure/analytics';
 
 // ─── Lazy-loaded pages ────────────────────────────────────────────────────────
 const LandingPage = lazy(() => import('@/pages/LandingPage').then(m => ({ default: m.LandingPage })));

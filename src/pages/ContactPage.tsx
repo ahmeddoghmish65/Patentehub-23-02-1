@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
-import { ROUTES } from '@/constants';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { cn } from '@/utils/cn';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
+import { ROUTES } from '@/shared/constants';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
+import { Input } from '@/shared/ui/Input';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
-import { supabase } from '@/lib/supabase';
-import { PageMeta } from '@/hooks/usePageMeta';
+import { supabase } from '@/shared/lib/supabase';
+import { PageMeta } from '@/shared/hooks/usePageMeta';
 
 interface FormData {
   name: string;

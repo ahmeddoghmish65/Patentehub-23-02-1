@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
-import { ROUTES } from '@/constants';
-import { Icon } from '@/components/ui/Icon';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
+import { ROUTES } from '@/shared/constants';
+import { Icon } from '@/shared/ui/Icon';
 import { useTranslation } from '@/i18n';
-import { PageMeta } from '@/hooks/usePageMeta';
+import { PageMeta } from '@/shared/hooks/usePageMeta';
 
 const sectionsAr = [
   { id: 'acceptance', title: 'قبول الشروط', icon: 'handshake' },

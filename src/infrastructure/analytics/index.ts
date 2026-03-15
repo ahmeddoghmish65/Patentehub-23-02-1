@@ -13,7 +13,7 @@
  */
 
 import posthog from 'posthog-js';
-import { hasFullConsent } from '@/utils/cookieManager';
+import { hasFullConsent } from '@/shared/utils/cookieManager';
 
 // ─── Environment variables ────────────────────────────────────────────────────
 const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined;

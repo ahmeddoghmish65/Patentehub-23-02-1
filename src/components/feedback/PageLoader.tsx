@@ -1,4 +1,4 @@
-import { Icon } from '@/components/ui/Icon';
+import { Icon } from '@/shared/ui/Icon';
 import { useTranslation } from '@/i18n';
 
 /**

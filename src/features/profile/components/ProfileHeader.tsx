@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
-import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
+import { VerifiedBadge } from '@/shared/ui/VerifiedBadge';
 import { useTranslation } from '@/i18n';
 import { useAuthStore } from '@/store';
-import type { User as FullUser } from '@/types';
+import type { User as FullUser } from '@/shared/types';
 
 type User = Omit<FullUser, 'password'>;
 import type { ActiveStatView } from '../types/profile.types';

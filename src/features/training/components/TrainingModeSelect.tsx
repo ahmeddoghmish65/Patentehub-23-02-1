@@ -1,6 +1,6 @@
 import { useDataStore } from '@/store';
-import { Icon } from '@/components/ui/Icon';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 import type { TrainMode, TrainModeConfig } from '../types';
 

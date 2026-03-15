@@ -3,10 +3,10 @@
  * Extracted from AdminPage.tsx users section.
  */
 import React, { useState } from 'react';
-import { cn } from '@/utils/cn';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
-import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
+import { cn } from '@/shared/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
+import { VerifiedBadge } from '@/shared/ui/VerifiedBadge';
 import { useTranslation } from '@/i18n';
 import type { ContentView, AnyItem, ConfirmDelete } from '../types/admin.types';
 
@@ -116,7 +116,7 @@ export const UsersTab = React.memo(function UsersTab({
                       className={cn('flex items-center gap-2 p-2 rounded-lg text-xs font-medium transition-all',
                         has ? 'bg-amber-200 text-amber-900' : 'bg-white text-surface-500 border border-surface-200')}
                       onClick={async () => {
-                        const db = await import('@/db/database').then(m => m.getDB());
+                        const db = await import('@/infrastructure/database/database').then(m => m.getDB());
                         const u = await db.get('users', selectedUser.id);
                         if (u) {
                           const current: string[] = u.permissions || [];
@@ -196,7 +196,7 @@ export const UsersTab = React.memo(function UsersTab({
               <>
                 <Button size="sm" variant="secondary"
                   onClick={async () => {
-                    const db = await import('@/db/database').then(m => m.getDB());
+                    const db = await import('@/infrastructure/database/database').then(m => m.getDB());
                     const u = await db.get('users', selectedUser.id);
                     if (u) {
                       u.role = u.role === 'manager' ? 'user' : 'manager';
@@ -210,7 +210,7 @@ export const UsersTab = React.memo(function UsersTab({
                 </Button>
                 <Button size="sm" variant="secondary"
                   onClick={async () => {
-                    const db = await import('@/db/database').then(m => m.getDB());
+                    const db = await import('@/infrastructure/database/database').then(m => m.getDB());
                     const u = await db.get('users', selectedUser.id);
                     if (u) { u.verified = !u.verified; await db.put('users', u); loadAdminUsers(); }
                   }}

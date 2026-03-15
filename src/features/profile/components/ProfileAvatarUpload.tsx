@@ -1,5 +1,5 @@
 import React, { useRef, useCallback } from 'react';
-import { Icon } from '@/components/ui/Icon';
+import { Icon } from '@/shared/ui/Icon';
 import { uploadAvatar } from '../services/profileService';
 
 interface ProfileAvatarUploadProps {

@@ -2,7 +2,7 @@
  * Admin Content Service — wraps all content-related API calls.
  * Keeps raw API imports out of components and hooks.
  */
-import * as api from '@/db/api';
+import * as api from '@/infrastructure/database/api';
 
 export async function exportContentData(token: string, storeName: string): Promise<unknown[]> {
   const r = await api.apiExportData(token, storeName);

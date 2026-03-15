@@ -3,8 +3,8 @@
  */
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Icon } from '@/components/ui/Icon';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation, type UiLang } from '@/i18n';
 
 export const LanguagesTab = React.memo(function LanguagesTab() {

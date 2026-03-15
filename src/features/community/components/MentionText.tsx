@@ -3,7 +3,7 @@
  * Renders text with clickable @mentions (blue) and #hashtags (primary color).
  */
 import { memo } from 'react';
-import { cn } from '@/utils/cn';
+import { cn } from '@/shared/utils/cn';
 import { parseTextTokens } from '../utils/textUtils';
 
 interface MentionTextProps {

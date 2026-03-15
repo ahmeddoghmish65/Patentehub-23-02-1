@@ -3,9 +3,9 @@
  * Extracted verbatim from AdminPage.tsx to preserve all existing functionality.
  */
 import React from 'react';
-import { cn } from '@/utils/cn';
-import { Icon } from '@/components/ui/Icon';
-import { Button } from '@/components/ui/Button';
+import { cn } from '@/shared/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { Button } from '@/shared/ui/Button';
 import type { ContentView, AnyItem, TableColumn } from '../../types/admin.types';
 
 interface AdminTableProps {

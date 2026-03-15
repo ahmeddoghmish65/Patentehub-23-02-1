@@ -1,8 +1,8 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/store';
-import { ROUTES } from '@/constants';
+import { ROUTES } from '@/shared/constants';
 import { PageLoader } from '@/components/feedback/PageLoader';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
 
 /**
  * PrivateRoute — only renders children when the user is authenticated.

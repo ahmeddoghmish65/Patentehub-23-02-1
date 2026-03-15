@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button } from '@/components/ui/Button';
-import { cn } from '@/utils/cn';
+import { Button } from '@/shared/ui/Button';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 
 interface ProfileSecurityProps {

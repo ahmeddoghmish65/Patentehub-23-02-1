@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
-import { Icon } from '@/components/ui/Icon';
-import { cn } from '@/utils/cn';
+import { Icon } from '@/shared/ui/Icon';
+import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
-import { useLocaleNavigate } from '@/hooks/useLocaleNavigate';
-import { ROUTES } from '@/constants';
-import { buildUserProfileUrl } from '@/constants';
-import type { Post } from '@/types';
+import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
+import { ROUTES } from '@/shared/constants';
+import { buildUserProfileUrl } from '@/shared/constants';
+import type { Post } from '@/shared/types';
 import type { SocialUser, ActiveStatView } from '../types/profile.types';
 import { getTextDir } from '../utils/profileUtils';
 

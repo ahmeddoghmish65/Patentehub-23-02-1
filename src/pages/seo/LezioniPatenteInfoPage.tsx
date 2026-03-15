@@ -4,7 +4,7 @@
  * Target keywords: lezioni patente b, codice della strada lezioni, studiare patente b
  */
 import { Link } from 'react-router-dom';
-import { PageMeta } from '@/hooks/usePageMeta';
+import { PageMeta } from '@/shared/hooks/usePageMeta';
 import { SeoLayout } from './SeoLayout';
 
 const CANONICAL = 'https://patentehub.com/it/lezioni-patente-b';
