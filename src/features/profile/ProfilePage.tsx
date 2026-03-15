@@ -181,7 +181,7 @@ export function ProfilePage() {
                 className={cn(
                   'rounded-xl p-2 text-center transition-all duration-200 w-full',
                   isEarned ? 'opacity-100' : 'opacity-30',
-                  isOpen ? 'bg-surface-50 ring-2 ring-primary-200' : 'hover:bg-surface-50',
+                  isOpen ? 'bg-surface-50 ring-2 ring-primary-200 dark:ring-primary-800' : 'hover:bg-surface-50',
                 )}
               >
                 <div className={cn('w-10 h-10 mx-auto rounded-lg flex items-center justify-center mb-1', isEarned ? badge.color : 'bg-surface-200')}>
@@ -197,7 +197,7 @@ export function ProfilePage() {
           if (!badge) return null;
           const isEarned = progress.badges.includes(badge.id);
           return (
-            <div className={cn('mt-3 p-3 rounded-xl border flex items-start gap-3', isEarned ? 'bg-primary-50 border-primary-100' : 'bg-surface-50 border-surface-100')}>
+            <div className={cn('mt-3 p-3 rounded-xl border flex items-start gap-3', isEarned ? 'bg-primary-50 dark:bg-primary-900/30 border-primary-100 dark:border-primary-800/50' : 'bg-surface-50 border-surface-100')}>
               <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center shrink-0', isEarned ? badge.color : 'bg-surface-200')}>
                 <Icon name={badge.icon} size={16} className={isEarned ? 'text-white' : 'text-surface-400'} filled />
               </div>

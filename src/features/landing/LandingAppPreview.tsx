@@ -10,7 +10,7 @@ export function LandingAppPreview({ isVisible }: LandingAppPreviewProps) {
   const { t } = useTranslation();
 
   return (
-    <section className="py-24 bg-white overflow-hidden" data-animate id="preview">
+    <section className="py-24 bg-white dark:bg-surface-50 overflow-hidden" data-animate id="preview">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={cn('text-center mb-16 transition-all duration-700', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
           <span className="inline-flex items-center gap-2 bg-violet-50 text-violet-700 border border-violet-100 px-5 py-2 rounded-full text-sm font-semibold mb-5">
@@ -24,9 +24,9 @@ export function LandingAppPreview({ isVisible }: LandingAppPreviewProps) {
         <div className={cn('grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-1000', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12')}>
           {/* Quiz Card */}
           <div className="rounded-3xl p-[2px] bg-gradient-to-br from-blue-500 via-violet-500 to-pink-500 shadow-2xl group hover:-translate-y-2 transition-all duration-500">
-            <div className="bg-white rounded-[22px] p-6 h-full">
+            <div className="bg-white dark:bg-surface-100 rounded-[22px] p-6 h-full">
               <div className="flex items-center gap-3 mb-5">
-                <div className="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center">
+                <div className="w-11 h-11 bg-red-50 dark:bg-red-950/40 rounded-xl flex items-center justify-center">
                   <Icon name="quiz" className="text-red-500" size={22} filled />
                 </div>
                 <div>
@@ -52,7 +52,7 @@ export function LandingAppPreview({ isVisible }: LandingAppPreviewProps) {
 
           {/* Sections Card */}
           <div className="rounded-3xl p-[2px] bg-gradient-to-br from-amber-400 to-orange-500 shadow-2xl group hover:-translate-y-2 transition-all duration-500">
-            <div className="bg-white rounded-[22px] p-6 h-full">
+            <div className="bg-white dark:bg-surface-100 rounded-[22px] p-6 h-full">
               <h3 className="font-bold text-surface-900 mb-5">{t('landing.preview_sections_title')}</h3>
               <div className="space-y-3">
                 {[
@@ -82,9 +82,9 @@ export function LandingAppPreview({ isVisible }: LandingAppPreviewProps) {
 
           {/* Exam Readiness Card */}
           <div className="rounded-3xl p-[2px] bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 shadow-2xl group hover:-translate-y-2 transition-all duration-500 md:col-span-2 lg:col-span-1">
-            <div className="bg-white rounded-[22px] p-6 h-full flex flex-col">
+            <div className="bg-white dark:bg-surface-100 rounded-[22px] p-6 h-full flex flex-col">
               <div className="flex items-center gap-3 mb-5">
-                <div className="w-11 h-11 bg-emerald-50 rounded-xl flex items-center justify-center">
+                <div className="w-11 h-11 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl flex items-center justify-center">
                   <Icon name="verified" className="text-emerald-500" size={22} filled />
                 </div>
                 <div>
@@ -137,7 +137,7 @@ export function LandingAppPreview({ isVisible }: LandingAppPreviewProps) {
                 ))}
               </div>
 
-              <div className="mt-4 bg-emerald-50 rounded-xl px-3 py-2 text-[11px] text-emerald-700 font-medium flex items-center gap-1.5">
+              <div className="mt-4 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl px-3 py-2 text-[11px] text-emerald-700 dark:text-emerald-400 font-medium flex items-center gap-1.5">
                 <Icon name="tips_and_updates" size={13} className="text-emerald-500 shrink-0" filled />
                 {t('dashboard.readiness_tip_keep_going')}
               </div>

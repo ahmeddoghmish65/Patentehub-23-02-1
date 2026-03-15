@@ -41,7 +41,7 @@ export function LandingNavbar({ scrolled, navLinks }: LandingNavbarProps) {
 
       <nav className={cn(
         'fixed top-0 inset-x-0 z-50 transition-all duration-500',
-        scrolled ? 'bg-white/95 backdrop-blur-2xl shadow-lg shadow-surface-900/5 border-b border-surface-100' : 'bg-white/80 backdrop-blur-md border-b border-surface-100/60'
+        scrolled ? 'bg-white/95 dark:bg-surface-100/95 backdrop-blur-2xl shadow-lg shadow-surface-900/5 border-b border-surface-100' : 'bg-white/80 dark:bg-surface-100/80 backdrop-blur-md border-b border-surface-100/60'
       )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20 overflow-hidden">
@@ -50,7 +50,7 @@ export function LandingNavbar({ scrolled, navLinks }: LandingNavbarProps) {
                 <div className="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/30">
                   <Icon name="directions_car" size={20} className="text-white" filled />
                 </div>
-                <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white" />
+                <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white dark:border-surface-100" />
               </div>
               <span className="text-lg font-black tracking-tight whitespace-nowrap" dir="ltr">
                 <span className="text-surface-900">Patente </span>
@@ -62,7 +62,7 @@ export function LandingNavbar({ scrolled, navLinks }: LandingNavbarProps) {
               {navLinks.map(l => (
                 <button key={l.id} onClick={() => document.getElementById(l.id)?.scrollIntoView({ behavior: 'smooth' })}
                   className={cn('px-4 py-2 rounded-xl text-sm font-medium transition-all',
-                    'text-surface-600 hover:text-primary-600 hover:bg-primary-50')}>
+                    'text-surface-600 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/30')}>
                   {l.label}
                 </button>
               ))}
@@ -109,7 +109,7 @@ export function LandingNavbar({ scrolled, navLinks }: LandingNavbarProps) {
             ? 'opacity-100 translate-y-0 pointer-events-auto'
             : 'opacity-0 -translate-y-3 pointer-events-none'
         )}>
-          <div className="bg-white rounded-2xl shadow-2xl border border-surface-100 overflow-hidden">
+          <div className="bg-white dark:bg-surface-100 rounded-2xl shadow-2xl border border-surface-100 overflow-hidden">
             <div className="p-2 pb-1">
               {navLinks.map((l, i) => (
                 <button

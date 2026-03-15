@@ -120,7 +120,7 @@ export function LandingPage() {
           },
         ]}
       />
-      <div className="min-h-screen bg-white overflow-x-hidden" dir={dir}>
+      <div className="min-h-screen bg-white dark:bg-surface-50 overflow-x-hidden" dir={dir}>
       <LandingNavbar scrolled={scrolled} navLinks={navLinks} />
       <LandingHero features={features} />
       <LandingStats stats={stats} />

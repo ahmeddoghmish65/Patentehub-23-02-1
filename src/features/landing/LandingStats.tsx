@@ -15,7 +15,7 @@ interface LandingStatsProps {
 
 export function LandingStats({ stats }: LandingStatsProps) {
   return (
-    <section className="bg-white py-16">
+    <section className="bg-white dark:bg-surface-50 py-16">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
           {stats.map((s, i) => (

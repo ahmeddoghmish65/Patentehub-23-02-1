@@ -21,7 +21,7 @@ export function LandingFAQ({ isVisible }: LandingFAQProps) {
   ];
 
   return (
-    <section id="faq" className="py-24 bg-white" data-animate>
+    <section id="faq" className="py-24 bg-white dark:bg-surface-50" data-animate>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={cn('text-center mb-16 transition-all duration-700', isVisible('faq') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
           <span className="inline-flex items-center gap-2 bg-orange-50 text-orange-700 border border-orange-100 px-5 py-2 rounded-full text-sm font-semibold mb-5">
@@ -37,7 +37,7 @@ export function LandingFAQ({ isVisible }: LandingFAQProps) {
             <div key={i}
               className={cn(
                 'rounded-2xl border overflow-hidden transition-all duration-400',
-                faqOpen === i ? 'border-primary-200 shadow-lg shadow-primary-50/50 bg-primary-50/20' : 'border-surface-100 bg-white hover:border-surface-200',
+                faqOpen === i ? 'border-primary-200 dark:border-primary-800 shadow-lg shadow-primary-50/50 bg-primary-50/20 dark:bg-primary-900/10' : 'border-surface-100 bg-white dark:bg-surface-100 hover:border-surface-200',
                 isVisible('faq') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
               )}
               style={{ transitionDelay: `${i * 55}ms` }}>

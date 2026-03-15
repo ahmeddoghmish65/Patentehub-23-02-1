@@ -27,11 +27,11 @@ interface ProfileExamReadinessProps {
 
 const FACTOR_ICONS = ['quiz', 'check_circle', 'book', 'schedule', 'trending_up'];
 const FACTOR_COLORS = [
-  { icon: 'text-blue-500',   bg: 'bg-blue-50',   border: 'border-blue-100' },
-  { icon: 'text-green-500',  bg: 'bg-green-50',  border: 'border-green-100' },
-  { icon: 'text-purple-500', bg: 'bg-purple-50', border: 'border-purple-100' },
-  { icon: 'text-orange-500', bg: 'bg-orange-50', border: 'border-orange-100' },
-  { icon: 'text-teal-500',   bg: 'bg-teal-50',   border: 'border-teal-100' },
+  { icon: 'text-blue-500',   bg: 'bg-blue-50 dark:bg-blue-950/40',     border: 'border-blue-100 dark:border-blue-900/50' },
+  { icon: 'text-green-500',  bg: 'bg-green-50 dark:bg-green-950/40',   border: 'border-green-100 dark:border-green-900/50' },
+  { icon: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-950/40', border: 'border-purple-100 dark:border-purple-900/50' },
+  { icon: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-950/40', border: 'border-orange-100 dark:border-orange-900/50' },
+  { icon: 'text-teal-500',   bg: 'bg-teal-50 dark:bg-teal-950/40',     border: 'border-teal-100 dark:border-teal-900/50' },
 ];
 
 const CIRCLE_COLOR: Record<ExamReadinessLevel, string> = {
@@ -43,12 +43,12 @@ const CIRCLE_COLOR: Record<ExamReadinessLevel, string> = {
 };
 
 const METRIC_ITEMS = (progress: UserProgress, t: (k: string) => string) => [
-  { label: t('profile.total_quizzes'),          value: progress.totalQuizzes,              icon: 'quiz',                   color: 'text-blue-600',   bg: 'bg-blue-50',   border: 'border-blue-100' },
-  { label: t('profile.current_streak'),          value: `${progress.currentStreak} ${t('profile.streak_days')}`, icon: 'local_fire_department', color: 'text-orange-500', bg: 'bg-orange-50', border: 'border-orange-100' },
-  { label: t('profile.xp_points'),               value: progress.xp,                        icon: 'stars',                  color: 'text-amber-500',  bg: 'bg-amber-50',  border: 'border-amber-100' },
-  { label: t('profile.completed_lessons_label'), value: progress.completedLessons.length,   icon: 'school',                 color: 'text-green-600',  bg: 'bg-green-50',  border: 'border-green-100' },
-  { label: t('profile.best_streak'),             value: `${progress.bestStreak} ${t('profile.streak_days')}`,   icon: 'emoji_events',          color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
-  { label: t('profile.learning_days'),           value: progress.totalStudyDays || 0,       icon: 'calendar_month',         color: 'text-teal-600',   bg: 'bg-teal-50',   border: 'border-teal-100' },
+  { label: t('profile.total_quizzes'),          value: progress.totalQuizzes,              icon: 'quiz',                   color: 'text-blue-600',   bg: 'bg-blue-50 dark:bg-blue-950/40',     border: 'border-blue-100 dark:border-blue-900/50' },
+  { label: t('profile.current_streak'),          value: `${progress.currentStreak} ${t('profile.streak_days')}`, icon: 'local_fire_department', color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-950/40', border: 'border-orange-100 dark:border-orange-900/50' },
+  { label: t('profile.xp_points'),               value: progress.xp,                        icon: 'stars',                  color: 'text-amber-500',  bg: 'bg-amber-50 dark:bg-amber-950/40',   border: 'border-amber-100 dark:border-amber-900/50' },
+  { label: t('profile.completed_lessons_label'), value: progress.completedLessons.length,   icon: 'school',                 color: 'text-green-600',  bg: 'bg-green-50 dark:bg-green-950/40',   border: 'border-green-100 dark:border-green-900/50' },
+  { label: t('profile.best_streak'),             value: `${progress.bestStreak} ${t('profile.streak_days')}`,   icon: 'emoji_events',          color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-950/40', border: 'border-purple-100 dark:border-purple-900/50' },
+  { label: t('profile.learning_days'),           value: progress.totalStudyDays || 0,       icon: 'calendar_month',         color: 'text-teal-600',   bg: 'bg-teal-50 dark:bg-teal-950/40',     border: 'border-teal-100 dark:border-teal-900/50' },
 ];
 
 export const ProfileExamReadiness = React.memo(function ProfileExamReadiness({
@@ -130,7 +130,7 @@ export const ProfileExamReadiness = React.memo(function ProfileExamReadiness({
         </div>
 
         {readiness.weaknessPenalty > 0 && (
-          <div className="mt-2 flex items-center gap-2 bg-red-50 border border-red-100 rounded-xl px-3 py-2">
+          <div className="mt-2 flex items-center gap-2 bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900/50 rounded-xl px-3 py-2">
             <Icon name="remove_circle" size={14} className="text-red-500 shrink-0" filled />
             <span className="text-xs text-red-600 font-medium">
               -{readiness.weaknessPenalty} {t('dashboard.readiness_weakness_label')} ({mistakes.length})
@@ -144,7 +144,7 @@ export const ProfileExamReadiness = React.memo(function ProfileExamReadiness({
         <div className="mb-4 bg-surface-50 dark:bg-surface-200 rounded-xl p-4">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-semibold text-surface-800">{t('profile.answer_dist')}</span>
-            <span className="text-xs font-semibold bg-white dark:bg-surface-200 text-surface-600 px-2.5 py-0.5 rounded-full border border-surface-200">
+            <span className="text-xs font-semibold bg-white dark:bg-surface-100 text-surface-600 px-2.5 py-0.5 rounded-full border border-surface-200">
               {totalAnswers} {t('profile.total_label')}
             </span>
           </div>
@@ -160,7 +160,7 @@ export const ProfileExamReadiness = React.memo(function ProfileExamReadiness({
               <span className="text-xs text-surface-600">{t('profile.correct_label')}</span>
               <strong className="text-xs text-success-600">{progress.correctAnswers}</strong>
             </div>
-            <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full border border-primary-100">
+            <span className="text-xs font-bold text-primary-600 bg-primary-50 dark:bg-primary-900/30 px-2 py-0.5 rounded-full border border-primary-100 dark:border-primary-800/50">
               {accuracy}%
             </span>
             <div className="flex items-center gap-1.5">

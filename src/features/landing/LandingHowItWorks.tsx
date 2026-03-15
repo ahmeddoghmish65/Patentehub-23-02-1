@@ -40,7 +40,7 @@ export function LandingHowItWorks({ isVisible, steps }: LandingHowItWorksProps) 
                 <div className={cn('w-24 h-24 mx-auto bg-gradient-to-br rounded-3xl flex items-center justify-center shadow-2xl hover:scale-105 transition-transform cursor-default', s.color)}>
                   <Icon name={s.icon} size={44} className="text-white" filled />
                 </div>
-                <div className="absolute -top-3 -right-3 w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center border border-surface-100">
+                <div className="absolute -top-3 -right-3 w-10 h-10 bg-white dark:bg-surface-100 rounded-xl shadow-lg flex items-center justify-center border border-surface-100">
                   <span className="text-sm font-black text-surface-400">{s.step}</span>
                 </div>
               </div>

@@ -52,7 +52,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
                   <div className="h-1.5 bg-blue-100 rounded-full w-3/5" />
                 </div>
               </div>
-              <div className="w-8 h-8 bg-white border border-surface-200 rounded-full flex items-center justify-center shadow-sm shrink-0">
+              <div className="w-8 h-8 bg-white dark:bg-surface-100 border border-surface-200 rounded-full flex items-center justify-center shadow-sm shrink-0">
                 <Icon name="swap_horiz" size={15} className="text-surface-400" />
               </div>
               <div className="flex-1 bg-white dark:bg-gray-800 rounded-2xl p-3.5 border border-blue-100 dark:border-blue-900/50 shadow-sm">

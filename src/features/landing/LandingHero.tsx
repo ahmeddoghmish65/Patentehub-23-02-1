@@ -29,7 +29,7 @@ export function LandingHero({ features }: LandingHeroProps) {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-white via-primary-50/70 to-blue-50/80" />
+      <div className="absolute inset-0 bg-gradient-to-br from-white via-primary-50/70 to-blue-50/80 dark:from-surface-50 dark:via-primary-900/20 dark:to-blue-900/20" />
       <div className="absolute inset-0 opacity-60"
         style={{ backgroundImage: 'radial-gradient(ellipse 80% 55% at 60% 0%, rgba(59,130,246,0.12), transparent)' }} />
       <div className="absolute inset-0 opacity-[0.04]"
@@ -78,7 +78,7 @@ export function LandingHero({ features }: LandingHeroProps) {
             {/* Mini badges */}
             <div className={cn('flex flex-wrap items-center gap-3 mt-10 animate-fade-in-up', dir === 'rtl' ? 'justify-center lg:justify-start' : 'justify-center lg:justify-start')} style={{ animationDelay: '0.4s' }}>
               {[t('landing.badge_free'), ...(uiLang !== 'it' ? [t('landing.badge_arabic')] : []), t('landing.badge_updated'), t('landing.badge_success')].map((b, i) => (
-                <span key={i} className="inline-flex items-center gap-1.5 bg-white border border-surface-200 text-surface-600 text-xs px-3 py-1.5 rounded-full shadow-sm">
+                <span key={i} className="inline-flex items-center gap-1.5 bg-white dark:bg-surface-100 border border-surface-200 text-surface-600 text-xs px-3 py-1.5 rounded-full shadow-sm">
                   <Icon name="check_circle" size={12} className="text-green-500" filled />
                   {b}
                 </span>
@@ -92,7 +92,7 @@ export function LandingHero({ features }: LandingHeroProps) {
               <div className="absolute inset-1/4 bg-primary-400/15 rounded-full blur-3xl" />
               <div className="absolute inset-8 rounded-full border border-primary-200/40" />
               <div className="absolute inset-16 rounded-full border border-primary-200/60" />
-              <div className="absolute inset-[30%] bg-white backdrop-blur-2xl rounded-3xl border border-primary-100 flex flex-col items-center justify-center p-4 shadow-xl shadow-primary-500/10">
+              <div className="absolute inset-[30%] bg-white dark:bg-surface-100 backdrop-blur-2xl rounded-3xl border border-primary-100 flex flex-col items-center justify-center p-4 shadow-xl shadow-primary-500/10">
                 <div className={cn('w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-br mb-3 shadow-lg transition-all duration-500', features[activeFeature].bg)}>
                   <Icon name={features[activeFeature].icon} size={28} className="text-white" filled />
                 </div>
@@ -107,7 +107,7 @@ export function LandingHero({ features }: LandingHeroProps) {
                 return (
                   <button key={i} onClick={() => setActiveFeature(i)}
                     className={cn('absolute w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300',
-                      activeFeature === i ? 'bg-primary-500 shadow-xl shadow-primary-500/30 scale-115' : 'bg-white border border-surface-200 hover:border-primary-300 hover:bg-primary-50 shadow-sm')}
+                      activeFeature === i ? 'bg-primary-500 shadow-xl shadow-primary-500/30 scale-115' : 'bg-white dark:bg-surface-100 border border-surface-200 hover:border-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900/30 shadow-sm')}
                     style={{ left: `${x}%`, top: `${y}%`, transform: `translate(-50%,-50%)` }}>
                     <Icon name={f.icon} size={18} className={activeFeature === i ? 'text-white' : 'text-surface-500'} filled={activeFeature === i} />
                   </button>
@@ -121,7 +121,7 @@ export function LandingHero({ features }: LandingHeroProps) {
       {/* Wave */}
       <div className="absolute bottom-0 inset-x-0">
         <svg viewBox="0 0 1440 70" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block">
-          <path d="M0,70 L1440,70 L1440,35 C1200,70 960,0 720,18 C480,36 240,70 0,35 Z" fill="white" />
+          <path d="M0,70 L1440,70 L1440,35 C1200,70 960,0 720,18 C480,36 240,70 0,35 Z" className="fill-white dark:fill-[#0f172a]" />
         </svg>
       </div>
     </section>
