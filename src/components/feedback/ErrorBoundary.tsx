@@ -151,7 +151,7 @@ function DefaultErrorScreen({
       className="min-h-screen flex items-center justify-center bg-surface-50 p-4"
       dir={isRtl ? 'rtl' : 'ltr'}
     >
-      <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+      <div className="bg-white dark:bg-surface-100 rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
         <div className="w-16 h-16 bg-danger-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <Icon name="error" size={32} className="text-danger-500" />
         </div>

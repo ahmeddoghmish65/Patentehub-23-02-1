@@ -40,7 +40,7 @@ export function NotFoundPage() {
           </button>
           <button
             onClick={() => window.history.back()}
-            className="flex items-center justify-center gap-2 bg-white text-surface-700 rounded-xl px-6 py-3 font-semibold border border-surface-200 hover:bg-surface-50 transition-colors"
+            className="flex items-center justify-center gap-2 bg-white dark:bg-surface-100 text-surface-700 rounded-xl px-6 py-3 font-semibold border border-surface-200 hover:bg-surface-50 transition-colors"
           >
             <Icon name={isIt ? 'arrow_back' : 'arrow_forward'} size={18} className="text-surface-500" />
             {isIt ? 'Torna indietro' : uiLang === 'en' ? 'Go back' : 'رجوع'}
@@ -57,7 +57,7 @@ export function NotFoundPage() {
             <button
               key={item.route}
               onClick={() => navigate(item.route)}
-              className="flex flex-col items-center gap-1.5 bg-white rounded-xl p-3 border border-surface-100 hover:border-primary-200 hover:bg-primary-50 transition-all group"
+              className="flex flex-col items-center gap-1.5 bg-white dark:bg-surface-100 rounded-xl p-3 border border-surface-100 hover:border-primary-200 hover:bg-primary-50 transition-all group"
             >
               <Icon name={item.icon} size={22} className="text-surface-400 group-hover:text-primary-500 transition-colors" filled />
               <span className="text-xs text-surface-500 group-hover:text-primary-600 font-medium">{item.label}</span>

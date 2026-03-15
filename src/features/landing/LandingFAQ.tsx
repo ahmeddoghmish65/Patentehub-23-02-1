@@ -24,7 +24,7 @@ export function LandingFAQ({ isVisible }: LandingFAQProps) {
     <section id="faq" className="py-24 bg-white dark:bg-surface-50" data-animate>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={cn('text-center mb-16 transition-all duration-700', isVisible('faq') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
-          <span className="inline-flex items-center gap-2 bg-orange-50 text-orange-700 border border-orange-100 px-5 py-2 rounded-full text-sm font-semibold mb-5">
+          <span className="inline-flex items-center gap-2 bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-100 dark:border-orange-800 px-5 py-2 rounded-full text-sm font-semibold mb-5">
             <Icon name="help" size={16} filled />
             {t('landing.faq_tag')}
           </span>

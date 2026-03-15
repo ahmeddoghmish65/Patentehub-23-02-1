@@ -18,7 +18,7 @@ export const HashtagSuggestions = memo(function HashtagSuggestions({
   const { t } = useTranslation();
 
   return (
-    <div className="absolute bottom-full left-0 right-0 bg-white border border-surface-200 rounded-xl shadow-2xl z-[200] overflow-hidden mb-1 max-h-40 overflow-y-auto">
+    <div className="absolute bottom-full left-0 right-0 bg-white dark:bg-surface-100 border border-surface-200 rounded-xl shadow-2xl z-[200] overflow-hidden mb-1 max-h-40 overflow-y-auto">
       <div className="px-3 py-1.5 bg-surface-50 border-b border-surface-100">
         <p className="text-[10px] text-surface-400 font-medium">{t('community.hashtag_suggestions')}</p>
       </div>

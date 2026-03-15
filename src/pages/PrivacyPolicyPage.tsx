@@ -56,7 +56,7 @@ export function PrivacyPolicyPage() {
         noIndex={false}
       />
       <div className="min-h-screen bg-surface-50 animate-fade-in-up">
-      <header className="sticky top-0 z-50 bg-white border-b border-surface-100 shadow-sm">
+      <header className="sticky top-0 z-50 bg-white dark:bg-surface-100 border-b border-surface-100 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
           <button onClick={() => goBack(ROUTES.LANDING)} className="flex items-center gap-1.5 text-surface-500 hover:text-primary-600 transition-colors">
             <Icon name="arrow_forward" size={20} className="ltr:rotate-180" />
@@ -98,7 +98,7 @@ export function PrivacyPolicyPage() {
 
         <div className="lg:grid lg:grid-cols-4 lg:gap-6">
           <div className="hidden lg:block">
-            <div className="bg-white rounded-2xl p-4 border border-surface-100 shadow-sm sticky top-6">
+            <div className="bg-white dark:bg-surface-100 rounded-2xl p-4 border border-surface-100 shadow-sm sticky top-6">
               <p className="text-xs font-bold text-surface-400 uppercase tracking-wider mb-3">{isIt ? 'Contenuto' : 'المحتويات'}</p>
               <nav className="space-y-0.5">
                 {sections.map(section => (
@@ -121,7 +121,7 @@ export function PrivacyPolicyPage() {
           <div className="lg:col-span-3 space-y-5">
             {isIt ? (
               <>
-                <section id="intro" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="intro" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="info" size={18} className="text-primary-600" filled /></span>
                     Introduzione
@@ -133,7 +133,7 @@ export function PrivacyPolicyPage() {
                   </div>
                 </section>
 
-                <section id="collect" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="collect" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="manage_search" size={18} className="text-primary-600" filled /></span>
                     Dati che raccogliamo
@@ -158,7 +158,7 @@ export function PrivacyPolicyPage() {
                   </div>
                 </section>
 
-                <section id="use" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="use" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="settings" size={18} className="text-primary-600" filled /></span>
                     Come utilizziamo i dati
@@ -180,7 +180,7 @@ export function PrivacyPolicyPage() {
                   </div>
                 </section>
 
-                <section id="cookies" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="cookies" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="data_object" size={18} className="text-primary-600" filled /></span>
                     Cookie e archiviazione locale
@@ -206,7 +206,7 @@ export function PrivacyPolicyPage() {
                   </div>
                 </section>
 
-                <section id="storage" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="storage" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="storage" size={18} className="text-primary-600" filled /></span>
                     Archiviazione dei dati
@@ -231,7 +231,7 @@ export function PrivacyPolicyPage() {
                   </div>
                 </section>
 
-                <section id="third-party" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="third-party" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="share" size={18} className="text-primary-600" filled /></span>
                     Servizi di terze parti
@@ -244,7 +244,7 @@ export function PrivacyPolicyPage() {
                       { name: 'Material Symbols (Google)', desc: 'Libreria di icone per l\'interfaccia', icon: 'interests' },
                     ].map((service, i) => (
                       <div key={i} className="flex items-center gap-3 bg-surface-50 rounded-xl p-4 border border-surface-100">
-                        <div className="w-10 h-10 bg-white rounded-xl border border-surface-200 flex items-center justify-center shrink-0"><Icon name={service.icon} size={20} className="text-surface-500" /></div>
+                        <div className="w-10 h-10 bg-white dark:bg-surface-100 rounded-xl border border-surface-200 flex items-center justify-center shrink-0"><Icon name={service.icon} size={20} className="text-surface-500" /></div>
                         <div><p className="text-sm font-semibold text-surface-800">{service.name}</p><p className="text-xs text-surface-500">{service.desc}</p></div>
                       </div>
                     ))}
@@ -257,7 +257,7 @@ export function PrivacyPolicyPage() {
                   </div>
                 </section>
 
-                <section id="rights" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="rights" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="verified_user" size={18} className="text-primary-600" filled /></span>
                     Diritti dell'utente ai sensi del GDPR
@@ -289,7 +289,7 @@ export function PrivacyPolicyPage() {
                   </div>
                 </section>
 
-                <section id="protection" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="protection" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="security" size={18} className="text-primary-600" filled /></span>
                     Protezione dei dati
@@ -335,7 +335,7 @@ export function PrivacyPolicyPage() {
               </>
             ) : (
               <>
-                <section id="intro" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="intro" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="info" size={18} className="text-primary-600" filled /></span>
                     مقدمة
@@ -347,7 +347,7 @@ export function PrivacyPolicyPage() {
                   </div>
                 </section>
 
-                <section id="collect" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="collect" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="manage_search" size={18} className="text-primary-600" filled /></span>
                     المعلومات التي نجمعها
@@ -372,7 +372,7 @@ export function PrivacyPolicyPage() {
                   </div>
                 </section>
 
-                <section id="use" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="use" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="settings" size={18} className="text-primary-600" filled /></span>
                     كيفية استخدام المعلومات
@@ -394,7 +394,7 @@ export function PrivacyPolicyPage() {
                   </div>
                 </section>
 
-                <section id="cookies" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="cookies" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="data_object" size={18} className="text-primary-600" filled /></span>
                     ملفات الارتباط والتخزين المحلي
@@ -420,7 +420,7 @@ export function PrivacyPolicyPage() {
                   </div>
                 </section>
 
-                <section id="storage" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="storage" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="storage" size={18} className="text-primary-600" filled /></span>
                     تخزين البيانات
@@ -445,7 +445,7 @@ export function PrivacyPolicyPage() {
                   </div>
                 </section>
 
-                <section id="third-party" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="third-party" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="share" size={18} className="text-primary-600" filled /></span>
                     خدمات الطرف الثالث
@@ -457,14 +457,14 @@ export function PrivacyPolicyPage() {
                       { name: 'Material Symbols (Google)', desc: 'مكتبة الأيقونات المستخدمة في واجهة التطبيق', icon: 'interests' },
                     ].map((service, i) => (
                       <div key={i} className="flex items-center gap-3 bg-surface-50 rounded-xl p-4 border border-surface-100">
-                        <div className="w-10 h-10 bg-white rounded-xl border border-surface-200 flex items-center justify-center shrink-0"><Icon name={service.icon} size={20} className="text-surface-500" /></div>
+                        <div className="w-10 h-10 bg-white dark:bg-surface-100 rounded-xl border border-surface-200 flex items-center justify-center shrink-0"><Icon name={service.icon} size={20} className="text-surface-500" /></div>
                         <div><p className="text-sm font-semibold text-surface-800">{service.name}</p><p className="text-xs text-surface-500">{service.desc}</p></div>
                       </div>
                     ))}
                   </div>
                 </section>
 
-                <section id="rights" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="rights" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="verified_user" size={18} className="text-primary-600" filled /></span>
                     حقوق المستخدم بموجب GDPR
@@ -489,7 +489,7 @@ export function PrivacyPolicyPage() {
                   </div>
                 </section>
 
-                <section id="protection" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="protection" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="security" size={18} className="text-primary-600" filled /></span>
                     حماية البيانات
@@ -536,7 +536,7 @@ export function PrivacyPolicyPage() {
             )}
 
             <div className="flex flex-col sm:flex-row gap-3">
-              <button onClick={() => navigate(ROUTES.TERMS_OF_SERVICE)} className="flex-1 flex items-center justify-between gap-2 bg-white rounded-2xl px-5 py-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all group">
+              <button onClick={() => navigate(ROUTES.TERMS_OF_SERVICE)} className="flex-1 flex items-center justify-between gap-2 bg-white dark:bg-surface-100 rounded-2xl px-5 py-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all group">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-surface-50 rounded-xl flex items-center justify-center group-hover:bg-primary-50 transition-colors"><Icon name="gavel" size={20} className="text-surface-400 group-hover:text-primary-500 transition-colors" /></div>
                   <div className={isIt ? '' : 'text-right'}>
@@ -546,7 +546,7 @@ export function PrivacyPolicyPage() {
                 </div>
                 <Icon name="arrow_back" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors" />
               </button>
-              <button onClick={() => navigate(ROUTES.CONTACT)} className="flex-1 flex items-center justify-between gap-2 bg-white rounded-2xl px-5 py-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all group">
+              <button onClick={() => navigate(ROUTES.CONTACT)} className="flex-1 flex items-center justify-between gap-2 bg-white dark:bg-surface-100 rounded-2xl px-5 py-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all group">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-surface-50 rounded-xl flex items-center justify-center group-hover:bg-primary-50 transition-colors"><Icon name="mail" size={20} className="text-surface-400 group-hover:text-primary-500 transition-colors" /></div>
                   <div className={isIt ? '' : 'text-right'}>

@@ -14,7 +14,7 @@ export function DictEntryCard({ item, lang, showAnswer, onShowAnswer, onNext }: 
   const { t } = useTranslation();
 
   return (
-    <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden mb-4 p-6">
+    <div className="bg-white dark:bg-surface-100 rounded-2xl border border-surface-100 overflow-hidden mb-4 p-6">
       <div className="text-center mb-4">
         <p className="text-2xl font-bold text-primary-600" dir="ltr">{item.termIt}</p>
         <p className="text-xs text-surface-400 mt-2">{t('training.term_question')}</p>

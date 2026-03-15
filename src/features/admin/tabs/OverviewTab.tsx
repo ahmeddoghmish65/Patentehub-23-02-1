@@ -97,12 +97,12 @@ export const OverviewTab = React.memo(function OverviewTab({
       {/* Quick KPIs row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: t('admin.kpi_verified'), value: verifiedUsers, icon: 'verified', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
-          { label: t('admin.kpi_managers'), value: managersCount, icon: 'manage_accounts', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
-          { label: t('admin.kpi_banned'), value: bannedUsers, icon: 'block', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-100' },
-          { label: t('admin.kpi_ready'), value: readyForExam, icon: 'emoji_events', color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-100' },
+          { label: t('admin.kpi_verified'), value: verifiedUsers, icon: 'verified', color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/30', border: 'border-blue-100 dark:border-blue-900' },
+          { label: t('admin.kpi_managers'), value: managersCount, icon: 'manage_accounts', color: 'text-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/30', border: 'border-amber-100 dark:border-amber-900' },
+          { label: t('admin.kpi_banned'), value: bannedUsers, icon: 'block', color: 'text-red-600', bg: 'bg-red-50 dark:bg-red-900/30', border: 'border-red-100 dark:border-red-900' },
+          { label: t('admin.kpi_ready'), value: readyForExam, icon: 'emoji_events', color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/30', border: 'border-green-100 dark:border-green-900' },
         ].map((s, i) => (
-          <div key={i} className={cn('bg-white rounded-xl p-4 border flex items-center gap-3', s.border)}>
+          <div key={i} className={cn('bg-white dark:bg-surface-100 rounded-xl p-4 border flex items-center gap-3', s.border)}>
             <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center shrink-0', s.bg)}>
               <Icon name={s.icon} size={22} className={s.color} filled />
             </div>
@@ -116,7 +116,7 @@ export const OverviewTab = React.memo(function OverviewTab({
 
       {/* Registrations chart + Exam readiness */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="bg-white rounded-xl border border-surface-100 p-5">
+        <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 p-5">
           <h3 className="font-bold text-surface-900 mb-1 flex items-center gap-2">
             <Icon name="person_add" size={18} className="text-primary-500" filled />
             {t('admin.chart_reg_title')}
@@ -137,7 +137,7 @@ export const OverviewTab = React.memo(function OverviewTab({
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-surface-100 p-5">
+        <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 p-5">
           <h3 className="font-bold text-surface-900 mb-1 flex items-center gap-2">
             <Icon name="school" size={18} className="text-purple-500" filled />
             {t('admin.chart_readiness_title')}
@@ -164,20 +164,20 @@ export const OverviewTab = React.memo(function OverviewTab({
       {/* Content Stats Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: t('admin.tab_sections'), value: adminStats.totalSections, icon: 'folder', color: 'text-purple-500', bg: 'bg-purple-50', tab: 'sections' as AdminTab },
-          { label: t('admin.tab_lessons'), value: adminStats.totalLessons, icon: 'school', color: 'text-green-500', bg: 'bg-green-50', tab: 'lessons' as AdminTab },
-          { label: t('admin.tab_questions'), value: adminStats.totalQuestions, icon: 'quiz', color: 'text-orange-500', bg: 'bg-orange-50', tab: 'questions' as AdminTab },
-          { label: t('admin.tab_signs'), value: adminStats.totalSigns, icon: 'traffic', color: 'text-red-500', bg: 'bg-red-50', tab: 'signs' as AdminTab },
-          { label: t('admin.stat_dict_sections'), value: dictTotal, icon: 'menu_book', color: 'text-cyan-500', bg: 'bg-cyan-50', tab: 'dictionary' as AdminTab },
-          { label: t('admin.stat_terms'), value: dictEntriesTotal, icon: 'translate', color: 'text-indigo-500', bg: 'bg-indigo-50', tab: 'dictionary' as AdminTab },
-          { label: t('admin.stat_total_quizzes'), value: totalQuizzes, icon: 'history_edu', color: 'text-pink-500', bg: 'bg-pink-50', tab: 'overview' as AdminTab },
-          { label: t('admin.stat_total_reports_all'), value: adminStats.totalReports, icon: 'flag', color: 'text-red-500', bg: 'bg-red-50', tab: 'reports' as AdminTab },
+          { label: t('admin.tab_sections'), value: adminStats.totalSections, icon: 'folder', color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-900/30', tab: 'sections' as AdminTab },
+          { label: t('admin.tab_lessons'), value: adminStats.totalLessons, icon: 'school', color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-900/30', tab: 'lessons' as AdminTab },
+          { label: t('admin.tab_questions'), value: adminStats.totalQuestions, icon: 'quiz', color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-900/30', tab: 'questions' as AdminTab },
+          { label: t('admin.tab_signs'), value: adminStats.totalSigns, icon: 'traffic', color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-900/30', tab: 'signs' as AdminTab },
+          { label: t('admin.stat_dict_sections'), value: dictTotal, icon: 'menu_book', color: 'text-cyan-500', bg: 'bg-cyan-50 dark:bg-cyan-900/30', tab: 'dictionary' as AdminTab },
+          { label: t('admin.stat_terms'), value: dictEntriesTotal, icon: 'translate', color: 'text-indigo-500', bg: 'bg-indigo-50 dark:bg-indigo-900/30', tab: 'dictionary' as AdminTab },
+          { label: t('admin.stat_total_quizzes'), value: totalQuizzes, icon: 'history_edu', color: 'text-pink-500', bg: 'bg-pink-50 dark:bg-pink-900/30', tab: 'overview' as AdminTab },
+          { label: t('admin.stat_total_reports_all'), value: adminStats.totalReports, icon: 'flag', color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-900/30', tab: 'reports' as AdminTab },
         ].map((s, i) => {
           const tabCfg = allTabsConfig.find(tc => tc.id === s.tab);
           const canAccess = isFullAdmin || !tabCfg?.permKey || userPerms.includes(tabCfg.permKey || '');
           return (
             <button key={i}
-              className={cn('bg-white rounded-xl p-4 border border-surface-100 text-right transition-all',
+              className={cn('bg-white dark:bg-surface-100 rounded-xl p-4 border border-surface-100 text-right transition-all',
                 canAccess ? 'hover:border-primary-200 hover:shadow-md cursor-pointer' : 'opacity-60 cursor-not-allowed')}
               onClick={() => canAccess && onNavigateTab(s.tab)}>
               <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center mb-3', s.bg)}>
@@ -193,7 +193,7 @@ export const OverviewTab = React.memo(function OverviewTab({
 
       {/* Pending Reports */}
       {pendingReports > 0 && (
-        <div className="bg-white rounded-xl border border-danger-100 p-5">
+        <div className="bg-white dark:bg-surface-100 rounded-xl border border-danger-100 p-5">
           <h3 className="font-bold text-surface-900 mb-3 flex items-center gap-2">
             <Icon name="flag" size={20} className="text-danger-500" filled />
             {t('admin.pending_reports')} ({pendingReports})
@@ -217,7 +217,7 @@ export const OverviewTab = React.memo(function OverviewTab({
       {/* Recent Users + Recent Logs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {adminUsers.length > 0 && (
-          <div className="bg-white rounded-xl border border-surface-100 p-5">
+          <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 p-5">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-bold text-surface-900 flex items-center gap-2">
                 <Icon name="group" size={18} className="text-blue-500" filled />
@@ -248,7 +248,7 @@ export const OverviewTab = React.memo(function OverviewTab({
         )}
 
         {adminLogs.length > 0 && (
-          <div className="bg-white rounded-xl border border-surface-100 p-5">
+          <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 p-5">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-bold text-surface-900 flex items-center gap-2">
                 <Icon name="history" size={18} className="text-surface-400" />

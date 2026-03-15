@@ -58,7 +58,7 @@ export function TermsOfServicePage() {
         noIndex={false}
       />
       <div className="min-h-screen bg-surface-50 animate-fade-in-up">
-      <header className="sticky top-0 z-50 bg-white border-b border-surface-100 shadow-sm">
+      <header className="sticky top-0 z-50 bg-white dark:bg-surface-100 border-b border-surface-100 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
           <button onClick={() => goBack(ROUTES.LANDING)} className="flex items-center gap-1.5 text-surface-500 hover:text-primary-600 transition-colors">
             <Icon name="arrow_forward" size={20} className="ltr:rotate-180" />
@@ -98,7 +98,7 @@ export function TermsOfServicePage() {
 
         <div className="lg:grid lg:grid-cols-4 lg:gap-6">
           <div className="hidden lg:block">
-            <div className="bg-white rounded-2xl p-4 border border-surface-100 shadow-sm sticky top-6">
+            <div className="bg-white dark:bg-surface-100 rounded-2xl p-4 border border-surface-100 shadow-sm sticky top-6">
               <p className="text-xs font-bold text-surface-400 uppercase tracking-wider mb-3">{isIt ? 'Contenuto' : 'المحتويات'}</p>
               <nav className="space-y-0.5">
                 {sections.map(section => (
@@ -121,7 +121,7 @@ export function TermsOfServicePage() {
           <div className="lg:col-span-3 space-y-5">
             {isIt ? (
               <>
-                <section id="acceptance" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="acceptance" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="handshake" size={18} className="text-surface-600" filled /></span>
                     Accettazione dei termini
@@ -139,7 +139,7 @@ export function TermsOfServicePage() {
                   </div>
                 </section>
 
-                <section id="purpose" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="purpose" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="school" size={18} className="text-surface-600" filled /></span>
                     Scopo dell'app
@@ -166,7 +166,7 @@ export function TermsOfServicePage() {
                   </div>
                 </section>
 
-                <section id="eligibility" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="eligibility" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="person_check" size={18} className="text-surface-600" filled /></span>
                     Requisiti di accesso
@@ -181,7 +181,7 @@ export function TermsOfServicePage() {
                   </div>
                 </section>
 
-                <section id="account" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="account" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="manage_accounts" size={18} className="text-surface-600" filled /></span>
                     Regole dell'account
@@ -206,7 +206,7 @@ export function TermsOfServicePage() {
                   </div>
                 </section>
 
-                <section id="responsibilities" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="responsibilities" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="assignment" size={18} className="text-surface-600" filled /></span>
                     Responsabilità dell'utente
@@ -228,7 +228,7 @@ export function TermsOfServicePage() {
                   </div>
                 </section>
 
-                <section id="ip" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="ip" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="copyright" size={18} className="text-surface-600" filled /></span>
                     Proprietà intellettuale
@@ -254,7 +254,7 @@ export function TermsOfServicePage() {
                   </div>
                 </section>
 
-                <section id="liability" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="liability" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="gavel" size={18} className="text-surface-600" filled /></span>
                     Limitazione di responsabilità
@@ -269,7 +269,7 @@ export function TermsOfServicePage() {
                   </div>
                 </section>
 
-                <section id="termination" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="termination" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="block" size={18} className="text-surface-600" filled /></span>
                     Chiusura dell'account
@@ -287,7 +287,7 @@ export function TermsOfServicePage() {
                   </div>
                 </section>
 
-                <section id="updates" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="updates" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="update" size={18} className="text-surface-600" filled /></span>
                     Aggiornamento dei termini
@@ -327,7 +327,7 @@ export function TermsOfServicePage() {
               </>
             ) : (
               <>
-                <section id="acceptance" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="acceptance" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="handshake" size={18} className="text-surface-600" filled /></span>
                     قبول الشروط
@@ -345,7 +345,7 @@ export function TermsOfServicePage() {
                   </div>
                 </section>
 
-                <section id="purpose" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="purpose" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="school" size={18} className="text-surface-600" filled /></span>
                     هدف التطبيق
@@ -359,7 +359,7 @@ export function TermsOfServicePage() {
                   </div>
                 </section>
 
-                <section id="eligibility" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="eligibility" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="person_check" size={18} className="text-surface-600" filled /></span>
                     شروط الأهلية
@@ -371,7 +371,7 @@ export function TermsOfServicePage() {
                   </ul>
                 </section>
 
-                <section id="account" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="account" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="manage_accounts" size={18} className="text-surface-600" filled /></span>
                     قواعد الحساب
@@ -393,7 +393,7 @@ export function TermsOfServicePage() {
                   </div>
                 </section>
 
-                <section id="responsibilities" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="responsibilities" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="assignment" size={18} className="text-surface-600" filled /></span>
                     مسؤوليات المستخدم
@@ -413,7 +413,7 @@ export function TermsOfServicePage() {
                   </div>
                 </section>
 
-                <section id="ip" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="ip" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="copyright" size={18} className="text-surface-600" filled /></span>
                     الملكية الفكرية
@@ -421,7 +421,7 @@ export function TermsOfServicePage() {
                   <p className="text-sm text-surface-600 leading-relaxed mb-4">جميع محتويات Patente Hub — الدروس والأسئلة والشروحات والتصاميم والشعار — هي ملكية فكرية حصرية لـ <strong className="text-surface-900">Patente Hub</strong>.</p>
                 </section>
 
-                <section id="liability" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="liability" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="gavel" size={18} className="text-surface-600" filled /></span>
                     حدود المسؤولية
@@ -429,7 +429,7 @@ export function TermsOfServicePage() {
                   <p className="text-sm text-surface-600">يُقدَّم التطبيق <strong>"كما هو"</strong>. Patente Hub لا يتحمل أي مسؤولية عن الأضرار الناجمة عن استخدام التطبيق، بما في ذلك الرسوب في الامتحان الرسمي.</p>
                 </section>
 
-                <section id="termination" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="termination" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="block" size={18} className="text-surface-600" filled /></span>
                     إنهاء الوصول
@@ -437,7 +437,7 @@ export function TermsOfServicePage() {
                   <p className="text-sm text-surface-600 mb-3">يمكنك حذف حسابك في أي وقت من إعدادات الملف الشخصي. نحتفظ بالحق في تعليق الحسابات التي تنتهك هذه الشروط.</p>
                 </section>
 
-                <section id="updates" className="bg-white rounded-2xl p-6 border border-surface-100 shadow-sm">
+                <section id="updates" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
                     <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="update" size={18} className="text-surface-600" filled /></span>
                     تحديثات الشروط
@@ -465,7 +465,7 @@ export function TermsOfServicePage() {
             )}
 
             <div className="flex flex-col sm:flex-row gap-3">
-              <button onClick={() => navigate(ROUTES.PRIVACY_POLICY)} className="flex-1 flex items-center justify-between gap-2 bg-white rounded-2xl px-5 py-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all group">
+              <button onClick={() => navigate(ROUTES.PRIVACY_POLICY)} className="flex-1 flex items-center justify-between gap-2 bg-white dark:bg-surface-100 rounded-2xl px-5 py-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all group">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-surface-50 rounded-xl flex items-center justify-center group-hover:bg-primary-50 transition-colors"><Icon name="privacy_tip" size={20} className="text-surface-400 group-hover:text-primary-500 transition-colors" /></div>
                   <div className={isIt ? '' : 'text-right'}>
@@ -475,7 +475,7 @@ export function TermsOfServicePage() {
                 </div>
                 <Icon name="arrow_back" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors" />
               </button>
-              <button onClick={() => navigate(ROUTES.CONTACT)} className="flex-1 flex items-center justify-between gap-2 bg-white rounded-2xl px-5 py-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all group">
+              <button onClick={() => navigate(ROUTES.CONTACT)} className="flex-1 flex items-center justify-between gap-2 bg-white dark:bg-surface-100 rounded-2xl px-5 py-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all group">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-surface-50 rounded-xl flex items-center justify-center group-hover:bg-primary-50 transition-colors"><Icon name="mail" size={20} className="text-surface-400 group-hover:text-primary-500 transition-colors" /></div>
                   <div className={isIt ? '' : 'text-right'}>

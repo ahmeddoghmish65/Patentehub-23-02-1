@@ -44,7 +44,7 @@ export const UsersTab = React.memo(function UsersTab({
         <button onClick={() => setViewUser(null)} className="flex items-center gap-2 text-surface-500 hover:text-primary-600">
           <Icon name="arrow_forward" size={20} /><span className="text-sm">{t('admin.back_to_users')}</span>
         </button>
-        <div className="bg-white rounded-xl border border-surface-100 p-6">
+        <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 p-6">
           {/* Header */}
           <div className="flex items-center gap-4 mb-6">
             {selectedUser.avatar ? (
@@ -276,7 +276,7 @@ export const UsersTab = React.memo(function UsersTab({
         ] as { v: ContentView; icon: string; label: string; color: string }[]).map(({ v, icon, label, color }) => (
           <button key={v} onClick={() => setContentView(v)}
             className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border',
-              contentView === v ? `${color} text-white` : 'bg-white text-surface-600 border-surface-200 hover:border-primary-200')}>
+              contentView === v ? `${color} text-white` : 'bg-white dark:bg-surface-100 text-surface-600 border-surface-200 hover:border-primary-200')}>
             <Icon name={icon} size={14} />
             {label}
           </button>
@@ -285,7 +285,7 @@ export const UsersTab = React.memo(function UsersTab({
 
       {/* Deleted users */}
       {contentView === 'deleted' && (
-        <div className="bg-white rounded-xl border border-danger-100 overflow-hidden">
+        <div className="bg-white dark:bg-surface-100 rounded-xl border border-danger-100 overflow-hidden">
           <div className="p-4 border-b border-danger-100 bg-danger-50 flex items-center gap-2">
             <Icon name="delete" size={18} className="text-danger-500" />
             <h3 className="font-bold text-danger-700">المستخدمين المحذوفين ({deletedUsers.length})</h3>
@@ -324,7 +324,7 @@ export const UsersTab = React.memo(function UsersTab({
 
       {/* Banned users */}
       {contentView === 'banned' && (
-        <div className="bg-white rounded-xl border border-danger-100 overflow-hidden">
+        <div className="bg-white dark:bg-surface-100 rounded-xl border border-danger-100 overflow-hidden">
           <div className="p-4 border-b border-danger-100 bg-danger-50 flex items-center gap-2">
             <Icon name="block" size={18} className="text-danger-500" />
             <h3 className="font-bold text-danger-700">المستخدمين المحظورين ({adminUsers.filter(u => u.isBanned).length})</h3>
@@ -358,7 +358,7 @@ export const UsersTab = React.memo(function UsersTab({
 
       {/* Active users table */}
       {contentView === 'active' && (
-        <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+        <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 overflow-hidden">
           <div className="p-4 border-b border-surface-100 flex items-center justify-between flex-wrap gap-3">
             <h2 className="font-bold text-surface-900">المستخدمين النشطين ({adminUsers.filter(u => !u.isBanned).length})</h2>
             <div className="flex items-center gap-2">

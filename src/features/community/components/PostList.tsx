@@ -43,7 +43,7 @@ export const PostList = memo(function PostList({
 
   if (posts.length === 0) {
     return (
-      <div className="text-center py-16 bg-white rounded-2xl border border-surface-100">
+      <div className="text-center py-16 bg-white dark:bg-surface-100 rounded-2xl border border-surface-100">
         <Icon
           name={activeTab === 'following' ? 'people' : 'forum'}
           size={48}

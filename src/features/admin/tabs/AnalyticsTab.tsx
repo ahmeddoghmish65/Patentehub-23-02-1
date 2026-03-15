@@ -46,12 +46,12 @@ export const AnalyticsTab = React.memo(function AnalyticsTab({
       {/* Overview Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'إجمالي الزيارات', value: visitStats?.totalVisits || 0, icon: 'visibility', color: 'text-blue-500', bg: 'bg-blue-50' },
-          { label: 'زيارات آخر 7 أيام', value: visitStats?.last7DaysVisits || 0, icon: 'calendar_today', color: 'text-green-500', bg: 'bg-green-50' },
-          { label: 'جلسات نشطة (7 أيام)', value: visitStats?.sessions7 || 0, icon: 'devices', color: 'text-orange-500', bg: 'bg-orange-50' },
-          { label: 'مستخدمون نشطون اليوم', value: activeToday, icon: 'group', color: 'text-purple-500', bg: 'bg-purple-50' },
+          { label: 'إجمالي الزيارات', value: visitStats?.totalVisits || 0, icon: 'visibility', color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-900/30' },
+          { label: 'زيارات آخر 7 أيام', value: visitStats?.last7DaysVisits || 0, icon: 'calendar_today', color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-900/30' },
+          { label: 'جلسات نشطة (7 أيام)', value: visitStats?.sessions7 || 0, icon: 'devices', color: 'text-orange-500', bg: 'bg-orange-50 dark:bg-orange-900/30' },
+          { label: 'مستخدمون نشطون اليوم', value: activeToday, icon: 'group', color: 'text-purple-500', bg: 'bg-purple-50 dark:bg-purple-900/30' },
         ].map((stat, i) => (
-          <div key={i} className="bg-white rounded-xl p-4 border border-surface-100">
+          <div key={i} className="bg-white dark:bg-surface-100 rounded-xl p-4 border border-surface-100">
             <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center mb-3', stat.bg)}>
               <Icon name={stat.icon} size={22} className={stat.color} filled />
             </div>
@@ -62,7 +62,7 @@ export const AnalyticsTab = React.memo(function AnalyticsTab({
       </div>
 
       {/* Weekly Chart */}
-      <div className="bg-white rounded-xl border border-surface-100 p-5">
+      <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 p-5">
         <h3 className="font-bold text-surface-900 mb-4 flex items-center gap-2">
           <Icon name="bar_chart" size={20} className="text-primary-500" filled />
           الزيارات خلال آخر 7 أيام (بيانات حقيقية)
@@ -103,7 +103,7 @@ export const AnalyticsTab = React.memo(function AnalyticsTab({
 
       {/* Page Breakdown + Learning Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="bg-white rounded-xl border border-surface-100 p-5">
+        <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 p-5">
           <h3 className="font-bold text-surface-900 mb-4 flex items-center gap-2">
             <Icon name="web" size={18} className="text-primary-500" />
             أكثر الصفحات زيارة (حقيقي)
@@ -125,7 +125,7 @@ export const AnalyticsTab = React.memo(function AnalyticsTab({
           )}
         </div>
 
-        <div className="bg-white rounded-xl border border-surface-100 p-5">
+        <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 p-5">
           <h3 className="font-bold text-surface-900 mb-4 flex items-center gap-2">
             <Icon name="school" size={18} className="text-primary-500" />
             إحصائيات التعلم التفصيلية
@@ -173,29 +173,29 @@ export const AnalyticsTab = React.memo(function AnalyticsTab({
       </div>
 
       {/* User Activity Summary */}
-      <div className="bg-white rounded-xl border border-surface-100 p-5">
+      <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 p-5">
         <h3 className="font-bold text-surface-900 mb-4 flex items-center gap-2">
           <Icon name="insights" size={18} className="text-primary-500" filled />
           ملخص نشاط المستخدمين
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="bg-blue-50 rounded-xl p-3 text-center">
-            <p className="text-xl font-bold text-blue-600">{totalQuizzes}</p>
-            <p className="text-[10px] text-blue-500">اختبار أُجري</p>
+          <div className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-3 text-center">
+            <p className="text-xl font-bold text-blue-600 dark:text-blue-400">{totalQuizzes}</p>
+            <p className="text-[10px] text-blue-500 dark:text-blue-400">اختبار أُجري</p>
           </div>
-          <div className="bg-green-50 rounded-xl p-3 text-center">
-            <p className="text-xl font-bold text-green-600">{adminUsers.reduce((s: number, u: AnyItem) => s + u.progress.completedLessons.length, 0)}</p>
-            <p className="text-[10px] text-green-500">درس مكتمل</p>
+          <div className="bg-green-50 dark:bg-green-900/30 rounded-xl p-3 text-center">
+            <p className="text-xl font-bold text-green-600 dark:text-green-400">{adminUsers.reduce((s: number, u: AnyItem) => s + u.progress.completedLessons.length, 0)}</p>
+            <p className="text-[10px] text-green-500 dark:text-green-400">درس مكتمل</p>
           </div>
-          <div className="bg-purple-50 rounded-xl p-3 text-center">
-            <p className="text-xl font-bold text-purple-600">{totalPosts}</p>
-            <p className="text-[10px] text-purple-500">منشور</p>
+          <div className="bg-purple-50 dark:bg-purple-900/30 rounded-xl p-3 text-center">
+            <p className="text-xl font-bold text-purple-600 dark:text-purple-400">{totalPosts}</p>
+            <p className="text-[10px] text-purple-500 dark:text-purple-400">منشور</p>
           </div>
-          <div className="bg-orange-50 rounded-xl p-3 text-center">
-            <p className="text-xl font-bold text-orange-600">
+          <div className="bg-orange-50 dark:bg-orange-900/30 rounded-xl p-3 text-center">
+            <p className="text-xl font-bold text-orange-600 dark:text-orange-400">
               {Math.round(adminUsers.reduce((s: number, u: AnyItem) => s + (u.progress.examReadiness || 0), 0) / Math.max(1, totalUsers))}%
             </p>
-            <p className="text-[10px] text-orange-500">متوسط الجاهزية</p>
+            <p className="text-[10px] text-orange-500 dark:text-orange-400">متوسط الجاهزية</p>
           </div>
         </div>
       </div>

@@ -15,7 +15,7 @@ export function SignCard({ item, lang, showAnswer, onShowAnswer, onNext }: Props
   const { t } = useTranslation();
 
   return (
-    <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden mb-4 p-6">
+    <div className="bg-white dark:bg-surface-100 rounded-2xl border border-surface-100 overflow-hidden mb-4 p-6">
       <div className="w-36 h-36 mx-auto mb-4 bg-surface-50 rounded-xl flex items-center justify-center overflow-hidden">
         {item.image
           ? <img src={item.image} alt="" className="w-full h-full object-contain" />

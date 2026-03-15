@@ -13,7 +13,7 @@ export function LandingAppPreview({ isVisible }: LandingAppPreviewProps) {
     <section className="py-24 bg-white dark:bg-surface-50 overflow-hidden" data-animate id="preview">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={cn('text-center mb-16 transition-all duration-700', isVisible('preview') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
-          <span className="inline-flex items-center gap-2 bg-violet-50 text-violet-700 border border-violet-100 px-5 py-2 rounded-full text-sm font-semibold mb-5">
+          <span className="inline-flex items-center gap-2 bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 border border-violet-100 dark:border-violet-800 px-5 py-2 rounded-full text-sm font-semibold mb-5">
             <Icon name="phone_iphone" size={16} filled />
             {t('landing.preview_tag')}
           </span>
@@ -33,17 +33,17 @@ export function LandingAppPreview({ isVisible }: LandingAppPreviewProps) {
                   <h3 className="font-bold text-surface-900 text-sm">{t('landing.preview_quiz_title')}</h3>
                   <p className="text-xs text-surface-400">{t('landing.preview_quiz_q')}</p>
                 </div>
-                <span className="ms-auto bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-lg">85%</span>
+                <span className="ms-auto bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold px-2.5 py-1 rounded-lg">85%</span>
               </div>
               <div className="bg-surface-50 rounded-2xl p-4 mb-4 border border-surface-100">
                 <p className="text-sm font-semibold text-surface-800 leading-relaxed">{t('landing.preview_quiz_question')}</p>
                 <p className="text-xs text-surface-400 mt-1.5" dir="ltr">I segnali di pericolo sono triangolari</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div className="py-3.5 px-3 rounded-2xl border-2 border-surface-900 bg-teal-50 text-center font-bold text-sm text-surface-900">
+                <div className="py-3.5 px-3 rounded-2xl border-2 border-surface-900 bg-teal-50 dark:bg-teal-900/30 text-center font-bold text-sm text-surface-900">
                   ✓ {t('landing.preview_quiz_correct')}
                 </div>
-                <div className="py-3.5 px-3 rounded-2xl border-2 border-surface-900 bg-rose-50 text-center font-bold text-sm text-surface-900 opacity-45">
+                <div className="py-3.5 px-3 rounded-2xl border-2 border-surface-900 bg-rose-50 dark:bg-rose-900/30 text-center font-bold text-sm text-surface-900 opacity-45">
                   ✗ {t('landing.preview_quiz_wrong')}
                 </div>
               </div>
@@ -97,7 +97,7 @@ export function LandingAppPreview({ isVisible }: LandingAppPreviewProps) {
               <div className="flex items-center justify-center mb-5">
                 <div className="relative w-28 h-28">
                   <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                    <circle cx="50" cy="50" r="40" fill="none" stroke="#e2e8f0" strokeWidth="8" />
+                    <circle cx="50" cy="50" r="40" fill="none" className="stroke-surface-200" strokeWidth="8" />
                     <circle
                       cx="50" cy="50" r="40" fill="none"
                       stroke="url(#readinessGrad)" strokeWidth="8"

@@ -15,7 +15,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
 
         {/* Header */}
         <div className={cn('text-center mb-14 transition-all duration-700', isVisible('features') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
-          <span className="inline-flex items-center gap-2 bg-primary-50 text-primary-700 border border-primary-100 px-5 py-2 rounded-full text-sm font-semibold mb-5">
+          <span className="inline-flex items-center gap-2 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border border-primary-100 dark:border-primary-800 px-5 py-2 rounded-full text-sm font-semibold mb-5">
             <Icon name="stars" size={16} filled />
             {t('landing.features_tag')}
           </span>
@@ -110,7 +110,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
                     <span className="text-[10px] text-surface-500" dir="ltr">{item.lbl}</span>
                     <span className="text-[10px] font-bold text-teal-600">{item.pct}%</span>
                   </div>
-                  <div className="h-1.5 bg-white rounded-full overflow-hidden border border-emerald-100">
+                  <div className="h-1.5 bg-white dark:bg-gray-700 rounded-full overflow-hidden border border-emerald-100 dark:border-emerald-900/50">
                     <div className="h-full bg-gradient-to-r from-emerald-300 to-teal-400 rounded-full" style={{ width: `${item.pct}%` }} />
                   </div>
                 </div>
@@ -128,15 +128,15 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
             <p className="text-[11px] text-surface-400 leading-snug mb-3">{t('landing.f4_desc')}</p>
             <div className="mt-auto grid grid-cols-3 gap-2">
               {([
-                { icon: 'warning', color: '#b45309', bg: '#fefce8' },
-                { icon: 'block', color: '#dc2626', bg: '#fff1f2' },
-                { icon: 'speed', color: '#6d28d9', bg: '#f5f3ff' },
-                { icon: 'directions', color: '#1d4ed8', bg: '#eff6ff' },
-                { icon: 'stop_circle', color: '#be123c', bg: '#fff1f2' },
-                { icon: 'turn_right', color: '#065f46', bg: '#f0fdf4' },
+                { icon: 'warning', iconClass: 'text-yellow-700 dark:text-yellow-400', bgClass: 'bg-yellow-50 dark:bg-yellow-900/25' },
+                { icon: 'block', iconClass: 'text-red-600 dark:text-red-400', bgClass: 'bg-red-50 dark:bg-red-900/25' },
+                { icon: 'speed', iconClass: 'text-violet-700 dark:text-violet-400', bgClass: 'bg-violet-50 dark:bg-violet-900/25' },
+                { icon: 'directions', iconClass: 'text-blue-700 dark:text-blue-400', bgClass: 'bg-blue-50 dark:bg-blue-900/25' },
+                { icon: 'stop_circle', iconClass: 'text-rose-700 dark:text-rose-400', bgClass: 'bg-rose-50 dark:bg-rose-900/25' },
+                { icon: 'turn_right', iconClass: 'text-emerald-800 dark:text-emerald-400', bgClass: 'bg-emerald-50 dark:bg-emerald-900/25' },
               ] as const).map((s, i) => (
-                <div key={i} className="aspect-square rounded-xl flex items-center justify-center" style={{ backgroundColor: s.bg }}>
-                  <Icon name={s.icon} size={15} style={{ color: s.color }} filled />
+                <div key={i} className={cn('aspect-square rounded-xl flex items-center justify-center', s.bgClass)}>
+                  <Icon name={s.icon} size={15} className={s.iconClass} filled />
                 </div>
               ))}
             </div>
