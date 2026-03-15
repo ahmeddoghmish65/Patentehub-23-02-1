@@ -14,10 +14,10 @@ export const TrendingHashtags = memo(function TrendingHashtags() {
 
   return (
     <div
-      className="absolute end-0 top-12 bg-white rounded-2xl shadow-2xl border border-surface-100 z-50 overflow-hidden"
+      className="absolute end-0 top-12 bg-white dark:bg-surface-100 rounded-2xl shadow-2xl border border-surface-100 z-50 overflow-hidden"
       style={{ width: 300 }}
     >
-      <div className="flex items-center gap-2 p-4 border-b border-surface-100 bg-surface-50">
+      <div className="flex items-center gap-2 p-4 border-b border-surface-100 bg-surface-50 dark:bg-surface-200">
         <Icon name="trending_up" size={18} className="text-primary-500" filled />
         <h3 className="font-bold text-surface-900">{t('community.trending_title')}</h3>
       </div>

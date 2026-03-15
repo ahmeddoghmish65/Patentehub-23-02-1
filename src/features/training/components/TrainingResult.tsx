@@ -25,7 +25,7 @@ export function TrainingResult({ mode, score, total, timedElapsed, modeLabel, on
 
   return (
     <div className="max-w-lg mx-auto text-center">
-      <div className="bg-white rounded-2xl p-8 border border-surface-100">
+      <div className="bg-white dark:bg-surface-100 rounded-2xl p-8 border border-surface-100">
         <div className={cn('w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6', resultColor)}>
           <Icon name={resultIcon} size={40} className={iconColor} filled />
         </div>

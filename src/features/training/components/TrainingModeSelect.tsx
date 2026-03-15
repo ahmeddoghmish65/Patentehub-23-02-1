@@ -31,7 +31,7 @@ export function TrainingModeSelect({ onSelect }: Props) {
         {modes.map(item => (
           <button
             key={item.id}
-            className="bg-white rounded-xl p-4 border border-surface-100 hover:border-primary-200 hover:shadow-lg transition-all text-start group flex items-start gap-4"
+            className="bg-white dark:bg-surface-100 rounded-xl p-4 border border-surface-100 hover:border-primary-200 hover:shadow-lg transition-all text-start group flex items-start gap-4"
             onClick={() => onSelect(item.id)}
             disabled={item.count === 0}
           >

@@ -51,7 +51,7 @@ export const PostComposer = memo(function PostComposer({
   const isQuiz = postType === 'quiz';
 
   return (
-    <div className="bg-white rounded-2xl border border-surface-100 mb-6 overflow-hidden">
+    <div className="bg-white dark:bg-surface-100 rounded-2xl border border-surface-100 mb-6 overflow-hidden">
       {/* Row 1: avatar + type tabs */}
       <div className="flex items-center gap-2.5 px-3.5 pt-3 pb-2">
         <div
@@ -91,7 +91,7 @@ export const PostComposer = memo(function PostComposer({
             <div className="relative">
               <textarea
                 dir="auto"
-                className="w-full border border-purple-200 rounded-xl px-3 py-2 text-sm resize-none focus:border-purple-400 focus:outline-none bg-purple-50/30"
+                className="w-full border border-purple-200 dark:border-purple-700 rounded-xl px-3 py-2 text-sm resize-none focus:border-purple-400 focus:outline-none bg-purple-50/30 dark:bg-surface-200 dark:text-surface-900"
                 rows={2}
                 placeholder={t('community.quiz_q_placeholder')}
                 value={quizQuestion}
@@ -122,7 +122,7 @@ export const PostComposer = memo(function PostComposer({
             </div>
             <textarea
               dir="auto"
-              className="w-full border border-surface-200 rounded-xl px-3 py-2 text-sm resize-none focus:outline-none focus:border-surface-300"
+              className="w-full border border-surface-200 dark:border-surface-300 dark:bg-surface-200 dark:text-surface-900 rounded-xl px-3 py-2 text-sm resize-none focus:outline-none focus:border-surface-300"
               rows={1}
               placeholder={t('community.quiz_optional')}
               value={newPost}
@@ -133,7 +133,7 @@ export const PostComposer = memo(function PostComposer({
           <div className="relative">
             <textarea
               dir="auto"
-              className="w-full border border-surface-200 rounded-xl px-3 py-2 text-sm resize-none focus:border-primary-400 focus:outline-none"
+              className="w-full border border-surface-200 dark:border-surface-300 dark:bg-surface-200 dark:text-surface-900 rounded-xl px-3 py-2 text-sm resize-none focus:border-primary-400 focus:outline-none"
               rows={3}
               placeholder={t('community.post_placeholder')}
               value={newPost}

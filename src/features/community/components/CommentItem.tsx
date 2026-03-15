@@ -66,7 +66,7 @@ export const CommentItem = memo(function CommentItem({
       {/* Top-level comment */}
       <div className="flex items-start gap-2">
         <UserAvatar userId={c.userId} avatar={c.userAvatar} name={c.userName} />
-        <div className="flex-1 bg-white rounded-xl px-3 py-2">
+        <div className="flex-1 bg-white dark:bg-surface-200 rounded-xl px-3 py-2">
           <div className="flex items-center justify-between">
             <span className="inline-flex items-center gap-1">
               <button className="text-xs font-semibold text-surface-800 hover:text-primary-600" onClick={() => onUserClick(c.userId)}>{c.userName}</button>
@@ -118,7 +118,7 @@ export const CommentItem = memo(function CommentItem({
           {visibleReplies.map(r => (
             <div key={r.id} className="flex items-start gap-2">
               <UserAvatar userId={r.userId} avatar={r.userAvatar} name={r.userName} />
-              <div className="flex-1 bg-white rounded-xl px-3 py-2">
+              <div className="flex-1 bg-white dark:bg-surface-200 rounded-xl px-3 py-2">
                 <div className="flex items-center gap-1">
                   <span className="inline-flex items-center gap-1">
                     <button className="text-xs font-semibold text-surface-800 hover:text-primary-600" onClick={() => onUserClick(r.userId)}>{r.userName}</button>
@@ -174,7 +174,7 @@ export const CommentItem = memo(function CommentItem({
           <div className="flex-1 relative">
             <input
               dir="auto"
-              className="w-full border border-primary-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-100 pr-16"
+              className="w-full border border-primary-300 dark:bg-surface-200 dark:text-surface-900 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-100 pr-16"
               placeholder={`${t('community.reply')} ${replyingTo.userName}...`}
               value={replyContent}
               onChange={e => setReplyContent(e.target.value)}

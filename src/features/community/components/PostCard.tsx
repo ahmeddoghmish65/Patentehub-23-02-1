@@ -214,7 +214,7 @@ export const PostCard = memo(function PostCard({
     <div
       id={!showAllComments ? `post-${post.id}` : undefined}
       className={cn(
-        'bg-white rounded-2xl border overflow-hidden',
+        'bg-white dark:bg-surface-100 rounded-2xl border overflow-hidden',
         post.pinned  ? 'border-amber-200 ring-1 ring-amber-100'  :
         post.featured ? 'border-blue-200 ring-1 ring-blue-100'  :
         'border-surface-100',
@@ -331,7 +331,7 @@ export const PostCard = memo(function PostCard({
           <div className="space-y-2">
             <textarea
               dir="auto"
-              className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none"
+              className="w-full border border-surface-200 dark:border-surface-300 dark:bg-surface-200 dark:text-surface-900 rounded-xl p-3 text-sm resize-none"
               rows={3}
               value={editContent}
               onChange={e => setEditContent(e.target.value)}
@@ -359,7 +359,7 @@ export const PostCard = memo(function PostCard({
                 <div className={cn('flex items-center justify-between p-2.5 rounded-lg border',
                   post.quizAnswer === true ? 'bg-success-50 border-success-200'
                   : quizSelected[post.id] === true ? 'bg-danger-50 border-danger-200'
-                  : 'bg-white border-surface-200')}>
+                  : 'bg-white dark:bg-surface-200 border-surface-200')}>
                   <span className="text-sm font-medium">{t('community.quiz_correct_opt')}</span>
                   <div className="flex items-center gap-2">
                     {post.quizAnswer === true && <Icon name="check_circle" size={16} className="text-success-500" filled />}

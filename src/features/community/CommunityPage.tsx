@@ -275,7 +275,7 @@ export function CommunityPage() {
             className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
             onClick={() => ui.setLikersModal(null)}
           >
-            <div className="bg-white rounded-2xl w-full max-w-xs max-h-[60vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="bg-white dark:bg-surface-100 rounded-2xl w-full max-w-xs max-h-[60vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
               <div className="flex items-center justify-between px-5 py-4 border-b border-surface-100">
                 <h3 className="font-bold text-surface-900 flex items-center gap-2">
                   <Icon name="favorite" size={18} className="text-red-500" filled />
@@ -366,8 +366,8 @@ export function CommunityPage() {
             </button>
 
             {ui.showBookmarks && (
-              <div className="absolute end-0 top-12 bg-white rounded-2xl shadow-2xl border border-surface-100 z-50 overflow-hidden" style={{ width: 320 }}>
-                <div className="flex items-center justify-between p-4 border-b border-surface-100 bg-surface-50">
+              <div className="absolute end-0 top-12 bg-white dark:bg-surface-100 rounded-2xl shadow-2xl border border-surface-100 z-50 overflow-hidden" style={{ width: 320 }}>
+                <div className="flex items-center justify-between p-4 border-b border-surface-100 bg-surface-50 dark:bg-surface-200">
                   <div className="flex items-center gap-2">
                     <Icon name="bookmark" size={18} className="text-primary-500" filled />
                     <h3 className="font-bold text-surface-900">{t('community.bookmarks_title')}</h3>
@@ -404,7 +404,7 @@ export function CommunityPage() {
                                 {t('community.delete_btn')}
                               </button>
                               <button
-                                className="flex-1 py-1.5 rounded-lg bg-white border border-surface-200 text-xs font-medium text-surface-600 hover:bg-surface-50 transition-colors"
+                                className="flex-1 py-1.5 rounded-lg bg-white dark:bg-surface-100 border border-surface-200 text-xs font-medium text-surface-600 hover:bg-surface-50 dark:hover:bg-surface-200 transition-colors"
                                 onClick={e => { e.stopPropagation(); ui.setConfirmDeleteBookmarkId(null); }}
                               >
                                 {t('common.cancel')}
@@ -463,8 +463,8 @@ export function CommunityPage() {
               )}
             </button>
             {ui.showNotifs && (
-              <div className="absolute end-0 top-12 bg-white rounded-2xl shadow-2xl border border-surface-100 z-50 overflow-hidden" style={{ width: 320 }}>
-                <div className="flex items-center justify-between p-4 border-b border-surface-100 bg-surface-50">
+              <div className="absolute end-0 top-12 bg-white dark:bg-surface-100 rounded-2xl shadow-2xl border border-surface-100 z-50 overflow-hidden" style={{ width: 320 }}>
+                <div className="flex items-center justify-between p-4 border-b border-surface-100 bg-surface-50 dark:bg-surface-200">
                   <div className="flex items-center gap-2">
                     <Icon name="notifications" size={18} className="text-primary-500" filled />
                     <h3 className="font-bold text-surface-900">{t('community.notifications_title')}</h3>
@@ -535,7 +535,7 @@ export function CommunityPage() {
                   })}
                 </div>
                 {(communityNotifs as unknown[]).length > 0 && (
-                  <div className="p-2 border-t border-surface-100 bg-surface-50 text-center">
+                  <div className="p-2 border-t border-surface-100 bg-surface-50 dark:bg-surface-200 text-center">
                     <p className="text-[10px] text-surface-400">{t('community.notif_footer')}</p>
                   </div>
                 )}
@@ -555,7 +555,7 @@ export function CommunityPage() {
               value={ui.searchQuery}
               onChange={e => ui.setSearchQuery(e.target.value)}
               placeholder={t('community.search_placeholder')}
-              className="w-full bg-white border border-surface-200 rounded-xl pr-10 pl-10 py-3 text-sm focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
+              className="w-full bg-white dark:bg-surface-100 dark:text-surface-900 dark:border-surface-300 border border-surface-200 rounded-xl pr-10 pl-10 py-3 text-sm focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all"
               dir="auto"
               autoFocus
             />
@@ -600,7 +600,7 @@ export function CommunityPage() {
               'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all border shrink-0',
               postSortMode === mode
                 ? 'bg-primary-500 text-white border-primary-500'
-                : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300 hover:text-primary-600',
+                : 'bg-white dark:bg-surface-100 text-surface-500 border-surface-200 hover:border-primary-300 hover:text-primary-600',
             )}
             onClick={() => ui.setPostSortMode(mode)}
           >
@@ -614,7 +614,7 @@ export function CommunityPage() {
             'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all border shrink-0',
             ui.activeTab === 'following'
               ? 'bg-primary-500 text-white border-primary-500'
-              : 'bg-white text-surface-500 border-surface-200 hover:border-primary-300 hover:text-primary-600',
+              : 'bg-white dark:bg-surface-100 text-surface-500 border-surface-200 hover:border-primary-300 hover:text-primary-600',
           )}
           onClick={() => ui.setActiveTab(ui.activeTab === 'following' ? 'discover' : 'following')}
         >
@@ -669,7 +669,7 @@ export function CommunityPage() {
       {/* ── Confirm Delete Modal ─────────────────────────────────────────────── */}
       {ui.confirmDelete && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => ui.setConfirmDelete(null)}>
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
+          <div className="bg-white dark:bg-surface-100 rounded-2xl p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
             <Icon name="warning" size={40} className="text-warning-500 mx-auto mb-4" />
             <h3 className="text-lg font-bold text-surface-900 text-center mb-2">{t('community.delete_title')}</h3>
             <p className="text-sm text-surface-500 text-center mb-6">
@@ -690,7 +690,7 @@ export function CommunityPage() {
       {/* ── Clear Bookmarks Confirm ──────────────────────────────────────────── */}
       {ui.confirmClearBookmarks && (
         <div className="fixed inset-0 z-[60] bg-black/50 flex items-center justify-center p-4" onClick={() => ui.setConfirmClearBookmarks(false)}>
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
+          <div className="bg-white dark:bg-surface-100 rounded-2xl p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
             <Icon name="warning" size={40} className="text-warning-500 mx-auto mb-4" />
             <h3 className="text-lg font-bold text-surface-900 text-center mb-2">{t('community.clear_bookmarks_title')}</h3>
             <p className="text-sm text-surface-500 text-center mb-6">{t('community.clear_bookmarks_desc')}</p>
@@ -709,13 +709,13 @@ export function CommunityPage() {
       {/* ── Report Modal ─────────────────────────────────────────────────────── */}
       {ui.reportModal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => ui.setReportModal(null)}>
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
+          <div className="bg-white dark:bg-surface-100 rounded-2xl p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-2 mb-4">
               <Icon name="flag" size={22} className="text-warning-500" />
               <h3 className="text-lg font-bold text-surface-900">{t('community.report_title')}</h3>
             </div>
             <textarea
-              className="w-full border border-surface-200 rounded-xl p-3 text-sm resize-none mb-4"
+              className="w-full border border-surface-200 dark:border-surface-300 dark:bg-surface-200 dark:text-surface-900 rounded-xl p-3 text-sm resize-none mb-4"
               rows={3}
               placeholder={t('community.report_placeholder')}
               value={ui.reportReason}
@@ -732,7 +732,7 @@ export function CommunityPage() {
       {/* ── Likers Modal (main feed) ─────────────────────────────────────────── */}
       {ui.likersModal && (
         <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => ui.setLikersModal(null)}>
-          <div className="bg-white rounded-2xl w-full max-w-xs max-h-[60vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div className="bg-white dark:bg-surface-100 rounded-2xl w-full max-w-xs max-h-[60vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between px-5 py-4 border-b border-surface-100">
               <h3 className="font-bold text-surface-900 flex items-center gap-2">
                 <Icon name="favorite" size={18} className="text-red-500" filled />

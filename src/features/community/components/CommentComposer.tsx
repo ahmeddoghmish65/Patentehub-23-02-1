@@ -51,7 +51,7 @@ export const CommentComposer = memo(function CommentComposer({
       <div className="flex-1 relative">
         <input
           dir="auto"
-          className="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm focus:border-primary-500"
+          className="w-full border border-surface-200 dark:border-surface-300 dark:bg-surface-200 dark:text-surface-900 rounded-lg px-3 py-2 text-sm focus:border-primary-500"
           placeholder={t('community.comment_placeholder')}
           value={newComment}
           onChange={e => onTextChange(e.target.value, setNewComment)}

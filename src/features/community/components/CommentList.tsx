@@ -51,7 +51,7 @@ export const CommentList = memo(function CommentList({
   const hasMore = !isDetail && rootComments.length > 3;
 
   return (
-    <div className="border-t border-surface-100 p-4 bg-surface-50 space-y-3">
+    <div className="border-t border-surface-100 p-4 bg-surface-50 dark:bg-surface-200 space-y-3">
       {postLocked && (
         <div className="flex items-center gap-2 bg-surface-100 rounded-xl px-3 py-2 border border-surface-200">
           <Icon name="lock" size={14} className="text-surface-400" />

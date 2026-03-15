@@ -82,7 +82,7 @@ export const ProfileExamReadiness = React.memo(function ProfileExamReadiness({
 
       {/* Exam Readiness Card */}
       <div className="rounded-xl mb-4">
-        <div className="flex items-center gap-4 mb-4 bg-surface-50 rounded-xl p-4">
+        <div className="flex items-center gap-4 mb-4 bg-surface-50 dark:bg-surface-200 rounded-xl p-4">
           <div className="relative w-20 h-20 shrink-0" dir="ltr">
             <svg className="w-full h-full -rotate-90" viewBox="0 0 80 80">
               <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="7" />
@@ -141,7 +141,7 @@ export const ProfileExamReadiness = React.memo(function ProfileExamReadiness({
 
       {/* Answer Distribution */}
       {totalAnswers > 0 ? (
-        <div className="mb-4 bg-surface-50 rounded-xl p-4">
+        <div className="mb-4 bg-surface-50 dark:bg-surface-200 rounded-xl p-4">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-semibold text-surface-800">{t('profile.answer_dist')}</span>
             <span className="text-xs font-semibold bg-white dark:bg-surface-200 text-surface-600 px-2.5 py-0.5 rounded-full border border-surface-200">
@@ -171,7 +171,7 @@ export const ProfileExamReadiness = React.memo(function ProfileExamReadiness({
           </div>
         </div>
       ) : (
-        <div className="mb-4 bg-surface-50 rounded-xl p-4 text-center">
+        <div className="mb-4 bg-surface-50 dark:bg-surface-200 rounded-xl p-4 text-center">
           <Icon name="quiz" size={28} className="text-surface-300 mx-auto mb-2" />
           <p className="text-sm text-surface-400">{t('profile.no_quizzes_label')}</p>
         </div>
@@ -181,7 +181,7 @@ export const ProfileExamReadiness = React.memo(function ProfileExamReadiness({
       <div className="grid grid-cols-2 gap-3">
         {metrics.map((m, i) => (
           <div key={i} className={cn('rounded-xl p-3 border flex items-center gap-2.5', m.bg, m.border)}>
-            <div className="w-9 h-9 rounded-xl bg-white/80 flex items-center justify-center shrink-0 shadow-sm">
+            <div className="w-9 h-9 rounded-xl bg-white/80 dark:bg-surface-300/80 flex items-center justify-center shrink-0 shadow-sm">
               <Icon name={m.icon} size={18} className={m.color} filled />
             </div>
             <div className="min-w-0">
