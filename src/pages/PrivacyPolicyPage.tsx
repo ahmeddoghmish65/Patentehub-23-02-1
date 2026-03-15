@@ -86,9 +86,9 @@ export function PrivacyPolicyPage() {
           </div>
         </div>
 
-        <div className="bg-primary-50 border border-primary-200 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
-          <Icon name="info" size={20} className="text-primary-500 shrink-0 mt-0.5" filled />
-          <p className="text-sm text-primary-700 leading-relaxed">
+        <div className="bg-primary-50 dark:bg-primary-900/40 border border-primary-200 dark:border-primary-700 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
+          <Icon name="info" size={20} className="text-primary-500 dark:text-primary-300 shrink-0 mt-0.5" filled />
+          <p className="text-sm text-primary-700 dark:text-primary-200 leading-relaxed">
             {isIt
               ? <>Utilizzando <strong>Patente Hub</strong>, accetti le condizioni descritte in questa informativa. Ti consigliamo di leggerla attentamente prima dell'uso.</>
               : <>باستخدامك لتطبيق <strong>Patente Hub</strong>، فإنك توافق على الشروط الواردة في هذه السياسة. نوصي بقراءتها بعناية قبل الاستخدام.</>
@@ -103,7 +103,7 @@ export function PrivacyPolicyPage() {
               <nav className="space-y-0.5">
                 {sections.map(section => (
                   <button key={section.id} onClick={() => scrollToSection(section.id)}
-                    className={`w-full ${isIt ? 'text-left' : 'text-right'} flex items-center gap-2 text-xs px-3 py-2 rounded-lg transition-all ${activeSection === section.id ? 'bg-primary-50 text-primary-700 font-semibold' : 'text-surface-500 hover:text-primary-600 hover:bg-surface-50'}`}>
+                    className={`w-full ${isIt ? 'text-left' : 'text-right'} flex items-center gap-2 text-xs px-3 py-2 rounded-lg transition-all ${activeSection === section.id ? 'bg-primary-50 dark:bg-primary-900 text-primary-700 dark:text-primary-200 font-semibold' : 'text-surface-500 hover:text-primary-600 hover:bg-surface-50 dark:hover:bg-surface-200'}`}>
                     <Icon name={section.icon} size={14} className={activeSection === section.id ? 'text-primary-500' : 'text-surface-400'} />
                     <span className="leading-tight">{section.title}</span>
                   </button>
@@ -123,7 +123,7 @@ export function PrivacyPolicyPage() {
               <>
                 <section id="intro" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="info" size={18} className="text-primary-600" filled /></span>
+                    <span className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name="info" size={18} className="text-primary-600 dark:text-primary-300" filled /></span>
                     Introduzione
                   </h2>
                   <div className="space-y-3 text-sm text-surface-600 leading-relaxed">
@@ -135,7 +135,7 @@ export function PrivacyPolicyPage() {
 
                 <section id="collect" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="manage_search" size={18} className="text-primary-600" filled /></span>
+                    <span className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name="manage_search" size={18} className="text-primary-600 dark:text-primary-300" filled /></span>
                     Dati che raccogliamo
                   </h2>
                   <div className="space-y-4">
@@ -160,7 +160,7 @@ export function PrivacyPolicyPage() {
 
                 <section id="use" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="settings" size={18} className="text-primary-600" filled /></span>
+                    <span className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name="settings" size={18} className="text-primary-600 dark:text-primary-300" filled /></span>
                     Come utilizziamo i dati
                   </h2>
                   <div className="grid sm:grid-cols-2 gap-3">
@@ -173,7 +173,7 @@ export function PrivacyPolicyPage() {
                       { icon: 'notifications', title: 'Notifiche', desc: 'Promemoria di studio e notifiche di risultati' },
                     ].map((item, i) => (
                       <div key={i} className="flex items-start gap-3 bg-surface-50 rounded-xl p-3 border border-surface-100">
-                        <div className="w-9 h-9 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name={item.icon} size={18} className="text-primary-600" filled /></div>
+                        <div className="w-9 h-9 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name={item.icon} size={18} className="text-primary-600 dark:text-primary-300" filled /></div>
                         <div><p className="text-sm font-semibold text-surface-800">{item.title}</p><p className="text-xs text-surface-500 leading-relaxed">{item.desc}</p></div>
                       </div>
                     ))}
@@ -182,7 +182,7 @@ export function PrivacyPolicyPage() {
 
                 <section id="cookies" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="data_object" size={18} className="text-primary-600" filled /></span>
+                    <span className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name="data_object" size={18} className="text-primary-600 dark:text-primary-300" filled /></span>
                     Cookie e archiviazione locale
                   </h2>
                   <p className="text-sm text-surface-600 leading-relaxed mb-4">L'app utilizza <strong>localStorage</strong> e <strong>IndexedDB</strong> per l'archiviazione locale sul tuo dispositivo invece dei cookie tradizionali. I token JWT di Supabase (autenticazione) sono salvati in localStorage e rinnovati automaticamente.</p>
@@ -208,15 +208,15 @@ export function PrivacyPolicyPage() {
 
                 <section id="storage" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="storage" size={18} className="text-primary-600" filled /></span>
+                    <span className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name="storage" size={18} className="text-primary-600 dark:text-primary-300" filled /></span>
                     Archiviazione dei dati
                   </h2>
                   <p className="text-sm text-surface-600 leading-relaxed mb-4">Patente Hub utilizza un modello di archiviazione ibrido: i dati di autenticazione e il profilo utente sono archiviati in modo sicuro su <strong className="text-surface-900">server Supabase (PostgreSQL, UE)</strong>, mentre i contenuti educativi e i dati della community sono salvati <strong className="text-surface-900">localmente sul tuo dispositivo</strong> tramite IndexedDB.</p>
                   <div className="grid sm:grid-cols-2 gap-3">
-                    <div className="bg-primary-50 rounded-xl p-4 border border-primary-100">
-                      <Icon name="cloud_done" size={24} className="text-primary-600 mb-2" filled />
-                      <h3 className="font-semibold text-primary-800 text-sm mb-1">Dati cloud (Supabase)</h3>
-                      <p className="text-xs text-primary-700">Account, profilo, progressi e impostazioni sono archiviati in modo sicuro su server PostgreSQL in Europa</p>
+                    <div className="bg-primary-50 dark:bg-primary-900/50 rounded-xl p-4 border border-primary-100 dark:border-primary-700">
+                      <Icon name="cloud_done" size={24} className="text-primary-600 dark:text-primary-300 mb-2" filled />
+                      <h3 className="font-semibold text-primary-800 dark:text-primary-100 text-sm mb-1">Dati cloud (Supabase)</h3>
+                      <p className="text-xs text-primary-700 dark:text-primary-300">Account, profilo, progressi e impostazioni sono archiviati in modo sicuro su server PostgreSQL in Europa</p>
                     </div>
                     <div className="bg-success-50 rounded-xl p-4 border border-success-100">
                       <Icon name="phone_android" size={24} className="text-success-600 mb-2" filled />
@@ -233,7 +233,7 @@ export function PrivacyPolicyPage() {
 
                 <section id="third-party" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="share" size={18} className="text-primary-600" filled /></span>
+                    <span className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name="share" size={18} className="text-primary-600 dark:text-primary-300" filled /></span>
                     Servizi di terze parti
                   </h2>
                   <p className="text-sm text-surface-600 leading-relaxed mb-4">L'app utilizza i seguenti servizi esterni, ognuno con la propria informativa sulla privacy:</p>
@@ -259,7 +259,7 @@ export function PrivacyPolicyPage() {
 
                 <section id="rights" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="verified_user" size={18} className="text-primary-600" filled /></span>
+                    <span className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name="verified_user" size={18} className="text-primary-600 dark:text-primary-300" filled /></span>
                     Diritti dell'utente ai sensi del GDPR
                   </h2>
                   <p className="text-sm text-surface-600 leading-relaxed mb-4">Ai sensi del GDPR hai i seguenti diritti, esercitabili in qualsiasi momento:</p>
@@ -274,16 +274,16 @@ export function PrivacyPolicyPage() {
                     ].map((right, i) => (
                       <div key={i} className="bg-surface-50 rounded-xl p-4 border border-surface-100">
                         <div className="flex items-center gap-2 mb-1.5">
-                          <div className="w-7 h-7 bg-primary-100 rounded-lg flex items-center justify-center"><Icon name={right.icon} size={15} className="text-primary-600" filled /></div>
+                          <div className="w-7 h-7 bg-primary-100 dark:bg-primary-900 rounded-lg flex items-center justify-center"><Icon name={right.icon} size={15} className="text-primary-600 dark:text-primary-300" filled /></div>
                           <h3 className="font-semibold text-surface-800 text-sm">{right.title}</h3>
                         </div>
                         <p className="text-xs text-surface-500 leading-relaxed">{right.desc}</p>
                       </div>
                     ))}
                   </div>
-                  <div className="mt-4 bg-primary-50 rounded-xl p-3 border border-primary-100">
-                    <p className="text-xs text-primary-700 flex items-start gap-2">
-                      <Icon name="info" size={14} className="text-primary-500 shrink-0 mt-0.5" />
+                  <div className="mt-4 bg-primary-50 dark:bg-primary-900/40 rounded-xl p-3 border border-primary-100 dark:border-primary-700">
+                    <p className="text-xs text-primary-700 dark:text-primary-200 flex items-start gap-2">
+                      <Icon name="info" size={14} className="text-primary-500 dark:text-primary-300 shrink-0 mt-0.5" />
                       Per esercitare uno di questi diritti, contattaci tramite la pagina contatti o invia un'email a privacy@patentehub.com
                     </p>
                   </div>
@@ -291,7 +291,7 @@ export function PrivacyPolicyPage() {
 
                 <section id="protection" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="security" size={18} className="text-primary-600" filled /></span>
+                    <span className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name="security" size={18} className="text-primary-600 dark:text-primary-300" filled /></span>
                     Protezione dei dati
                   </h2>
                   <ul className="space-y-3">
@@ -337,7 +337,7 @@ export function PrivacyPolicyPage() {
               <>
                 <section id="intro" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="info" size={18} className="text-primary-600" filled /></span>
+                    <span className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name="info" size={18} className="text-primary-600 dark:text-primary-300" filled /></span>
                     مقدمة
                   </h2>
                   <div className="space-y-3 text-sm text-surface-600 leading-relaxed">
@@ -349,7 +349,7 @@ export function PrivacyPolicyPage() {
 
                 <section id="collect" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="manage_search" size={18} className="text-primary-600" filled /></span>
+                    <span className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name="manage_search" size={18} className="text-primary-600 dark:text-primary-300" filled /></span>
                     المعلومات التي نجمعها
                   </h2>
                   <div className="space-y-4">
@@ -374,7 +374,7 @@ export function PrivacyPolicyPage() {
 
                 <section id="use" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="settings" size={18} className="text-primary-600" filled /></span>
+                    <span className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name="settings" size={18} className="text-primary-600 dark:text-primary-300" filled /></span>
                     كيفية استخدام المعلومات
                   </h2>
                   <div className="grid sm:grid-cols-2 gap-3">
@@ -387,7 +387,7 @@ export function PrivacyPolicyPage() {
                       { icon: 'support_agent', title: 'الدعم الفني', desc: 'تقديم المساعدة عند التواصل مع فريق الدعم' },
                     ].map((item, i) => (
                       <div key={i} className="flex items-start gap-3 bg-surface-50 rounded-xl p-3 border border-surface-100">
-                        <div className="w-9 h-9 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name={item.icon} size={18} className="text-primary-600" filled /></div>
+                        <div className="w-9 h-9 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name={item.icon} size={18} className="text-primary-600 dark:text-primary-300" filled /></div>
                         <div><p className="text-sm font-semibold text-surface-800">{item.title}</p><p className="text-xs text-surface-500 leading-relaxed">{item.desc}</p></div>
                       </div>
                     ))}
@@ -396,7 +396,7 @@ export function PrivacyPolicyPage() {
 
                 <section id="cookies" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="data_object" size={18} className="text-primary-600" filled /></span>
+                    <span className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name="data_object" size={18} className="text-primary-600 dark:text-primary-300" filled /></span>
                     ملفات الارتباط والتخزين المحلي
                   </h2>
                   <p className="text-sm text-surface-600 leading-relaxed mb-4">يستخدم التطبيق <strong>localStorage</strong> و <strong>IndexedDB</strong> للتخزين المحلي على جهازك بدلاً من ملفات الارتباط التقليدية. تُحفَظ رموز JWT من Supabase في localStorage وتُجدَّد تلقائياً.</p>
@@ -422,15 +422,15 @@ export function PrivacyPolicyPage() {
 
                 <section id="storage" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="storage" size={18} className="text-primary-600" filled /></span>
+                    <span className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name="storage" size={18} className="text-primary-600 dark:text-primary-300" filled /></span>
                     تخزين البيانات
                   </h2>
                   <p className="text-sm text-surface-600 leading-relaxed mb-4">يعتمد Patente Hub على نموذج تخزين مزدوج: تُحفَظ بيانات المصادقة والملف الشخصي بأمان على <strong className="text-surface-900">خوادم Supabase (PostgreSQL، أوروبا)</strong>، بينما تُخزَّن المحتويات التعليمية وبيانات المجتمع <strong className="text-surface-900">محلياً على جهازك</strong> عبر IndexedDB.</p>
                   <div className="grid sm:grid-cols-2 gap-3">
-                    <div className="bg-primary-50 rounded-xl p-4 border border-primary-100">
-                      <Icon name="cloud_done" size={24} className="text-primary-600 mb-2" filled />
-                      <h3 className="font-semibold text-primary-800 text-sm mb-1">بيانات سحابية (Supabase)</h3>
-                      <p className="text-xs text-primary-700">الحساب والملف الشخصي والتقدم والإعدادات تُحفَظ بأمان على خوادم PostgreSQL في أوروبا</p>
+                    <div className="bg-primary-50 dark:bg-primary-900/50 rounded-xl p-4 border border-primary-100 dark:border-primary-700">
+                      <Icon name="cloud_done" size={24} className="text-primary-600 dark:text-primary-300 mb-2" filled />
+                      <h3 className="font-semibold text-primary-800 dark:text-primary-100 text-sm mb-1">بيانات سحابية (Supabase)</h3>
+                      <p className="text-xs text-primary-700 dark:text-primary-300">الحساب والملف الشخصي والتقدم والإعدادات تُحفَظ بأمان على خوادم PostgreSQL في أوروبا</p>
                     </div>
                     <div className="bg-success-50 rounded-xl p-4 border border-success-100">
                       <Icon name="phone_android" size={24} className="text-success-600 mb-2" filled />
@@ -447,7 +447,7 @@ export function PrivacyPolicyPage() {
 
                 <section id="third-party" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="share" size={18} className="text-primary-600" filled /></span>
+                    <span className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name="share" size={18} className="text-primary-600 dark:text-primary-300" filled /></span>
                     خدمات الطرف الثالث
                   </h2>
                   <div className="space-y-3">
@@ -466,7 +466,7 @@ export function PrivacyPolicyPage() {
 
                 <section id="rights" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="verified_user" size={18} className="text-primary-600" filled /></span>
+                    <span className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name="verified_user" size={18} className="text-primary-600 dark:text-primary-300" filled /></span>
                     حقوق المستخدم بموجب GDPR
                   </h2>
                   <div className="grid sm:grid-cols-2 gap-3">
@@ -480,7 +480,7 @@ export function PrivacyPolicyPage() {
                     ].map((right, i) => (
                       <div key={i} className="bg-surface-50 rounded-xl p-4 border border-surface-100">
                         <div className="flex items-center gap-2 mb-1.5">
-                          <div className="w-7 h-7 bg-primary-100 rounded-lg flex items-center justify-center"><Icon name={right.icon} size={15} className="text-primary-600" filled /></div>
+                          <div className="w-7 h-7 bg-primary-100 dark:bg-primary-900 rounded-lg flex items-center justify-center"><Icon name={right.icon} size={15} className="text-primary-600 dark:text-primary-300" filled /></div>
                           <h3 className="font-semibold text-surface-800 text-sm">{right.title}</h3>
                         </div>
                         <p className="text-xs text-surface-500 leading-relaxed">{right.desc}</p>
@@ -491,7 +491,7 @@ export function PrivacyPolicyPage() {
 
                 <section id="protection" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name="security" size={18} className="text-primary-600" filled /></span>
+                    <span className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name="security" size={18} className="text-primary-600 dark:text-primary-300" filled /></span>
                     حماية البيانات
                   </h2>
                   <ul className="space-y-3">
@@ -538,7 +538,7 @@ export function PrivacyPolicyPage() {
             <div className="flex flex-col sm:flex-row gap-3">
               <button onClick={() => navigate(ROUTES.TERMS_OF_SERVICE)} className="flex-1 flex items-center justify-between gap-2 bg-white dark:bg-surface-100 rounded-2xl px-5 py-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all group">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-surface-50 rounded-xl flex items-center justify-center group-hover:bg-primary-50 transition-colors"><Icon name="gavel" size={20} className="text-surface-400 group-hover:text-primary-500 transition-colors" /></div>
+                  <div className="w-10 h-10 bg-surface-50 rounded-xl flex items-center justify-center group-hover:bg-primary-50 dark:group-hover:bg-primary-900 transition-colors"><Icon name="gavel" size={20} className="text-surface-400 group-hover:text-primary-500 transition-colors" /></div>
                   <div className={isIt ? '' : 'text-right'}>
                     <p className="text-xs text-surface-400">{isIt ? 'Pagina successiva' : 'الصفحة التالية'}</p>
                     <p className="text-sm font-bold text-surface-900">{isIt ? 'Termini di servizio' : 'شروط الاستخدام'}</p>
@@ -548,7 +548,7 @@ export function PrivacyPolicyPage() {
               </button>
               <button onClick={() => navigate(ROUTES.CONTACT)} className="flex-1 flex items-center justify-between gap-2 bg-white dark:bg-surface-100 rounded-2xl px-5 py-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all group">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-surface-50 rounded-xl flex items-center justify-center group-hover:bg-primary-50 transition-colors"><Icon name="mail" size={20} className="text-surface-400 group-hover:text-primary-500 transition-colors" /></div>
+                  <div className="w-10 h-10 bg-surface-50 rounded-xl flex items-center justify-center group-hover:bg-primary-50 dark:group-hover:bg-primary-900 transition-colors"><Icon name="mail" size={20} className="text-surface-400 group-hover:text-primary-500 transition-colors" /></div>
                   <div className={isIt ? '' : 'text-right'}>
                     <p className="text-xs text-surface-400">{isIt ? 'Contattaci' : 'تواصل معنا'}</p>
                     <p className="text-sm font-bold text-surface-900">{isIt ? 'Pagina contatti' : 'صفحة الاتصال'}</p>

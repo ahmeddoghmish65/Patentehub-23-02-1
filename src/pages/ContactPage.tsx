@@ -237,7 +237,7 @@ export function ContactPage() {
                 href="mailto:support@patentehub.com"
                 className="flex items-start gap-3 group"
               >
-                <div className="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-primary-100 transition-colors">
+                <div className="w-10 h-10 bg-primary-50 dark:bg-primary-900 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-primary-100 dark:group-hover:bg-primary-800 transition-colors">
                   <Icon name="email" size={20} className="text-primary-600" />
                 </div>
                 <div>
@@ -278,17 +278,17 @@ export function ContactPage() {
           </div>
 
           {/* Support Hours */}
-          <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-2xl p-5 border border-primary-100">
+          <div className="bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900 dark:to-primary-800 rounded-2xl p-5 border border-primary-100 dark:border-primary-700">
             <div className="flex items-center gap-2 mb-3">
-              <Icon name="schedule" size={20} className="text-primary-600" filled />
-              <h3 className="font-bold text-primary-900 text-sm">
+              <Icon name="schedule" size={20} className="text-primary-600 dark:text-primary-300" filled />
+              <h3 className="font-bold text-primary-900 dark:text-primary-100 text-sm">
                 {isIt ? 'Orari di supporto' : 'ساعات الدعم'}
               </h3>
             </div>
             <div className="space-y-1">
-              <p className="text-sm text-primary-700">{isIt ? 'Lunedì – Venerdì' : 'الأحد – الخميس'}</p>
-              <p className="text-sm font-bold text-primary-800">9:00 – 18:00</p>
-              <p className="text-xs text-primary-500 mt-1">{isIt ? 'Ora Europa Centrale (CET)' : 'توقيت وسط أوروبا (CET)'}</p>
+              <p className="text-sm text-primary-700 dark:text-primary-200">{isIt ? 'Lunedì – Venerdì' : 'الأحد – الخميس'}</p>
+              <p className="text-sm font-bold text-primary-800 dark:text-primary-100">9:00 – 18:00</p>
+              <p className="text-xs text-primary-500 dark:text-primary-300 mt-1">{isIt ? 'Ora Europa Centrale (CET)' : 'توقيت وسط أوروبا (CET)'}</p>
             </div>
           </div>
 
@@ -301,21 +301,21 @@ export function ContactPage() {
             <div className="space-y-2">
               <button
                 onClick={() => navigate(ROUTES.PRIVACY_POLICY)}
-                className="w-full flex items-center gap-2 text-sm text-surface-600 hover:text-primary-600 hover:bg-primary-50 px-3 py-2 rounded-xl transition-all text-right"
+                className="w-full flex items-center gap-2 text-sm text-surface-600 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900 px-3 py-2 rounded-xl transition-all text-right"
               >
                 <Icon name="privacy_tip" size={16} className="text-surface-400" />
                 {isIt ? 'Privacy Policy' : 'سياسة الخصوصية'}
               </button>
               <button
                 onClick={() => navigate(ROUTES.TERMS_OF_SERVICE)}
-                className="w-full flex items-center gap-2 text-sm text-surface-600 hover:text-primary-600 hover:bg-primary-50 px-3 py-2 rounded-xl transition-all text-right"
+                className="w-full flex items-center gap-2 text-sm text-surface-600 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900 px-3 py-2 rounded-xl transition-all text-right"
               >
                 <Icon name="gavel" size={16} className="text-surface-400" />
                 {isIt ? 'Termini di utilizzo' : 'شروط الاستخدام'}
               </button>
               <button
                 onClick={() => navigate(ROUTES.LANDING)}
-                className="w-full flex items-center gap-2 text-sm text-surface-600 hover:text-primary-600 hover:bg-primary-50 px-3 py-2 rounded-xl transition-all text-right"
+                className="w-full flex items-center gap-2 text-sm text-surface-600 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900 px-3 py-2 rounded-xl transition-all text-right"
               >
                 <Icon name="help_outline" size={16} className="text-surface-400" />
                 {isIt ? 'FAQ' : 'الأسئلة الشائعة'}

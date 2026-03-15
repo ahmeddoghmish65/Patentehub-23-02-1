@@ -75,20 +75,20 @@ export function TermsOfServicePage() {
       </header>
 
       <div className="max-w-4xl mx-auto px-4 py-6">
-        <div className="bg-gradient-to-br from-surface-800 to-surface-900 rounded-2xl p-8 text-center text-white mb-6 relative overflow-hidden">
+        <div className="bg-gradient-to-br from-surface-800 to-surface-900 dark:from-surface-50 dark:to-surface-100 rounded-2xl p-8 text-center text-white mb-6 relative overflow-hidden">
           <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(circle at 30% 40%, white 1px, transparent 1px)', backgroundSize: '50px 50px' }} />
           <div className="relative">
             <div className="w-16 h-16 mx-auto bg-white/10 rounded-2xl flex items-center justify-center mb-4 border border-white/20">
               <Icon name="gavel" size={32} className="text-white" filled />
             </div>
             <h1 className="text-3xl font-black mb-2">{isIt ? 'Termini di servizio' : 'شروط الاستخدام'}</h1>
-            <p className="text-surface-300 text-sm">{isIt ? 'Ultimo aggiornamento: gennaio 2025 · Si prega di leggere prima dell\'uso' : 'آخر تحديث: يناير 2025 · يرجى القراءة قبل الاستخدام'}</p>
+            <p className="text-surface-300 dark:text-surface-600 text-sm">{isIt ? 'Ultimo aggiornamento: gennaio 2025 · Si prega di leggere prima dell\'uso' : 'آخر تحديث: يناير 2025 · يرجى القراءة قبل الاستخدام'}</p>
           </div>
         </div>
 
-        <div className="bg-warning-50 border border-warning-200 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
+        <div className="bg-warning-50 dark:bg-surface-100 border border-warning-200 dark:border-surface-200 rounded-xl px-4 py-3 mb-6 flex items-start gap-3">
           <Icon name="warning" size={20} className="text-warning-500 shrink-0 mt-0.5" filled />
-          <p className="text-sm text-warning-700 leading-relaxed">
+          <p className="text-sm text-warning-700 dark:text-surface-300 leading-relaxed">
             {isIt
               ? <><strong>Importante:</strong> Utilizzando Patente Hub, confermi di aver letto questi termini e di accettarli. Se non sei d'accordo, ti preghiamo di interrompere l'utilizzo dell'app.</>
               : <><strong>مهم:</strong> باستخدامك لتطبيق Patente Hub، فإنك تؤكد قراءتك لهذه الشروط وموافقتك عليها. إذا كنت لا توافق، يرجى التوقف عن استخدام التطبيق.</>
@@ -103,14 +103,14 @@ export function TermsOfServicePage() {
               <nav className="space-y-0.5">
                 {sections.map(section => (
                   <button key={section.id} onClick={() => scrollToSection(section.id)}
-                    className={`w-full ${isIt ? 'text-left' : 'text-right'} flex items-center gap-2 text-xs px-3 py-2 rounded-lg transition-all ${activeSection === section.id ? 'bg-surface-900 text-white font-semibold' : 'text-surface-500 hover:text-surface-800 hover:bg-surface-50'}`}>
+                    className={`w-full ${isIt ? 'text-left' : 'text-right'} flex items-center gap-2 text-xs px-3 py-2 rounded-lg transition-all ${activeSection === section.id ? 'bg-surface-900 dark:bg-primary-600 text-white font-semibold' : 'text-surface-500 hover:text-surface-800 hover:bg-surface-50 dark:hover:bg-surface-200'}`}>
                     <Icon name={section.icon} size={14} className={activeSection === section.id ? 'text-white' : 'text-surface-400'} />
                     <span className="leading-tight">{section.title}</span>
                   </button>
                 ))}
               </nav>
               <div className="mt-4 pt-4 border-t border-surface-100">
-                <button onClick={() => navigate(ROUTES.CONTACT)} className="w-full flex items-center justify-center gap-1.5 text-xs bg-surface-800 text-white px-3 py-2 rounded-xl hover:bg-surface-900 transition-colors font-medium">
+                <button onClick={() => navigate(ROUTES.CONTACT)} className="w-full flex items-center justify-center gap-1.5 text-xs bg-surface-800 dark:bg-primary-600 text-white px-3 py-2 rounded-xl hover:bg-surface-900 dark:hover:bg-primary-700 transition-colors font-medium">
                   <Icon name="mail" size={14} />
                   {isIt ? 'Contattaci' : 'تواصل معنا'}
                 </button>
@@ -123,7 +123,7 @@ export function TermsOfServicePage() {
               <>
                 <section id="acceptance" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="handshake" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="handshake" size={18} className="text-surface-600" filled /></span>
                     Accettazione dei termini
                   </h2>
                   <div className="space-y-3 text-sm text-surface-600 leading-relaxed">
@@ -141,7 +141,7 @@ export function TermsOfServicePage() {
 
                 <section id="purpose" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="school" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="school" size={18} className="text-surface-600" filled /></span>
                     Scopo dell'app
                   </h2>
                   <p className="text-sm text-surface-600 leading-relaxed mb-4"><strong>Patente Hub</strong> è un'app educativa gratuita progettata per aiutare gli studenti a prepararsi all'esame della patente di guida italiana (Esame di Guida).</p>
@@ -153,7 +153,7 @@ export function TermsOfServicePage() {
                       { icon: 'trending_up', title: 'Monitoraggio progressi', desc: 'Statistiche precise sulla preparazione all\'esame' },
                     ].map((item, i) => (
                       <div key={i} className="flex items-start gap-3 bg-surface-50 rounded-xl p-3 border border-surface-100">
-                        <div className="w-9 h-9 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name={item.icon} size={18} className="text-primary-600" filled /></div>
+                        <div className="w-9 h-9 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name={item.icon} size={18} className="text-primary-600 dark:text-primary-300" filled /></div>
                         <div><p className="text-sm font-semibold text-surface-800">{item.title}</p><p className="text-xs text-surface-500 leading-relaxed">{item.desc}</p></div>
                       </div>
                     ))}
@@ -168,7 +168,7 @@ export function TermsOfServicePage() {
 
                 <section id="eligibility" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="person_check" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="person_check" size={18} className="text-surface-600" filled /></span>
                     Requisiti di accesso
                   </h2>
                   <ul className="space-y-2 text-sm text-surface-600 mb-3">
@@ -183,7 +183,7 @@ export function TermsOfServicePage() {
 
                 <section id="account" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="manage_accounts" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="manage_accounts" size={18} className="text-surface-600" filled /></span>
                     Regole dell'account
                   </h2>
                   <div className="space-y-4">
@@ -208,7 +208,7 @@ export function TermsOfServicePage() {
 
                 <section id="responsibilities" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="assignment" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="assignment" size={18} className="text-surface-600" filled /></span>
                     Responsabilità dell'utente
                   </h2>
                   <div className="grid sm:grid-cols-2 gap-3">
@@ -230,7 +230,7 @@ export function TermsOfServicePage() {
 
                 <section id="ip" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="copyright" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="copyright" size={18} className="text-surface-600" filled /></span>
                     Proprietà intellettuale
                   </h2>
                   <p className="text-sm text-surface-600 leading-relaxed mb-4">Tutti i contenuti di Patente Hub — lezioni, domande, spiegazioni, design e logo — sono proprietà intellettuale esclusiva di <strong className="text-surface-900">Patente Hub</strong>.</p>
@@ -256,7 +256,7 @@ export function TermsOfServicePage() {
 
                 <section id="liability" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="gavel" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="gavel" size={18} className="text-surface-600" filled /></span>
                     Limitazione di responsabilità
                   </h2>
                   <div className="space-y-3 text-sm text-surface-600 leading-relaxed">
@@ -271,7 +271,7 @@ export function TermsOfServicePage() {
 
                 <section id="termination" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="block" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="block" size={18} className="text-surface-600" filled /></span>
                     Chiusura dell'account
                   </h2>
                   <div className="space-y-4">
@@ -289,7 +289,7 @@ export function TermsOfServicePage() {
 
                 <section id="updates" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="update" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="update" size={18} className="text-surface-600" filled /></span>
                     Aggiornamento dei termini
                   </h2>
                   <ul className="space-y-2">
@@ -300,26 +300,26 @@ export function TermsOfServicePage() {
                       { icon: 'thumb_up', text: 'Continuare a usare l\'app equivale ad accettare i termini aggiornati' },
                     ].map((item, i) => (
                       <li key={i} className="flex items-center gap-3 text-sm text-surface-600">
-                        <div className="w-8 h-8 bg-primary-50 rounded-lg flex items-center justify-center shrink-0"><Icon name={item.icon} size={15} className="text-primary-600" filled /></div>
+                        <div className="w-8 h-8 bg-primary-50 dark:bg-primary-900 rounded-lg flex items-center justify-center shrink-0"><Icon name={item.icon} size={15} className="text-primary-600 dark:text-primary-300" filled /></div>
                         {item.text}
                       </li>
                     ))}
                   </ul>
                 </section>
 
-                <section id="contact" className="bg-gradient-to-br from-surface-800 to-surface-900 rounded-2xl p-6 text-white">
+                <section id="contact" className="bg-gradient-to-br from-surface-800 to-surface-900 dark:from-surface-50 dark:to-surface-100 rounded-2xl p-6 text-white">
                   <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
-                    <Icon name="contact_mail" size={22} className="text-surface-300" filled />
+                    <Icon name="contact_mail" size={22} className="text-surface-300 dark:text-surface-600" filled />
                     Informazioni di contatto
                   </h2>
-                  <p className="text-surface-300 text-sm leading-relaxed mb-5">Per qualsiasi domanda su questi termini o per ulteriori chiarimenti, contattaci:</p>
+                  <p className="text-surface-300 dark:text-surface-600 text-sm leading-relaxed mb-5">Per qualsiasi domanda su questi termini o per ulteriori chiarimenti, contattaci:</p>
                   <div className="space-y-3">
                     <a href="mailto:legal@patentehub.com" className="flex items-center gap-3 bg-white/10 hover:bg-white/20 rounded-xl px-4 py-3 transition-colors border border-white/10">
-                      <Icon name="email" size={20} className="text-surface-300" />
-                      <div><p className="text-xs text-surface-400">Per questioni legali</p><p className="text-sm font-semibold" dir="ltr">legal@patentehub.com</p></div>
+                      <Icon name="email" size={20} className="text-surface-300 dark:text-surface-600" />
+                      <div><p className="text-xs text-surface-400 dark:text-surface-500">Per questioni legali</p><p className="text-sm font-semibold" dir="ltr">legal@patentehub.com</p></div>
                     </a>
-                    <button onClick={() => navigate(ROUTES.CONTACT)} className="w-full flex items-center justify-center gap-2 bg-white text-surface-900 font-semibold rounded-xl px-4 py-3 hover:bg-surface-100 transition-colors text-sm">
-                      <Icon name="chat" size={18} className="text-surface-700" />
+                    <button onClick={() => navigate(ROUTES.CONTACT)} className="w-full flex items-center justify-center gap-2 bg-white text-surface-900 dark:text-surface-50 font-semibold rounded-xl px-4 py-3 hover:bg-surface-100 dark:hover:bg-white/90 transition-colors text-sm">
+                      <Icon name="chat" size={18} className="text-surface-700 dark:text-surface-100" />
                       Apri la pagina contatti
                     </button>
                   </div>
@@ -329,7 +329,7 @@ export function TermsOfServicePage() {
               <>
                 <section id="acceptance" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="handshake" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="handshake" size={18} className="text-surface-600" filled /></span>
                     قبول الشروط
                   </h2>
                   <div className="space-y-3 text-sm text-surface-600 leading-relaxed">
@@ -347,7 +347,7 @@ export function TermsOfServicePage() {
 
                 <section id="purpose" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="school" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="school" size={18} className="text-surface-600" filled /></span>
                     هدف التطبيق
                   </h2>
                   <p className="text-sm text-surface-600 leading-relaxed mb-4"><strong>Patente Hub</strong> هو تطبيق تعليمي مجاني مصمم حصراً لمساعدة الناطقين بالعربية على الاستعداد لامتحان رخصة القيادة الإيطالية.</p>
@@ -361,7 +361,7 @@ export function TermsOfServicePage() {
 
                 <section id="eligibility" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="person_check" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="person_check" size={18} className="text-surface-600" filled /></span>
                     شروط الأهلية
                   </h2>
                   <ul className="space-y-2 text-sm text-surface-600">
@@ -373,7 +373,7 @@ export function TermsOfServicePage() {
 
                 <section id="account" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="manage_accounts" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="manage_accounts" size={18} className="text-surface-600" filled /></span>
                     قواعد الحساب
                   </h2>
                   <div className="space-y-4">
@@ -395,7 +395,7 @@ export function TermsOfServicePage() {
 
                 <section id="responsibilities" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="assignment" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="assignment" size={18} className="text-surface-600" filled /></span>
                     مسؤوليات المستخدم
                   </h2>
                   <div className="grid sm:grid-cols-2 gap-3">
@@ -415,7 +415,7 @@ export function TermsOfServicePage() {
 
                 <section id="ip" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="copyright" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="copyright" size={18} className="text-surface-600" filled /></span>
                     الملكية الفكرية
                   </h2>
                   <p className="text-sm text-surface-600 leading-relaxed mb-4">جميع محتويات Patente Hub — الدروس والأسئلة والشروحات والتصاميم والشعار — هي ملكية فكرية حصرية لـ <strong className="text-surface-900">Patente Hub</strong>.</p>
@@ -423,7 +423,7 @@ export function TermsOfServicePage() {
 
                 <section id="liability" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="gavel" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="gavel" size={18} className="text-surface-600" filled /></span>
                     حدود المسؤولية
                   </h2>
                   <p className="text-sm text-surface-600">يُقدَّم التطبيق <strong>"كما هو"</strong>. Patente Hub لا يتحمل أي مسؤولية عن الأضرار الناجمة عن استخدام التطبيق، بما في ذلك الرسوب في الامتحان الرسمي.</p>
@@ -431,7 +431,7 @@ export function TermsOfServicePage() {
 
                 <section id="termination" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="block" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="block" size={18} className="text-surface-600" filled /></span>
                     إنهاء الوصول
                   </h2>
                   <p className="text-sm text-surface-600 mb-3">يمكنك حذف حسابك في أي وقت من إعدادات الملف الشخصي. نحتفظ بالحق في تعليق الحسابات التي تنتهك هذه الشروط.</p>
@@ -439,24 +439,24 @@ export function TermsOfServicePage() {
 
                 <section id="updates" className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
                   <h2 className="text-lg font-bold text-surface-900 mb-4 flex items-center gap-2">
-                    <span className="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0"><Icon name="update" size={18} className="text-surface-600" filled /></span>
+                    <span className="w-8 h-8 bg-surface-100 dark:bg-surface-200 rounded-lg flex items-center justify-center shrink-0"><Icon name="update" size={18} className="text-surface-600" filled /></span>
                     تحديثات الشروط
                   </h2>
                   <p className="text-sm text-surface-600">نحتفظ بالحق في تعديل هذه الشروط. سيتم إشعارك عند إجراء تغييرات جوهرية. استمرارك في استخدام التطبيق يُعدّ موافقة على الشروط المحدثة.</p>
                 </section>
 
-                <section id="contact" className="bg-gradient-to-br from-surface-800 to-surface-900 rounded-2xl p-6 text-white">
+                <section id="contact" className="bg-gradient-to-br from-surface-800 to-surface-900 dark:from-surface-50 dark:to-surface-100 rounded-2xl p-6 text-white">
                   <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
-                    <Icon name="contact_mail" size={22} className="text-surface-300" filled />
+                    <Icon name="contact_mail" size={22} className="text-surface-300 dark:text-surface-600" filled />
                     معلومات الاتصال
                   </h2>
                   <div className="space-y-3">
                     <a href="mailto:legal@patentehub.com" className="flex items-center gap-3 bg-white/10 hover:bg-white/20 rounded-xl px-4 py-3 transition-colors border border-white/10">
-                      <Icon name="email" size={20} className="text-surface-300" />
-                      <div><p className="text-xs text-surface-400">للاستفسارات القانونية</p><p className="text-sm font-semibold" dir="ltr">legal@patentehub.com</p></div>
+                      <Icon name="email" size={20} className="text-surface-300 dark:text-surface-600" />
+                      <div><p className="text-xs text-surface-400 dark:text-surface-500">للاستفسارات القانونية</p><p className="text-sm font-semibold" dir="ltr">legal@patentehub.com</p></div>
                     </a>
-                    <button onClick={() => navigate(ROUTES.CONTACT)} className="w-full flex items-center justify-center gap-2 bg-white text-surface-900 font-semibold rounded-xl px-4 py-3 hover:bg-surface-100 transition-colors text-sm">
-                      <Icon name="chat" size={18} className="text-surface-700" />
+                    <button onClick={() => navigate(ROUTES.CONTACT)} className="w-full flex items-center justify-center gap-2 bg-white text-surface-900 dark:text-surface-50 font-semibold rounded-xl px-4 py-3 hover:bg-surface-100 dark:hover:bg-white/90 transition-colors text-sm">
+                      <Icon name="chat" size={18} className="text-surface-700 dark:text-surface-100" />
                       فتح صفحة التواصل
                     </button>
                   </div>
@@ -467,7 +467,7 @@ export function TermsOfServicePage() {
             <div className="flex flex-col sm:flex-row gap-3">
               <button onClick={() => navigate(ROUTES.PRIVACY_POLICY)} className="flex-1 flex items-center justify-between gap-2 bg-white dark:bg-surface-100 rounded-2xl px-5 py-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all group">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-surface-50 rounded-xl flex items-center justify-center group-hover:bg-primary-50 transition-colors"><Icon name="privacy_tip" size={20} className="text-surface-400 group-hover:text-primary-500 transition-colors" /></div>
+                  <div className="w-10 h-10 bg-surface-50 rounded-xl flex items-center justify-center group-hover:bg-primary-50 dark:group-hover:bg-primary-900 transition-colors"><Icon name="privacy_tip" size={20} className="text-surface-400 group-hover:text-primary-500 transition-colors" /></div>
                   <div className={isIt ? '' : 'text-right'}>
                     <p className="text-xs text-surface-400">{isIt ? 'Vedi anche' : 'شاهد أيضاً'}</p>
                     <p className="text-sm font-bold text-surface-900">{isIt ? 'Informativa privacy' : 'سياسة الخصوصية'}</p>
@@ -477,7 +477,7 @@ export function TermsOfServicePage() {
               </button>
               <button onClick={() => navigate(ROUTES.CONTACT)} className="flex-1 flex items-center justify-between gap-2 bg-white dark:bg-surface-100 rounded-2xl px-5 py-4 border border-surface-100 hover:border-primary-200 hover:shadow-md transition-all group">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-surface-50 rounded-xl flex items-center justify-center group-hover:bg-primary-50 transition-colors"><Icon name="mail" size={20} className="text-surface-400 group-hover:text-primary-500 transition-colors" /></div>
+                  <div className="w-10 h-10 bg-surface-50 rounded-xl flex items-center justify-center group-hover:bg-primary-50 dark:group-hover:bg-primary-900 transition-colors"><Icon name="mail" size={20} className="text-surface-400 group-hover:text-primary-500 transition-colors" /></div>
                   <div className={isIt ? '' : 'text-right'}>
                     <p className="text-xs text-surface-400">{isIt ? 'Contattaci' : 'تواصل معنا'}</p>
                     <p className="text-sm font-bold text-surface-900">{isIt ? 'Pagina contatti' : 'صفحة الاتصال'}</p>
