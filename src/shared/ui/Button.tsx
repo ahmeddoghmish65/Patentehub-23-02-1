@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { cn } from '@/shared/utils/cn';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import { componentTokens } from '@/theme/tokens';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
@@ -10,6 +11,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean;
   icon?: ReactNode;
 }
+
+const SIZES = {
+  sm: 'px-3 py-1.5 text-sm rounded-lg gap-1.5',
+  md: 'px-5 py-2.5 text-base rounded-xl gap-2',
+  lg: 'px-7 py-3.5 text-lg rounded-2xl gap-2.5',
+} as const;
 
 export const Button = memo(function Button({
   variant = 'primary',
@@ -22,29 +29,14 @@ export const Button = memo(function Button({
   disabled,
   ...props
 }: ButtonProps) {
-  const variants = {
-    primary:   'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 shadow-lg shadow-primary-200 dark:shadow-none',
-    secondary: 'bg-surface-100 text-surface-800 hover:bg-surface-200 active:bg-surface-300',
-    outline:   'border-2 border-primary-600 text-primary-600 hover:bg-primary-50 active:bg-primary-100 dark:hover:bg-primary-900 dark:active:bg-primary-800',
-    ghost:     'text-surface-600 hover:bg-surface-100 active:bg-surface-200',
-    danger:    'bg-danger-500 text-white hover:bg-danger-600 active:bg-danger-600',
-  };
-
-  const sizes = {
-    sm: 'px-3 py-1.5 text-sm rounded-lg gap-1.5',
-    md: 'px-5 py-2.5 text-base rounded-xl gap-2',
-    lg: 'px-7 py-3.5 text-lg rounded-2xl gap-2.5',
-  };
-
   return (
     <button
       className={cn(
-        'inline-flex items-center justify-center font-semibold transition-all duration-200 cursor-pointer',
-        'disabled:opacity-50 disabled:cursor-not-allowed',
-        variants[variant],
-        sizes[size],
+        componentTokens.button.base,
+        componentTokens.button[variant],
+        SIZES[size],
         fullWidth && 'w-full',
-        className
+        className,
       )}
       disabled={disabled || loading}
       {...props}

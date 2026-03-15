@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { cn } from '@/shared/utils/cn';
 import type { InputHTMLAttributes } from 'react';
 import { Icon } from './Icon';
+import { componentTokens, tokens } from '@/theme/tokens';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -13,7 +14,7 @@ export const Input = memo(function Input({ label, error, icon, className, ...pro
   return (
     <div className="w-full">
       {label && (
-        <label className="block text-sm font-medium text-surface-700 mb-1.5">
+        <label className={cn('block mb-1.5', tokens.type.label, tokens.text.secondary)}>
           {label}
         </label>
       )}
@@ -25,20 +26,16 @@ export const Input = memo(function Input({ label, error, icon, className, ...pro
         )}
         <input
           className={cn(
-            'w-full px-4 py-3 rounded-xl border border-surface-200',
-            'bg-white dark:bg-surface-100',
-            'text-surface-800 placeholder:text-surface-400',
-            'focus:border-primary-500 focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-900',
-            'transition-all duration-200',
+            componentTokens.input,
             icon && 'pr-11',
             error && 'border-danger-500 focus:border-danger-500 focus:ring-danger-100',
-            className
+            className,
           )}
           {...props}
         />
       </div>
       {error && (
-        <p className="mt-1 text-sm text-danger-500 flex items-center gap-1">
+        <p className={cn('mt-1 flex items-center gap-1', tokens.type.caption, tokens.text.danger)}>
           <Icon name="error" size={16} />
           {error}
         </p>

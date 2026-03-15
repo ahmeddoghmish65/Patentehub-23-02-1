@@ -14,37 +14,95 @@ interface Props {
   isLast: boolean;
   onAnswer: (ans: boolean) => void;
   onNext: (correct: boolean) => void;
+  /** When true, renders in larger, centred focus mode style */
+  focusMode?: boolean;
 }
 
-export function QuestionCard({ item, lang, showAnswer, userAnswer, trueLabel, falseLabel, isLast, onAnswer, onNext }: Props) {
+export function QuestionCard({
+  item, lang, showAnswer, userAnswer,
+  trueLabel, falseLabel, isLast,
+  onAnswer, onNext,
+  focusMode = false,
+}: Props) {
   const { t } = useTranslation();
+
+  const isCorrect = userAnswer === item.isTrue;
 
   return (
     <>
-      <div className="bg-white rounded-2xl border border-surface-100 overflow-hidden mb-4 p-6">
+      {/* Question card */}
+      <div className={cn(
+        'bg-white dark:bg-surface-100 rounded-2xl border border-surface-100 overflow-hidden mb-4',
+        focusMode ? 'p-8' : 'p-6',
+        'transition-colors duration-200',
+      )}>
         {item.image && (
-          <img src={item.image} alt="" className="w-full rounded-xl mb-4 max-h-40 object-contain bg-surface-50" />
+          <img
+            src={item.image}
+            alt=""
+            className={cn(
+              'w-full rounded-xl bg-surface-50 object-contain mb-4',
+              focusMode ? 'max-h-56' : 'max-h-40',
+            )}
+          />
         )}
-        {lang === 'ar' && <h2 className="text-base font-bold text-surface-900 mb-1" dir="rtl">{item.questionAr}</h2>}
-        {lang === 'it' && <h2 className="text-base font-bold text-surface-900 mb-1" dir="ltr">{item.questionIt}</h2>}
+
+        {/* Question text */}
+        {lang === 'ar' && (
+          <h2 className={cn(
+            'font-bold text-surface-900 mb-1',
+            focusMode ? 'text-2xl leading-relaxed' : 'text-base',
+          )} dir="rtl">
+            {item.questionAr}
+          </h2>
+        )}
+        {lang === 'it' && (
+          <h2 className={cn(
+            'font-bold text-surface-900 mb-1',
+            focusMode ? 'text-2xl leading-relaxed' : 'text-base',
+          )} dir="ltr">
+            {item.questionIt}
+          </h2>
+        )}
         {lang === 'both' && (
           <>
-            <h2 className="text-base font-bold text-surface-900 mb-1" dir="ltr">{item.questionIt}</h2>
-            <p className="text-base text-surface-500" dir="rtl">{item.questionAr}</p>
+            <h2 className={cn(
+              'font-bold text-surface-900 mb-1',
+              focusMode ? 'text-xl leading-relaxed' : 'text-base',
+            )} dir="ltr">
+              {item.questionIt}
+            </h2>
+            <p className={cn(
+              'text-surface-500',
+              focusMode ? 'text-lg' : 'text-base',
+            )} dir="rtl">
+              {item.questionAr}
+            </p>
           </>
         )}
       </div>
 
+      {/* Answer buttons */}
       {!showAnswer && (
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className={cn('grid grid-cols-2 gap-4 mb-4', focusMode && 'gap-6')}>
           <button
-            className="py-4 rounded-2xl border-2 border-surface-900 bg-teal-50 hover:bg-teal-100 text-surface-900 font-bold text-base transition-all"
+            className={cn(
+              'rounded-2xl border-2 border-surface-200 bg-teal-50 dark:bg-surface-100',
+              'hover:border-teal-400 hover:bg-teal-100',
+              'text-surface-900 font-bold transition-all duration-200',
+              focusMode ? 'py-7 text-xl' : 'py-4 text-base',
+            )}
             onClick={() => onAnswer(true)}
           >
             ✓ {trueLabel}
           </button>
           <button
-            className="py-4 rounded-2xl border-2 border-surface-900 bg-rose-50 hover:bg-rose-100 text-surface-900 font-bold text-base transition-all"
+            className={cn(
+              'rounded-2xl border-2 border-surface-200 bg-rose-50 dark:bg-surface-100',
+              'hover:border-rose-400 hover:bg-rose-100',
+              'text-surface-900 font-bold transition-all duration-200',
+              focusMode ? 'py-7 text-xl' : 'py-4 text-base',
+            )}
             onClick={() => onAnswer(false)}
           >
             ✗ {falseLabel}
@@ -52,27 +110,60 @@ export function QuestionCard({ item, lang, showAnswer, userAnswer, trueLabel, fa
         </div>
       )}
 
+      {/* Answer reveal + explanation */}
       {showAnswer && (
         <div className="space-y-3 mb-4">
-          <div className={cn('p-4 rounded-xl border', userAnswer === item.isTrue ? 'bg-success-50 border-success-200' : 'bg-danger-50 border-danger-200')}>
-            <p className="font-semibold text-sm flex items-center gap-2">
+          <div className={cn(
+            'rounded-xl border',
+            isCorrect ? 'bg-success-50 border-success-200' : 'bg-danger-50 border-danger-200',
+            focusMode ? 'p-6' : 'p-4',
+          )}>
+            {/* Correct / wrong indicator */}
+            <p className={cn(
+              'font-semibold flex items-center gap-2',
+              focusMode ? 'text-base mb-2' : 'text-sm',
+            )}>
               <Icon
-                name={userAnswer === item.isTrue ? 'check_circle' : 'cancel'}
-                size={18}
-                className={userAnswer === item.isTrue ? 'text-success-500' : 'text-danger-500'}
+                name={isCorrect ? 'check_circle' : 'cancel'}
+                size={focusMode ? 22 : 18}
+                className={isCorrect ? 'text-success-500' : 'text-danger-500'}
                 filled
               />
-              {userAnswer === item.isTrue ? t('training.correct_answer') : t('training.wrong_answer')}
+              {isCorrect ? t('training.correct_answer') : t('training.wrong_answer')}
             </p>
-            <p className="text-xs text-surface-600 mt-1">{t('training.correct_is')} {item.isTrue ? trueLabel : falseLabel}</p>
+
+            {/* Correct value */}
+            <p className={cn(
+              'text-surface-600 mt-1',
+              focusMode ? 'text-sm' : 'text-xs',
+            )}>
+              {t('training.correct_is')} {item.isTrue ? trueLabel : falseLabel}
+            </p>
+
+            {/* Explanation */}
             {(lang === 'ar' || lang === 'both') && item.explanationAr && (
-              <p className="text-xs text-surface-500 mt-2" dir="rtl">{item.explanationAr}</p>
+              <p className={cn(
+                'text-surface-500 mt-2 leading-relaxed',
+                focusMode ? 'text-sm' : 'text-xs',
+              )} dir="rtl">
+                {item.explanationAr}
+              </p>
             )}
             {(lang === 'it' || lang === 'both') && item.explanationIt && (
-              <p className="text-xs text-surface-500 mt-2" dir="ltr">{item.explanationIt}</p>
+              <p className={cn(
+                'text-surface-500 mt-2 leading-relaxed',
+                focusMode ? 'text-sm' : 'text-xs',
+              )} dir="ltr">
+                {item.explanationIt}
+              </p>
             )}
           </div>
-          <Button fullWidth onClick={() => onNext(userAnswer === item.isTrue)}>
+
+          <Button
+            fullWidth
+            size={focusMode ? 'lg' : 'md'}
+            onClick={() => onNext(isCorrect)}
+          >
             {isLast ? t('training.show_result') : t('training.next')}
             <Icon name="arrow_back" size={18} className="mr-1" />
           </Button>

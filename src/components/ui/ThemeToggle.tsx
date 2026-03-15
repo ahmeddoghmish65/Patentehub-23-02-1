@@ -4,6 +4,8 @@
  * Two variants:
  *   'compact' (default) — a single icon button that cycles through options.
  *   'full'              — a 3-segment control showing all options at once.
+ *
+ * Uses centralized config from @/config/theme for option metadata and cycle order.
  */
 
 import { memo } from 'react';
@@ -11,48 +13,31 @@ import { useTheme } from '@/providers/ThemeProvider';
 import type { Theme } from '@/providers/ThemeProvider';
 import { Icon } from '@/shared/ui/Icon';
 import { cn } from '@/shared/utils/cn';
+import { THEME_OPTIONS, THEME_CYCLE } from '@/config/theme';
 
 interface ThemeToggleProps {
   variant?: 'compact' | 'full';
   className?: string;
 }
 
-interface Option {
-  value: Theme;
-  icon: string;
-  label: string;
-}
-
-const OPTIONS: Option[] = [
-  { value: 'light',  icon: 'light_mode',      label: 'Light'  },
-  { value: 'system', icon: 'brightness_auto',  label: 'System' },
-  { value: 'dark',   icon: 'dark_mode',        label: 'Dark'   },
-];
-
-const CYCLE: Record<Theme, Theme> = {
-  light:  'dark',
-  dark:   'system',
-  system: 'light',
-};
-
 export const ThemeToggle = memo(function ThemeToggle({
   variant = 'compact',
   className,
 }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme();
-  const current = OPTIONS.find(o => o.value === theme) ?? OPTIONS[1];
+  const current = THEME_OPTIONS.find(o => o.id === theme) ?? THEME_OPTIONS[1];
 
   if (variant === 'compact') {
     return (
       <button
-        onClick={() => setTheme(CYCLE[theme])}
+        onClick={() => setTheme(THEME_CYCLE[theme as Theme])}
         className={cn(
-          'p-2 rounded-xl transition-colors',
+          'p-2 rounded-xl transition-colors duration-200',
           'text-surface-500 hover:text-surface-700 hover:bg-surface-100',
           className,
         )}
         aria-label={`Theme: ${theme}. Click to switch.`}
-        title={`Theme: ${theme}`}
+        title={current.description}
       >
         <Icon name={current.icon} size={20} />
       </button>
@@ -63,20 +48,20 @@ export const ThemeToggle = memo(function ThemeToggle({
   return (
     <div
       className={cn(
-        'flex items-center gap-0.5 p-1 rounded-xl',
-        'bg-surface-100',
+        'flex items-center gap-0.5 p-1 rounded-xl bg-surface-100',
         className,
       )}
       role="group"
       aria-label="Theme selector"
     >
-      {OPTIONS.map(opt => {
-        const active = theme === opt.value;
+      {THEME_OPTIONS.map(opt => {
+        const active = theme === opt.id;
         return (
           <button
-            key={opt.value}
-            onClick={() => setTheme(opt.value)}
+            key={opt.id}
+            onClick={() => setTheme(opt.id)}
             aria-pressed={active}
+            title={opt.description}
             className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200',
               active

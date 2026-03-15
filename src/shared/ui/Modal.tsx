@@ -2,6 +2,7 @@ import { memo, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import { cn } from '@/shared/utils/cn';
 import { Icon } from '@/shared/ui/Icon';
+import { componentTokens, tokens } from '@/theme/tokens';
 
 interface ModalProps {
   open:         boolean;
@@ -20,7 +21,7 @@ const SIZE_MAP = {
   md: 'max-w-md',
   lg: 'max-w-lg',
   xl: 'max-w-2xl',
-};
+} as const;
 
 export const Modal = memo(function Modal({
   open,
@@ -32,7 +33,6 @@ export const Modal = memo(function Modal({
   className,
   persistent = false,
 }: ModalProps) {
-  // Close on Escape key
   const handleKey = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape' && !persistent) onClose();
   }, [onClose, persistent]);
@@ -58,33 +58,30 @@ export const Modal = memo(function Modal({
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className={cn('absolute inset-0', tokens.bg.overlay)}
         onClick={persistent ? undefined : onClose}
         aria-hidden="true"
       />
 
       {/* Panel */}
-      <div
-        className={cn(
-          'relative w-full bg-white dark:bg-surface-100 rounded-2xl shadow-2xl',
-          'flex flex-col max-h-[90vh] overflow-hidden',
-          'transition-colors duration-200',
-          SIZE_MAP[size],
-          className,
-        )}
-      >
+      <div className={cn(componentTokens.modal, SIZE_MAP[size], className)}>
         {/* Header */}
         {(title || !persistent) && (
           <div className="flex items-center justify-between px-6 pt-5 pb-0 shrink-0">
             {title && (
-              <h2 id="modal-title" className="text-lg font-bold text-surface-900">
+              <h2 id="modal-title" className={cn(tokens.type.h3, tokens.text.primary)}>
                 {title}
               </h2>
             )}
             {!persistent && (
               <button
                 onClick={onClose}
-                className="ms-auto p-1.5 rounded-lg text-surface-400 hover:text-surface-600 hover:bg-surface-100 transition-colors"
+                className={cn(
+                  'ms-auto p-1.5 rounded-lg',
+                  tokens.text.placeholder,
+                  'hover:text-surface-600 hover:bg-surface-100',
+                  tokens.transition.colors,
+                )}
                 aria-label="Close"
               >
                 <Icon name="close" size={20} />
@@ -100,7 +97,7 @@ export const Modal = memo(function Modal({
 
         {/* Footer */}
         {footer && (
-          <div className="px-6 pb-5 pt-0 shrink-0 border-t border-surface-100">
+          <div className={cn('px-6 pb-5 pt-0 shrink-0 border-t', tokens.border.default)}>
             <div className="pt-4">{footer}</div>
           </div>
         )}

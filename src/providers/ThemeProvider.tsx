@@ -20,6 +20,7 @@ import {
   useState,
 } from 'react';
 import type { ReactNode } from 'react';
+import { THEME_STORAGE_KEY } from '@/config/theme';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -36,8 +37,6 @@ interface ThemeContextValue {
 
 // ─── Internals ────────────────────────────────────────────────────────────────
 
-const STORAGE_KEY = 'ph_theme';
-
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 function getSystemTheme(): 'light' | 'dark' {
@@ -48,7 +47,7 @@ function getSystemTheme(): 'light' | 'dark' {
 
 function getStoredTheme(): Theme {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(THEME_STORAGE_KEY);
     if (stored === 'light' || stored === 'dark' || stored === 'system') {
       return stored;
     }
@@ -95,7 +94,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   // Listen for external writes to localStorage (e.g., auth store on login)
   useEffect(() => {
     const handler = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY && e.newValue) {
+      if (e.key === THEME_STORAGE_KEY && e.newValue) {
         const v = e.newValue;
         if (v === 'light' || v === 'dark' || v === 'system') {
           setThemeState(v);
@@ -121,7 +120,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
     try {
-      localStorage.setItem(STORAGE_KEY, newTheme);
+      localStorage.setItem(THEME_STORAGE_KEY, newTheme);
     } catch {
       // ignore
     }

@@ -9,7 +9,8 @@
 
 export type Theme = 'light' | 'dark' | 'system';
 
-const STORAGE_KEY = 'ph_theme';
+// Re-use the same key as config/theme.ts to stay in sync
+const STORAGE_KEY = 'ph_theme'; // must match THEME_STORAGE_KEY in @/config/theme
 
 export function applyTheme(theme: Theme): void {
   const root = document.documentElement;

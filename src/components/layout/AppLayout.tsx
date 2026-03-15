@@ -12,11 +12,13 @@ import { getConsentLevel, type ConsentLevel } from '@/shared/utils/cookieManager
 import { initAnalytics } from '@/infrastructure/analytics';
 import { ROUTES } from '@/shared/constants';
 import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
+import { useFocusMode } from '@/features/focus-mode';
 
 export function AppLayout() {
   const { user } = useAuthStore();
   const hideBottomNav = useUIStore(s => s.hideBottomNav);
-  const { dir, t } = useTranslation();
+  const { isActive: focusActive, exit: exitFocus } = useFocusMode();
+  const { dir } = useTranslation();
   const { pathname } = useLocation();
   const { lang } = useParams<{ lang?: string }>();
   const { navigate } = useLocaleNavigate();
@@ -69,6 +71,43 @@ export function AppLayout() {
     );
   }
 
+  // ─── Focus Mode Layout ─────────────────────────────────────────────────────
+  // When focus mode is active: full-screen, no sidebar/bottom-nav, centred
+  if (focusActive) {
+    return (
+      <div className="min-h-screen bg-surface-50 transition-colors duration-200">
+        {/* Minimal focus mode header */}
+        <header className="fixed top-0 inset-x-0 z-40 flex items-center justify-between px-4 py-3 bg-surface-50/90 backdrop-blur-sm border-b border-surface-100 transition-colors duration-200">
+          {/* Logo text */}
+          <div className="flex items-center gap-2" dir="ltr">
+            <div className="w-7 h-7 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center">
+              <Icon name="directions_car" size={16} className="text-white" filled />
+            </div>
+            <span className="text-sm font-bold text-primary-500">Patente Hub</span>
+          </div>
+
+          {/* Exit focus mode button */}
+          <button
+            onClick={exitFocus}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-surface-500 hover:text-surface-700 hover:bg-surface-100 transition-colors"
+            aria-label="Exit focus mode"
+          >
+            <Icon name="fullscreen_exit" size={16} />
+            <span className="hidden sm:inline">Exit Focus</span>
+          </button>
+        </header>
+
+        {/* Centred study area */}
+        <main className="pt-16 pb-8 min-h-screen">
+          <div className="max-w-2xl mx-auto px-4 py-6">
+            <Outlet />
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // ─── Normal Layout ─────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-surface-50">
       <Sidebar />
@@ -88,7 +127,7 @@ function ProfileGate({ onNavigate }: { onNavigate: (path: string) => void }) {
   const { t } = useTranslation();
   return (
     <div className="max-w-md mx-auto text-center py-12">
-      <div className="bg-white rounded-2xl p-8 border border-warning-200 shadow-lg">
+      <div className="bg-white dark:bg-surface-100 rounded-2xl p-8 border border-warning-200 shadow-lg transition-colors duration-200">
         <div className="w-20 h-20 mx-auto bg-warning-50 rounded-2xl flex items-center justify-center mb-6">
           <Icon name="person_add" size={40} className="text-warning-500" filled />
         </div>

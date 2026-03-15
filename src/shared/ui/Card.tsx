@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import type { ReactNode } from 'react';
 import { cn } from '@/shared/utils/cn';
+import { componentTokens, tokens } from '@/theme/tokens';
 
 interface CardProps {
   children:    ReactNode;
@@ -21,14 +22,13 @@ export const Card = memo(function Card({
   hoverable  = false,
 }: CardProps) {
   const Tag = onClick ? 'button' : 'div';
+  const base = hoverable ? componentTokens.cardHoverable : componentTokens.card;
 
   return (
     <Tag
       className={cn(
-        'bg-white dark:bg-surface-100 rounded-2xl border border-surface-100',
-        'transition-colors duration-200',
-        !noPadding && 'p-4',
-        hoverable && 'hover:shadow-md hover:border-primary-100 dark:hover:border-primary-800 transition-all duration-200',
+        base,
+        !noPadding && tokens.spacing.card,
         onClick && 'w-full text-start cursor-pointer',
         className,
       )}

@@ -2,20 +2,21 @@ import { memo, useState, useRef, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import { cn } from '@/shared/utils/cn';
 import { Icon } from '@/shared/ui/Icon';
+import { componentTokens } from '@/theme/tokens';
 
 export interface DropdownItem {
-  label:    string;
-  value:    string;
-  icon?:    string;
-  danger?:  boolean;
+  label:     string;
+  value:     string;
+  icon?:     string;
+  danger?:   boolean;
   disabled?: boolean;
 }
 
 interface DropdownProps {
-  trigger:   ReactNode;
-  items:     DropdownItem[];
-  onSelect:  (value: string) => void;
-  align?:    'start' | 'end';
+  trigger:    ReactNode;
+  items:      DropdownItem[];
+  onSelect:   (value: string) => void;
+  align?:     'start' | 'end';
   className?: string;
 }
 
@@ -28,7 +29,6 @@ export const Dropdown = memo(function Dropdown({
 }: DropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-
   const close = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
@@ -47,10 +47,7 @@ export const Dropdown = memo(function Dropdown({
       {open && (
         <div
           className={cn(
-            'absolute z-40 mt-1 min-w-[10rem]',
-            'bg-white dark:bg-surface-100 rounded-xl shadow-lg',
-            'border border-surface-100 py-1 overflow-hidden',
-            'transition-colors duration-200',
+            componentTokens.dropdown,
             align === 'end' ? 'end-0' : 'start-0',
           )}
         >
