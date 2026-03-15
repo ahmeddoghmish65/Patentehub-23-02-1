@@ -137,12 +137,12 @@ export function QuizPatenteBPage() {
       </section>
 
       {/* ── What is quiz patente ─────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-white" aria-labelledby="cos-e-quiz">
+      <section className="py-16 px-4 bg-white dark:bg-gray-900" aria-labelledby="cos-e-quiz">
         <div className="max-w-4xl mx-auto">
-          <h2 id="cos-e-quiz" className="text-3xl font-bold text-gray-900 mb-6 text-center">
+          <h2 id="cos-e-quiz" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
             Cos'è il Quiz Patente B?
           </h2>
-          <div className="prose prose-lg max-w-none text-gray-600 leading-relaxed">
+          <div className="prose prose-lg max-w-none text-gray-600 dark:text-gray-400 leading-relaxed">
             <p>
               Il <strong>quiz patente B</strong> è uno strumento di preparazione all'esame teorico della patente di guida
               di categoria B (auto). Su Patente Hub, le domande sono tratte dall'archivio ufficiale del
@@ -162,23 +162,23 @@ export function QuizPatenteBPage() {
       </section>
 
       {/* ── Topics grid ─────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-gray-50" aria-labelledby="argomenti-quiz">
+      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800" aria-labelledby="argomenti-quiz">
         <div className="max-w-5xl mx-auto">
-          <h2 id="argomenti-quiz" className="text-3xl font-bold text-gray-900 mb-4 text-center">
+          <h2 id="argomenti-quiz" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 text-center">
             Argomenti del Quiz Patente B
           </h2>
-          <p className="text-center text-gray-500 mb-10">
+          <p className="text-center text-gray-500 dark:text-gray-400 mb-10">
             Le domande coprono tutti gli argomenti dell'esame teorico ufficiale
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {TOPICS.map((topic) => (
               <article
                 key={topic.title}
-                className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+                className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="text-3xl mb-3" aria-hidden="true">{topic.icon}</div>
-                <h3 className="font-bold text-gray-900 mb-2">{topic.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{topic.desc}</p>
+                <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">{topic.title}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{topic.desc}</p>
               </article>
             ))}
           </div>
@@ -186,9 +186,9 @@ export function QuizPatenteBPage() {
       </section>
 
       {/* ── How it works ────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-white" aria-labelledby="come-funziona">
+      <section className="py-16 px-4 bg-white dark:bg-gray-900" aria-labelledby="come-funziona">
         <div className="max-w-4xl mx-auto">
-          <h2 id="come-funziona" className="text-3xl font-bold text-gray-900 mb-10 text-center">
+          <h2 id="come-funziona" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-10 text-center">
             Come Funziona il Quiz su Patente Hub
           </h2>
           <ol className="space-y-6">
@@ -224,8 +224,8 @@ export function QuizPatenteBPage() {
                   {step}
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 mb-1">{title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{desc}</p>
+                  <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-1">{title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{desc}</p>
                 </div>
               </li>
             ))}
@@ -234,19 +234,19 @@ export function QuizPatenteBPage() {
       </section>
 
       {/* ── FAQ ─────────────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-gray-50" aria-labelledby="faq-quiz">
+      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800" aria-labelledby="faq-quiz">
         <div className="max-w-3xl mx-auto">
-          <h2 id="faq-quiz" className="text-3xl font-bold text-gray-900 mb-10 text-center">
+          <h2 id="faq-quiz" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-10 text-center">
             Domande Frequenti sul Quiz Patente B
           </h2>
           <div className="space-y-3">
             {FAQ_ITEMS.map((item, i) => (
               <div
                 key={i}
-                className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm"
+                className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm"
               >
                 <button
-                  className="w-full text-left px-6 py-5 flex items-center justify-between gap-4 font-semibold text-gray-900 hover:text-indigo-600 transition-colors"
+                  className="w-full text-left px-6 py-5 flex items-center justify-between gap-4 font-semibold text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   aria-expanded={openFaq === i}
                 >
@@ -254,7 +254,7 @@ export function QuizPatenteBPage() {
                   <span className="text-xl flex-shrink-0 transition-transform duration-200" style={{ transform: openFaq === i ? 'rotate(45deg)' : 'none' }}>+</span>
                 </button>
                 {openFaq === i && (
-                  <div className="px-6 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-50">
+                  <div className="px-6 pb-5 text-gray-600 dark:text-gray-400 text-sm leading-relaxed border-t border-gray-100 dark:border-gray-700">
                     <p className="pt-4">{item.a}</p>
                   </div>
                 )}
@@ -290,9 +290,9 @@ export function QuizPatenteBPage() {
       </section>
 
       {/* ── Internal links ───────────────────────────────────────────────── */}
-      <section className="py-12 px-4 bg-white" aria-labelledby="link-correlati">
+      <section className="py-12 px-4 bg-white dark:bg-gray-900" aria-labelledby="link-correlati">
         <div className="max-w-4xl mx-auto">
-          <h2 id="link-correlati" className="text-xl font-bold text-gray-900 mb-6">
+          <h2 id="link-correlati" className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">
             Risorse Correlate per la Patente B
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -305,7 +305,7 @@ export function QuizPatenteBPage() {
               <Link
                 key={to}
                 to={to}
-                className="flex items-center gap-2 p-4 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 transition-all"
+                className="flex items-center gap-2 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all"
               >
                 {label}
               </Link>

@@ -11,9 +11,9 @@ interface SeoLayoutProps {
 
 export function SeoLayout({ children }: SeoLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900">
       {/* ── Header ──────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100 shadow-sm">
+      <header className="sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur border-b border-gray-100 dark:border-gray-700 shadow-sm">
         <nav
           className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between"
           aria-label="Navigazione principale"
@@ -27,7 +27,7 @@ export function SeoLayout({ children }: SeoLayoutProps) {
             <span>Patente Hub</span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
+          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600 dark:text-gray-300">
             <Link to="/it/quiz-patente-b" className="hover:text-indigo-600 transition-colors">Quiz Patente B</Link>
             <Link to="/it/simulatore-esame-patente" className="hover:text-indigo-600 transition-colors">Simulatore</Link>
             <Link to="/it/segnali-stradali-italia" className="hover:text-indigo-600 transition-colors">Segnali</Link>
@@ -37,7 +37,7 @@ export function SeoLayout({ children }: SeoLayoutProps) {
           <div className="flex items-center gap-3">
             <Link
               to="/it/login"
-              className="text-sm font-medium text-gray-600 hover:text-indigo-600 transition-colors"
+              className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-indigo-600 transition-colors"
             >
               Accedi
             </Link>

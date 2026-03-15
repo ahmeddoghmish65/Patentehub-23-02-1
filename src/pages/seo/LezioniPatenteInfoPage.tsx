@@ -186,27 +186,27 @@ export function LezioniPatenteInfoPage() {
       </section>
 
       {/* ── Lesson topics ─────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-white" aria-labelledby="argomenti-lezioni">
+      <section className="py-16 px-4 bg-white dark:bg-gray-900" aria-labelledby="argomenti-lezioni">
         <div className="max-w-5xl mx-auto">
-          <h2 id="argomenti-lezioni" className="text-3xl font-bold text-gray-900 mb-4 text-center">
+          <h2 id="argomenti-lezioni" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 text-center">
             Argomenti delle Lezioni Patente B
           </h2>
-          <p className="text-center text-gray-500 mb-10">
+          <p className="text-center text-gray-500 dark:text-gray-400 mb-10">
             Ogni modulo copre un aspetto fondamentale del Codice della Strada
           </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {LESSON_TOPICS.map((topic) => (
               <article
                 key={topic.number}
-                className="bg-gray-50 rounded-2xl p-5 border border-gray-100 hover:border-violet-200 hover:bg-violet-50 transition-all group"
+                className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-5 border border-gray-100 dark:border-gray-700 hover:border-violet-200 dark:hover:border-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-all group"
               >
                 <div className="flex items-start gap-3">
-                  <span className="text-xs font-bold text-violet-400 bg-violet-100 rounded-lg px-2 py-1 flex-shrink-0 group-hover:bg-violet-200 transition-colors">
+                  <span className="text-xs font-bold text-violet-400 bg-violet-100 dark:bg-violet-900/40 rounded-lg px-2 py-1 flex-shrink-0 group-hover:bg-violet-200 dark:group-hover:bg-violet-900/60 transition-colors">
                     {topic.number}
                   </span>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-1 text-sm">{topic.title}</h3>
-                    <p className="text-xs text-gray-500 leading-relaxed">{topic.desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-1 text-sm">{topic.title}</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{topic.desc}</p>
                   </div>
                 </div>
               </article>
@@ -216,20 +216,20 @@ export function LezioniPatenteInfoPage() {
       </section>
 
       {/* ── Why Patente Hub ───────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-gray-50" aria-labelledby="perche-patente-hub">
+      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800" aria-labelledby="perche-patente-hub">
         <div className="max-w-5xl mx-auto">
-          <h2 id="perche-patente-hub" className="text-3xl font-bold text-gray-900 mb-4 text-center">
+          <h2 id="perche-patente-hub" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 text-center">
             Perché Studiare la Patente su Patente Hub?
           </h2>
-          <p className="text-center text-gray-500 mb-10">
+          <p className="text-center text-gray-500 dark:text-gray-400 mb-10">
             La piattaforma gratuita più completa per prepararsi all'esame teorico della patente B
           </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {FEATURES.map((feat) => (
-              <article key={feat.title} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+              <article key={feat.title} className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm">
                 <div className="text-3xl mb-3" aria-hidden="true">{feat.icon}</div>
-                <h3 className="font-bold text-gray-900 mb-2">{feat.title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{feat.desc}</p>
+                <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">{feat.title}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{feat.desc}</p>
               </article>
             ))}
           </div>
@@ -237,12 +237,12 @@ export function LezioniPatenteInfoPage() {
       </section>
 
       {/* ── Study plan ───────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-white" aria-labelledby="piano-studio">
+      <section className="py-16 px-4 bg-white dark:bg-gray-900" aria-labelledby="piano-studio">
         <div className="max-w-4xl mx-auto">
-          <h2 id="piano-studio" className="text-3xl font-bold text-gray-900 mb-4 text-center">
+          <h2 id="piano-studio" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 text-center">
             Piano di Studio Consigliato per la Patente B
           </h2>
-          <p className="text-center text-gray-500 mb-10">
+          <p className="text-center text-gray-500 dark:text-gray-400 mb-10">
             Un programma di 4 settimane per arrivare all'esame preparato
           </p>
           <div className="grid md:grid-cols-2 gap-6">
@@ -296,7 +296,7 @@ export function LezioniPatenteInfoPage() {
                 <h3 className={`font-bold text-lg mb-4 ${titleColor}`}>{week}</h3>
                 <ul className="space-y-2">
                   {tasks.map((task) => (
-                    <li key={task} className="flex items-start gap-2 text-sm text-gray-700">
+                    <li key={task} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
                       <span className="text-green-500 flex-shrink-0 mt-0.5">✓</span>
                       {task}
                     </li>
@@ -327,9 +327,9 @@ export function LezioniPatenteInfoPage() {
       </section>
 
       {/* ── Internal links ───────────────────────────────────────────────── */}
-      <section className="py-12 px-4 bg-white">
+      <section className="py-12 px-4 bg-white dark:bg-gray-900">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Strumenti Complementari per la Patente B</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">Strumenti Complementari per la Patente B</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { to: '/it/quiz-patente-b', label: '📝 Quiz Patente B' },
@@ -340,7 +340,7 @@ export function LezioniPatenteInfoPage() {
               <Link
                 key={to}
                 to={to}
-                className="flex items-center gap-2 p-4 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50 transition-all"
+                className="flex items-center gap-2 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-all"
               >
                 {label}
               </Link>

@@ -183,12 +183,12 @@ export function ErroriComuniPage() {
       </section>
 
       {/* ── Intro ────────────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-white" aria-labelledby="intro-errori">
+      <section className="py-16 px-4 bg-white dark:bg-gray-900" aria-labelledby="intro-errori">
         <div className="max-w-4xl mx-auto">
-          <h2 id="intro-errori" className="text-3xl font-bold text-gray-900 mb-6 text-center">
+          <h2 id="intro-errori" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
             Perché Conoscere gli Errori Comuni Prima dell'Esame
           </h2>
-          <div className="prose prose-lg max-w-none text-gray-600 leading-relaxed">
+          <div className="prose prose-lg max-w-none text-gray-600 dark:text-gray-400 leading-relaxed">
             <p>
               Ogni anno in Italia migliaia di candidati <strong>non superano l'esame teorico della patente B</strong>
               non per mancanza di studio, ma per errori evitabili. Molti sbagliano le stesse domande,
@@ -208,16 +208,16 @@ export function ErroriComuniPage() {
       </section>
 
       {/* ── Errors list ──────────────────────────────────────────────────── */}
-      <section className="py-8 px-4 bg-gray-50" aria-labelledby="lista-errori">
+      <section className="py-8 px-4 bg-gray-50 dark:bg-gray-800" aria-labelledby="lista-errori">
         <div className="max-w-4xl mx-auto">
-          <h2 id="lista-errori" className="text-3xl font-bold text-gray-900 mb-10 text-center">
+          <h2 id="lista-errori" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-10 text-center">
             I 8 Errori Più Comuni nell'Esame Patente B
           </h2>
           <div className="space-y-6">
             {COMMON_ERRORS.map((err) => (
               <article
                 key={err.rank}
-                className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm"
+                className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm"
               >
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-10 h-10 rounded-full bg-orange-600 text-white font-extrabold flex items-center justify-center text-lg">
@@ -225,13 +225,13 @@ export function ErroriComuniPage() {
                   </div>
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <h3 className="font-bold text-gray-900 text-base">{err.title}</h3>
+                      <h3 className="font-bold text-gray-900 dark:text-gray-100 text-base">{err.title}</h3>
                       <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${err.categoryColor}`}>
                         {err.category}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 leading-relaxed mb-3">{err.desc}</p>
-                    <div className="flex items-start gap-2 bg-amber-50 rounded-xl p-3 border border-amber-100">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">{err.desc}</p>
+                    <div className="flex items-start gap-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl p-3 border border-amber-100 dark:border-amber-800">
                       <span className="text-amber-600 flex-shrink-0 text-lg" aria-hidden="true">💡</span>
                       <p className="text-sm text-amber-800 font-medium leading-relaxed">{err.tip}</p>
                     </div>
@@ -244,12 +244,12 @@ export function ErroriComuniPage() {
       </section>
 
       {/* ── Checklist before exam ─────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-white" aria-labelledby="checklist-esame">
+      <section className="py-16 px-4 bg-white dark:bg-gray-900" aria-labelledby="checklist-esame">
         <div className="max-w-4xl mx-auto">
-          <h2 id="checklist-esame" className="text-3xl font-bold text-gray-900 mb-4 text-center">
+          <h2 id="checklist-esame" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 text-center">
             Checklist Prima dell'Esame Patente B
           </h2>
-          <p className="text-center text-gray-500 mb-10">
+          <p className="text-center text-gray-500 dark:text-gray-400 mb-10">
             Controlla di aver studiato tutti questi punti prima di presentarti all'esame
           </p>
           <div className="grid md:grid-cols-2 gap-4">
@@ -267,10 +267,10 @@ export function ErroriComuniPage() {
             ].map((item) => (
               <div
                 key={item}
-                className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100"
+                className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700"
               >
-                <div className="w-5 h-5 rounded border-2 border-gray-300 flex-shrink-0 mt-0.5" aria-hidden="true" />
-                <span className="text-sm text-gray-700">{item}</span>
+                <div className="w-5 h-5 rounded border-2 border-gray-300 dark:border-gray-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                <span className="text-sm text-gray-700 dark:text-gray-300">{item}</span>
               </div>
             ))}
           </div>
@@ -278,16 +278,16 @@ export function ErroriComuniPage() {
       </section>
 
       {/* ── FAQ ─────────────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-gray-50" aria-labelledby="faq-errori">
+      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800" aria-labelledby="faq-errori">
         <div className="max-w-3xl mx-auto">
-          <h2 id="faq-errori" className="text-3xl font-bold text-gray-900 mb-10 text-center">
+          <h2 id="faq-errori" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-10 text-center">
             Domande Frequenti sull'Esame Patente B
           </h2>
           <div className="space-y-3">
             {FAQ_ITEMS.map((item, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+              <div key={i} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm">
                 <button
-                  className="w-full text-left px-6 py-5 flex items-center justify-between gap-4 font-semibold text-gray-900 hover:text-orange-600 transition-colors"
+                  className="w-full text-left px-6 py-5 flex items-center justify-between gap-4 font-semibold text-gray-900 dark:text-gray-100 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   aria-expanded={openFaq === i}
                 >
@@ -295,7 +295,7 @@ export function ErroriComuniPage() {
                   <span className="text-xl flex-shrink-0" style={{ display: 'inline-block', transform: openFaq === i ? 'rotate(45deg)' : 'none', transition: 'transform 0.2s' }}>+</span>
                 </button>
                 {openFaq === i && (
-                  <div className="px-6 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-50">
+                  <div className="px-6 pb-5 text-gray-600 dark:text-gray-400 text-sm leading-relaxed border-t border-gray-100 dark:border-gray-700">
                     <p className="pt-4">{item.a}</p>
                   </div>
                 )}
@@ -324,9 +324,9 @@ export function ErroriComuniPage() {
       </section>
 
       {/* ── Internal links ───────────────────────────────────────────────── */}
-      <section className="py-12 px-4 bg-white">
+      <section className="py-12 px-4 bg-white dark:bg-gray-900">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Completa la tua Preparazione alla Patente B</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">Completa la tua Preparazione alla Patente B</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { to: '/it/quiz-patente-b', label: '📚 Quiz Patente B' },
@@ -337,7 +337,7 @@ export function ErroriComuniPage() {
               <Link
                 key={to}
                 to={to}
-                className="flex items-center gap-2 p-4 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-orange-300 hover:text-orange-600 hover:bg-orange-50 transition-all"
+                className="flex items-center gap-2 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-orange-300 hover:text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all"
               >
                 {label}
               </Link>

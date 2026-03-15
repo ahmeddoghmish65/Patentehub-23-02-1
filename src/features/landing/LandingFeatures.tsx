@@ -10,7 +10,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
   const { t, uiLang } = useTranslation();
 
   return (
-    <section id="features" className="py-24 bg-gradient-to-b from-white to-surface-50" data-animate>
+    <section id="features" className="py-24 bg-gradient-to-b from-white dark:from-gray-900 to-surface-50 dark:to-gray-800" data-animate>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
@@ -29,7 +29,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
         )}>
 
           {/* F1: Bilingual — large (2 col × 2 row) */}
-          <div className="col-span-2 lg:row-span-2 rounded-3xl bg-gradient-to-br from-blue-50 via-primary-50/60 to-indigo-50 border border-blue-100 p-6 sm:p-7 flex flex-col justify-between shadow-sm hover:shadow-2xl hover:shadow-blue-100/60 transition-all duration-500"
+          <div className="col-span-2 lg:row-span-2 rounded-3xl bg-gradient-to-br from-blue-50 dark:from-blue-950/40 via-primary-50/60 dark:via-primary-950/30 to-indigo-50 dark:to-indigo-950/40 border border-blue-100 dark:border-blue-900/50 p-6 sm:p-7 flex flex-col justify-between shadow-sm hover:shadow-2xl hover:shadow-blue-100/60 transition-all duration-500"
             style={{ transitionDelay: '0ms' }}>
             <div>
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/25 mb-4">
@@ -39,7 +39,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
               <p className="text-surface-500 text-sm leading-relaxed max-w-xs">{t('landing.f1_desc')}</p>
             </div>
             <div className="flex items-center gap-3 mt-5">
-              <div className="flex-1 bg-white rounded-2xl p-3.5 border border-blue-100 shadow-sm">
+              <div className="flex-1 bg-white dark:bg-gray-800 rounded-2xl p-3.5 border border-blue-100 dark:border-blue-900/50 shadow-sm">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[10px] font-bold text-surface-400 uppercase tracking-wider">العربية</span>
                   <div className="w-7 h-7 bg-blue-500 rounded-xl flex items-center justify-center">
@@ -55,7 +55,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
               <div className="w-8 h-8 bg-white border border-surface-200 rounded-full flex items-center justify-center shadow-sm shrink-0">
                 <Icon name="swap_horiz" size={15} className="text-surface-400" />
               </div>
-              <div className="flex-1 bg-white rounded-2xl p-3.5 border border-blue-100 shadow-sm">
+              <div className="flex-1 bg-white dark:bg-gray-800 rounded-2xl p-3.5 border border-blue-100 dark:border-blue-900/50 shadow-sm">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[10px] font-bold text-surface-400 uppercase tracking-wider">Italiano</span>
                   <div className="w-7 h-7 bg-surface-100 rounded-xl flex items-center justify-center">
@@ -72,7 +72,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
           </div>
 
           {/* F2: Quiz */}
-          <div className="col-span-1 rounded-3xl bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-100 p-5 flex flex-col shadow-sm hover:shadow-2xl hover:shadow-violet-100/60 transition-all duration-500"
+          <div className="col-span-1 rounded-3xl bg-gradient-to-br from-violet-50 dark:from-violet-950/40 to-purple-50 dark:to-purple-950/40 border border-violet-100 dark:border-violet-900/50 p-5 flex flex-col shadow-sm hover:shadow-2xl hover:shadow-violet-100/60 transition-all duration-500"
             style={{ transitionDelay: '60ms' }}>
             <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-violet-600 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/25 mb-4 shrink-0">
               <Icon name="quiz" size={20} className="text-white" filled />
@@ -80,11 +80,11 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
             <h3 className="text-sm font-bold text-surface-900 mb-1">{t('landing.f2_title')}</h3>
             <p className="text-[11px] text-surface-400 leading-snug">{t('landing.f2_desc')}</p>
             <div className="mt-auto flex gap-2 pt-4">
-              <div className="flex-1 bg-white rounded-2xl p-3 border border-violet-100 shadow-sm text-center">
+              <div className="flex-1 bg-white dark:bg-gray-800 rounded-2xl p-3 border border-violet-100 dark:border-violet-900/50 shadow-sm text-center">
                 <p className="text-xl font-black text-violet-600">92%</p>
                 <p className="text-[10px] text-surface-400 leading-tight mt-0.5">{t('landing.stat2_label')}</p>
               </div>
-              <div className="flex-1 bg-white rounded-2xl p-3 border border-violet-100 shadow-sm text-center">
+              <div className="flex-1 bg-white dark:bg-gray-800 rounded-2xl p-3 border border-violet-100 dark:border-violet-900/50 shadow-sm text-center">
                 <p className="text-xl font-black text-surface-800">+10K</p>
                 <p className="text-[10px] text-surface-400 leading-tight mt-0.5">{t('landing.stat3_label')}</p>
               </div>
@@ -92,7 +92,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
           </div>
 
           {/* F3: Lessons */}
-          <div className="col-span-1 rounded-3xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100/70 p-5 flex flex-col shadow-sm hover:shadow-2xl hover:shadow-emerald-100/50 transition-all duration-500"
+          <div className="col-span-1 rounded-3xl bg-gradient-to-br from-emerald-50 dark:from-emerald-950/40 to-teal-50 dark:to-teal-950/40 border border-emerald-100/70 dark:border-emerald-900/40 p-5 flex flex-col shadow-sm hover:shadow-2xl hover:shadow-emerald-100/50 transition-all duration-500"
             style={{ transitionDelay: '120ms' }}>
             <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-400/20 mb-4 shrink-0">
               <Icon name="school" size={20} className="text-white" filled />
@@ -119,7 +119,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
           </div>
 
           {/* F4: Traffic Signs */}
-          <div className="col-span-1 rounded-3xl bg-gradient-to-br from-red-50 to-rose-50 border border-red-100/60 p-5 flex flex-col shadow-sm hover:shadow-2xl hover:shadow-red-100/40 transition-all duration-500"
+          <div className="col-span-1 rounded-3xl bg-gradient-to-br from-red-50 dark:from-red-950/40 to-rose-50 dark:to-rose-950/40 border border-red-100/60 dark:border-red-900/40 p-5 flex flex-col shadow-sm hover:shadow-2xl hover:shadow-red-100/40 transition-all duration-500"
             style={{ transitionDelay: '180ms' }}>
             <div className="w-10 h-10 bg-gradient-to-br from-red-400 to-rose-500 rounded-2xl flex items-center justify-center shadow-lg shadow-red-400/20 mb-4 shrink-0">
               <Icon name="traffic" size={20} className="text-white" filled />
@@ -143,7 +143,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
           </div>
 
           {/* F5: Dictionary */}
-          <div className="col-span-1 rounded-3xl bg-gradient-to-br from-yellow-50 to-amber-50/80 border border-yellow-100/70 p-5 flex flex-col shadow-sm hover:shadow-2xl hover:shadow-yellow-100/50 transition-all duration-500"
+          <div className="col-span-1 rounded-3xl bg-gradient-to-br from-yellow-50 dark:from-yellow-950/40 to-amber-50/80 dark:to-amber-950/30 border border-yellow-100/70 dark:border-yellow-900/40 p-5 flex flex-col shadow-sm hover:shadow-2xl hover:shadow-yellow-100/50 transition-all duration-500"
             style={{ transitionDelay: '240ms' }}>
             <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-2xl flex items-center justify-center shadow-lg shadow-yellow-400/20 mb-4 shrink-0">
               <Icon name="menu_book" size={20} className="text-white" filled />
@@ -151,11 +151,11 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
             <h3 className="text-sm font-bold text-surface-900 mb-1">{t('landing.f5_title')}</h3>
             <p className="text-[11px] text-surface-400 leading-snug mb-3">{t('landing.f5_desc')}</p>
             <div className="mt-auto space-y-2">
-              <div className="bg-white rounded-2xl p-3 border border-yellow-100/80 shadow-sm">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-3 border border-yellow-100/80 dark:border-yellow-900/40 shadow-sm">
                 <p className="text-xs font-black text-surface-800" dir="ltr">Precedenza</p>
                 <p className="text-xs text-surface-500 mt-0.5">الأولوية في المرور</p>
               </div>
-              <div className="bg-white rounded-2xl p-3 border border-yellow-100/80 shadow-sm opacity-55">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-3 border border-yellow-100/80 dark:border-yellow-900/40 shadow-sm opacity-55">
                 <p className="text-xs font-black text-surface-800" dir="ltr">Segnaletica</p>
                 <p className="text-xs text-surface-500 mt-0.5">إشارات الطريق</p>
               </div>
@@ -163,7 +163,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
           </div>
 
           {/* F6: Community */}
-          <div className="col-span-1 lg:row-start-3 rounded-3xl bg-gradient-to-br from-cyan-50 to-sky-50 border border-cyan-100 p-5 flex flex-col shadow-sm hover:shadow-2xl hover:shadow-cyan-100/60 transition-all duration-500"
+          <div className="col-span-1 lg:row-start-3 rounded-3xl bg-gradient-to-br from-cyan-50 dark:from-cyan-950/40 to-sky-50 dark:to-sky-950/40 border border-cyan-100 dark:border-cyan-900/50 p-5 flex flex-col shadow-sm hover:shadow-2xl hover:shadow-cyan-100/60 transition-all duration-500"
             style={{ transitionDelay: '300ms' }}>
             <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/25 mb-4 shrink-0">
               <Icon name="forum" size={20} className="text-white" filled />
@@ -177,7 +177,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
                 ))}
                 <span className="text-xs text-surface-500 ms-2 font-semibold">+5K</span>
               </div>
-              <div className="bg-white rounded-xl p-2.5 border border-cyan-100 shadow-sm">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-2.5 border border-cyan-100 dark:border-cyan-900/50 shadow-sm">
                 <div className="flex justify-between text-[10px] text-surface-400 mb-1.5">
                   <span>{uiLang === 'ar' ? 'نسبة النشاط' : 'Attività'}</span>
                   <span>80%</span>
@@ -190,7 +190,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
           </div>
 
           {/* F8: Practice Mode */}
-          <div className="col-span-1 lg:col-start-4 lg:row-start-3 rounded-3xl bg-gradient-to-br from-orange-50 to-rose-50/60 border border-orange-100/60 p-5 flex flex-col shadow-sm hover:shadow-2xl hover:shadow-orange-100/40 transition-all duration-500"
+          <div className="col-span-1 lg:col-start-4 lg:row-start-3 rounded-3xl bg-gradient-to-br from-orange-50 dark:from-orange-950/40 to-rose-50/60 dark:to-rose-950/30 border border-orange-100/60 dark:border-orange-900/40 p-5 flex flex-col shadow-sm hover:shadow-2xl hover:shadow-orange-100/40 transition-all duration-500"
             style={{ transitionDelay: '420ms' }}>
             <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-amber-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-400/20 mb-4 shrink-0">
               <Icon name="fitness_center" size={20} className="text-white" filled />
@@ -198,7 +198,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
             <h3 className="text-sm font-bold text-surface-900 mb-1">{t('landing.f8_title')}</h3>
             <p className="text-[11px] text-surface-400 leading-snug mb-3">{t('landing.f8_desc')}</p>
             <div className="mt-auto space-y-2">
-              <div className="bg-white rounded-2xl p-3 border border-orange-100/60 shadow-sm text-center">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-3 border border-orange-100/60 dark:border-orange-900/40 shadow-sm text-center">
                 <p className="text-2xl font-black text-orange-400">7 🔥</p>
                 <p className="text-[10px] text-surface-400 mt-0.5">{uiLang === 'ar' ? 'يوم متتالي' : 'giorni di fila'}</p>
               </div>
@@ -211,7 +211,7 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
           </div>
 
           {/* F7: Progress Tracking — wide (2 col × 1 row) */}
-          <div className="col-span-2 lg:col-start-2 lg:row-start-3 rounded-3xl bg-gradient-to-br from-violet-50 to-indigo-50 border border-violet-100/70 p-6 flex items-center gap-5 shadow-sm hover:shadow-2xl hover:shadow-violet-100/50 transition-all duration-500"
+          <div className="col-span-2 lg:col-start-2 lg:row-start-3 rounded-3xl bg-gradient-to-br from-violet-50 dark:from-violet-950/40 to-indigo-50 dark:to-indigo-950/40 border border-violet-100/70 dark:border-violet-900/40 p-6 flex items-center gap-5 shadow-sm hover:shadow-2xl hover:shadow-violet-100/50 transition-all duration-500"
             style={{ transitionDelay: '360ms' }}>
             <div className="shrink-0">
               <div className="w-10 h-10 bg-gradient-to-br from-violet-400 to-indigo-500 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-400/20 mb-3">

@@ -114,23 +114,23 @@ export function SimulatoreEsamePage() {
       </section>
 
       {/* ── Exam rules ───────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-white" aria-labelledby="regole-esame">
+      <section className="py-16 px-4 bg-white dark:bg-gray-900" aria-labelledby="regole-esame">
         <div className="max-w-5xl mx-auto">
-          <h2 id="regole-esame" className="text-3xl font-bold text-gray-900 mb-4 text-center">
+          <h2 id="regole-esame" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 text-center">
             Le Regole dell'Esame Teorico Patente B
           </h2>
-          <p className="text-center text-gray-500 mb-10">
+          <p className="text-center text-gray-500 dark:text-gray-400 mb-10">
             Il simulatore di Patente Hub replica esattamente le condizioni dell'esame reale
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {EXAM_RULES.map((rule) => (
               <article
                 key={rule.label}
-                className="bg-gray-50 rounded-2xl p-6 text-center border border-gray-100"
+                className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 text-center border border-gray-100 dark:border-gray-700"
               >
                 <div className="text-4xl mb-3" aria-hidden="true">{rule.icon}</div>
-                <h3 className="font-bold text-gray-900 text-lg mb-2">{rule.label}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{rule.desc}</p>
+                <h3 className="font-bold text-gray-900 dark:text-gray-100 text-lg mb-2">{rule.label}</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{rule.desc}</p>
               </article>
             ))}
           </div>
@@ -138,9 +138,9 @@ export function SimulatoreEsamePage() {
       </section>
 
       {/* ── How the simulator works ──────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-gray-50" aria-labelledby="come-funziona-simulatore">
+      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800" aria-labelledby="come-funziona-simulatore">
         <div className="max-w-4xl mx-auto">
-          <h2 id="come-funziona-simulatore" className="text-3xl font-bold text-gray-900 mb-10 text-center">
+          <h2 id="come-funziona-simulatore" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-10 text-center">
             Come Funziona il Simulatore
           </h2>
           <div className="grid md:grid-cols-2 gap-10 items-center">
@@ -172,15 +172,15 @@ export function SimulatoreEsamePage() {
                     {step}
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-1">{title}</h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">{desc}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-1">{title}</h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{desc}</p>
                   </div>
                 </div>
               ))}
             </div>
             {/* Stats card */}
-            <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
-              <h3 className="font-bold text-gray-900 text-xl mb-6 text-center">La tua scheda esame</h3>
+            <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 border border-gray-100 dark:border-gray-700 shadow-sm">
+              <h3 className="font-bold text-gray-900 dark:text-gray-100 text-xl mb-6 text-center">La tua scheda esame</h3>
               <div className="space-y-4">
                 {[
                   { label: 'Domande totali', value: '30', color: 'text-indigo-600' },
@@ -189,8 +189,8 @@ export function SimulatoreEsamePage() {
                   { label: 'Tempo massimo', value: '30 min', color: 'text-amber-600' },
                   { label: 'Punteggio minimo', value: '90%', color: 'text-indigo-600' },
                 ].map(({ label, value, color }) => (
-                  <div key={label} className="flex justify-between items-center py-2 border-b border-gray-50">
-                    <span className="text-sm text-gray-600">{label}</span>
+                  <div key={label} className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">{label}</span>
                     <span className={`font-bold text-lg ${color}`}>{value}</span>
                   </div>
                 ))}
@@ -201,12 +201,12 @@ export function SimulatoreEsamePage() {
       </section>
 
       {/* ── Tips section ────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-white" aria-labelledby="consigli-esame">
+      <section className="py-16 px-4 bg-white dark:bg-gray-900" aria-labelledby="consigli-esame">
         <div className="max-w-4xl mx-auto">
-          <h2 id="consigli-esame" className="text-3xl font-bold text-gray-900 mb-4 text-center">
+          <h2 id="consigli-esame" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 text-center">
             Consigli per Superare l'Esame Teorico della Patente B
           </h2>
-          <p className="text-center text-gray-500 mb-10">
+          <p className="text-center text-gray-500 dark:text-gray-400 mb-10">
             Strategie pratiche testate da chi ha già superato l'esame
           </p>
           <div className="grid md:grid-cols-2 gap-6">
@@ -232,11 +232,11 @@ export function SimulatoreEsamePage() {
                 desc: 'Leggi sempre la spiegazione delle risposte errate. Capire il principio è molto più utile del memorizzare la risposta.',
               },
             ].map(({ icon, title, desc }) => (
-              <article key={title} className="flex gap-4 p-5 bg-gray-50 rounded-2xl border border-gray-100">
+              <article key={title} className="flex gap-4 p-5 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
                 <div className="text-2xl flex-shrink-0" aria-hidden="true">{icon}</div>
                 <div>
-                  <h3 className="font-bold text-gray-900 mb-1">{title}</h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">{desc}</p>
+                  <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-1">{title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{desc}</p>
                 </div>
               </article>
             ))}
@@ -245,19 +245,19 @@ export function SimulatoreEsamePage() {
       </section>
 
       {/* ── FAQ ─────────────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-gray-50" aria-labelledby="faq-simulatore">
+      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800" aria-labelledby="faq-simulatore">
         <div className="max-w-3xl mx-auto">
-          <h2 id="faq-simulatore" className="text-3xl font-bold text-gray-900 mb-10 text-center">
+          <h2 id="faq-simulatore" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-10 text-center">
             Domande Frequenti sul Simulatore Esame Patente
           </h2>
           <div className="space-y-3">
             {FAQ_ITEMS.map((item, i) => (
               <div
                 key={i}
-                className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm"
+                className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm"
               >
                 <button
-                  className="w-full text-left px-6 py-5 flex items-center justify-between gap-4 font-semibold text-gray-900 hover:text-emerald-600 transition-colors"
+                  className="w-full text-left px-6 py-5 flex items-center justify-between gap-4 font-semibold text-gray-900 dark:text-gray-100 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   aria-expanded={openFaq === i}
                 >
@@ -265,7 +265,7 @@ export function SimulatoreEsamePage() {
                   <span className="text-xl flex-shrink-0 transition-transform duration-200" style={{ transform: openFaq === i ? 'rotate(45deg)' : 'none' }}>+</span>
                 </button>
                 {openFaq === i && (
-                  <div className="px-6 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-50">
+                  <div className="px-6 pb-5 text-gray-600 dark:text-gray-400 text-sm leading-relaxed border-t border-gray-100 dark:border-gray-700">
                     <p className="pt-4">{item.a}</p>
                   </div>
                 )}
@@ -294,9 +294,9 @@ export function SimulatoreEsamePage() {
       </section>
 
       {/* ── Internal links ───────────────────────────────────────────────── */}
-      <section className="py-12 px-4 bg-white">
+      <section className="py-12 px-4 bg-white dark:bg-gray-900">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Approfondisci la Preparazione alla Patente B</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">Approfondisci la Preparazione alla Patente B</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { to: '/it/quiz-patente-b', label: '📚 Quiz Patente B' },
@@ -307,7 +307,7 @@ export function SimulatoreEsamePage() {
               <Link
                 key={to}
                 to={to}
-                className="flex items-center gap-2 p-4 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-emerald-300 hover:text-emerald-600 hover:bg-emerald-50 transition-all"
+                className="flex items-center gap-2 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-emerald-300 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all"
               >
                 {label}
               </Link>

@@ -154,12 +154,12 @@ export function SegnaliStradaliInfoPage() {
       </section>
 
       {/* ── Intro ────────────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-white" aria-labelledby="intro-segnali">
+      <section className="py-16 px-4 bg-white dark:bg-gray-900" aria-labelledby="intro-segnali">
         <div className="max-w-4xl mx-auto">
-          <h2 id="intro-segnali" className="text-3xl font-bold text-gray-900 mb-6 text-center">
+          <h2 id="intro-segnali" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
             I Segnali Stradali nell'Esame Patente B
           </h2>
-          <div className="prose prose-lg max-w-none text-gray-600 leading-relaxed">
+          <div className="prose prose-lg max-w-none text-gray-600 dark:text-gray-400 leading-relaxed">
             <p>
               I <strong>segnali stradali</strong> sono uno degli argomenti più importanti dell'esame teorico della
               <strong> patente B</strong>. Circa il <strong>30-40% delle domande</strong> dell'esame riguarda
@@ -179,12 +179,12 @@ export function SegnaliStradaliInfoPage() {
       </section>
 
       {/* ── Categories ───────────────────────────────────────────────────── */}
-      <section className="py-8 px-4 bg-gray-50" aria-labelledby="categorie-segnali">
+      <section className="py-8 px-4 bg-gray-50 dark:bg-gray-800" aria-labelledby="categorie-segnali">
         <div className="max-w-5xl mx-auto">
-          <h2 id="categorie-segnali" className="text-3xl font-bold text-gray-900 mb-4 text-center">
+          <h2 id="categorie-segnali" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4 text-center">
             Le 5 Categorie di Segnali Stradali
           </h2>
-          <p className="text-center text-gray-500 mb-10">
+          <p className="text-center text-gray-500 dark:text-gray-400 mb-10">
             Conosci le caratteristiche di ogni categoria per riconoscerle a colpo d'occhio
           </p>
           <div className="space-y-6">
@@ -197,14 +197,14 @@ export function SegnaliStradaliInfoPage() {
                   <div className="text-4xl flex-shrink-0" aria-hidden="true">{cat.emoji}</div>
                   <div className="flex-1">
                     <h3 className={`text-xl font-bold mb-2 ${cat.titleColor}`}>{cat.name}</h3>
-                    <p className="text-gray-700 text-sm leading-relaxed mb-4">{cat.desc}</p>
+                    <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-4">{cat.desc}</p>
                     <div>
-                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Esempi principali:</p>
+                      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Esempi principali:</p>
                       <ul className="flex flex-wrap gap-2">
                         {cat.examples.map((ex) => (
                           <li
                             key={ex}
-                            className="text-xs bg-white rounded-full px-3 py-1 border border-gray-200 text-gray-600"
+                            className="text-xs bg-white dark:bg-gray-700 rounded-full px-3 py-1 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300"
                           >
                             {ex}
                           </li>
@@ -220,9 +220,9 @@ export function SegnaliStradaliInfoPage() {
       </section>
 
       {/* ── Study tips ───────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-white" aria-labelledby="come-studiare-segnali">
+      <section className="py-16 px-4 bg-white dark:bg-gray-900" aria-labelledby="come-studiare-segnali">
         <div className="max-w-4xl mx-auto">
-          <h2 id="come-studiare-segnali" className="text-3xl font-bold text-gray-900 mb-10 text-center">
+          <h2 id="come-studiare-segnali" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-10 text-center">
             Come Studiare i Segnali Stradali per la Patente
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
@@ -243,10 +243,10 @@ export function SegnaliStradaliInfoPage() {
                 desc: 'Dopo aver studiato una categoria, fai quiz specifici su quella categoria per consolidare la memoria.',
               },
             ].map(({ icon, title, desc }) => (
-              <article key={title} className="text-center p-6 bg-gray-50 rounded-2xl border border-gray-100">
+              <article key={title} className="text-center p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">
                 <div className="text-3xl mb-3" aria-hidden="true">{icon}</div>
-                <h3 className="font-bold text-gray-900 mb-2">{title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{desc}</p>
+                <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2">{title}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{desc}</p>
               </article>
             ))}
           </div>
@@ -254,16 +254,16 @@ export function SegnaliStradaliInfoPage() {
       </section>
 
       {/* ── FAQ ─────────────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-gray-50" aria-labelledby="faq-segnali">
+      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800" aria-labelledby="faq-segnali">
         <div className="max-w-3xl mx-auto">
-          <h2 id="faq-segnali" className="text-3xl font-bold text-gray-900 mb-10 text-center">
+          <h2 id="faq-segnali" className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-10 text-center">
             Domande Frequenti sui Segnali Stradali
           </h2>
           <div className="space-y-3">
             {FAQ_ITEMS.map((item, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+              <div key={i} className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm">
                 <button
-                  className="w-full text-left px-6 py-5 flex items-center justify-between gap-4 font-semibold text-gray-900 hover:text-red-600 transition-colors"
+                  className="w-full text-left px-6 py-5 flex items-center justify-between gap-4 font-semibold text-gray-900 dark:text-gray-100 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   aria-expanded={openFaq === i}
                 >
@@ -271,7 +271,7 @@ export function SegnaliStradaliInfoPage() {
                   <span className="text-xl flex-shrink-0" style={{ transform: openFaq === i ? 'rotate(45deg)' : 'none', display: 'inline-block', transition: 'transform 0.2s' }}>+</span>
                 </button>
                 {openFaq === i && (
-                  <div className="px-6 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-50">
+                  <div className="px-6 pb-5 text-gray-600 dark:text-gray-400 text-sm leading-relaxed border-t border-gray-100 dark:border-gray-700">
                     <p className="pt-4">{item.a}</p>
                   </div>
                 )}
@@ -300,9 +300,9 @@ export function SegnaliStradaliInfoPage() {
       </section>
 
       {/* ── Internal links ───────────────────────────────────────────────── */}
-      <section className="py-12 px-4 bg-white">
+      <section className="py-12 px-4 bg-white dark:bg-gray-900">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Continua a Prepararti per la Patente B</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">Continua a Prepararti per la Patente B</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { to: '/it/quiz-patente-b', label: '📚 Quiz Patente B' },
@@ -313,7 +313,7 @@ export function SegnaliStradaliInfoPage() {
               <Link
                 key={to}
                 to={to}
-                className="flex items-center gap-2 p-4 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-red-300 hover:text-red-600 hover:bg-red-50 transition-all"
+                className="flex items-center gap-2 p-4 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-red-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
               >
                 {label}
               </Link>
