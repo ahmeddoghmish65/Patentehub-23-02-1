@@ -45,6 +45,7 @@ const MistakesPage = lazy(() => import('@/pages/MistakesPage').then(m => ({ defa
 const ExamSimulatorPage = lazy(() => import('@/pages/ExamSimulatorPage').then(m => ({ default: m.ExamSimulatorPage })));
 const QuestionsBrowsePage = lazy(() => import('@/pages/QuestionsBrowsePage').then(m => ({ default: m.QuestionsBrowsePage })));
 const AdminPage = lazy(() => import('@/pages/AdminPage').then(m => ({ default: m.AdminPage })));
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 
 // ─── Root redirect — sends / to /:defaultLang ─────────────────────────────────
 function RootRedirect() {
@@ -195,8 +196,8 @@ export const router = createBrowserRouter([
         ],
       },
 
-      // ── Fallback under /:lang ──────────────────────────────────────────
-      { path: '*', element: <LocaleFallback /> },
+      // ── 404 under /:lang ──────────────────────────────────────────────
+      { path: '*', element: <SuspensePage><NotFoundPage /></SuspensePage> },
     ],
   },
 

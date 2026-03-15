@@ -842,5 +842,18 @@
     "answer_label": "Answer:",
     "answer_true": "True",
     "answer_false": "False"
+  },
+  "error_boundary": {
+    "title": "Something went wrong",
+    "title_persistent": "Persistent error",
+    "desc": "An unexpected error occurred. Please try again.",
+    "desc_persistent": "This page keeps failing. Please navigate to a different page.",
+    "try_again": "Try again",
+    "go_dashboard": "Go to dashboard"
+  },
+  "not_found": {
+    "title": "Page not found",
+    "desc": "We couldn't find the page you're looking for.",
+    "go_home": "Go home"
   }
 }

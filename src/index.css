@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* ─── Dark mode: activate on .dark class (set by applyTheme in store/helpers) ─ */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ─── Self-hosted fonts (no Google Fonts dependency) ─────────────────────────
    All fonts are bundled locally so they work offline, in PWAs, and in
    environments where Google Fonts is blocked or the service worker is stale.
@@ -205,4 +208,38 @@ input:focus, select:focus, textarea:focus {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* ─── Dark mode overrides ─────────────────────────────────────────────────────
+   Override design tokens when .dark is on <html>.
+   These map surface/* colours to dark-palette equivalents and invert body bg.
+   ─────────────────────────────────────────────────────────────────────────── */
+.dark {
+  /* Surface scale — inverted (light values become dark) */
+  --color-surface-50:  #0f172a;
+  --color-surface-100: #1e293b;
+  --color-surface-200: #334155;
+  --color-surface-300: #475569;
+  --color-surface-400: #64748b;
+  --color-surface-500: #94a3b8;
+  --color-surface-600: #cbd5e1;
+  --color-surface-700: #e2e8f0;
+  --color-surface-800: #f1f5f9;
+  --color-surface-900: #f8fafc;
+
+  /* Status colours stay the same — they're recognisable in both modes */
+
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #0f172a;
+}
+
+/* Scrollbar in dark mode */
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }

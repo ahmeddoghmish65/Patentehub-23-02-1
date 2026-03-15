@@ -842,5 +842,18 @@
     "answer_label": "Risposta:",
     "answer_true": "Vero",
     "answer_false": "Falso"
+  },
+  "error_boundary": {
+    "title": "Qualcosa è andato storto",
+    "title_persistent": "Errore persistente",
+    "desc": "Si è verificato un errore imprevisto. Riprova.",
+    "desc_persistent": "Questa pagina continua a fallire. Vai su un'altra pagina.",
+    "try_again": "Riprova",
+    "go_dashboard": "Vai alla home"
+  },
+  "not_found": {
+    "title": "Pagina non trovata",
+    "desc": "Non riusciamo a trovare la pagina che stai cercando.",
+    "go_home": "Torna alla home"
   }
 }
