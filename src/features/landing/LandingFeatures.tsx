@@ -47,9 +47,9 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <div className="h-1.5 bg-blue-100 rounded-full w-full" />
-                  <div className="h-1.5 bg-blue-100 rounded-full w-4/5" />
-                  <div className="h-1.5 bg-blue-100 rounded-full w-3/5" />
+                  <div className="h-1.5 bg-blue-100 dark:bg-blue-800/60 rounded-full w-full" />
+                  <div className="h-1.5 bg-blue-100 dark:bg-blue-800/60 rounded-full w-4/5" />
+                  <div className="h-1.5 bg-blue-100 dark:bg-blue-800/60 rounded-full w-3/5" />
                 </div>
               </div>
               <div className="w-8 h-8 bg-white dark:bg-surface-100 border border-surface-200 rounded-full flex items-center justify-center shadow-sm shrink-0">
@@ -58,14 +58,14 @@ export function LandingFeatures({ isVisible }: LandingFeaturesProps) {
               <div className="flex-1 bg-white dark:bg-gray-800 rounded-2xl p-3.5 border border-blue-100 dark:border-blue-900/50 shadow-sm">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[10px] font-bold text-surface-400 uppercase tracking-wider">Italiano</span>
-                  <div className="w-7 h-7 bg-surface-100 rounded-xl flex items-center justify-center">
-                    <span className="text-surface-600 font-black text-xs">IT</span>
+                  <div className="w-7 h-7 bg-surface-100 dark:bg-gray-700 rounded-xl flex items-center justify-center">
+                    <span className="text-surface-600 dark:text-gray-300 font-black text-xs">IT</span>
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <div className="h-1.5 bg-surface-100 rounded-full w-full" />
-                  <div className="h-1.5 bg-surface-100 rounded-full w-3/4" />
-                  <div className="h-1.5 bg-surface-100 rounded-full w-1/2" />
+                  <div className="h-1.5 bg-surface-100 dark:bg-gray-600/60 rounded-full w-full" />
+                  <div className="h-1.5 bg-surface-100 dark:bg-gray-600/60 rounded-full w-3/4" />
+                  <div className="h-1.5 bg-surface-100 dark:bg-gray-600/60 rounded-full w-1/2" />
                 </div>
               </div>
             </div>
