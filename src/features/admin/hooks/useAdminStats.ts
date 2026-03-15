@@ -1,16 +1,24 @@
 /**
- * useAdminStats — loads and exposes admin statistics.
+ * useAdminStats — loads and exposes admin statistics via TanStack Query.
  */
-import { useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAdminStore } from '@/store';
+import { queryKeys } from '@/shared/lib/queryKeys';
 
 export function useAdminStats() {
-  const adminStats = useAdminStore(s => s.adminStats);
   const loadAdminStats = useAdminStore(s => s.loadAdminStats);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    loadAdminStats();
-  }, [loadAdminStats]);
+  const { data: adminStats } = useQuery({
+    queryKey: queryKeys.admin.stats,
+    queryFn: async () => {
+      await loadAdminStats();
+      return useAdminStore.getState().adminStats;
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes — stats don't change that fast
+  });
 
-  return { adminStats, reload: loadAdminStats };
+  const reload = () => queryClient.invalidateQueries({ queryKey: queryKeys.admin.stats });
+
+  return { adminStats: adminStats ?? null, reload };
 }

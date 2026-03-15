@@ -1,12 +1,17 @@
 /**
  * postStore.ts
  * Manages posts, likes, and per-post liker avatars.
+ * Mutations invalidate the TanStack Query posts cache for automatic UI refresh.
  */
 import { create } from 'zustand';
 import { useAuthStore } from '@/store/auth.store';
 import { getDB } from '@/infrastructure/database/database';
 import * as postService from '../services/postService';
 import type { Post, PostSortMode, PostLiker } from '../types';
+import { queryClient } from '@/app/providers/AppProviders';
+import { queryKeys } from '@/shared/lib/queryKeys';
+
+const invalidatePosts = () => queryClient.invalidateQueries({ queryKey: queryKeys.posts.all });
 
 interface PostState {
   posts: Post[];
@@ -59,7 +64,7 @@ export const usePostStore = create<PostState>((set, get) => ({
     const t = token();
     if (!t) return false;
     const r = await postService.createPost(t, content, image);
-    if (r.success) await get().loadPosts();
+    if (r.success) { await get().loadPosts(); invalidatePosts(); }
     return r.success;
   },
 
@@ -67,7 +72,7 @@ export const usePostStore = create<PostState>((set, get) => ({
     const t = token();
     if (!t) return false;
     const r = await postService.updatePost(t, id, content);
-    if (r.success) await get().loadPosts();
+    if (r.success) { await get().loadPosts(); invalidatePosts(); }
     return r.success;
   },
 
@@ -75,7 +80,7 @@ export const usePostStore = create<PostState>((set, get) => ({
     const t = token();
     if (!t) return false;
     const r = await postService.deletePost(t, id);
-    if (r.success) await get().loadPosts();
+    if (r.success) { await get().loadPosts(); invalidatePosts(); }
     return r.success;
   },
 
@@ -89,6 +94,7 @@ export const usePostStore = create<PostState>((set, get) => ({
       set(state => ({
         likes: { ...state.likes, [postId]: r.data!.liked },
       }));
+      invalidatePosts();
       return r.data;
     }
     return null;

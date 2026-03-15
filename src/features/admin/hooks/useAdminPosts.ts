@@ -1,14 +1,13 @@
 /**
- * useAdminPosts — loads and exposes post / comment management state.
+ * useAdminPosts — loads and exposes post / comment management state via TanStack Query.
  */
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAdminStore, useDataStore } from '@/store';
+import { queryKeys } from '@/shared/lib/queryKeys';
 import type { Comment } from '@/infrastructure/database/database';
 
 export function useAdminPosts() {
-  const posts = useDataStore(s => s.posts);
-  const deletedPosts = useAdminStore(s => s.deletedPosts);
-  const deletedComments = useAdminStore(s => s.deletedComments);
   const loadPosts = useDataStore(s => s.loadPosts);
   const loadDeletedPosts = useAdminStore(s => s.loadDeletedPosts);
   const loadDeletedComments = useAdminStore(s => s.loadDeletedComments);
@@ -19,6 +18,22 @@ export function useAdminPosts() {
   const restoreComment = useAdminStore(s => s.restoreComment);
   const permanentDeleteComment = useAdminStore(s => s.permanentDeleteComment);
   const getComments = useDataStore(s => s.getComments);
+  const queryClient = useQueryClient();
+
+  const { data } = useQuery({
+    queryKey: queryKeys.admin.posts,
+    queryFn: async () => {
+      await Promise.all([loadPosts(), loadDeletedPosts(), loadDeletedComments()]);
+      const ds = useDataStore.getState();
+      const as_ = useAdminStore.getState();
+      return { posts: ds.posts, deletedPosts: as_.deletedPosts, deletedComments: as_.deletedComments };
+    },
+    staleTime: 1000 * 60 * 2, // 2 minutes
+  });
+
+  const posts = data?.posts ?? [];
+  const deletedPosts = data?.deletedPosts ?? [];
+  const deletedComments = data?.deletedComments ?? [];
 
   const [allComments, setAllComments] = useState<(Comment & { postContent?: string })[]>([]);
 
@@ -34,11 +49,7 @@ export function useAdminPosts() {
     setAllComments(comments);
   }, [posts, getComments]);
 
-  useEffect(() => {
-    loadPosts();
-    loadDeletedPosts();
-    loadDeletedComments();
-  }, [loadPosts, loadDeletedPosts, loadDeletedComments]);
+  const reload = () => queryClient.invalidateQueries({ queryKey: queryKeys.admin.posts });
 
   return {
     posts,
@@ -52,5 +63,6 @@ export function useAdminPosts() {
     permanentDeletePost,
     restoreComment,
     permanentDeleteComment,
+    reload,
   };
 }

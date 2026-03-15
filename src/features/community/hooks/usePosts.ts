@@ -1,14 +1,24 @@
 /**
  * usePosts.ts
  * Returns the filtered and sorted post list for the current feed state.
+ * Uses TanStack Query for caching and automatic background refetching.
  */
 import { useMemo } from 'react';
-import { usePostStore } from '../store/postStore';
 import { useCommunityUIStore } from '../store/communityUIStore';
+import { usePostsQuery } from './usePostsQuery';
+import type { PostSortMode } from '@/infrastructure/database/api';
 
 export function usePosts() {
-  const { posts, loadingPosts, likes, postLikers, loadPosts, checkAllLikes } = usePostStore();
   const { activeTab, following, searchQuery, postSortMode, activeHashtag } = useCommunityUIStore();
+
+  const { data, isLoading: loadingPosts, refetch: loadPosts } = usePostsQuery(
+    postSortMode as PostSortMode,
+    activeHashtag ?? undefined,
+  );
+
+  const posts = data?.posts ?? [];
+  const likes = data?.likes ?? {};
+  const postLikers = data?.postLikers ?? {};
 
   const filteredPosts = useMemo(() => {
     // Tab filter
@@ -33,7 +43,7 @@ export function usePosts() {
     likes,
     postLikers,
     loadPosts,
-    checkAllLikes,
+    checkAllLikes: async (_postIds: string[]) => { await loadPosts(); },
     postSortMode,
     activeHashtag,
   };

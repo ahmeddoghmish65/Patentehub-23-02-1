@@ -1,24 +1,17 @@
 /**
  * useTrendingHashtags.ts
- * Loads trending hashtags and keeps them in the UI store.
+ * Loads trending hashtags using TanStack Query for automatic caching and refetching.
  */
-import { useEffect, useCallback } from 'react';
-import { useCommunityUIStore } from '../store/communityUIStore';
+import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '@/shared/lib/queryKeys';
 import { getTrendingHashtags } from '../services/hashtagService';
 
-export function useTrendingHashtags(postCount: number) {
-  const { trendingHashtags, setTrendingHashtags } = useCommunityUIStore();
-
-  const refresh = useCallback(async () => {
-    const tags = await getTrendingHashtags(8);
-    setTrendingHashtags(tags);
-  }, [setTrendingHashtags]);
-
-  // Reload whenever the number of posts changes (new posts may create new tags)
-  useEffect(() => {
-    refresh().catch(() => {});
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postCount]);
+export function useTrendingHashtags(_postCount?: number) {
+  const { data: trendingHashtags = [], refetch: refresh } = useQuery({
+    queryKey: queryKeys.hashtags.trending(8),
+    queryFn: () => getTrendingHashtags(8),
+    staleTime: 1000 * 60 * 2, // 2 minutes — hashtags change with new posts
+  });
 
   return { trendingHashtags, refresh };
 }
