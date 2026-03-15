@@ -15,11 +15,11 @@ interface BadgeProps {
 
 const VARIANTS: Record<BadgeVariant, string> = {
   default: 'bg-surface-100 text-surface-600',
-  primary: 'bg-primary-100 text-primary-700',
-  success: 'bg-success-50  text-success-700',
-  warning: 'bg-warning-50  text-warning-700',
-  danger:  'bg-danger-50   text-danger-700',
-  info:    'bg-blue-50     text-blue-700',
+  primary: 'bg-primary-100 text-primary-700 dark:bg-primary-800 dark:text-primary-200',
+  success: 'bg-success-50  text-success-600 dark:bg-surface-200 dark:text-success-500',
+  warning: 'bg-warning-50  text-warning-600 dark:bg-surface-200 dark:text-warning-500',
+  danger:  'bg-danger-50   text-danger-600  dark:bg-surface-200 dark:text-danger-500',
+  info:    'bg-blue-50     text-blue-700    dark:bg-blue-900    dark:text-blue-300',
 };
 
 const SIZES: Record<BadgeSize, string> = {

@@ -3,3 +3,4 @@
  * This file exists only for backward compatibility during migration.
  */
 export * from '@/shared/ui';
+export { ThemeToggle } from './ThemeToggle';

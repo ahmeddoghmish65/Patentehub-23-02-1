@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/store';
 import { Icon } from '@/shared/ui/Icon';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 import { ROUTES } from '@/shared/constants';
@@ -47,13 +48,15 @@ export function Sidebar() {
 
   return (
     <aside className={cn(
-      'hidden lg:flex fixed z-50 h-full w-72 bg-white flex-col border-surface-100',
+      'hidden lg:flex fixed z-50 h-full w-72 flex-col',
+      'bg-white dark:bg-surface-100 border-surface-100',
+      'transition-colors duration-200',
       sidebarPositionClass,
     )}>
       {/* Logo */}
       <div className="p-6 border-b border-surface-100">
         <div className="flex items-center gap-3" dir="ltr">
-          <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-200 shrink-0">
+          <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-lg shadow-primary-200 dark:shadow-none shrink-0">
             <Icon name="directions_car" size={22} className="text-white" filled />
           </div>
           <div>
@@ -94,7 +97,7 @@ export function Sidebar() {
                 'w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all',
                 navButtonAlign,
                 active
-                  ? 'bg-primary-50 text-primary-700 font-semibold'
+                  ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 font-semibold'
                   : 'text-surface-500 hover:bg-surface-50',
               )}
               onClick={() => navigate(item.path)}
@@ -111,18 +114,25 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Streak + Language Switcher */}
+      {/* Streak + Theme + Language Switcher */}
       <div className="p-4 space-y-3">
-        <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-100">
+        <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl p-4 border border-orange-100 dark:border-orange-900/30">
           <div className="flex items-center gap-2 mb-2">
             <Icon name="local_fire_department" size={20} className="text-orange-500" filled />
-            <span className="text-sm font-semibold text-orange-700">{t('nav.streak')}</span>
+            <span className="text-sm font-semibold text-orange-700 dark:text-orange-400">{t('nav.streak')}</span>
           </div>
-          <p className="text-3xl font-bold text-orange-600">{user.progress.currentStreak}</p>
+          <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">{user.progress.currentStreak}</p>
           <p className="text-xs text-orange-400 mt-1">
             {t('nav.exam_readiness')}: {user.progress.examReadiness}%
           </p>
         </div>
+
+        {/* Theme toggle — compact icon button */}
+        <div className="flex items-center justify-between px-1">
+          <span className="text-xs text-surface-400 font-medium">Theme</span>
+          <ThemeToggle variant="compact" />
+        </div>
+
         <div className="flex items-center justify-center">
           <LanguageSwitcher variant="full" />
         </div>

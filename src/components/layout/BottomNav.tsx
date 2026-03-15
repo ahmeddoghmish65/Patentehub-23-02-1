@@ -34,7 +34,10 @@ export function BottomNav() {
   };
 
   return (
-    <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-surface-100 pb-safe">
+    <nav className={cn(
+      'lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-surface-100 pb-safe',
+      'bg-white dark:bg-surface-100 transition-colors duration-200',
+    )}>
       <div className="flex items-center justify-around h-16">
         {items.map(item => {
           const active = isActive(item.path);

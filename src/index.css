@@ -122,6 +122,7 @@ html[dir="ltr"] *:not(.material-symbols-rounded) {
 body {
   background-color: #f8fafc;
   overflow-x: hidden;
+  transition: background-color 300ms ease, color 300ms ease;
 }
 
 @keyframes fadeInUp {
@@ -174,6 +175,11 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+.dark .glass-card {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -208,6 +214,11 @@ input:focus, select:focus, textarea:focus {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* Dark mode focus ring: use a lighter blue for better contrast on dark bg */
+.dark :focus-visible {
+  outline-color: #60a5fa;
 }
 
 /* ─── Dark mode overrides ─────────────────────────────────────────────────────

@@ -9,6 +9,7 @@ import { queryClient } from '@/app/providers/AppProviders';
 import { getSavedTheme } from '@/shared/utils/cookieManager';
 import { applyTheme } from '@/store/helpers';
 import { LanguageProvider } from '@/i18n';
+import { ThemeProvider } from '@/providers/ThemeProvider';
 import { initAnalytics } from '@/infrastructure/analytics';
 import { initSentry, initLogRocket } from '@/infrastructure/monitoring';
 
@@ -36,22 +37,24 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
-        <LanguageProvider>
-          <App />
-          {/* Global toast notification system */}
-          <Toaster
-            position="top-center"
-            richColors
-            closeButton
-            duration={4000}
-            toastOptions={{
-              style: {
-                fontFamily: 'inherit',
-                borderRadius: '12px',
-              },
-            }}
-          />
-        </LanguageProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <App />
+            {/* Global toast notification system */}
+            <Toaster
+              position="top-center"
+              richColors
+              closeButton
+              duration={4000}
+              toastOptions={{
+                style: {
+                  fontFamily: 'inherit',
+                  borderRadius: '12px',
+                },
+              }}
+            />
+          </LanguageProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </HelmetProvider>
   </StrictMode>,

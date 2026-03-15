@@ -23,11 +23,11 @@ export const Button = memo(function Button({
   ...props
 }: ButtonProps) {
   const variants = {
-    primary: 'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 shadow-lg shadow-primary-200',
+    primary:   'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 shadow-lg shadow-primary-200 dark:shadow-none',
     secondary: 'bg-surface-100 text-surface-800 hover:bg-surface-200 active:bg-surface-300',
-    outline: 'border-2 border-primary-600 text-primary-600 hover:bg-primary-50 active:bg-primary-100',
-    ghost: 'text-surface-600 hover:bg-surface-100 active:bg-surface-200',
-    danger: 'bg-danger-500 text-white hover:bg-danger-600 active:bg-danger-600',
+    outline:   'border-2 border-primary-600 text-primary-600 hover:bg-primary-50 active:bg-primary-100 dark:hover:bg-primary-900 dark:active:bg-primary-800',
+    ghost:     'text-surface-600 hover:bg-surface-100 active:bg-surface-200',
+    danger:    'bg-danger-500 text-white hover:bg-danger-600 active:bg-danger-600',
   };
 
   const sizes = {

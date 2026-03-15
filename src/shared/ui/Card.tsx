@@ -25,9 +25,10 @@ export const Card = memo(function Card({
   return (
     <Tag
       className={cn(
-        'bg-white rounded-2xl border border-surface-100',
+        'bg-white dark:bg-surface-100 rounded-2xl border border-surface-100',
+        'transition-colors duration-200',
         !noPadding && 'p-4',
-        hoverable && 'hover:shadow-md hover:border-primary-100 transition-all duration-200',
+        hoverable && 'hover:shadow-md hover:border-primary-100 dark:hover:border-primary-800 transition-all duration-200',
         onClick && 'w-full text-start cursor-pointer',
         className,
       )}

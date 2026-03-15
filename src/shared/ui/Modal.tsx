@@ -66,8 +66,9 @@ export const Modal = memo(function Modal({
       {/* Panel */}
       <div
         className={cn(
-          'relative w-full bg-white rounded-2xl shadow-2xl',
+          'relative w-full bg-white dark:bg-surface-100 rounded-2xl shadow-2xl',
           'flex flex-col max-h-[90vh] overflow-hidden',
+          'transition-colors duration-200',
           SIZE_MAP[size],
           className,
         )}

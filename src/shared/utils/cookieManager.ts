@@ -181,9 +181,17 @@ export function getSavedLanguage(): 'ar' | 'it' | 'both' | null {
 }
 
 /** Return the persisted theme preference, or `null`. */
-export function getSavedTheme(): 'light' | 'dark' | null {
+export function getSavedTheme(): 'light' | 'dark' | 'system' | null {
+  // Check localStorage first — ThemeProvider's primary storage
+  try {
+    const v = localStorage.getItem('ph_theme');
+    if (v === 'light' || v === 'dark' || v === 'system') return v;
+  } catch {
+    // localStorage unavailable
+  }
+  // Fall back to cookie (legacy / server-side persistence)
   const v = getCookie(COOKIE_NAMES.THEME);
-  if (v === 'light' || v === 'dark') return v;
+  if (v === 'light' || v === 'dark' || v === 'system') return v;
   return null;
 }
 

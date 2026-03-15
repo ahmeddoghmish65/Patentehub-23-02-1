@@ -7,6 +7,7 @@ import { Icon } from '@/shared/ui/Icon';
 import { Button } from '@/shared/ui/Button';
 import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { saveCompleteProfile } from './services/profileService';
 import { useProfile } from './hooks/useProfile';
 import { useUpdateProfile } from './hooks/useUpdateProfile';
@@ -163,7 +164,7 @@ export function ProfilePage() {
       <ProfileExamReadiness readiness={readiness} progress={progress} mistakes={mistakes} />
 
       {/* Badges */}
-      <div className="bg-white rounded-xl p-5 border border-surface-100">
+      <div className="bg-white dark:bg-surface-100 rounded-xl p-5 border border-surface-100">
         <h2 className="font-bold text-surface-900 mb-4 flex items-center gap-2">
           <Icon name="emoji_events" size={20} className="text-orange-500" />
           {t('profile.achievements')} ({progress.badges.length}/{allBadges.length})
@@ -209,7 +210,7 @@ export function ProfilePage() {
       </div>
 
       {/* Account Management */}
-      <div className="bg-white rounded-xl border border-surface-100 overflow-hidden">
+      <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 overflow-hidden">
         <div className="px-5 py-4 border-b border-surface-100">
           <h2 className="font-bold text-surface-900 flex items-center gap-2">
             <Icon name="manage_accounts" size={20} className="text-surface-500" />
@@ -238,6 +239,18 @@ export function ProfilePage() {
           </div>
           <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors ltr:rotate-180" />
         </button>
+
+        {/* Theme setting */}
+        <div className="w-full px-5 py-4 flex items-center gap-3 border-b border-surface-50">
+          <div className="w-9 h-9 bg-primary-50 rounded-xl flex items-center justify-center shrink-0">
+            <Icon name="brightness_auto" size={18} className="text-primary-500" />
+          </div>
+          <div className="flex-1 text-right">
+            <p className="text-sm font-semibold text-surface-800">{t('profile.theme_btn') || 'Appearance'}</p>
+            <p className="text-xs text-surface-400">{t('profile.theme_btn_desc') || 'Light, Dark or System'}</p>
+          </div>
+          <ThemeToggle variant="compact" />
+        </div>
 
         {isAdmin && (
           <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-primary-50 transition-colors border-b border-surface-50 group" onClick={() => navigate(ROUTES.ADMIN)}>
@@ -293,7 +306,7 @@ export function ProfilePage() {
       {/* Translation Modal */}
       {showTranslation && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-4" onClick={() => setShowTranslation(false)}>
-          <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden" onClick={e => e.stopPropagation()}>
+          <div className="bg-white dark:bg-surface-100 rounded-2xl w-full max-w-sm overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between px-4 py-3 border-b border-surface-100">
               <h3 className="font-bold text-surface-900 flex items-center gap-2">
                 <Icon name="language" size={18} className="text-primary-500" />
@@ -377,7 +390,7 @@ export function ProfilePage() {
       {/* Profile Completion Modal */}
       {showCompleteProfile && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
-          <div className="bg-white w-full sm:rounded-2xl sm:max-w-md max-h-[95vh] overflow-y-auto shadow-2xl flex flex-col" onClick={e => e.stopPropagation()}>
+          <div className="bg-white dark:bg-surface-100 w-full sm:rounded-2xl sm:max-w-md max-h-[95vh] overflow-y-auto shadow-2xl flex flex-col" onClick={e => e.stopPropagation()}>
             <div className="bg-gradient-to-br from-primary-500 to-primary-700 p-6 sm:rounded-t-2xl shrink-0">
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center shrink-0">
@@ -404,7 +417,7 @@ export function ProfilePage() {
                   </label>
                   <input
                     type="date"
-                    className="w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary-400"
+                    className="w-full border border-surface-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-primary-400 dark:bg-surface-100 dark:text-surface-900"
                     style={{ boxSizing: 'border-box' }}
                     value={completeForm.birthDate}
                     onChange={e => setCompleteForm(p => ({ ...p, birthDate: e.target.value }))}
@@ -453,7 +466,7 @@ export function ProfilePage() {
                   <input
                     type="tel"
                     dir="ltr"
-                    className={cn('flex-1 border rounded-xl px-3 py-2.5 text-sm text-left focus:outline-none focus:border-primary-400', profilePhoneError ? 'border-danger-400 bg-danger-50' : 'border-surface-200')}
+                    className={cn('flex-1 border rounded-xl px-3 py-2.5 text-sm text-left focus:outline-none focus:border-primary-400 dark:bg-surface-100 dark:text-surface-900', profilePhoneError ? 'border-danger-400 bg-danger-50' : 'border-surface-200')}
                     placeholder="1234567890"
                     value={completeForm.phone}
                     onChange={e => {

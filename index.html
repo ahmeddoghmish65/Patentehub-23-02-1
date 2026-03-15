@@ -6,6 +6,24 @@
       Language detection: runs synchronously before any render to prevent flickering.
       Priority: 1) localStorage  2) browser language  3) default (ar)
     -->
+    <!--
+      Theme detection: runs synchronously before any render to prevent FOUC.
+      Priority: 1) localStorage  2) OS/system preference  3) default (light)
+    -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('ph_theme');
+          var dark =
+            t === 'dark' ||
+            (t !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <script>
       (function () {
         var STORAGE_KEY = 'ph_ui_lang';

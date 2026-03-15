@@ -47,8 +47,10 @@ export const Dropdown = memo(function Dropdown({
       {open && (
         <div
           className={cn(
-            'absolute z-40 mt-1 min-w-[10rem] bg-white rounded-xl shadow-lg',
+            'absolute z-40 mt-1 min-w-[10rem]',
+            'bg-white dark:bg-surface-100 rounded-xl shadow-lg',
             'border border-surface-100 py-1 overflow-hidden',
+            'transition-colors duration-200',
             align === 'end' ? 'end-0' : 'start-0',
           )}
         >
@@ -60,7 +62,7 @@ export const Dropdown = memo(function Dropdown({
               className={cn(
                 'w-full flex items-center gap-2 px-3 py-2 text-sm text-start transition-colors',
                 item.danger
-                  ? 'text-danger-600 hover:bg-danger-50'
+                  ? 'text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-500/10'
                   : 'text-surface-700 hover:bg-surface-50',
                 item.disabled && 'opacity-50 cursor-not-allowed',
               )}
