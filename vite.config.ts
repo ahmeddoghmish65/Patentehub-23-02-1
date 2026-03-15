@@ -48,42 +48,10 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // Include woff2 fonts in precache so they are available offline immediately.
+        // Fonts live in public/fonts/ and are copied to dist/fonts/ at build time.
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2}"],
-        runtimeCaching: [
-          {
-            // CSS metadata from Google Fonts — use StaleWhileRevalidate so the
-            // cached copy is served immediately while a fresh copy is fetched in
-            // the background.  CacheFirst was incorrect here: a stale cached CSS
-            // can reference font file URLs that are no longer in the binary cache,
-            // causing icons and text fonts to disappear entirely.
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: "StaleWhileRevalidate",
-            options: {
-              cacheName: "google-fonts-stylesheets",
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-          {
-            // Actual font binary files from gstatic — these are content-addressed
-            // (URL changes when content changes), so CacheFirst for 1 year is safe.
-            // Raised maxEntries to 30 to cover Cairo (9 weights) + Inter (9 weights)
-            // + Material Symbols Rounded variable font.
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "google-fonts-webfonts",
-              expiration: {
-                maxEntries: 30,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-        ],
+        // No runtimeCaching needed for external fonts — all fonts are self-hosted.
       },
     }),
   ],
