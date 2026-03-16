@@ -42,7 +42,7 @@ export function QuestionCard({
         )}
 
         {/* Question text */}
-        <div className="flex items-start gap-2">
+        <div className="flex items-center gap-2">
           <div className="flex-1">
             {lang === 'ar' && (
               <h2 className="font-bold text-surface-900 mb-1 text-base" dir="rtl">
@@ -66,7 +66,7 @@ export function QuestionCard({
             )}
           </div>
           {(lang === 'it' || lang === 'both') && (
-            <TTSButton text={item.questionIt} size="sm" className="mt-0.5" />
+            <TTSButton text={item.questionIt} size="sm" />
           )}
         </div>
       </div>

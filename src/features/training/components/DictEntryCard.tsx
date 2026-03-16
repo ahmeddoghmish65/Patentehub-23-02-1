@@ -37,7 +37,7 @@ export function DictEntryCard({ item, lang, showAnswer, onShowAnswer, onNext }: 
             <p className="text-sm text-surface-500" dir="rtl">{item.definitionAr}</p>
           )}
           {(lang === 'it' || lang === 'both') && item.definitionIt && (
-            <div className="flex items-start justify-center gap-1" dir="ltr">
+            <div className="flex items-center justify-center gap-1" dir="ltr">
               <p className="text-xs text-surface-400">{item.definitionIt}</p>
               <TTSButton text={item.definitionIt} size="sm" />
             </div>
