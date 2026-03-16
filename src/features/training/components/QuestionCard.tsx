@@ -106,10 +106,12 @@ export function QuestionCard({
         <div className="space-y-3 mb-4">
           <div className={cn(
             'rounded-xl border p-4',
-            isCorrect ? 'bg-success-50 border-success-200' : 'bg-danger-50 border-danger-200',
+            isCorrect
+              ? 'bg-success-50 dark:bg-success-900/20 border-success-200 dark:border-success-800/40'
+              : 'bg-danger-50 dark:bg-danger-900/20 border-danger-200 dark:border-danger-800/40',
           )}>
             {/* Correct / wrong indicator */}
-            <p className="font-semibold flex items-center gap-2 text-sm">
+            <p className={cn('font-semibold flex items-center gap-2 text-sm', isCorrect ? 'text-success-700 dark:text-success-400' : 'text-danger-700 dark:text-danger-400')}>
               <Icon
                 name={isCorrect ? 'check_circle' : 'cancel'}
                 size={18}
@@ -120,18 +122,18 @@ export function QuestionCard({
             </p>
 
             {/* Correct value */}
-            <p className="text-surface-600 mt-1 text-xs">
+            <p className="text-surface-600 dark:text-surface-700 mt-1 text-xs">
               {t('training.correct_is')} {item.isTrue ? trueLabel : falseLabel}
             </p>
 
             {/* Explanation */}
             {(lang === 'ar' || lang === 'both') && item.explanationAr && (
-              <p className="text-surface-500 mt-2 leading-relaxed text-xs" dir="rtl">
+              <p className="text-surface-500 dark:text-surface-600 mt-2 leading-relaxed text-xs" dir="rtl">
                 {item.explanationAr}
               </p>
             )}
             {(lang === 'it' || lang === 'both') && item.explanationIt && (
-              <p className="text-surface-500 mt-2 leading-relaxed text-xs" dir="ltr">
+              <p className="text-surface-500 dark:text-surface-600 mt-2 leading-relaxed text-xs" dir="ltr">
                 {item.explanationIt}
               </p>
             )}

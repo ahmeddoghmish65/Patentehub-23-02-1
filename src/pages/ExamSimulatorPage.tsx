@@ -332,7 +332,7 @@ export function ExamSimulatorPage() {
                       <p className="text-xs text-surface-500 mt-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2" dir="ltr">{q.explanationIt}</p>
                     )}
                     {lang === 'both' && q.explanationAr && (
-                      <p className="text-xs text-surface-500 mt-1 bg-surface-50 rounded-lg p-2" dir="rtl">{q.explanationAr}</p>
+                      <p className="text-xs text-surface-500 dark:text-surface-600 mt-1 bg-surface-50 dark:bg-surface-200 rounded-lg p-2" dir="rtl">{q.explanationAr}</p>
                     )}
                   </div>
                 </div>
@@ -389,7 +389,7 @@ export function ExamSimulatorPage() {
       {/* Exam Header */}
       <div className="bg-white dark:bg-surface-100 rounded-xl border border-surface-100 px-3 py-2.5 mb-3 shrink-0 flex items-center justify-between gap-2">
         <div className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-mono font-bold',
-          remaining < 300 ? 'bg-danger-50 text-danger-600 animate-pulse' : remaining < 600 ? 'bg-warning-50 text-warning-600' : 'bg-surface-50 text-surface-700'
+          remaining < 300 ? 'bg-danger-50 dark:bg-danger-900/20 text-danger-600 dark:text-danger-400 animate-pulse' : remaining < 600 ? 'bg-warning-50 dark:bg-warning-900/20 text-warning-600 dark:text-warning-400' : 'bg-surface-50 dark:bg-surface-200 text-surface-700 dark:text-surface-800'
         )}>
           <Icon name="timer" size={16} />
           {fmt(remaining)}

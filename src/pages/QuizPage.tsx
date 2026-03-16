@@ -183,7 +183,7 @@ export function QuizPage() {
 
       <div className="bg-white dark:bg-surface-100 rounded-2xl border border-surface-100 p-6 sm:p-8 mb-6">
         <span className={cn('inline-block px-2.5 py-1 rounded-lg text-xs font-semibold mb-4',
-          q.difficulty === 'easy' ? 'bg-success-50 text-success-600' : q.difficulty === 'medium' ? 'bg-warning-50 text-warning-600' : 'bg-danger-50 text-danger-600')}>
+          q.difficulty === 'easy' ? 'bg-success-50 dark:bg-success-900/20 text-success-600 dark:text-success-400' : q.difficulty === 'medium' ? 'bg-warning-50 dark:bg-warning-900/20 text-warning-600 dark:text-warning-400' : 'bg-danger-50 dark:bg-danger-900/20 text-danger-600 dark:text-danger-400')}>
           {q.difficulty === 'easy' ? t('quiz_page.difficulty_easy') : q.difficulty === 'medium' ? t('quiz_page.difficulty_medium') : t('quiz_page.difficulty_hard')}
         </span>
         {q.image && <img src={q.image} alt="" className="w-full rounded-xl mb-4 max-h-48 object-contain" />}
@@ -225,15 +225,15 @@ export function QuizPage() {
       </div>
 
       {showExplanation && (
-        <div className={cn('rounded-xl p-5 mb-6 border', selectedAnswer === q.isTrue ? 'bg-success-50 dark:bg-success-900/20 border-success-200' : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200')}>
+        <div className={cn('rounded-xl p-5 mb-6 border', selectedAnswer === q.isTrue ? 'bg-success-50 dark:bg-success-900/20 border-success-200 dark:border-success-800/40' : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/40')}>
           <div className="flex items-start gap-3">
             <Icon name={selectedAnswer === q.isTrue ? 'lightbulb' : 'info'} size={22} className={selectedAnswer === q.isTrue ? 'text-success-500' : 'text-blue-500'} filled />
             <div>
-              <p className="font-semibold text-sm text-surface-800 mb-1">{selectedAnswer === q.isTrue ? t('quiz_page.correct_feedback') : t('quiz_page.wrong_feedback')}</p>
-              {lang === 'ar' && q.explanationAr && <p className="text-sm text-surface-600" dir="rtl">{q.explanationAr}</p>}
-              {lang === 'it' && q.explanationIt && <p className="text-sm text-surface-600" dir="ltr">{q.explanationIt}</p>}
-              {lang === 'both' && q.explanationIt && <p className="text-sm text-surface-600" dir="ltr">{q.explanationIt}</p>}
-              {lang === 'both' && q.explanationAr && <p className="text-sm text-surface-500 mt-1" dir="rtl">{q.explanationAr}</p>}
+              <p className={cn('font-semibold text-sm mb-1', selectedAnswer === q.isTrue ? 'text-success-700 dark:text-success-400' : 'text-blue-700 dark:text-blue-400')}>{selectedAnswer === q.isTrue ? t('quiz_page.correct_feedback') : t('quiz_page.wrong_feedback')}</p>
+              {lang === 'ar' && q.explanationAr && <p className="text-sm text-surface-700 dark:text-surface-800" dir="rtl">{q.explanationAr}</p>}
+              {lang === 'it' && q.explanationIt && <p className="text-sm text-surface-700 dark:text-surface-800" dir="ltr">{q.explanationIt}</p>}
+              {lang === 'both' && q.explanationIt && <p className="text-sm text-surface-700 dark:text-surface-800" dir="ltr">{q.explanationIt}</p>}
+              {lang === 'both' && q.explanationAr && <p className="text-sm text-surface-600 dark:text-surface-700 mt-1" dir="rtl">{q.explanationAr}</p>}
             </div>
           </div>
         </div>

@@ -87,7 +87,7 @@ export function MistakesPage() {
                   style={{ width: `${(practiceIdx / mistakes.length) * 100}%` }} />
               </div>
               <span className="text-xs text-surface-400 shrink-0 font-medium">{practiceIdx + 1} / {mistakes.length}</span>
-              <span className="text-xs bg-danger-50 text-danger-600 border border-danger-100 px-2 py-0.5 rounded-full font-bold shrink-0">
+              <span className="text-xs bg-danger-50 dark:bg-danger-900/20 text-danger-600 dark:text-danger-400 border border-danger-100 dark:border-danger-800/40 px-2 py-0.5 rounded-full font-bold shrink-0">
                 ×{q.count}
               </span>
             </div>
@@ -127,19 +127,19 @@ export function MistakesPage() {
                 </button>
               </div>
             ) : (
-              <div className={cn('rounded-2xl p-5 border-2 text-center', practiceResult === 'correct' ? 'bg-success-50 border-success-300' : 'bg-danger-50 border-danger-300')}>
+              <div className={cn('rounded-2xl p-5 border-2 text-center', practiceResult === 'correct' ? 'bg-success-50 dark:bg-success-900/20 border-success-300 dark:border-success-800/40' : 'bg-danger-50 dark:bg-danger-900/20 border-danger-300 dark:border-danger-800/40')}>
                 <Icon name={practiceResult === 'correct' ? 'check_circle' : 'cancel'} size={36}
                   className={cn('mx-auto mb-2', practiceResult === 'correct' ? 'text-success-500' : 'text-danger-500')} filled />
-                <p className={cn('font-bold text-base mb-1', practiceResult === 'correct' ? 'text-success-700' : 'text-danger-700')}>
+                <p className={cn('font-bold text-base mb-1', practiceResult === 'correct' ? 'text-success-700 dark:text-success-400' : 'text-danger-700 dark:text-danger-400')}>
                   {practiceResult === 'correct'
                     ? t('mistakes.correct_feedback')
                     : `${t('mistakes.wrong_feedback')} ${q.correctAnswer ? trueLabel : falseLabel}`}
                 </p>
-                <p className={cn('text-xs mb-4', practiceResult === 'correct' ? 'text-success-600' : 'text-danger-600')}>
+                <p className={cn('text-xs mb-4', practiceResult === 'correct' ? 'text-success-600 dark:text-success-500' : 'text-danger-600 dark:text-danger-500')}>
                   {`${t('mistakes.error_count_now')} ${practiceResult === 'correct' ? Math.max(0, q.count - 1) : q.count + 1}`}
                 </p>
                 <button onClick={nextQuestion}
-                  className="bg-white dark:bg-surface-200 border border-surface-200 text-surface-700 font-semibold text-sm px-6 py-2 rounded-xl hover:bg-surface-50 transition-colors">
+                  className="bg-white dark:bg-surface-200 border border-surface-200 dark:border-surface-300 text-surface-700 dark:text-surface-800 font-semibold text-sm px-6 py-2 rounded-xl hover:bg-surface-50 dark:hover:bg-surface-300 transition-colors">
                   {practiceIdx + 1 < mistakes.length ? t('mistakes.next') : t('mistakes.finish')}
                 </button>
               </div>
