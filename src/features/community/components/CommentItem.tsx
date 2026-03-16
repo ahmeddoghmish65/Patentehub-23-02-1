@@ -69,12 +69,12 @@ export const CommentItem = memo(function CommentItem({
         <div className="flex-1 bg-white dark:bg-surface-200 rounded-xl px-3 py-2">
           <div className="flex items-center justify-between">
             <span className="inline-flex items-center gap-1">
-              <button className="text-xs font-semibold text-surface-800 hover:text-primary-600" onClick={() => onUserClick(c.userId)}>{c.userName}</button>
+              <button className="text-xs font-semibold text-surface-800 dark:text-surface-900 hover:text-primary-600" onClick={() => onUserClick(c.userId)}>{c.userName}</button>
               {verifiedUsers[c.userId] && <VerifiedBadge size="xs" tooltip />}
             </span>
             <span className="text-[10px] text-surface-400">{relativeTime(c.createdAt, uiLang)}</span>
           </div>
-          <p dir={getTextDir(c.content)} className="text-sm text-surface-600 mt-0.5">
+          <p dir={getTextDir(c.content)} className="text-sm text-surface-600 dark:text-surface-700 mt-0.5">
             <MentionText text={c.content} onMentionClick={onMentionClick} onHashtagClick={onHashtagClick} />
           </p>
           <div className="flex items-center gap-3 mt-1.5">
@@ -114,21 +114,21 @@ export const CommentItem = memo(function CommentItem({
 
       {/* Replies */}
       {visibleReplies.length > 0 && (
-        <div className="mr-8 space-y-2 border-r-2 border-primary-100 pr-3">
+        <div className="mr-8 space-y-2 border-r-2 border-primary-100 dark:border-primary-800/40 pr-3">
           {visibleReplies.map(r => (
             <div key={r.id} className="flex items-start gap-2">
               <UserAvatar userId={r.userId} avatar={r.userAvatar} name={r.userName} />
               <div className="flex-1 bg-white dark:bg-surface-200 rounded-xl px-3 py-2">
                 <div className="flex items-center gap-1">
                   <span className="inline-flex items-center gap-1">
-                    <button className="text-xs font-semibold text-surface-800 hover:text-primary-600" onClick={() => onUserClick(r.userId)}>{r.userName}</button>
+                    <button className="text-xs font-semibold text-surface-800 dark:text-surface-900 hover:text-primary-600" onClick={() => onUserClick(r.userId)}>{r.userName}</button>
                     {verifiedUsers[r.userId] && <VerifiedBadge size="xs" tooltip />}
                   </span>
                   <Icon name="arrow_back" size={10} className="text-surface-300" />
                   <span className="text-[10px] text-primary-500">{c.userName}</span>
                   <span className="text-[10px] text-surface-400 mr-auto">{relativeTime(r.createdAt, uiLang)}</span>
                 </div>
-                <p dir={getTextDir(getReplyContent(r))} className="text-sm text-surface-600 mt-0.5">
+                <p dir={getTextDir(getReplyContent(r))} className="text-sm text-surface-600 dark:text-surface-700 mt-0.5">
                   <MentionText text={getReplyContent(r)} onMentionClick={onMentionClick} onHashtagClick={onHashtagClick} />
                 </p>
                 <div className="flex items-center gap-3 mt-1.5">

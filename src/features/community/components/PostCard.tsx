@@ -148,7 +148,7 @@ export const PostCard = memo(function PostCard({
     const isLong = text.length > 180 || text.split('\n').length > 3;
 
     const textElement = (content: string) => (
-      <p dir={getTextDir(text)} className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap mb-3">
+      <p dir={getTextDir(text)} className="text-surface-700 dark:text-surface-800 text-sm leading-relaxed whitespace-pre-wrap mb-3">
         <MentionText text={content} onMentionClick={onMentionClick} onHashtagClick={onHashtagClick} />
       </p>
     );
@@ -158,7 +158,7 @@ export const PostCard = memo(function PostCard({
     if (isExpanded) {
       return (
         <div className="mb-3">
-          <p dir={getTextDir(text)} className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap">
+          <p dir={getTextDir(text)} className="text-surface-700 dark:text-surface-800 text-sm leading-relaxed whitespace-pre-wrap">
             <MentionText text={text} onMentionClick={onMentionClick} onHashtagClick={onHashtagClick} />
           </p>
           <button className="text-primary-500 text-xs font-medium mt-1 hover:text-primary-700" onClick={() => toggleExpandText(post.id)}>
@@ -174,7 +174,7 @@ export const PostCard = memo(function PostCard({
 
     return (
       <div className="mb-3">
-        <p dir={getTextDir(text)} className="text-surface-700 text-sm leading-relaxed whitespace-pre-wrap">
+        <p dir={getTextDir(text)} className="text-surface-700 dark:text-surface-800 text-sm leading-relaxed whitespace-pre-wrap">
           <MentionText text={truncated} onMentionClick={onMentionClick} onHashtagClick={onHashtagClick} />
         </p>
         <button className="text-primary-500 text-xs font-medium mt-1 hover:text-primary-700" onClick={() => toggleExpandText(post.id)}>
@@ -197,7 +197,7 @@ export const PostCard = memo(function PostCard({
               'text-[11px] px-2 py-0.5 rounded-full font-medium transition-colors',
               activeHashtag === tag
                 ? 'bg-primary-500 text-white'
-                : 'bg-primary-50 text-primary-600 hover:bg-primary-100',
+                : 'bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300 hover:bg-primary-100 dark:hover:bg-primary-900/50',
             )}
             onClick={() => setActiveHashtag(activeHashtag === tag ? null : tag)}
           >
@@ -215,9 +215,9 @@ export const PostCard = memo(function PostCard({
       id={!showAllComments ? `post-${post.id}` : undefined}
       className={cn(
         'bg-white dark:bg-surface-100 rounded-2xl border overflow-hidden',
-        post.pinned  ? 'border-amber-200 ring-1 ring-amber-100'  :
-        post.featured ? 'border-blue-200 ring-1 ring-blue-100'  :
-        'border-surface-100',
+        post.pinned  ? 'border-amber-200 dark:border-amber-700/50 ring-1 ring-amber-100 dark:ring-amber-900/30'  :
+        post.featured ? 'border-blue-200 dark:border-blue-700/50 ring-1 ring-blue-100 dark:ring-blue-900/30'  :
+        'border-surface-100 dark:border-surface-200',
       )}
     >
       {/* Status banners */}
@@ -234,9 +234,9 @@ export const PostCard = memo(function PostCard({
         </div>
       )}
       {post.locked && (
-        <div className="bg-surface-50 px-4 py-1 flex items-center gap-1.5 border-b border-surface-100">
-          <Icon name="lock" size={12} className="text-surface-400" />
-          <span className="text-[11px] text-surface-400">{t('community.comments_locked_label')}</span>
+        <div className="bg-surface-50 dark:bg-surface-200 px-4 py-1 flex items-center gap-1.5 border-b border-surface-100 dark:border-surface-300">
+          <Icon name="lock" size={12} className="text-surface-400 dark:text-surface-600" />
+          <span className="text-[11px] text-surface-400 dark:text-surface-600">{t('community.comments_locked_label')}</span>
         </div>
       )}
 
@@ -359,28 +359,28 @@ export const PostCard = memo(function PostCard({
                 <div className={cn('flex items-center justify-between p-2.5 rounded-lg border',
                   post.quizAnswer === true ? 'bg-success-50 dark:bg-success-900/20 border-success-200 dark:border-success-800/40'
                   : quizSelected[post.id] === true ? 'bg-danger-50 dark:bg-danger-900/20 border-danger-200 dark:border-danger-800/40'
-                  : 'bg-white dark:bg-surface-700 border-surface-200 dark:border-surface-600')}>
-                  <span className="text-sm font-medium">{t('community.quiz_correct_opt')}</span>
+                  : 'bg-white dark:bg-surface-200 border-surface-200 dark:border-surface-300')}>
+                  <span className="text-sm font-medium text-surface-900">{t('community.quiz_correct_opt')}</span>
                   <div className="flex items-center gap-2">
                     {post.quizAnswer === true && <Icon name="check_circle" size={16} className="text-success-500" filled />}
-                    <div className="w-20 bg-surface-200 rounded-full h-1.5">
+                    <div className="w-20 bg-surface-200 dark:bg-surface-300 rounded-full h-1.5">
                       <div className="bg-primary-500 rounded-full h-1.5" style={{ width: `${truePct}%` }} />
                     </div>
-                    <span className="text-xs text-surface-600 w-8 text-left">{truePct}%</span>
+                    <span className="text-xs text-surface-600 dark:text-surface-700 w-8 text-left">{truePct}%</span>
                   </div>
                 </div>
                 {/* False option */}
                 <div className={cn('flex items-center justify-between p-2.5 rounded-lg border',
                   post.quizAnswer === false ? 'bg-success-50 dark:bg-success-900/20 border-success-200 dark:border-success-800/40'
                   : quizSelected[post.id] === false ? 'bg-danger-50 dark:bg-danger-900/20 border-danger-200 dark:border-danger-800/40'
-                  : 'bg-white dark:bg-surface-700 border-surface-200 dark:border-surface-600')}>
-                  <span className="text-sm font-medium">{t('community.quiz_wrong_opt')}</span>
+                  : 'bg-white dark:bg-surface-200 border-surface-200 dark:border-surface-300')}>
+                  <span className="text-sm font-medium text-surface-900">{t('community.quiz_wrong_opt')}</span>
                   <div className="flex items-center gap-2">
                     {post.quizAnswer === false && <Icon name="check_circle" size={16} className="text-success-500" filled />}
-                    <div className="w-20 bg-surface-200 rounded-full h-1.5">
+                    <div className="w-20 bg-surface-200 dark:bg-surface-300 rounded-full h-1.5">
                       <div className="bg-primary-500 rounded-full h-1.5" style={{ width: `${falsePct}%` }} />
                     </div>
-                    <span className="text-xs text-surface-600 w-8 text-left">{falsePct}%</span>
+                    <span className="text-xs text-surface-600 dark:text-surface-700 w-8 text-left">{falsePct}%</span>
                   </div>
                 </div>
                 <p className="text-xs text-surface-400 text-center mt-1">{totalAns} {t('community.quiz_voted')}</p>
