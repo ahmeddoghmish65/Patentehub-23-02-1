@@ -50,7 +50,7 @@ export const ProfileAvatarUpload = React.memo(function ProfileAvatarUpload({
           </div>
         )}
         <button
-          className="absolute -bottom-1 -right-1 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-surface-50 transition-colors"
+          className="absolute -bottom-1 -right-1 w-7 h-7 bg-white dark:bg-surface-200 rounded-full flex items-center justify-center shadow-lg hover:bg-surface-50 dark:hover:bg-surface-300 transition-colors"
           onClick={() => fileRef.current?.click()}
           type="button"
         >

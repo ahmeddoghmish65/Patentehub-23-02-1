@@ -201,7 +201,7 @@ export function ProfilePage() {
                 <Icon name={badge.icon} size={16} className={isEarned ? 'text-white' : 'text-surface-400'} filled />
               </div>
               <div className="flex-1 min-w-0">
-                <p className={cn('text-xs font-bold mb-0.5', isEarned ? 'text-primary-700' : 'text-surface-600')}>{badge.name}</p>
+                <p className={cn('text-xs font-bold mb-0.5', isEarned ? 'text-primary-700 dark:text-primary-300' : 'text-surface-600')}>{badge.name}</p>
                 <p className="text-[11px] text-surface-600 leading-relaxed">{badge.desc}</p>
               </div>
             </div>
@@ -255,9 +255,9 @@ export function ProfilePage() {
         </div>
 
         {isAdmin && (
-          <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-primary-50 transition-colors border-b border-surface-50 group" onClick={() => navigate(ROUTES.ADMIN)}>
-            <div className="w-9 h-9 bg-primary-100 rounded-xl flex items-center justify-center shrink-0">
-              <Icon name="admin_panel_settings" size={18} className="text-primary-600" />
+          <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors border-b border-surface-50 dark:border-surface-700 group" onClick={() => navigate(ROUTES.ADMIN)}>
+            <div className="w-9 h-9 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center shrink-0">
+              <Icon name="admin_panel_settings" size={18} className="text-primary-600 dark:text-primary-400" />
             </div>
             <div className="flex-1 text-right">
               <p className="text-sm font-semibold text-surface-800">{t('profile.admin_panel')}</p>
@@ -338,8 +338,8 @@ export function ProfilePage() {
                       }}
                     >
                       {l === 'ar' && <span className="w-9 h-9 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-lg font-bold text-orange-600 dark:text-orange-400">ع</span>}
-                      {l === 'it' && <span className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-xs font-bold text-blue-600 dark:text-blue-400" dir="ltr">IT</span>}
-                      {l === 'en' && <span className="w-9 h-9 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-xs font-bold text-green-600 dark:text-green-400" dir="ltr">EN</span>}
+                      {l === 'it' && <span className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center text-xs font-bold text-blue-600 dark:text-blue-400" dir="ltr">IT</span>}
+                      {l === 'en' && <span className="w-9 h-9 rounded-xl bg-green-100 dark:bg-green-900/40 flex items-center justify-center text-xs font-bold text-green-600 dark:text-green-400" dir="ltr">EN</span>}
                       <span className={cn('text-xs font-medium text-center', uiLang === l ? 'text-primary-700' : 'text-surface-600')}>
                         {t(`profile.ui_lang_${l}`)}
                       </span>
@@ -363,7 +363,7 @@ export function ProfilePage() {
                       className={cn(
                         'relative flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all',
                         opt.comingSoon ? 'border-surface-100 bg-surface-50 opacity-60 cursor-not-allowed'
-                          : settings.language === opt.value ? 'border-primary-500 bg-primary-50'
+                          : settings.language === opt.value ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30'
                           : 'border-surface-100 hover:border-surface-200',
                       )}
                       onClick={() => !opt.comingSoon && updateSettings({ language: opt.value })}
@@ -373,10 +373,10 @@ export function ProfilePage() {
                           {uiLang === 'it' ? 'Presto' : 'قريباً'}
                         </span>
                       )}
-                      {opt.value === 'it'   && <span className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600" dir="ltr">IT</span>}
-                      {opt.value === 'both' && <Icon name="translate" size={24} className={settings.language === opt.value ? 'text-primary-600' : 'text-surface-500'} />}
-                      {opt.value === 'en_it'&& <span className="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center text-[10px] font-bold text-green-600" dir="ltr">EN</span>}
-                      <span className={cn('text-xs font-medium text-center leading-tight', settings.language === opt.value ? 'text-primary-700' : 'text-surface-600')}>
+                      {opt.value === 'it'   && <span className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center text-xs font-bold text-blue-600 dark:text-blue-400" dir="ltr">IT</span>}
+                      {opt.value === 'both' && <Icon name="translate" size={24} className={settings.language === opt.value ? 'text-primary-600 dark:text-primary-400' : 'text-surface-500'} />}
+                      {opt.value === 'en_it'&& <span className="w-9 h-9 rounded-xl bg-green-100 dark:bg-green-900/40 flex items-center justify-center text-[10px] font-bold text-green-600 dark:text-green-400" dir="ltr">EN</span>}
+                      <span className={cn('text-xs font-medium text-center leading-tight', settings.language === opt.value ? 'text-primary-700 dark:text-primary-300' : 'text-surface-600')}>
                         {opt.label}
                       </span>
                       {settings.language === opt.value && !opt.comingSoon && <Icon name="check_circle" size={16} className="text-primary-500" filled />}

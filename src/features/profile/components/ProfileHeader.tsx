@@ -72,15 +72,15 @@ export const ProfileHeader = React.memo(function ProfileHeader({
             <p className="text-sm text-surface-600 mt-1 line-clamp-2">{storedBio}</p>
           )}
           <div className="flex items-center gap-2 mt-2 flex-wrap">
-            <span className="text-xs bg-primary-50 text-primary-600 px-2 py-0.5 rounded-full font-medium">
+            <span className="text-xs bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 px-2 py-0.5 rounded-full font-medium">
               {t('profile.level_label')} {user.progress.level}
             </span>
-            <span className="text-xs bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full font-medium">
+            <span className="text-xs bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 px-2 py-0.5 rounded-full font-medium">
               {user.progress.xp} XP
             </span>
             {!user.profileComplete && (
               <button
-                className="text-xs bg-warning-50 text-warning-600 px-2 py-0.5 rounded-full font-medium animate-pulse"
+                className="text-xs bg-warning-50 dark:bg-warning-900/20 text-warning-600 dark:text-warning-400 px-2 py-0.5 rounded-full font-medium animate-pulse"
                 onClick={onCompleteProfileClick}
               >
                 {t('profile.complete_badge')}
