@@ -218,7 +218,7 @@ export function ProfilePage() {
           </h2>
         </div>
 
-        <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors border-b border-surface-50 dark:border-surface-700 group" onClick={handleOpenEditPage}>
+        <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-surface-50 dark:hover:bg-surface-200 transition-colors border-b border-surface-50 dark:border-surface-200 group" onClick={handleOpenEditPage}>
           <div className="w-9 h-9 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center group-hover:bg-primary-100 dark:group-hover:bg-primary-900/50 transition-colors shrink-0">
             <Icon name="edit" size={18} className="text-primary-500" />
           </div>
@@ -229,7 +229,7 @@ export function ProfilePage() {
           <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors ltr:rotate-180" />
         </button>
 
-        <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors border-b border-surface-50 dark:border-surface-700 group" onClick={() => setShowTranslation(true)}>
+        <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-surface-50 dark:hover:bg-surface-200 transition-colors border-b border-surface-50 dark:border-surface-200 group" onClick={() => setShowTranslation(true)}>
           <div className="w-9 h-9 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center group-hover:bg-primary-100 dark:group-hover:bg-primary-900/50 transition-colors shrink-0">
             <Icon name="language" size={18} className="text-primary-500" />
           </div>
@@ -241,7 +241,7 @@ export function ProfilePage() {
         </button>
 
         {/* Theme setting */}
-        <div className="px-5 py-4 border-b border-surface-50 dark:border-surface-700 space-y-3">
+        <div className="px-5 py-4 border-b border-surface-50 dark:border-surface-200 space-y-3">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center shrink-0">
               <Icon name="brightness_auto" size={18} className="text-primary-500" />
@@ -255,7 +255,7 @@ export function ProfilePage() {
         </div>
 
         {isAdmin && (
-          <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors border-b border-surface-50 dark:border-surface-700 group" onClick={() => navigate(ROUTES.ADMIN)}>
+          <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors border-b border-surface-50 dark:border-surface-200 group" onClick={() => navigate(ROUTES.ADMIN)}>
             <div className="w-9 h-9 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center shrink-0">
               <Icon name="admin_panel_settings" size={18} className="text-primary-600 dark:text-primary-400" />
             </div>
@@ -297,7 +297,7 @@ export function ProfilePage() {
 
         <div className="px-5 py-4 border-t border-surface-100">
           <button
-            className="w-full flex items-center justify-center gap-2 bg-danger-50 dark:bg-danger-900/20 text-danger-600 dark:text-danger-400 rounded-xl py-3 text-sm font-semibold hover:bg-danger-100 dark:hover:bg-danger-900/30 transition-colors border border-danger-100 dark:border-danger-800/40"
+            className="w-full flex items-center justify-center gap-2 bg-danger-50 dark:bg-danger-500/10 text-danger-600 dark:text-danger-500 rounded-xl py-3 text-sm font-semibold hover:bg-danger-50 dark:hover:bg-danger-500/20 transition-colors border border-danger-600/20 dark:border-danger-500/30"
             onClick={handleLogout}
           >
             <Icon name="logout" size={18} /> {t('profile.logout')}

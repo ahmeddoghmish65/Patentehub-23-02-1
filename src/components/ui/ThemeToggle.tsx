@@ -53,7 +53,7 @@ export const ThemeToggle = memo(function ThemeToggle({
   return (
     <div
       className={cn(
-        'flex items-center gap-0.5 p-1 rounded-xl bg-surface-100',
+        'flex items-center gap-0.5 p-1 rounded-xl bg-surface-100 dark:bg-surface-50',
         className,
       )}
       role="group"
@@ -70,8 +70,8 @@ export const ThemeToggle = memo(function ThemeToggle({
             className={cn(
               'flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200',
               active
-                ? 'bg-white dark:bg-surface-700 text-surface-900 shadow-sm'
-                : 'text-surface-500 hover:text-surface-700',
+                ? 'bg-white dark:bg-surface-200 text-surface-900 shadow-sm'
+                : 'text-surface-500 dark:text-surface-400 hover:text-surface-700 dark:hover:text-surface-300',
             )}
           >
             <Icon name={opt.icon} size={16} />
