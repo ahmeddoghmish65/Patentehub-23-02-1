@@ -86,7 +86,7 @@ export function QuestionsBrowsePage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     {q.image && (
-                      <img src={q.image} alt="" className="w-28 rounded-lg mb-2 max-h-24 object-contain bg-surface-50" />
+                      <img src={q.image} alt="" className="w-full rounded-lg mb-2 max-h-36 object-contain bg-white" />
                     )}
                     <div className="flex items-start gap-2">
                       <div className="flex-1">
