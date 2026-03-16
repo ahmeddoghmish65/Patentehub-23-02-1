@@ -84,11 +84,11 @@ export function QuestionsBrowsePage() {
                       {idx + 1}
                     </span>
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 flex items-start gap-3">
                     {q.image && (
-                      <img src={q.image} alt="" className="w-full rounded-lg mb-2 max-h-36 object-contain bg-white" />
+                      <img src={q.image} alt="" className="w-16 h-16 rounded-lg object-contain bg-surface-50 shrink-0" />
                     )}
-                    <div className="flex items-start gap-2">
+                    <div className="flex items-start gap-2 flex-1 min-w-0">
                       <div className="flex-1">
                         {lang === 'ar' && (
                           <p className="text-sm font-medium text-surface-800 leading-relaxed" dir="rtl">{q.questionAr}</p>
