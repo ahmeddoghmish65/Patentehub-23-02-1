@@ -242,8 +242,8 @@ export const Dashboard = memo(function Dashboard() {
               {t('dashboard.progress_summary')}
             </h3>
             <span className={cn('text-xs font-semibold px-2 py-0.5 rounded-full',
-              readiness.score >= 70 ? 'bg-success-50 text-success-600' :
-              readiness.score >= 40 ? 'bg-warning-50 text-warning-600' :
+              readiness.score >= 70 ? 'bg-success-50 dark:bg-success-900/30 text-success-600 dark:text-success-400' :
+              readiness.score >= 40 ? 'bg-warning-50 dark:bg-warning-900/30 text-warning-600 dark:text-warning-400' :
               'bg-surface-100 text-surface-500'
             )}>
               {t('dashboard.readiness')}: {readiness.score}%

@@ -33,12 +33,12 @@ export function DictionaryPage() {
       <div className="bg-white dark:bg-surface-100 rounded-xl p-4 border border-surface-100 mb-6">
         <div className="relative mb-3">
           <Icon name="search" size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400" />
-          <input className="w-full pr-10 pl-4 py-2.5 rounded-lg border border-surface-200 text-sm" placeholder={t('dictionary_page.search_placeholder')} value={search} onChange={e => setSearch(e.target.value)} />
+          <input className="w-full pr-10 pl-4 py-2.5 rounded-lg border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-200 text-sm" placeholder={t('dictionary_page.search_placeholder')} value={search} onChange={e => setSearch(e.target.value)} />
         </div>
         <div className="flex gap-2 overflow-x-auto">
           {dictSections.map(s => (
             <button key={s.id} className={cn('shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1',
-              activeSec === s.id ? 'bg-primary-500 text-white' : 'bg-surface-100 text-surface-600')} onClick={() => setActiveSec(s.id)}>
+              activeSec === s.id ? 'bg-primary-500 text-white' : 'bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-600')} onClick={() => setActiveSec(s.id)}>
               <Icon name={s.icon || 'menu_book'} size={16} />{(lang === 'it' || uiLang === 'it') ? (s.nameIt || s.nameAr) : s.nameAr}
             </button>
           ))}

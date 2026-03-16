@@ -90,7 +90,7 @@ export function ContactPage() {
         canonical={`https://patentehub.com/${uiLang}/contact`}
         noIndex={false}
       />
-      <div className="min-h-screen bg-surface-50 animate-fade-in-up">
+      <div className="min-h-screen bg-surface-50 dark:bg-surface-950 animate-fade-in-up">
       {/* App Header */}
       <header className="sticky top-0 z-50 bg-white dark:bg-surface-100 border-b border-surface-100 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
@@ -119,7 +119,7 @@ export function ContactPage() {
           <div className="bg-white dark:bg-surface-100 rounded-2xl p-6 border border-surface-100 shadow-sm">
             {submitted ? (
               <div className="text-center py-10">
-                <div className="w-20 h-20 mx-auto bg-success-50 rounded-full flex items-center justify-center mb-6">
+                <div className="w-20 h-20 mx-auto bg-success-50 dark:bg-success-900/30 rounded-full flex items-center justify-center mb-6">
                   <Icon name="check_circle" size={48} className="text-success-500" filled />
                 </div>
                 <h2 className="text-xl font-bold text-surface-900 mb-2">
@@ -185,7 +185,7 @@ export function ContactPage() {
                     value={formData.message}
                     onChange={e => handleChange('message', e.target.value)}
                     className={cn(
-                      'w-full px-4 py-3 rounded-xl border border-surface-200 bg-white dark:bg-surface-200 resize-none',
+                      'w-full px-4 py-3 rounded-xl border border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 resize-none text-surface-800 dark:text-surface-200',
                       'text-surface-800 placeholder:text-surface-400',
                       'focus:border-primary-500 focus:ring-2 focus:ring-primary-100',
                       'transition-all duration-200',
@@ -204,7 +204,7 @@ export function ContactPage() {
                 </div>
 
                 {submitError && (
-                  <div className="bg-danger-50 border border-danger-200 text-danger-600 px-4 py-3 rounded-xl flex items-center gap-2">
+                  <div className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800/40 text-danger-600 dark:text-danger-400 px-4 py-3 rounded-xl flex items-center gap-2">
                     <Icon name="error" size={20} />
                     <span className="text-sm">{submitError}</span>
                   </div>
@@ -254,7 +254,7 @@ export function ContactPage() {
                 rel="noopener noreferrer"
                 className="flex items-start gap-3 group"
               >
-                <div className="w-10 h-10 bg-success-50 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-success-100 transition-colors">
+                <div className="w-10 h-10 bg-success-50 dark:bg-success-900/30 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-success-100 dark:group-hover:bg-success-900/50 transition-colors">
                   <Icon name="chat" size={20} className="text-success-600" />
                 </div>
                 <div>
@@ -266,7 +266,7 @@ export function ContactPage() {
               </a>
 
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-surface-50 rounded-xl flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 bg-surface-50 dark:bg-surface-700 rounded-xl flex items-center justify-center shrink-0">
                   <Icon name="location_on" size={20} className="text-surface-400" />
                 </div>
                 <div>

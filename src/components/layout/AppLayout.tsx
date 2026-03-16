@@ -90,7 +90,7 @@ function ProfileGate({ onNavigate }: { onNavigate: (path: string) => void }) {
   return (
     <div className="max-w-md mx-auto text-center py-12">
       <div className="bg-white dark:bg-surface-100 rounded-2xl p-8 border border-warning-200 shadow-lg transition-colors duration-200">
-        <div className="w-20 h-20 mx-auto bg-warning-50 rounded-2xl flex items-center justify-center mb-6">
+        <div className="w-20 h-20 mx-auto bg-warning-50 dark:bg-warning-900/30 rounded-2xl flex items-center justify-center mb-6">
           <Icon name="person_add" size={40} className="text-warning-500" filled />
         </div>
         <h2 className="text-xl font-bold text-surface-900 mb-3">{t('profile_gate.title')}</h2>

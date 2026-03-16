@@ -87,8 +87,8 @@ export function LanguageSwitcher({ variant = 'compact', className }: LanguageSwi
                 className={cn(
                   'w-full flex items-center gap-2.5 px-3 py-2 text-sm transition-colors',
                   uiLang === language.code
-                    ? 'bg-primary-50 text-primary-700 font-semibold'
-                    : 'text-surface-700 hover:bg-surface-50',
+                    ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-semibold'
+                    : 'text-surface-700 dark:text-surface-300 hover:bg-surface-50 dark:hover:bg-surface-700',
                 )}
               >
                 <span className="text-base">{language.flag}</span>

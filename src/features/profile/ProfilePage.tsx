@@ -218,8 +218,8 @@ export function ProfilePage() {
           </h2>
         </div>
 
-        <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-surface-50 transition-colors border-b border-surface-50 group" onClick={handleOpenEditPage}>
-          <div className="w-9 h-9 bg-primary-50 rounded-xl flex items-center justify-center group-hover:bg-primary-100 transition-colors shrink-0">
+        <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors border-b border-surface-50 dark:border-surface-700 group" onClick={handleOpenEditPage}>
+          <div className="w-9 h-9 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center group-hover:bg-primary-100 dark:group-hover:bg-primary-900/50 transition-colors shrink-0">
             <Icon name="edit" size={18} className="text-primary-500" />
           </div>
           <div className="flex-1 text-right">
@@ -229,8 +229,8 @@ export function ProfilePage() {
           <Icon name="chevron_left" size={20} className="text-surface-300 group-hover:text-primary-500 transition-colors ltr:rotate-180" />
         </button>
 
-        <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-surface-50 transition-colors border-b border-surface-50 group" onClick={() => setShowTranslation(true)}>
-          <div className="w-9 h-9 bg-primary-50 rounded-xl flex items-center justify-center group-hover:bg-primary-100 transition-colors shrink-0">
+        <button className="w-full px-5 py-4 flex items-center gap-3 hover:bg-surface-50 dark:hover:bg-surface-700 transition-colors border-b border-surface-50 dark:border-surface-700 group" onClick={() => setShowTranslation(true)}>
+          <div className="w-9 h-9 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center group-hover:bg-primary-100 dark:group-hover:bg-primary-900/50 transition-colors shrink-0">
             <Icon name="language" size={18} className="text-primary-500" />
           </div>
           <div className="flex-1 text-right">
@@ -241,9 +241,9 @@ export function ProfilePage() {
         </button>
 
         {/* Theme setting */}
-        <div className="px-5 py-4 border-b border-surface-50 space-y-3">
+        <div className="px-5 py-4 border-b border-surface-50 dark:border-surface-700 space-y-3">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-primary-50 rounded-xl flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center shrink-0">
               <Icon name="brightness_auto" size={18} className="text-primary-500" />
             </div>
             <div className="flex-1 text-right">
@@ -287,7 +287,7 @@ export function ProfilePage() {
         {!user.profileComplete && (
           <div className="px-5 pb-3">
             <button
-              className="w-full bg-warning-50 text-warning-700 rounded-lg py-2.5 text-sm font-medium border border-warning-200 hover:bg-warning-100"
+              className="w-full bg-warning-50 dark:bg-warning-900/20 text-warning-700 dark:text-warning-400 rounded-lg py-2.5 text-sm font-medium border border-warning-200 dark:border-warning-800/40 hover:bg-warning-100 dark:hover:bg-warning-900/30"
               onClick={() => setShowCompleteProfile(true)}
             >
               {t('profile.complete_profile_btn')}
@@ -297,7 +297,7 @@ export function ProfilePage() {
 
         <div className="px-5 py-4 border-t border-surface-100">
           <button
-            className="w-full flex items-center justify-center gap-2 bg-danger-50 text-danger-600 rounded-xl py-3 text-sm font-semibold hover:bg-danger-100 transition-colors border border-danger-100"
+            className="w-full flex items-center justify-center gap-2 bg-danger-50 dark:bg-danger-900/20 text-danger-600 dark:text-danger-400 rounded-xl py-3 text-sm font-semibold hover:bg-danger-100 dark:hover:bg-danger-900/30 transition-colors border border-danger-100 dark:border-danger-800/40"
             onClick={handleLogout}
           >
             <Icon name="logout" size={18} /> {t('profile.logout')}
@@ -330,16 +330,16 @@ export function ProfilePage() {
                   {(['ar', 'it', 'en'] as const).map(l => (
                     <button
                       key={l}
-                      className={cn('flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all', uiLang === l ? 'border-primary-500 bg-primary-50' : 'border-surface-100 hover:border-surface-200')}
+                      className={cn('flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all', uiLang === l ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30' : 'border-surface-100 dark:border-surface-700 hover:border-surface-200 dark:hover:border-surface-600')}
                       onClick={() => {
                         setUiLang(l);
                         const pathWithoutLang = pathname.replace(`/${uiLang}`, '') || '';
                         rawNavigate(`/${l}${pathWithoutLang}`, { replace: true });
                       }}
                     >
-                      {l === 'ar' && <span className="w-9 h-9 rounded-xl bg-orange-100 flex items-center justify-center text-lg font-bold text-orange-600">ع</span>}
-                      {l === 'it' && <span className="w-9 h-9 rounded-xl bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-600" dir="ltr">IT</span>}
-                      {l === 'en' && <span className="w-9 h-9 rounded-xl bg-green-100 flex items-center justify-center text-xs font-bold text-green-600" dir="ltr">EN</span>}
+                      {l === 'ar' && <span className="w-9 h-9 rounded-xl bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-lg font-bold text-orange-600 dark:text-orange-400">ع</span>}
+                      {l === 'it' && <span className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-xs font-bold text-blue-600 dark:text-blue-400" dir="ltr">IT</span>}
+                      {l === 'en' && <span className="w-9 h-9 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-xs font-bold text-green-600 dark:text-green-400" dir="ltr">EN</span>}
                       <span className={cn('text-xs font-medium text-center', uiLang === l ? 'text-primary-700' : 'text-surface-600')}>
                         {t(`profile.ui_lang_${l}`)}
                       </span>

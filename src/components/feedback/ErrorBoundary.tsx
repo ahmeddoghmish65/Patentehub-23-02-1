@@ -148,11 +148,11 @@ function DefaultErrorScreen({
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-surface-50 p-4"
+      className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950 p-4"
       dir={isRtl ? 'rtl' : 'ltr'}
     >
       <div className="bg-white dark:bg-surface-100 rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
-        <div className="w-16 h-16 bg-danger-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-danger-50 dark:bg-danger-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <Icon name="error" size={32} className="text-danger-500" />
         </div>
 
@@ -166,7 +166,7 @@ function DefaultErrorScreen({
 
         {/* Dev-only: show error details */}
         {isDev && error && (
-          <pre className="text-xs text-start bg-surface-50 border border-surface-200 rounded-lg p-3 mb-4 overflow-x-auto text-danger-700 whitespace-pre-wrap break-words">
+          <pre className="text-xs text-start bg-surface-50 dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-lg p-3 mb-4 overflow-x-auto text-danger-700 dark:text-danger-400 whitespace-pre-wrap break-words">
             {error.message}
           </pre>
         )}

@@ -160,7 +160,7 @@ export function ExamSimulatorPage() {
               { label: t('exam.max_errors_label'), value: `${MAX_ERRORS} ${t('exam.errors_plural')}`, icon: 'close', danger: true },
               { label: t('exam.q_type_label'), value: t('exam.q_type_value'), icon: 'check_circle' },
             ].map(item => (
-              <div key={item.label} className="bg-surface-50 rounded-xl p-3 text-start">
+              <div key={item.label} className="bg-surface-50 dark:bg-surface-800 rounded-xl p-3 text-start">
                 <p className="text-[10px] text-surface-400 mb-0.5">{item.label}</p>
                 <p className={cn('text-sm font-bold', item.danger ? 'text-danger-600' : 'text-surface-900')}>{item.value}</p>
               </div>
@@ -202,7 +202,7 @@ export function ExamSimulatorPage() {
             {/* Top: icon+status and score circle side by side */}
             <div className="flex items-center justify-between gap-4 mb-4">
               <div className="flex flex-col items-center gap-1.5 flex-1">
-                <div className={cn('w-14 h-14 rounded-full flex items-center justify-center', passed ? 'bg-success-50' : 'bg-danger-50')}>
+                <div className={cn('w-14 h-14 rounded-full flex items-center justify-center', passed ? 'bg-success-50 dark:bg-success-900/30' : 'bg-danger-50 dark:bg-danger-900/30')}>
                   <Icon name={passed ? 'celebration' : 'sentiment_dissatisfied'} size={30} className={passed ? 'text-success-500' : 'text-danger-500'} filled />
                 </div>
                 <h1 className={cn('text-2xl font-bold', passed ? 'text-success-600' : 'text-danger-600')}>{passed ? t('exam.passed') : t('exam.failed')}</h1>
@@ -223,26 +223,26 @@ export function ExamSimulatorPage() {
 
             {/* Stats row */}
             <div className="grid grid-cols-4 gap-2 mb-3">
-              <div className="bg-success-50 rounded-xl p-2.5 border border-success-100 text-center">
-                <p className="text-lg font-bold text-success-600 leading-none">{correctCount}</p>
-                <p className="text-[10px] text-success-500 mt-0.5">{t('exam.correct_label')}</p>
+              <div className="bg-success-50 dark:bg-success-900/20 rounded-xl p-2.5 border border-success-100 dark:border-success-800/40 text-center">
+                <p className="text-lg font-bold text-success-600 dark:text-success-400 leading-none">{correctCount}</p>
+                <p className="text-[10px] text-success-500 dark:text-success-500 mt-0.5">{t('exam.correct_label')}</p>
               </div>
-              <div className="bg-danger-50 rounded-xl p-2.5 border border-danger-100 text-center">
-                <p className="text-lg font-bold text-danger-600 leading-none">{errors}</p>
+              <div className="bg-danger-50 dark:bg-danger-900/20 rounded-xl p-2.5 border border-danger-100 dark:border-danger-800/40 text-center">
+                <p className="text-lg font-bold text-danger-600 dark:text-danger-400 leading-none">{errors}</p>
                 <p className="text-[10px] text-danger-500 mt-0.5">{t('exam.errors_label')}</p>
               </div>
-              <div className="bg-surface-50 rounded-xl p-2.5 border border-surface-100 text-center">
-                <p className="text-lg font-bold text-surface-600 leading-none">{unanswered}</p>
+              <div className="bg-surface-50 dark:bg-surface-800 rounded-xl p-2.5 border border-surface-100 dark:border-surface-700 text-center">
+                <p className="text-lg font-bold text-surface-600 dark:text-surface-300 leading-none">{unanswered}</p>
                 <p className="text-[10px] text-surface-500 mt-0.5">{t('exam.unanswered_label')}</p>
               </div>
-              <div className="bg-blue-50 rounded-xl p-2.5 border border-blue-100 text-center">
+              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-2.5 border border-blue-100 dark:border-blue-800/40 text-center">
                 <p className="text-lg font-bold text-blue-600 leading-none">{fmt(elapsed)}</p>
                 <p className="text-[10px] text-blue-500 mt-0.5">{t('exam.time_used')}</p>
               </div>
             </div>
 
             {/* Error detail bar */}
-            <div className={cn('rounded-xl p-3 mb-4 flex items-center gap-3', passed ? 'bg-success-50 border border-success-100' : 'bg-danger-50 border border-danger-100')}>
+            <div className={cn('rounded-xl p-3 mb-4 flex items-center gap-3', passed ? 'bg-success-50 dark:bg-success-900/20 border border-success-100 dark:border-success-800/40' : 'bg-danger-50 dark:bg-danger-900/20 border border-danger-100 dark:border-danger-800/40')}>
               <Icon name={passed ? 'check_circle' : 'error'} size={20} className={passed ? 'text-success-500' : 'text-danger-500'} filled />
               <div className="text-start">
                 <p className={cn('text-sm font-bold', passed ? 'text-success-700' : 'text-danger-700')}>
@@ -282,7 +282,7 @@ export function ExamSimulatorPage() {
         </button>
         
         {/* Error summary at top */}
-        <div className={cn('rounded-xl p-3 mb-4 flex items-center justify-between', totalErrors <= MAX_ERRORS ? 'bg-success-50 border border-success-100' : 'bg-danger-50 border border-danger-100')}>
+        <div className={cn('rounded-xl p-3 mb-4 flex items-center justify-between', totalErrors <= MAX_ERRORS ? 'bg-success-50 dark:bg-success-900/20 border border-success-100 dark:border-success-800/40' : 'bg-danger-50 dark:bg-danger-900/20 border border-danger-100 dark:border-danger-800/40')}>
           <span className={cn('text-sm font-bold', totalErrors <= MAX_ERRORS ? 'text-success-700' : 'text-danger-700')}>
             {totalErrors <= MAX_ERRORS ? t('exam.passed_badge') : t('exam.failed_badge')}
           </span>
@@ -300,7 +300,7 @@ export function ExamSimulatorPage() {
               <div key={q.id} className={cn('bg-white dark:bg-surface-100 rounded-xl p-4 border-2', correct ? 'border-success-200' : userAns === undefined ? 'border-surface-300' : 'border-red-300')}>
                 <div className="flex items-start gap-3" dir="ltr">
                   <span className={cn('w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0',
-                    correct ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600'
+                    correct ? 'bg-success-50 dark:bg-success-900/30 text-success-600 dark:text-success-400' : 'bg-danger-50 dark:bg-danger-900/30 text-danger-600 dark:text-danger-400'
                   )}>{i + 1}</span>
                   <div className="flex-1">
                     <div className="flex items-start gap-2">
@@ -315,7 +315,7 @@ export function ExamSimulatorPage() {
                       )}
                     </div>
                     <div className="flex items-center gap-4 text-xs">
-                      <span className={cn('px-2 py-0.5 rounded-full', userAns === undefined ? 'bg-surface-100 text-surface-500' : correct ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600')}>
+                      <span className={cn('px-2 py-0.5 rounded-full', userAns === undefined ? 'bg-surface-100 dark:bg-surface-700 text-surface-500' : correct ? 'bg-success-50 dark:bg-success-900/30 text-success-600 dark:text-success-400' : 'bg-danger-50 dark:bg-danger-900/30 text-danger-600 dark:text-danger-400')}>
                         {t('exam.your_answer')} {userAns === undefined ? t('exam.not_answered') : userAns ? trueLabel : falseLabel}
                       </span>
                       <span className="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full">
@@ -323,7 +323,7 @@ export function ExamSimulatorPage() {
                       </span>
                     </div>
                     {lang === 'ar' && q.explanationAr && (
-                      <p className="text-xs text-surface-500 mt-2 bg-surface-50 rounded-lg p-2" dir="rtl">{q.explanationAr}</p>
+                      <p className="text-xs text-surface-500 mt-2 bg-surface-50 dark:bg-surface-800 rounded-lg p-2" dir="rtl">{q.explanationAr}</p>
                     )}
                     {lang === 'it' && q.explanationIt && (
                       <p className="text-xs text-surface-500 mt-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2" dir="ltr">{q.explanationIt}</p>

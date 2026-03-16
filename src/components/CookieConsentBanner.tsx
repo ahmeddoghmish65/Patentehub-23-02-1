@@ -38,8 +38,8 @@ export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
     {
       title: 'أساسية (مطلوبة دائماً)',
       icon: 'lock',
-      colorClass: 'text-success-600',
-      bgClass: 'bg-success-50 border-success-100',
+      colorClass: 'text-success-600 dark:text-success-400',
+      bgClass: 'bg-success-50 dark:bg-success-900/20 border-success-100 dark:border-success-800/40',
       items: [
         { name: 'ph_auth', desc: 'الحفاظ على جلسة تسجيل الدخول (30 يوماً)' },
         { name: 'ph_lang', desc: 'تذكُّر تفضيل اللغة (1 سنة)' },
@@ -50,8 +50,8 @@ export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
     {
       title: 'اختيارية (بموافقتك فقط)',
       icon: 'tune',
-      colorClass: 'text-primary-600',
-      bgClass: 'bg-primary-50 border-primary-100',
+      colorClass: 'text-primary-600 dark:text-primary-400',
+      bgClass: 'bg-primary-50 dark:bg-primary-900/20 border-primary-100 dark:border-primary-800/40',
       items: [
         { name: 'ph_last_page', desc: 'آخر صفحة زرتها — للمتابعة من حيث توقفت (7 أيام)' },
         { name: 'ph_last_quiz', desc: 'آخر اختبار أجريته (7 أيام)' },
@@ -64,8 +64,8 @@ export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
     {
       title: 'Essenziali (sempre necessari)',
       icon: 'lock',
-      colorClass: 'text-success-600',
-      bgClass: 'bg-success-50 border-success-100',
+      colorClass: 'text-success-600 dark:text-success-400',
+      bgClass: 'bg-success-50 dark:bg-success-900/20 border-success-100 dark:border-success-800/40',
       items: [
         { name: 'ph_auth', desc: 'Mantenimento della sessione di accesso (30 giorni)' },
         { name: 'ph_lang', desc: 'Ricorda la preferenza della lingua (1 anno)' },
@@ -76,8 +76,8 @@ export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
     {
       title: 'Facoltativi (solo con il tuo consenso)',
       icon: 'tune',
-      colorClass: 'text-primary-600',
-      bgClass: 'bg-primary-50 border-primary-100',
+      colorClass: 'text-primary-600 dark:text-primary-400',
+      bgClass: 'bg-primary-50 dark:bg-primary-900/20 border-primary-100 dark:border-primary-800/40',
       items: [
         { name: 'ph_last_page', desc: 'Ultima pagina visitata — per continuare da dove hai lasciato (7 giorni)' },
         { name: 'ph_last_quiz', desc: 'Ultimo quiz completato (7 giorni)' },
@@ -98,7 +98,7 @@ export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
       <div className="max-w-2xl mx-auto bg-white dark:bg-surface-100 rounded-2xl shadow-2xl border border-surface-200 overflow-hidden animate-fade-in-up">
         {/* Main row */}
         <div className="flex items-start gap-3 p-5 pb-4">
-          <div className="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center shrink-0 mt-0.5">
+          <div className="w-10 h-10 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center shrink-0 mt-0.5">
             <Icon name="cookie" size={22} className="text-primary-600" filled />
           </div>
 
@@ -141,7 +141,7 @@ export function CookieConsentBanner({ onConsent }: CookieConsentBannerProps) {
         )}
 
         {/* Action bar */}
-        <div className="px-5 py-3.5 bg-surface-50 border-t border-surface-100 flex flex-col sm:flex-row items-center gap-3">
+        <div className="px-5 py-3.5 bg-surface-50 dark:bg-surface-800 border-t border-surface-100 dark:border-surface-700 flex flex-col sm:flex-row items-center gap-3">
           <button
             onClick={() => setShowDetails(v => !v)}
             className="text-xs text-primary-600 hover:text-primary-700 flex items-center gap-1 sm:mr-auto self-start sm:self-auto transition-colors"

@@ -116,12 +116,12 @@ export function QuizPage() {
         {lang === 'both' && <h1 className="text-2xl font-bold text-surface-900 mb-2" dir="ltr">{section?.nameIt || t('quiz_page.default_title')}</h1>}
         {lang === 'both' && <p className="text-primary-500 mb-6" dir="rtl">{section?.nameAr}</p>}
         <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="bg-surface-50 rounded-xl p-4">
-            <p className="text-xl font-bold text-surface-900">{quizQuestions.length}</p>
+          <div className="bg-surface-50 dark:bg-surface-800 rounded-xl p-4">
+            <p className="text-xl font-bold text-surface-900 dark:text-surface-100">{quizQuestions.length}</p>
             <p className="text-xs text-surface-500">{t('quiz_page.true_false_label')}</p>
           </div>
-          <div className="bg-surface-50 rounded-xl p-4">
-            <p className="text-xl font-bold text-surface-900">70%</p>
+          <div className="bg-surface-50 dark:bg-surface-800 rounded-xl p-4">
+            <p className="text-xl font-bold text-surface-900 dark:text-surface-100">70%</p>
             <p className="text-xs text-surface-500">{t('quiz_page.passing_score')}</p>
           </div>
         </div>
@@ -137,7 +137,7 @@ export function QuizPage() {
     return (
       <div className="max-w-lg mx-auto">
         <div className="bg-white dark:bg-surface-100 rounded-2xl p-8 border border-surface-100 text-center">
-          <div className={cn('w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6', passed ? 'bg-success-50' : 'bg-danger-50')}>
+          <div className={cn('w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6', passed ? 'bg-success-50 dark:bg-success-900/30' : 'bg-danger-50 dark:bg-danger-900/30')}>
             <Icon name={passed ? 'celebration' : 'sentiment_dissatisfied'} size={48} className={passed ? 'text-success-500' : 'text-danger-500'} filled />
           </div>
           <h1 className="text-3xl font-bold text-surface-900 mb-2">{passed ? `🎉 ${t('quiz_page.passed_title')}` : t('quiz_page.failed_title')}</h1>
@@ -152,9 +152,9 @@ export function QuizPage() {
             </div>
           </div>
           <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="bg-surface-50 rounded-xl p-3"><p className="text-xl font-bold text-success-500">{cc}</p><p className="text-xs text-surface-500">{t('quiz_page.correct_count')}</p></div>
-            <div className="bg-surface-50 rounded-xl p-3"><p className="text-xl font-bold text-danger-500">{quizQuestions.length - cc}</p><p className="text-xs text-surface-500">{t('quiz_page.wrong_count')}</p></div>
-            <div className="bg-surface-50 rounded-xl p-3"><p className="text-xl font-bold text-primary-500">{fmt(elapsed)}</p><p className="text-xs text-surface-500">{t('quiz_page.time_label')}</p></div>
+            <div className="bg-surface-50 dark:bg-surface-800 rounded-xl p-3"><p className="text-xl font-bold text-success-500">{cc}</p><p className="text-xs text-surface-500">{t('quiz_page.correct_count')}</p></div>
+            <div className="bg-surface-50 dark:bg-surface-800 rounded-xl p-3"><p className="text-xl font-bold text-danger-500">{quizQuestions.length - cc}</p><p className="text-xs text-surface-500">{t('quiz_page.wrong_count')}</p></div>
+            <div className="bg-surface-50 dark:bg-surface-800 rounded-xl p-3"><p className="text-xl font-bold text-primary-500">{fmt(elapsed)}</p><p className="text-xs text-surface-500">{t('quiz_page.time_label')}</p></div>
           </div>
           <div className="space-y-3">
             <Button fullWidth onClick={start} icon={<Icon name="replay" size={20} />}>{t('quiz_page.retake')}</Button>

@@ -238,7 +238,7 @@ function RegisterForm({ onSuccess, navigate }: { onSuccess: () => void; navigate
                   <div className="flex items-center gap-1 flex-wrap">
                     <span className="text-[10px] text-surface-400">{t('auth.username_suggestions')}</span>
                     {usernameSuggestions.map(s => (
-                      <button key={s} type="button" className="text-[10px] bg-primary-50 text-primary-600 border border-primary-200 px-2 py-0.5 rounded-full hover:bg-primary-100 transition-colors font-mono" onClick={() => setValue('username', s)}>@{s}</button>
+                      <button key={s} type="button" className="text-[10px] bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-800/50 px-2 py-0.5 rounded-full hover:bg-primary-100 dark:hover:bg-primary-900/50 transition-colors font-mono" onClick={() => setValue('username', s)}>@{s}</button>
                     ))}
                   </div>
                 )}
@@ -346,10 +346,10 @@ function ResetPasswordFlow({ onSuccess, navigate }: { onSuccess: () => void; nav
 
       {step === 'code' && (
         <form onSubmit={codeForm.handleSubmit(handleCodeSubmit)} className="space-y-4">
-          <div className="bg-primary-50 rounded-xl p-5 border border-primary-100 text-center">
+          <div className="bg-primary-50 dark:bg-primary-900/20 rounded-xl p-5 border border-primary-100 dark:border-primary-800/40 text-center">
             <Icon name="lock_clock" size={32} className="text-primary-500 mx-auto mb-2" filled />
             <p className="text-sm text-primary-700 font-bold mb-1">{t('auth.your_code')}</p>
-            <div className="text-3xl font-mono font-black text-primary-700 tracking-[0.3em] bg-white rounded-xl py-3 px-4 border-2 border-primary-200 inline-block mt-1 select-all">{generatedCode}</div>
+            <div className="text-3xl font-mono font-black text-primary-700 dark:text-primary-300 tracking-[0.3em] bg-white dark:bg-surface-800 rounded-xl py-3 px-4 border-2 border-primary-200 dark:border-primary-700 inline-block mt-1 select-all">{generatedCode}</div>
             <p className="text-[11px] text-primary-400 mt-2">{t('auth.code_valid')}</p>
           </div>
           <Input label={t('auth.enter_code')} placeholder={t('auth.placeholder_code')} icon="pin" dir="ltr" className="text-left text-center tracking-widest" {...codeForm.register('code')} error={codeForm.formState.errors.code?.message} />

@@ -71,7 +71,7 @@ export function Sidebar() {
 
       {/* User card */}
       <div className="p-4">
-        <div className="flex items-center gap-3 bg-surface-50 rounded-xl p-3">
+        <div className="flex items-center gap-3 bg-surface-50 dark:bg-surface-800 rounded-xl p-3">
           {user.avatar ? (
             <img src={user.avatar} className="w-10 h-10 rounded-xl object-cover" alt="" />
           ) : (
@@ -98,7 +98,7 @@ export function Sidebar() {
                 navButtonAlign,
                 active
                   ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 font-semibold'
-                  : 'text-surface-500 hover:bg-surface-50',
+                  : 'text-surface-500 hover:bg-surface-50 dark:hover:bg-surface-700',
               )}
               onClick={() => navigate(item.path)}
             >

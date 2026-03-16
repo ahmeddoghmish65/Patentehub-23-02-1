@@ -349,17 +349,17 @@ export const PostCard = memo(function PostCard({
 
         {/* Quiz block */}
         {isQuiz && post.quizQuestion && (
-          <div className="bg-purple-50 rounded-xl p-4 border border-purple-100 mt-2">
-            <p dir={getTextDir(post.quizQuestion)} className="text-sm font-semibold text-purple-900 mb-3">
+          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 border border-purple-100 dark:border-purple-800/40 mt-2">
+            <p dir={getTextDir(post.quizQuestion)} className="text-sm font-semibold text-purple-900 dark:text-purple-200 mb-3">
               {post.quizQuestion}
             </p>
             {hasVoted ? (
               <div className="space-y-2">
                 {/* True option */}
                 <div className={cn('flex items-center justify-between p-2.5 rounded-lg border',
-                  post.quizAnswer === true ? 'bg-success-50 border-success-200'
-                  : quizSelected[post.id] === true ? 'bg-danger-50 border-danger-200'
-                  : 'bg-white dark:bg-surface-200 border-surface-200')}>
+                  post.quizAnswer === true ? 'bg-success-50 dark:bg-success-900/20 border-success-200 dark:border-success-800/40'
+                  : quizSelected[post.id] === true ? 'bg-danger-50 dark:bg-danger-900/20 border-danger-200 dark:border-danger-800/40'
+                  : 'bg-white dark:bg-surface-700 border-surface-200 dark:border-surface-600')}>
                   <span className="text-sm font-medium">{t('community.quiz_correct_opt')}</span>
                   <div className="flex items-center gap-2">
                     {post.quizAnswer === true && <Icon name="check_circle" size={16} className="text-success-500" filled />}
@@ -371,9 +371,9 @@ export const PostCard = memo(function PostCard({
                 </div>
                 {/* False option */}
                 <div className={cn('flex items-center justify-between p-2.5 rounded-lg border',
-                  post.quizAnswer === false ? 'bg-success-50 border-success-200'
-                  : quizSelected[post.id] === false ? 'bg-danger-50 border-danger-200'
-                  : 'bg-white border-surface-200')}>
+                  post.quizAnswer === false ? 'bg-success-50 dark:bg-success-900/20 border-success-200 dark:border-success-800/40'
+                  : quizSelected[post.id] === false ? 'bg-danger-50 dark:bg-danger-900/20 border-danger-200 dark:border-danger-800/40'
+                  : 'bg-white dark:bg-surface-700 border-surface-200 dark:border-surface-600')}>
                   <span className="text-sm font-medium">{t('community.quiz_wrong_opt')}</span>
                   <div className="flex items-center gap-2">
                     {post.quizAnswer === false && <Icon name="check_circle" size={16} className="text-success-500" filled />}
@@ -385,7 +385,7 @@ export const PostCard = memo(function PostCard({
                 </div>
                 <p className="text-xs text-surface-400 text-center mt-1">{totalAns} {t('community.quiz_voted')}</p>
                 {quizSelected[post.id] !== post.quizAnswer && (
-                  <div className="bg-danger-50 rounded-lg p-2 border border-danger-100 mt-2">
+                  <div className="bg-danger-50 dark:bg-danger-900/20 rounded-lg p-2 border border-danger-100 dark:border-danger-800/40 mt-2">
                     <p className="text-xs text-danger-600 flex items-center gap-1">
                       <Icon name="info" size={14} />
                       {t('community.quiz_wrong_feedback')} {post.quizAnswer ? t('community.quiz_correct_opt') : t('community.quiz_wrong_opt')}
@@ -393,7 +393,7 @@ export const PostCard = memo(function PostCard({
                   </div>
                 )}
                 {quizSelected[post.id] === post.quizAnswer && (
-                  <div className="bg-success-50 rounded-lg p-2 border border-success-100 mt-2">
+                  <div className="bg-success-50 dark:bg-success-900/20 rounded-lg p-2 border border-success-100 dark:border-success-800/40 mt-2">
                     <p className="text-xs text-success-600 flex items-center gap-1">
                       <Icon name="check_circle" size={14} /> {t('community.quiz_right_feedback')}
                     </p>
@@ -403,13 +403,13 @@ export const PostCard = memo(function PostCard({
             ) : (
               <div className="grid grid-cols-2 gap-2 mt-1">
                 <button
-                  className="py-2 px-3 rounded-xl border-2 border-surface-900 bg-teal-50 hover:bg-teal-100 text-surface-900 transition-all font-semibold text-sm text-center"
+                  className="py-2 px-3 rounded-xl border-2 border-teal-300 dark:border-teal-700/60 bg-teal-50 dark:bg-teal-900/30 hover:bg-teal-100 dark:hover:bg-teal-900/50 text-teal-900 dark:text-teal-300 transition-all font-semibold text-sm text-center"
                   onClick={() => handleQuizAnswer(true)}
                 >
                   {t('community.correct_quiz')}
                 </button>
                 <button
-                  className="py-2 px-3 rounded-xl border-2 border-surface-900 bg-rose-50 hover:bg-rose-100 text-surface-900 transition-all font-semibold text-sm text-center"
+                  className="py-2 px-3 rounded-xl border-2 border-rose-300 dark:border-rose-700/60 bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-900 dark:text-rose-300 transition-all font-semibold text-sm text-center"
                   onClick={() => handleQuizAnswer(false)}
                 >
                   {t('community.wrong_quiz')}
