@@ -209,11 +209,11 @@ export function QuizPage() {
             <button key={String(val)}
               className={cn(
                 'py-4 rounded-2xl border-2 transition-all font-bold text-base text-center',
-                !show && val === true  && 'bg-teal-50 border-surface-900 hover:bg-teal-100 text-surface-900',
-                !show && val === false && 'bg-rose-50 border-surface-900 hover:bg-rose-100 text-surface-900',
-                show && isCorrect && 'border-emerald-400 bg-emerald-50 text-emerald-800',
-                show && isSelected && !isCorrect && 'border-rose-400 bg-rose-100 text-rose-800',
-                show && !isSelected && !isCorrect && 'border-surface-200 bg-white dark:bg-surface-100 text-surface-400 opacity-40',
+                !show && val === true  && 'bg-teal-50 dark:bg-teal-900/30 border-teal-300 dark:border-teal-700/60 hover:bg-teal-100 dark:hover:bg-teal-900/50 text-teal-900 dark:text-teal-300',
+                !show && val === false && 'bg-rose-50 dark:bg-rose-900/30 border-rose-300 dark:border-rose-700/60 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-900 dark:text-rose-300',
+                show && isCorrect && 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300',
+                show && isSelected && !isCorrect && 'border-rose-400 bg-rose-100 dark:bg-rose-900/30 text-rose-800 dark:text-rose-300',
+                show && !isSelected && !isCorrect && 'border-surface-200 bg-white dark:bg-surface-800 text-surface-400 opacity-40',
               )}
               onClick={() => handleAnswer(val)}
               disabled={show}

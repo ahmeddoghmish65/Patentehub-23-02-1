@@ -468,8 +468,8 @@ export function ExamSimulatorPage() {
           <button
             className={cn('py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 font-bold text-base',
               userAnswer === true
-                ? 'border-green-500 bg-green-50 text-green-700 shadow-sm'
-                : 'border-surface-200 text-surface-400 hover:border-green-400 hover:bg-green-50/50 hover:text-green-600'
+                ? 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 shadow-sm'
+                : 'border-surface-200 dark:border-surface-700 text-surface-400 dark:text-surface-500 hover:border-green-400 hover:bg-green-50/50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400'
             )}
             onClick={() => handleAnswer(true)}
           >
@@ -479,8 +479,8 @@ export function ExamSimulatorPage() {
           <button
             className={cn('py-3 rounded-xl border-2 transition-all flex items-center justify-center gap-2 font-bold text-base',
               userAnswer === false
-                ? 'border-red-500 bg-red-50 text-red-700 shadow-sm'
-                : 'border-surface-200 text-surface-400 hover:border-red-400 hover:bg-red-50/50 hover:text-red-600'
+                ? 'border-red-500 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 shadow-sm'
+                : 'border-surface-200 dark:border-surface-700 text-surface-400 dark:text-surface-500 hover:border-red-400 hover:bg-red-50/50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400'
             )}
             onClick={() => handleAnswer(false)}
           >
