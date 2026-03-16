@@ -4,6 +4,7 @@ import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore, useUIStore } from '@/store';
 import { Icon } from '@/shared/ui/Icon';
 import { Button } from '@/shared/ui/Button';
+import { TTSButton } from '@/shared/ui/TTSButton';
 import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 import { ROUTES } from '@/shared/constants';
@@ -186,10 +187,17 @@ export function QuizPage() {
           {q.difficulty === 'easy' ? t('quiz_page.difficulty_easy') : q.difficulty === 'medium' ? t('quiz_page.difficulty_medium') : t('quiz_page.difficulty_hard')}
         </span>
         {q.image && <img src={q.image} alt="" className="w-full rounded-xl mb-4 max-h-48 object-contain" />}
-        {lang === 'ar' && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="rtl">{q.questionAr}</h2>}
-        {lang === 'it' && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="ltr">{q.questionIt}</h2>}
-        {lang === 'both' && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="ltr">{q.questionIt}</h2>}
-        {lang === 'both' && <p className="text-base text-surface-600" dir="rtl">{q.questionAr}</p>}
+        <div className="flex items-start gap-2">
+          <div className="flex-1">
+            {lang === 'ar' && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="rtl">{q.questionAr}</h2>}
+            {lang === 'it' && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="ltr">{q.questionIt}</h2>}
+            {lang === 'both' && <h2 className="text-base font-bold text-surface-900 mb-2 leading-relaxed" dir="ltr">{q.questionIt}</h2>}
+            {lang === 'both' && <p className="text-base text-surface-600" dir="rtl">{q.questionAr}</p>}
+          </div>
+          {(lang === 'it' || lang === 'both') && (
+            <TTSButton text={q.questionIt} className="mt-0.5" />
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-6">

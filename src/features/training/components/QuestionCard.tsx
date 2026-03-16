@@ -1,6 +1,7 @@
 import type { Question } from '@/infrastructure/database/database';
 import { Icon } from '@/shared/ui/Icon';
 import { Button } from '@/shared/ui/Button';
+import { TTSButton } from '@/shared/ui/TTSButton';
 import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 
@@ -48,38 +49,45 @@ export function QuestionCard({
         )}
 
         {/* Question text */}
-        {lang === 'ar' && (
-          <h2 className={cn(
-            'font-bold text-surface-900 mb-1',
-            focusMode ? 'text-2xl leading-relaxed' : 'text-base',
-          )} dir="rtl">
-            {item.questionAr}
-          </h2>
-        )}
-        {lang === 'it' && (
-          <h2 className={cn(
-            'font-bold text-surface-900 mb-1',
-            focusMode ? 'text-2xl leading-relaxed' : 'text-base',
-          )} dir="ltr">
-            {item.questionIt}
-          </h2>
-        )}
-        {lang === 'both' && (
-          <>
-            <h2 className={cn(
-              'font-bold text-surface-900 mb-1',
-              focusMode ? 'text-xl leading-relaxed' : 'text-base',
-            )} dir="ltr">
-              {item.questionIt}
-            </h2>
-            <p className={cn(
-              'text-surface-500',
-              focusMode ? 'text-lg' : 'text-base',
-            )} dir="rtl">
-              {item.questionAr}
-            </p>
-          </>
-        )}
+        <div className="flex items-start gap-2">
+          <div className="flex-1">
+            {lang === 'ar' && (
+              <h2 className={cn(
+                'font-bold text-surface-900 mb-1',
+                focusMode ? 'text-2xl leading-relaxed' : 'text-base',
+              )} dir="rtl">
+                {item.questionAr}
+              </h2>
+            )}
+            {lang === 'it' && (
+              <h2 className={cn(
+                'font-bold text-surface-900 mb-1',
+                focusMode ? 'text-2xl leading-relaxed' : 'text-base',
+              )} dir="ltr">
+                {item.questionIt}
+              </h2>
+            )}
+            {lang === 'both' && (
+              <>
+                <h2 className={cn(
+                  'font-bold text-surface-900 mb-1',
+                  focusMode ? 'text-xl leading-relaxed' : 'text-base',
+                )} dir="ltr">
+                  {item.questionIt}
+                </h2>
+                <p className={cn(
+                  'text-surface-500',
+                  focusMode ? 'text-lg' : 'text-base',
+                )} dir="rtl">
+                  {item.questionAr}
+                </p>
+              </>
+            )}
+          </div>
+          {(lang === 'it' || lang === 'both') && (
+            <TTSButton text={item.questionIt} size={focusMode ? 'md' : 'sm'} className="mt-0.5" />
+          )}
+        </div>
       </div>
 
       {/* Answer buttons */}

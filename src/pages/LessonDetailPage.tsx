@@ -4,6 +4,7 @@ import { useLocaleNavigate } from '@/shared/hooks/useLocaleNavigate';
 import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/shared/ui/Icon';
 import { Button } from '@/shared/ui/Button';
+import { TTSButton } from '@/shared/ui/TTSButton';
 import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 import { ROUTES, buildLessonUrl } from '@/shared/constants';
@@ -83,8 +84,9 @@ export function LessonDetailPage() {
           
           {(lang === 'it' || lang === 'both') && (
             <div>
-              <h3 className="text-sm font-semibold text-primary-600 mb-2 flex items-center gap-1.5" dir="ltr">
+              <h3 className="text-sm font-semibold text-primary-600 mb-2 flex items-center justify-between" dir="ltr">
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-blue-100 text-blue-700 text-[10px] font-extrabold leading-none">IT</span>
+                <TTSButton text={lesson.contentIt} size="md" />
               </h3>
               <div className="text-base text-surface-700 leading-relaxed prose-sm" dir="ltr" dangerouslySetInnerHTML={{ __html: lesson.contentIt }} />
             </div>
@@ -127,7 +129,7 @@ export function LessonDetailPage() {
                         {i + 1}
                       </span>
                     </div>
-                    <div>
+                    <div className="flex-1">
                       {lang === 'ar' && (
                         <p className="text-sm font-medium text-surface-800" dir="rtl">{q.questionAr}</p>
                       )}
@@ -141,6 +143,9 @@ export function LessonDetailPage() {
                         <p className="text-sm text-surface-500 mt-1" dir="rtl">{q.questionAr}</p>
                       )}
                     </div>
+                    {(lang === 'it' || lang === 'both') && (
+                      <TTSButton text={q.questionIt} />
+                    )}
                   </div>
                 </div>
               ))}
