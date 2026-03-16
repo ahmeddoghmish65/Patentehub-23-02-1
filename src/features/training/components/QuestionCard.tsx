@@ -76,9 +76,11 @@ export function QuestionCard({
         <div className="grid grid-cols-2 gap-4 mb-4">
           <button
             className={cn(
-              'rounded-2xl border-2 border-surface-200 bg-teal-50 dark:bg-surface-100',
-              'hover:border-teal-400 hover:bg-teal-100',
-              'text-surface-900 font-bold transition-all duration-200 py-4 text-base',
+              'rounded-2xl border-2 py-4 text-base font-bold transition-all duration-200',
+              'bg-teal-50 border-teal-200 text-teal-800',
+              'dark:bg-teal-900/30 dark:border-teal-700/60 dark:text-teal-300',
+              'hover:bg-teal-100 hover:border-teal-400',
+              'dark:hover:bg-teal-900/50 dark:hover:border-teal-500',
             )}
             onClick={() => onAnswer(true)}
           >
@@ -86,9 +88,11 @@ export function QuestionCard({
           </button>
           <button
             className={cn(
-              'rounded-2xl border-2 border-surface-200 bg-rose-50 dark:bg-surface-100',
-              'hover:border-rose-400 hover:bg-rose-100',
-              'text-surface-900 font-bold transition-all duration-200 py-4 text-base',
+              'rounded-2xl border-2 py-4 text-base font-bold transition-all duration-200',
+              'bg-rose-50 border-rose-200 text-rose-800',
+              'dark:bg-rose-900/30 dark:border-rose-700/60 dark:text-rose-300',
+              'hover:bg-rose-100 hover:border-rose-400',
+              'dark:hover:bg-rose-900/50 dark:hover:border-rose-500',
             )}
             onClick={() => onAnswer(false)}
           >
