@@ -104,8 +104,8 @@ export function QuestionsBrowsePage() {
                         )}
                       </div>
                       {(lang === 'it' || lang === 'both') && (
-                        <div onClick={e => e.stopPropagation()}>
-                          <TTSButton text={q.questionIt} size="sm" className="mt-0.5" />
+                        <div onClick={e => e.stopPropagation()} className="shrink-0 pt-0.5">
+                          <TTSButton text={q.questionIt} size="sm" />
                         </div>
                       )}
                     </div>
