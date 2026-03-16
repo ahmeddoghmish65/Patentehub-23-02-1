@@ -1,6 +1,7 @@
 import type { Sign } from '@/infrastructure/database/database';
 import { Icon } from '@/shared/ui/Icon';
 import { Button } from '@/shared/ui/Button';
+import { TTSButton } from '@/shared/ui/TTSButton';
 import { useTranslation } from '@/i18n';
 
 interface Props {
@@ -31,10 +32,18 @@ export function SignCard({ item, lang, showAnswer, onShowAnswer, onNext }: Props
       ) : (
         <div className="text-center space-y-3">
           {lang === 'ar' && <h3 className="text-lg font-bold text-surface-900" dir="rtl">{item.nameAr}</h3>}
-          {lang === 'it' && <h3 className="text-lg font-bold text-surface-900" dir="ltr">{item.nameIt}</h3>}
+          {lang === 'it' && (
+            <div className="flex items-center justify-center gap-2" dir="ltr">
+              <h3 className="text-lg font-bold text-surface-900">{item.nameIt}</h3>
+              <TTSButton text={item.nameIt} size="sm" />
+            </div>
+          )}
           {lang === 'both' && (
             <>
-              <h3 className="text-lg font-bold text-surface-900" dir="ltr">{item.nameIt}</h3>
+              <div className="flex items-center justify-center gap-2" dir="ltr">
+                <h3 className="text-lg font-bold text-surface-900">{item.nameIt}</h3>
+                <TTSButton text={item.nameIt} size="sm" />
+              </div>
               <p className="text-base text-primary-500 font-medium" dir="rtl">{item.nameAr}</p>
             </>
           )}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/shared/ui/Icon';
+import { TTSButton } from '@/shared/ui/TTSButton';
 import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 
@@ -174,11 +175,17 @@ export function SignsPage() {
                 <h2 className="text-xl font-bold text-surface-900 mb-4" dir="rtl">{selectedSignData.nameAr}</h2>
               )}
               {lang === 'it' && (
-                <h2 className="text-xl font-bold text-surface-900 mb-4" dir="ltr">{selectedSignData.nameIt}</h2>
+                <div className="flex items-center gap-2 mb-4" dir="ltr">
+                  <h2 className="text-xl font-bold text-surface-900">{selectedSignData.nameIt}</h2>
+                  <TTSButton text={selectedSignData.nameIt} size="md" />
+                </div>
               )}
               {lang === 'both' && (
                 <>
-                  <h2 className="text-xl font-bold text-surface-900 mb-1" dir="ltr">{selectedSignData.nameIt}</h2>
+                  <div className="flex items-center gap-2 mb-1" dir="ltr">
+                    <h2 className="text-xl font-bold text-surface-900">{selectedSignData.nameIt}</h2>
+                    <TTSButton text={selectedSignData.nameIt} size="md" />
+                  </div>
                   <p className="text-lg text-primary-500 font-medium mb-4" dir="rtl">{selectedSignData.nameAr}</p>
                 </>
               )}
@@ -186,7 +193,10 @@ export function SignsPage() {
               <div className="bg-surface-50 rounded-xl p-4 space-y-3">
                 {(lang === 'it' || lang === 'both') && selectedSignData.descriptionIt && (
                   <div dir="ltr">
-                    <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-blue-100 text-blue-700 text-[10px] font-extrabold leading-none mb-1">IT</span>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-blue-100 text-blue-700 text-[10px] font-extrabold leading-none">IT</span>
+                      <TTSButton text={selectedSignData.descriptionIt} size="sm" />
+                    </div>
                     <p className="text-sm text-surface-700 leading-relaxed">{selectedSignData.descriptionIt}</p>
                   </div>
                 )}

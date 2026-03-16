@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/shared/ui/Icon';
+import { TTSButton } from '@/shared/ui/TTSButton';
 import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 
@@ -60,11 +61,15 @@ export function DictionaryPage() {
                       <span className="text-lg font-bold text-surface-900" dir="rtl">{entry.termAr}</span>
                     )}
                     {lang === 'it' && (
-                      <span className="text-lg font-bold text-primary-600" dir="ltr">{entry.termIt}</span>
+                      <>
+                        <span className="text-lg font-bold text-primary-600" dir="ltr">{entry.termIt}</span>
+                        <TTSButton text={entry.termIt} size="sm" />
+                      </>
                     )}
                     {lang === 'both' && (
                       <>
                         <span className="text-lg font-bold text-primary-600" dir="ltr">{entry.termIt}</span>
+                        <TTSButton text={entry.termIt} size="sm" />
                         <span className="text-surface-300">—</span>
                         <span className="text-lg font-bold text-surface-900" dir="rtl">{entry.termAr}</span>
                       </>
@@ -73,8 +78,11 @@ export function DictionaryPage() {
                   {lang === 'ar' && (
                     <p className="text-sm text-surface-500" dir="rtl">{entry.definitionAr}</p>
                   )}
-                  {(lang === 'it' || lang === 'both') && (
-                    <p className="text-sm text-surface-400 mb-1" dir="ltr">{entry.definitionIt}</p>
+                  {(lang === 'it' || lang === 'both') && entry.definitionIt && (
+                    <div className="flex items-start gap-1 mb-1" dir="ltr">
+                      <p className="text-sm text-surface-400 flex-1">{entry.definitionIt}</p>
+                      <TTSButton text={entry.definitionIt} size="sm" />
+                    </div>
                   )}
                   {lang === 'both' && (
                     <p className="text-sm text-surface-500" dir="rtl">{entry.definitionAr}</p>

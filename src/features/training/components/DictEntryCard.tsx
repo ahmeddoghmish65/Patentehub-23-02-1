@@ -1,5 +1,6 @@
 import type { DictionaryEntry } from '@/infrastructure/database/database';
 import { Button } from '@/shared/ui/Button';
+import { TTSButton } from '@/shared/ui/TTSButton';
 import { useTranslation } from '@/i18n';
 
 interface Props {
@@ -16,7 +17,10 @@ export function DictEntryCard({ item, lang, showAnswer, onShowAnswer, onNext }: 
   return (
     <div className="bg-white dark:bg-surface-100 rounded-2xl border border-surface-100 overflow-hidden mb-4 p-6">
       <div className="text-center mb-4">
-        <p className="text-2xl font-bold text-primary-600" dir="ltr">{item.termIt}</p>
+        <div className="flex items-center justify-center gap-2">
+          <p className="text-2xl font-bold text-primary-600" dir="ltr">{item.termIt}</p>
+          <TTSButton text={item.termIt} size="sm" />
+        </div>
         <p className="text-xs text-surface-400 mt-2">{t('training.term_question')}</p>
       </div>
 
@@ -33,7 +37,10 @@ export function DictEntryCard({ item, lang, showAnswer, onShowAnswer, onNext }: 
             <p className="text-sm text-surface-500" dir="rtl">{item.definitionAr}</p>
           )}
           {(lang === 'it' || lang === 'both') && item.definitionIt && (
-            <p className="text-xs text-surface-400" dir="ltr">{item.definitionIt}</p>
+            <div className="flex items-start justify-center gap-1" dir="ltr">
+              <p className="text-xs text-surface-400">{item.definitionIt}</p>
+              <TTSButton text={item.definitionIt} size="sm" />
+            </div>
           )}
           <div className="flex gap-2 justify-center pt-2">
             <Button variant="secondary" onClick={() => onNext(false)} className="!bg-danger-50 !text-danger-600">

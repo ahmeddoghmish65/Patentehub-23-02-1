@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuthStore, useDataStore, useUIStore } from '@/store';
 import { Icon } from '@/shared/ui/Icon';
+import { TTSButton } from '@/shared/ui/TTSButton';
 import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 
@@ -97,10 +98,16 @@ export function MistakesPage() {
                 <p className="font-semibold text-surface-800 text-base leading-relaxed mb-2" dir="rtl">{q.questionAr}</p>
               )}
               {lang === 'it' && (
-                <p className="font-semibold text-surface-800 text-base leading-relaxed mb-2" dir="ltr">{q.questionIt}</p>
+                <div className="flex items-start gap-2 mb-2">
+                  <p className="font-semibold text-surface-800 text-base leading-relaxed flex-1" dir="ltr">{q.questionIt}</p>
+                  <TTSButton text={q.questionIt} size="sm" className="mt-0.5 shrink-0" />
+                </div>
               )}
               {lang === 'both' && (
-                <p className="font-semibold text-surface-800 text-base leading-relaxed mb-2" dir="ltr">{q.questionIt}</p>
+                <div className="flex items-start gap-2 mb-2">
+                  <p className="font-semibold text-surface-800 text-base leading-relaxed flex-1" dir="ltr">{q.questionIt}</p>
+                  <TTSButton text={q.questionIt} size="sm" className="mt-0.5 shrink-0" />
+                </div>
               )}
               {lang === 'both' && (
                 <p className="text-sm text-surface-400 leading-relaxed" dir="rtl">{q.questionAr}</p>
@@ -151,8 +158,18 @@ export function MistakesPage() {
                 </div>
                 <div className="flex-1">
                   {lang === 'ar' && <p className="font-semibold text-surface-800 text-sm mb-1" dir="rtl">{m.questionAr}</p>}
-                  {lang === 'it' && <p className="font-semibold text-surface-800 text-sm mb-1" dir="ltr">{m.questionIt}</p>}
-                  {lang === 'both' && <p className="font-semibold text-surface-800 text-sm mb-1" dir="ltr">{m.questionIt}</p>}
+                  {lang === 'it' && (
+                    <div className="flex items-start gap-1.5 mb-1">
+                      <p className="font-semibold text-surface-800 text-sm flex-1" dir="ltr">{m.questionIt}</p>
+                      <TTSButton text={m.questionIt} size="sm" className="shrink-0" />
+                    </div>
+                  )}
+                  {lang === 'both' && (
+                    <div className="flex items-start gap-1.5 mb-1">
+                      <p className="font-semibold text-surface-800 text-sm flex-1" dir="ltr">{m.questionIt}</p>
+                      <TTSButton text={m.questionIt} size="sm" className="shrink-0" />
+                    </div>
+                  )}
                   {lang === 'both' && <p className="text-sm text-surface-400 mb-2" dir="rtl">{m.questionAr}</p>}
                   <div className="flex items-center gap-4 text-xs flex-wrap">
                     <span className="text-danger-500 flex items-center gap-1">
