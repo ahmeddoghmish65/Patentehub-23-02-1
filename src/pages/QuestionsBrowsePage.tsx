@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuthStore, useDataStore } from '@/store';
 import { Icon } from '@/shared/ui/Icon';
+import { TTSButton } from '@/shared/ui/TTSButton';
 import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 
@@ -87,18 +88,27 @@ export function QuestionsBrowsePage() {
                     {q.image && (
                       <img src={q.image} alt="" className="w-full rounded-lg mb-2 max-h-36 object-contain bg-white" />
                     )}
-                    {lang === 'ar' && (
-                      <p className="text-sm font-medium text-surface-800 leading-relaxed" dir="rtl">{q.questionAr}</p>
-                    )}
-                    {lang === 'it' && (
-                      <p className="text-sm font-medium text-surface-800 leading-relaxed" dir="ltr">{q.questionIt}</p>
-                    )}
-                    {lang === 'both' && (
-                      <p className="text-sm font-medium text-surface-800 leading-relaxed" dir="ltr">{q.questionIt}</p>
-                    )}
-                    {lang === 'both' && (
-                      <p className="text-sm text-surface-500 leading-relaxed mt-1" dir="rtl">{q.questionAr}</p>
-                    )}
+                    <div className="flex items-start gap-2">
+                      <div className="flex-1">
+                        {lang === 'ar' && (
+                          <p className="text-sm font-medium text-surface-800 leading-relaxed" dir="rtl">{q.questionAr}</p>
+                        )}
+                        {lang === 'it' && (
+                          <p className="text-sm font-medium text-surface-800 leading-relaxed" dir="ltr">{q.questionIt}</p>
+                        )}
+                        {lang === 'both' && (
+                          <p className="text-sm font-medium text-surface-800 leading-relaxed" dir="ltr">{q.questionIt}</p>
+                        )}
+                        {lang === 'both' && (
+                          <p className="text-sm text-surface-500 leading-relaxed mt-1" dir="rtl">{q.questionAr}</p>
+                        )}
+                      </div>
+                      {(lang === 'it' || lang === 'both') && (
+                        <div onClick={e => e.stopPropagation()}>
+                          <TTSButton text={q.questionIt} size="sm" className="mt-0.5" />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </button>
 
