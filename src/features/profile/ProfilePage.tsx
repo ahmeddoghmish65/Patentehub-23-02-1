@@ -241,15 +241,17 @@ export function ProfilePage() {
         </button>
 
         {/* Theme setting */}
-        <div className="w-full px-5 py-4 flex items-center gap-3 border-b border-surface-50">
-          <div className="w-9 h-9 bg-primary-50 rounded-xl flex items-center justify-center shrink-0">
-            <Icon name="brightness_auto" size={18} className="text-primary-500" />
+        <div className="px-5 py-4 border-b border-surface-50 space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-primary-50 rounded-xl flex items-center justify-center shrink-0">
+              <Icon name="brightness_auto" size={18} className="text-primary-500" />
+            </div>
+            <div className="flex-1 text-right">
+              <p className="text-sm font-semibold text-surface-800">{t('profile.theme_btn')}</p>
+              <p className="text-xs text-surface-400">{t('profile.theme_btn_desc')}</p>
+            </div>
           </div>
-          <div className="flex-1 text-right">
-            <p className="text-sm font-semibold text-surface-800">{t('profile.theme_btn') || 'Appearance'}</p>
-            <p className="text-xs text-surface-400">{t('profile.theme_btn_desc') || 'Light, Dark or System'}</p>
-          </div>
-          <ThemeToggle variant="compact" />
+          <ThemeToggle variant="full" className="w-full justify-center" />
         </div>
 
         {isAdmin && (

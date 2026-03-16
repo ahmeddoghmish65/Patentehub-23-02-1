@@ -14,6 +14,7 @@ import type { Theme } from '@/providers/ThemeProvider';
 import { Icon } from '@/shared/ui/Icon';
 import { cn } from '@/shared/utils/cn';
 import { THEME_OPTIONS, THEME_CYCLE } from '@/config/theme';
+import { useTranslation } from '@/i18n';
 
 interface ThemeToggleProps {
   variant?: 'compact' | 'full';
@@ -25,7 +26,11 @@ export const ThemeToggle = memo(function ThemeToggle({
   className,
 }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme();
+  const { t } = useTranslation();
   const current = THEME_OPTIONS.find(o => o.id === theme) ?? THEME_OPTIONS[1];
+
+  const themeLabel = (id: string) =>
+    t(`profile.theme_${id}`) || id.charAt(0).toUpperCase() + id.slice(1);
 
   if (variant === 'compact') {
     return (
@@ -63,14 +68,14 @@ export const ThemeToggle = memo(function ThemeToggle({
             aria-pressed={active}
             title={opt.description}
             className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200',
+              'flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200',
               active
                 ? 'bg-white dark:bg-surface-700 text-surface-900 shadow-sm'
                 : 'text-surface-500 hover:text-surface-700',
             )}
           >
             <Icon name={opt.icon} size={16} />
-            <span>{opt.label}</span>
+            <span>{themeLabel(opt.id)}</span>
           </button>
         );
       })}
