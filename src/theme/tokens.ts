@@ -353,45 +353,4 @@ export const componentTokens = {
     tokens.transition.colors,
   ),
 
-  // ── Focus mode container ──────────────────────────────────────────────────
-  focusMode: {
-    overlay: cn(
-      'fixed inset-0 z-40',
-      'bg-surface-50 dark:bg-surface-50',
-      'flex flex-col',
-      tokens.transition.colors,
-    ),
-    card: cn(
-      tokens.bg.card,
-      'rounded-3xl border',
-      tokens.border.default,
-      tokens.transition.colors,
-      'p-8',
-    ),
-    question: cn(
-      'text-xl font-bold leading-relaxed',
-      tokens.text.primary,
-    ),
-  },
-
-} as const;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// FOCUS MODE TOKENS
-// Specialised tokens for the distraction-free study experience.
-// All text is larger and colour palette is reduced for concentration.
-// ─────────────────────────────────────────────────────────────────────────────
-
-export const focusModeTokens = {
-  bg:         'bg-surface-50 dark:bg-surface-50',
-  card:       cn(tokens.bg.card, 'rounded-3xl border', tokens.border.default),
-  question:   'text-2xl font-bold leading-relaxed text-surface-900',
-  explanation:'text-base leading-relaxed text-surface-600',
-  label:      'text-sm font-semibold text-surface-400 uppercase tracking-widest',
-  progress:   'h-1.5 bg-surface-100 rounded-full overflow-hidden',
-  progressBar:'h-full bg-primary-500 transition-all duration-500',
-  answer: {
-    true:     'py-6 rounded-2xl border-2 border-surface-200 hover:border-teal-400 bg-teal-50 dark:bg-surface-100 hover:bg-teal-100 text-surface-900 font-bold text-lg',
-    false:    'py-6 rounded-2xl border-2 border-surface-200 hover:border-rose-400 bg-rose-50 dark:bg-surface-100 hover:bg-rose-100 text-surface-900 font-bold text-lg',
-  },
 } as const;

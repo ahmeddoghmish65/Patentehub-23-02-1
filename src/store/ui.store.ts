@@ -3,10 +3,6 @@
  *
  * Keeps lightweight boolean flags that need to be accessible across the tree
  * without prop-drilling, but don't warrant a full React context.
- *
- * Theme and Focus Mode state live in their own React context providers
- * (ThemeProvider, FocusModeProvider) because they require DOM side-effects
- * and localStorage persistence on mount.
  */
 import { create } from 'zustand';
 

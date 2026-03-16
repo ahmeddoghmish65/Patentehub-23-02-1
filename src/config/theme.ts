@@ -49,4 +49,3 @@ export const THEME_CYCLE: Record<Theme, Theme> = {
 // ─── Storage keys (shared between provider + anti-flash script) ───────────────
 
 export const THEME_STORAGE_KEY = 'ph_theme' as const;
-export const FOCUS_MODE_STORAGE_KEY = 'ph_focus_mode' as const;

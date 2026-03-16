@@ -6,8 +6,6 @@ import { TIMED_LIMIT } from '../constants';
 import { QuestionCard } from './QuestionCard';
 import { SignCard } from './SignCard';
 import { DictEntryCard } from './DictEntryCard';
-import { useFocusMode } from '@/features/focus-mode';
-import { FocusToggle } from '@/features/focus-mode';
 
 function isQuestion(item: TrainItem): item is Question {
   return 'questionAr' in item;
@@ -44,92 +42,11 @@ export function TrainingSession({
   onClose, onNext, onQuestionAnswer, onShowAnswer,
 }: Props) {
   const item = items[index];
-  const { isActive: focusActive } = useFocusMode();
 
   if (!item) return null;
 
   const remaining = TIMED_LIMIT - timedElapsed;
   const progress = ((index + 1) / total) * 100;
-
-  // ─── Focus Mode layout ─────────────────────────────────────────────────────
-  if (focusActive) {
-    return (
-      <div className="space-y-6">
-        {/* Minimal focus mode header */}
-        <div className="flex items-center justify-between">
-          {/* Progress fraction */}
-          <span className="text-xs font-semibold text-surface-400 uppercase tracking-wider">
-            {index + 1} / {total}
-          </span>
-
-          <div className="flex items-center gap-2">
-            {/* Timer — only for timed mode */}
-            {mode === 'timed' && (
-              <span className={cn(
-                'text-sm font-mono font-bold px-3 py-1 rounded-xl tabular-nums',
-                remaining < 30
-                  ? 'bg-danger-50 text-danger-600 animate-pulse'
-                  : 'bg-surface-100 text-surface-600',
-              )}>
-                <Icon name="timer" size={14} className="inline ml-1" />
-                {Math.floor(remaining / 60)}:{(remaining % 60).toString().padStart(2, '0')}
-              </span>
-            )}
-
-            {/* Score */}
-            <span className="text-sm font-semibold text-success-600 bg-success-50 dark:bg-surface-200 px-3 py-1 rounded-xl">
-              {score} ✓
-            </span>
-
-            {/* Focus mode toggle */}
-            <FocusToggle variant="icon" />
-          </div>
-        </div>
-
-        {/* Slim progress bar */}
-        <div className="h-1 bg-surface-100 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-primary-500 rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-
-        {/* Card content — larger, more padding, centred */}
-        {isQuestion(item) && (
-          <QuestionCard
-            item={item}
-            lang={lang}
-            showAnswer={showAnswer}
-            userAnswer={userAnswer}
-            trueLabel={trueLabel}
-            falseLabel={falseLabel}
-            isLast={index === items.length - 1}
-            onAnswer={onQuestionAnswer}
-            onNext={onNext}
-            focusMode
-          />
-        )}
-        {isSign(item) && (
-          <SignCard
-            item={item}
-            lang={lang}
-            showAnswer={showAnswer}
-            onShowAnswer={onShowAnswer}
-            onNext={onNext}
-          />
-        )}
-        {isDictEntry(item) && (
-          <DictEntryCard
-            item={item}
-            lang={lang}
-            showAnswer={showAnswer}
-            onShowAnswer={onShowAnswer}
-            onNext={onNext}
-          />
-        )}
-      </div>
-    );
-  }
 
   // ─── Standard layout ───────────────────────────────────────────────────────
   return (
@@ -140,8 +57,6 @@ export function TrainingSession({
           <button onClick={onClose} className="text-surface-400 hover:text-surface-600 p-1 rounded-lg hover:bg-surface-100 transition-colors">
             <Icon name="close" size={24} />
           </button>
-          {/* Focus mode toggle — enter distraction-free mode */}
-          <FocusToggle variant="icon" />
         </div>
 
         <div className="flex items-center gap-3">

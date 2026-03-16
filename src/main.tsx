@@ -10,7 +10,6 @@ import { getSavedTheme } from '@/shared/utils/cookieManager';
 import { applyTheme } from '@/store/helpers';
 import { LanguageProvider } from '@/i18n';
 import { ThemeProvider } from '@/providers/ThemeProvider';
-import { FocusModeProvider } from '@/features/focus-mode';
 import { initAnalytics } from '@/infrastructure/analytics';
 import { initSentry, initLogRocket } from '@/infrastructure/monitoring';
 
@@ -39,7 +38,6 @@ createRoot(document.getElementById('root')!).render(
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
-          <FocusModeProvider>
             <LanguageProvider>
               <App />
             {/* Global toast notification system */}
@@ -56,7 +54,6 @@ createRoot(document.getElementById('root')!).render(
               }}
             />
             </LanguageProvider>
-          </FocusModeProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </HelmetProvider>

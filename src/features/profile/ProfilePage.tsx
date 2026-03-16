@@ -8,7 +8,6 @@ import { Button } from '@/shared/ui/Button';
 import { cn } from '@/shared/utils/cn';
 import { useTranslation } from '@/i18n';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
-import { FocusToggle } from '@/features/focus-mode';
 import { saveCompleteProfile } from './services/profileService';
 import { useProfile } from './hooks/useProfile';
 import { useUpdateProfile } from './hooks/useUpdateProfile';
@@ -251,11 +250,6 @@ export function ProfilePage() {
             <p className="text-xs text-surface-400">{t('profile.theme_btn_desc') || 'Light, Dark or System'}</p>
           </div>
           <ThemeToggle variant="compact" />
-        </div>
-
-        {/* Focus Mode setting */}
-        <div className="px-5 py-4 border-b border-surface-50">
-          <FocusToggle variant="button" />
         </div>
 
         {isAdmin && (
