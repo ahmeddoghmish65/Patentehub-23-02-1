@@ -39,7 +39,7 @@ export const Loader = memo(function Loader({
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 dark:bg-surface-50/70 backdrop-blur-sm">
         {spinner}
       </div>
     );
